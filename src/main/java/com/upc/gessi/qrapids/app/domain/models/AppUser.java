@@ -40,6 +40,12 @@ public class AppUser implements Serializable{
     @Column(name="question")
     private String question;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable( name = "user_project",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "project_id") })
+    private List<Project> allowedProjects;
+
 	public AppUser() { }
 
     public AppUser(String username, String email, boolean admin, String password, UserGroup userGroup, Question appuser_question, String question) {
@@ -111,6 +117,10 @@ public class AppUser implements Serializable{
 
 	    return password;
 
+    }
+
+    public List<Project> getAllowedProjects() {
+        return allowedProjects;
     }
 
     public UserGroup getUserGroup() {
