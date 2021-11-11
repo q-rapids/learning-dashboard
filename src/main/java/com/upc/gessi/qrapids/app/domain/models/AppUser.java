@@ -5,6 +5,8 @@ import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 @Entity
@@ -12,7 +14,7 @@ import java.util.List;
 public class AppUser implements Serializable{
 
     // SerialVersion UID
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 12L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +46,7 @@ public class AppUser implements Serializable{
     @JoinTable( name = "user_project",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "project_id") })
-    private List<Project> allowedProjects;
+    private Set<Project> allowedProjects = new HashSet<Project>(0);
 
 	public AppUser() { }
 
@@ -119,7 +121,7 @@ public class AppUser implements Serializable{
 
     }
 
-    public List<Project> getAllowedProjects() {
+    public Set<Project> getAllowedProjects() {
         return allowedProjects;
     }
 

@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class Util {
@@ -145,7 +146,7 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public List<String> getUserFromToken(@RequestParam(value = "token", required = false) String token) {
         try {
-            List<Project> l = usersController.getAllowedProjects(token);
+            List<Project> l = new ArrayList<>(usersController.getAllowedProjects(token));
             List list = new ArrayList<String>();
             for(int i=0; i<l.size(); ++i) {
                 list.add(l.get(i).getExternalId());
