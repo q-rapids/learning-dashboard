@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -15,6 +16,9 @@ import java.util.Set;
 @Service
 public class UsersController {
 
+    @Value("${security.enable}")
+    private boolean securityEnable;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -23,6 +27,7 @@ public class UsersController {
     private AuthTools authTools;
 
     public Set<Project> getAllowedProjects(String token) {
+        if(!securityEnable) return new HashSet<>(projectRepository.findAll());
         String name = this.authTools.getUserToken(token);
         AppUser user = userRepository.findByUsername(name);
         if(user.getAdmin()) {
@@ -36,9 +41,9 @@ public class UsersController {
     }
 
     public Boolean getIfAdmin(String token) {
+        if(!securityEnable) return true;
         String name = this.authTools.getUserToken(token);
         AppUser user = userRepository.findByUsername(name);
-        if(user.getAdmin()) return true;
-        else return false;
+        return user.getAdmin();
     }
 }
