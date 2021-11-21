@@ -9,7 +9,9 @@ import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UsersController {
@@ -24,12 +26,12 @@ public class UsersController {
     private ProjectRepository projectRepository;
     private AuthTools authTools;
 
-    public List<Project> getAllowedProjects(String token) {
-        if(!securityEnable) return projectRepository.findAll();;
+    public Set<Project> getAllowedProjects(String token) {
+        if(!securityEnable) return new HashSet<>(projectRepository.findAll());
         String name = this.authTools.getUserToken(token);
         AppUser user = userRepository.findByUsername(name);
         if(user.getAdmin()) {
-            return projectRepository.findAll();
+            return new HashSet<>(projectRepository.findAll());
         }
         return user.getAllowedProjects();
     }
