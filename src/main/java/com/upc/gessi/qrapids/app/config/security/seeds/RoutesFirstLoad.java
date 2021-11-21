@@ -47,6 +47,10 @@ public class RoutesFirstLoad {
 
         routes.add( new Route( "REST : Decisions", "/Decisions") );
 
+        routes.add( new Route( "REST : Reporting", "/Reporting") );
+
+        routes.add( new Route( "REST : Phases", "/Phases") );
+
         routes.add( new Route( "REST : Products - Configuration", "/Products/Configuration") );
         routes.add( new Route( "REST : Strategic Indicators - Configuration", "/StrategicIndicators/Configuration") );
         routes.add( new Route( "REST : Quality Factors - Configuration", "/QualityFactors/Configuration") );

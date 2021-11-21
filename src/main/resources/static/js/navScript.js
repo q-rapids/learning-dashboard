@@ -442,13 +442,8 @@ else if (assessment === "DetailedStrategicIndicators") {
     }
 } else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
-var isAdmin=sessionStorage.getItem("isAdmin");
-console.log(typeof(isAdmin));
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
-if(isAdmin=="false") {
-    console.log("HA ENTRAT");
-    $("#Prediction").hide();
-}
+
 $("#StrategicIndicatorsAssessment").attr("href", serverUrl + "/StrategicIndicators/" + time + viewMode);
 
 $("#StrategicIndicatorsPrediction").attr("href", serverUrl + "/StrategicIndicators/PredictionChart");
@@ -494,13 +489,9 @@ $("#QRSimulation").attr("href", serverUrl + "/Simulation/QR");
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
 
  $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
-if(isAdmin=="false") {
-    $("#QualityRequirements").hide();
-}
+
 $("#Decisions").attr("href", serverUrl + "/Decisions");
-if(isAdmin=="false") {
-    $("#Decisions").hide();
-}
+
 console.log("qmMode " + qmMode);
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel" + qmMode);
 
@@ -513,9 +504,7 @@ $("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
 $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
 
 $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
-if(isAdmin=="false") {
-    $("#Configuration").hide();
-}
+
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 
 $("#QualityFactorsConfig").attr("href", serverUrl + "/QualityFactors/Configuration");
@@ -537,6 +526,8 @@ $("#usersConfig").attr("href", serverUrl + "/users");
 $("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
 
 $("#Reporting").attr("href", serverUrl + "/Reporting");
+
+
 
 $("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
 $("#LogoutProfileConfig").click(function () {
@@ -749,4 +740,17 @@ window.onload = function() {
         if (!window.location.href.match("/QualityAlerts"))  // correct alerts new status bug
             window.location.reload();
     }
+}
+
+var isAdmin=sessionStorage.getItem("isAdmin");
+console.log(typeof(isAdmin));
+if(isAdmin=="false") {
+    $("#Configuration").hide();
+    $("#RawDataAssessment").hide();
+    $("#PhasesAssessment").hide();
+    $("#QualityRequirements").hide();
+    $("#Decisions").hide();
+    $("#Prediction").hide();
+    $("#Reporting").hide();
+    $("#MyProfile").hide();
 }
