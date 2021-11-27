@@ -130,7 +130,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             user = this.userRepository.findByUsername( this.authTools.getUserToken( token ) );
 
 
-            if ( user.getAdmin() )
+            if ( user!=null && user.getAdmin() )
                 isAllowed = true;
 
 
