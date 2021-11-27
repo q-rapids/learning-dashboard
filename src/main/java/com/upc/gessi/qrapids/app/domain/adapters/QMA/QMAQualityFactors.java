@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators.*;
 
@@ -212,8 +213,11 @@ public class QMAQualityFactors {
 
         // get project info
         Iterator<FactorMetricEvaluationDTO> iter = evals.iterator();
-        FactorMetricEvaluationDTO firstQualityFactor = iter.next();
-        Project project = projectsController.findProjectByExternalId(firstQualityFactor.getProject());
+        Project project = null;
+        if (iter.hasNext()){ // check when evals is null --> no qf exist
+            FactorMetricEvaluationDTO firstQualityFactor = iter.next();
+            project = projectsController.findProjectByExternalId(firstQualityFactor.getProject());
+        }
 
         // The evaluations (eval param) has the following structure:
         // - list of factors (first iterator/for)
