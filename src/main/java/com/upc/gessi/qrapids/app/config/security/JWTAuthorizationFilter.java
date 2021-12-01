@@ -5,8 +5,10 @@ import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
+import com.upc.gessi.qrapids.app.domain.repositories.Route.RouteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +32,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UserRepository userRepository;
 
+    private RouteRepository routeRepository;
+
 	private boolean DEBUG = false;
 
 	private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
@@ -38,9 +42,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		super(authManager);
 	}
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager, UserRepository userRepository ) {
+    public JWTAuthorizationFilter(AuthenticationManager authManager, UserRepository userRepository, RouteRepository routeRepository ) {
         super(authManager);
         this.userRepository = userRepository;
+        this.routeRepository = routeRepository;
     }
 
 	/**
@@ -125,15 +130,19 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             user = this.userRepository.findByUsername( this.authTools.getUserToken( token ) );
 
 
-            if ( user.getAdmin() )
+            if ( user!=null && user.getAdmin() )
                 isAllowed = true;
 
 
             // Test elements and try to verify if the current route is allowed for the current user
             else{
+                //isAllowed = true;
                 // Cast set object ot List of AppUSers
-                routes.addAll( user.getUserGroup().getRoutes() );
-                isAllowed = this.routeFilter.filterShiled( origin_request, token, routes );
+                // Old version that checks if the route is allowed for a not admin user
+                //routes.addAll( user.getUserGroup().getRoutes() );
+                //isAllowed = this.routeFilter.filterShiled( origin_request, token, routes );
+                // New version.
+                isAllowed = !this.routeFilter.filterShiled( origin_request, token, routeRepository.findAll());
             }
 
         }
