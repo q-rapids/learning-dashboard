@@ -10,8 +10,13 @@
 <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
 <div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 <br/>
+
+
 <div id="CategoriesConfigView">
     <div id="CategoriesElementSelector">
+        <div id="buttonsNewItem">
+            <button onclick="newCategory()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Category</button>
+        </div>
         <ul id="ElementList" class="list-group">
             <li id="SICategoriesButton" class="list-group-item category-element active">Strategic Indicators</li>
             <li id="FactorsCategoriesButton" class="list-group-item category-element">Factors</li>
@@ -19,7 +24,8 @@
         </ul>
     </div>
     <div id="Categories">
-        <div id="SICategories">
+        <div id="MetricsForm" ></div>
+        <div id="SICategories" style="display: none">
             <h3>Strategic Indicator Categories</h3>
             <div id="tableSIdiv" class="table-editable">
                 <table id="tableSI" class="table">

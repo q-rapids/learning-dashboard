@@ -3,6 +3,7 @@ $("#SICategoriesButton").click(function () {
     $("#SICategories").show();
     $("#FactorsCategories").hide();
     $("#MetricsCategories").hide();
+    document.getElementById('MetricsForm').innerHTML = "";
 });
 
 $("#FactorsCategoriesButton").click(function () {
@@ -10,6 +11,7 @@ $("#FactorsCategoriesButton").click(function () {
     $("#SICategories").hide();
     $("#FactorsCategories").show();
     $("#MetricsCategories").hide();
+    document.getElementById('MetricsForm').innerHTML = "";
 });
 
 $("#MetricsCategoriesButton").click(function () {
@@ -17,7 +19,125 @@ $("#MetricsCategoriesButton").click(function () {
     $("#SICategories").hide();
     $("#FactorsCategories").hide();
     $("#MetricsCategories").show();
+    document.getElementById('MetricsForm').innerHTML = "";
 });
+
+function newCategory() {
+
+    $("#SICategories").hide();
+    $("#FactorsCategories").hide();
+    $("#MetricsCategories").hide();
+
+    var patternForm = document.createElement('div');
+    patternForm.setAttribute("id", "patternForm");
+
+    var title1Row = document.createElement('div');
+    title1Row.classList.add("productInfoRow");
+    var title1P = document.createElement('p');
+    title1P.appendChild(document.createTextNode("Step 1 - Give a name for the category"));
+    title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+    title1Row.appendChild(title1P);
+    patternForm.appendChild(title1Row);
+
+    var nameRow = document.createElement('div');
+    nameRow.classList.add("productInfoRow");
+    var nameP = document.createElement('p');
+    nameP.appendChild(document.createTextNode("Name*: "));
+    nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+    nameRow.appendChild(nameP);
+    var inputName = document.createElement("input");
+    inputName.setAttribute('id', 'Category Name');
+    inputName.setAttribute('type', 'text');
+    inputName.setAttribute('style', 'width: 100%;');
+    inputName.setAttribute('placeholder', 'Write the pattern name here');
+    nameRow.appendChild(inputName);
+    patternForm.appendChild(nameRow);
+
+    var parameterTitleRow = document.createElement('div');
+    parameterTitleRow.classList.add("productInfoRow");
+    var parameterTitleP = document.createElement('p');
+    parameterTitleP.appendChild(document.createTextNode("Step 2 - Fill the Category information"));
+    parameterTitleP.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+    parameterTitleRow.appendChild(parameterTitleP);
+    patternForm.appendChild(parameterTitleRow);
+
+    var metricTable = document.createElement('table');
+    var tableRow = document.createElement('div');
+    tableRow.classList.add("productInfoRow");
+    metricTable.setAttribute('id', "tableMetrics");
+    metricTable.setAttribute('class', "table");
+    var metrictr = document.createElement('tr');
+    var metrictbody = document.createElement('tbody');
+    var thName=document.createElement('th');
+    thName.appendChild(document.createTextNode("Name"));
+    var thColor=document.createElement('th');
+    thColor.appendChild(document.createTextNode("Color"));
+    var thUpperThreshold=document.createElement('th');
+    thUpperThreshold.appendChild(document.createTextNode("Upper Threshold (%)"));
+    metrictr.appendChild(thName);
+    metrictr.appendChild(thColor);
+    metrictr.appendChild(thUpperThreshold);
+    metrictbody.appendChild(metrictr);
+    metricTable.appendChild(metrictbody);
+    tableRow.appendChild(metricTable);
+    patternForm.appendChild(tableRow);
+
+    var buttonsRow = document.createElement('div');
+    buttonsRow.classList.add("productInfoRow");
+    buttonsRow.setAttribute('id', 'buttonsRow');
+    buttonsRow.setAttribute('style', 'justify-content: space-between;');
+    var saveButton = document.createElement('button');
+    saveButton.classList.add("btn");
+    saveButton.classList.add("btn-primary");
+    saveButton.setAttribute('id', 'saveButton');
+    saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+    saveButton.appendChild(document.createTextNode("Save Pattern"));
+    //saveButton.addEventListener("click", savePattern);
+    saveMethod = "POST";
+    buttonsRow.appendChild(saveButton);
+    patternForm.appendChild(buttonsRow);
+
+    document.getElementById('MetricsForm').innerHTML = "";
+    document.getElementById('MetricsForm').appendChild(patternForm);
+
+    buildCategoryRowForm("#00ff00", 100);
+    buildCategoryRowForm("#ff8000", 67);
+    buildCategoryRowForm("#ff0000", 33);
+
+
+
+
+   /* var metricTable = document.createElement('table');
+    var tableRow = document.createElement('div');
+    tableRow.classList.add("productInfoRow");
+    metricTable.setAttribute('id', "tableMetrics");
+    metricTable.setAttribute('class', "table");
+    var metrictr = document.createElement('tr');
+    var thName=document.createElement('th');
+    thName.appendChild(document.createTextNode("Name"));
+    var thColor=document.createElement('th');
+    thColor.appendChild(document.createTextNode("Color"));
+    var thUpperThreshold=document.createElement('th');
+    thUpperThreshold.appendChild(document.createTextNode("Upper Threshold (%)"));
+    var thEmpty=document.createElement('th');
+    var thspan=document.createElement('th');
+    var span=document.createElement('span');
+    span.setAttribute('class', "table-addMetric glyphicon glyphicon-plus");
+    thspan.appendChild(span);
+    metrictr.appendChild(thName);
+    metrictr.appendChild(thColor);
+    metrictr.appendChild(thUpperThreshold);
+    metrictr.appendChild(thspan);
+    metricTable.appendChild(metrictr);
+    tableRow.appendChild(metricTable);
+    patternForm.appendChild(tableRow)*/
+
+
+
+
+
+}
+
 
 function selectElement (selectedElement) {
     selectedElement.addClass("active");
@@ -85,6 +205,65 @@ function loadMetricsCategories () {
         }
     });
 }
+
+function buildCategoryRowForm (color, Threshold) {
+    var table = document.getElementById("tableMetrics");
+    var row = table.insertRow(-1);
+
+    var categoryName = document.createElement("td");
+    categoryName.setAttribute("contenteditable", "true");
+    categoryName.appendChild(document.createTextNode("Write type here"));
+    row.appendChild(categoryName);
+
+    var categoryColorPicker = document.createElement("input");
+    categoryColorPicker.setAttribute("value", color);
+    categoryColorPicker.setAttribute("type", "color");
+    var categoryColor = document.createElement("td");
+    categoryColor.appendChild(categoryColorPicker);
+    row.appendChild(categoryColor);
+
+    var thresholdSelector = document.createElement("input");
+    thresholdSelector.setAttribute("value", Threshold);
+    thresholdSelector.setAttribute("name", "upperThres");
+    thresholdSelector.setAttribute("min", "1");
+    thresholdSelector.setAttribute("max", "100");
+    thresholdSelector.setAttribute("type", "number");
+    var threshold = document.createElement("td");
+    threshold.appendChild(thresholdSelector);
+    row.appendChild(threshold);
+
+
+    var arrowUp = document.createElement("span");
+    arrowUp.classList.add("glyphicon", "glyphicon-arrow-up");
+    arrowUp.addEventListener("click", function () {
+        var $row = $(this).parents('tr');
+        if ($row.index() === 1) return; // Don't go above the header
+        $row.prev().before($row.get(0));
+        checkFirst();
+    });
+    var arrowDown = document.createElement("span");
+    arrowDown.classList.add("glyphicon", "glyphicon-arrow-down");
+    arrowDown.addEventListener("click", function () {
+        var $row = $(this).parents('tr');
+        $row.next().after($row.get(0));
+        checkFirst();
+    });
+    var arrows = document.createElement("td");
+    arrows.appendChild(arrowUp);
+    arrows.appendChild(arrowDown);
+    row.appendChild(arrows);
+
+    var removeIcon = document.createElement("span");
+    removeIcon.classList.add("glyphicon", "glyphicon-remove");
+    var remove = document.createElement("td");
+    remove.addEventListener("click", function () {
+        $(this).parents('tr').detach();
+        checkFirst();
+    });
+    remove.appendChild(removeIcon);
+    row.appendChild(remove);
+}
+
 
 function buildCategoryRow (category, tableId, hasThreshold) {
     var table = document.getElementById(tableId);

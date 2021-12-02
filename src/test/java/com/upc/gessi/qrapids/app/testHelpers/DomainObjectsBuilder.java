@@ -709,24 +709,27 @@ public class DomainObjectsBuilder {
 
     public List<MetricCategory> buildMetricCategoryList () {
         Long metricGoodCategoryId = 10L;
-        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryName = "Default";
+        String metricGoodCategoryType = "Good";
         String metricGoodCategoryColor = "#00ff00";
         float metricGoodCategoryUpperThreshold = 1f;
-        MetricCategory metricGoodCategory = new MetricCategory(metricGoodCategoryName, metricGoodCategoryColor, metricGoodCategoryUpperThreshold);
+        MetricCategory metricGoodCategory = new MetricCategory(metricGoodCategoryName, metricGoodCategoryColor, metricGoodCategoryUpperThreshold,metricGoodCategoryType);
         metricGoodCategory.setId(metricGoodCategoryId);
 
         Long metricNeutralCategoryId = 11L;
-        String metricNeutralCategoryName = "Neutral";
+        String metricNeutralCategoryType = "Neutral";
+        String metricNeutralCategoryName = "Default";
         String metricNeutralCategoryColor = "#ff8000";
         float metricNeutralCategoryUpperThreshold = 0.67f;
-        MetricCategory metricNeutralCategory = new MetricCategory(metricNeutralCategoryName, metricNeutralCategoryColor, metricNeutralCategoryUpperThreshold);
+        MetricCategory metricNeutralCategory = new MetricCategory(metricNeutralCategoryName, metricNeutralCategoryColor, metricNeutralCategoryUpperThreshold,metricNeutralCategoryType);
         metricNeutralCategory.setId(metricNeutralCategoryId);
 
         Long metricBadCategoryId = 12L;
-        String metricBadCategoryName = "Bad";
+        String metricBadCategoryType = "Bad";
+        String metricBadCategoryName = "Default";
         String metricBadCategoryColor = "#ff0000";
         float metricBadCategoryUpperThreshold = 0.33f;
-        MetricCategory metricBadCategory = new MetricCategory(metricBadCategoryName, metricBadCategoryColor, metricBadCategoryUpperThreshold);
+        MetricCategory metricBadCategory = new MetricCategory(metricBadCategoryName, metricBadCategoryColor, metricBadCategoryUpperThreshold,metricBadCategoryType);
         metricBadCategory.setId(metricBadCategoryId);
 
         List<MetricCategory> metricCategoryList = new ArrayList<>();
