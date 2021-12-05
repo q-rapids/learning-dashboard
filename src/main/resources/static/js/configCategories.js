@@ -46,7 +46,7 @@ function newCategory() {
     nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
     nameRow.appendChild(nameP);
     var inputName = document.createElement("input");
-    inputName.setAttribute('id', 'Category Name');
+    inputName.setAttribute('id', 'CategoryName');
     inputName.setAttribute('type', 'text');
     inputName.setAttribute('style', 'width: 100%;');
     inputName.setAttribute('placeholder', 'Write the pattern name here');
@@ -69,14 +69,21 @@ function newCategory() {
     var metrictr = document.createElement('tr');
     var metrictbody = document.createElement('tbody');
     var thName=document.createElement('th');
-    thName.appendChild(document.createTextNode("Name"));
+    thName.appendChild(document.createTextNode("Type"));
     var thColor=document.createElement('th');
     thColor.appendChild(document.createTextNode("Color"));
     var thUpperThreshold=document.createElement('th');
     thUpperThreshold.appendChild(document.createTextNode("Upper Threshold (%)"));
+    var thEmpty = document.createElement('th');
+    var thSpan=document.createElement('th');
+    var Span = document.createElement('span');
+    Span.setAttribute("class","table-addMetric glyphicon glyphicon-plus");
+    thSpan.appendChild(Span);
     metrictr.appendChild(thName);
     metrictr.appendChild(thColor);
     metrictr.appendChild(thUpperThreshold);
+    metrictr.appendChild(thEmpty);
+    metrictr.appendChild(thSpan);
     metrictbody.appendChild(metrictr);
     metricTable.appendChild(metrictbody);
     tableRow.appendChild(metricTable);
@@ -92,7 +99,7 @@ function newCategory() {
     saveButton.setAttribute('id', 'saveButton');
     saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
     saveButton.appendChild(document.createTextNode("Save Pattern"));
-    //saveButton.addEventListener("click", savePattern);
+    saveButton.addEventListener("click", function() { saveMetricCategories();});
     saveMethod = "POST";
     buttonsRow.appendChild(saveButton);
     patternForm.appendChild(buttonsRow);
@@ -100,44 +107,12 @@ function newCategory() {
     document.getElementById('MetricsForm').innerHTML = "";
     document.getElementById('MetricsForm').appendChild(patternForm);
 
-    buildCategoryRowForm("#00ff00", 100);
+    /*buildCategoryRowForm("#00ff00", 100);
     buildCategoryRowForm("#ff8000", 67);
-    buildCategoryRowForm("#ff0000", 33);
-
-
-
-
-   /* var metricTable = document.createElement('table');
-    var tableRow = document.createElement('div');
-    tableRow.classList.add("productInfoRow");
-    metricTable.setAttribute('id', "tableMetrics");
-    metricTable.setAttribute('class', "table");
-    var metrictr = document.createElement('tr');
-    var thName=document.createElement('th');
-    thName.appendChild(document.createTextNode("Name"));
-    var thColor=document.createElement('th');
-    thColor.appendChild(document.createTextNode("Color"));
-    var thUpperThreshold=document.createElement('th');
-    thUpperThreshold.appendChild(document.createTextNode("Upper Threshold (%)"));
-    var thEmpty=document.createElement('th');
-    var thspan=document.createElement('th');
-    var span=document.createElement('span');
-    span.setAttribute('class', "table-addMetric glyphicon glyphicon-plus");
-    thspan.appendChild(span);
-    metrictr.appendChild(thName);
-    metrictr.appendChild(thColor);
-    metrictr.appendChild(thUpperThreshold);
-    metrictr.appendChild(thspan);
-    metricTable.appendChild(metrictr);
-    tableRow.appendChild(metricTable);
-    patternForm.appendChild(tableRow)*/
-
-
-
-
-
+    buildCategoryRowForm("#ff0000", 33);*/
+    buildDefaultThresholdTable("tableMetrics");
+    addButtonBehaviour();
 }
-
 
 function selectElement (selectedElement) {
     selectedElement.addClass("active");
@@ -205,65 +180,6 @@ function loadMetricsCategories () {
         }
     });
 }
-
-function buildCategoryRowForm (color, Threshold) {
-    var table = document.getElementById("tableMetrics");
-    var row = table.insertRow(-1);
-
-    var categoryName = document.createElement("td");
-    categoryName.setAttribute("contenteditable", "true");
-    categoryName.appendChild(document.createTextNode("Write type here"));
-    row.appendChild(categoryName);
-
-    var categoryColorPicker = document.createElement("input");
-    categoryColorPicker.setAttribute("value", color);
-    categoryColorPicker.setAttribute("type", "color");
-    var categoryColor = document.createElement("td");
-    categoryColor.appendChild(categoryColorPicker);
-    row.appendChild(categoryColor);
-
-    var thresholdSelector = document.createElement("input");
-    thresholdSelector.setAttribute("value", Threshold);
-    thresholdSelector.setAttribute("name", "upperThres");
-    thresholdSelector.setAttribute("min", "1");
-    thresholdSelector.setAttribute("max", "100");
-    thresholdSelector.setAttribute("type", "number");
-    var threshold = document.createElement("td");
-    threshold.appendChild(thresholdSelector);
-    row.appendChild(threshold);
-
-
-    var arrowUp = document.createElement("span");
-    arrowUp.classList.add("glyphicon", "glyphicon-arrow-up");
-    arrowUp.addEventListener("click", function () {
-        var $row = $(this).parents('tr');
-        if ($row.index() === 1) return; // Don't go above the header
-        $row.prev().before($row.get(0));
-        checkFirst();
-    });
-    var arrowDown = document.createElement("span");
-    arrowDown.classList.add("glyphicon", "glyphicon-arrow-down");
-    arrowDown.addEventListener("click", function () {
-        var $row = $(this).parents('tr');
-        $row.next().after($row.get(0));
-        checkFirst();
-    });
-    var arrows = document.createElement("td");
-    arrows.appendChild(arrowUp);
-    arrows.appendChild(arrowDown);
-    row.appendChild(arrows);
-
-    var removeIcon = document.createElement("span");
-    removeIcon.classList.add("glyphicon", "glyphicon-remove");
-    var remove = document.createElement("td");
-    remove.addEventListener("click", function () {
-        $(this).parents('tr').detach();
-        checkFirst();
-    });
-    remove.appendChild(removeIcon);
-    row.appendChild(remove);
-}
-
 
 function buildCategoryRow (category, tableId, hasThreshold) {
     var table = document.getElementById(tableId);
@@ -444,6 +360,32 @@ function getDataThreshold (table) {
     return data;
 }
 
+function getDataMetricThreshold (table) {
+    var $rows = $('#'+table).find('tr:not(:hidden)');
+    var headers = ["type", "color", "upperThreshold"];
+    var data = [];
+
+    // Turn all existing rows into a loopable array
+    $rows.slice(1).each(function () {
+        var $td = $(this).find('td');
+        var h = {};
+
+        // Use the headers from earlier to name our hash keys
+        headers.forEach(function (header, i) {
+            if (i%3 == 0)
+                h[header] = $td.eq(i).text();
+            else if (i%3 == 1)
+                h[header] = $td.eq(i).children()[0].value;
+            else
+                h[header] = $td.eq(i).children()[0].value;
+        });
+
+        data.push(h);
+    });
+    console.log(data);
+    return data;
+}
+
 $('#saveSICategories').click(function () {
     var dataSI = getData();
     if (dataSI.length < 2)
@@ -492,29 +434,38 @@ $('#saveFactorCategories').click(function () {
     }
 });
 
-$('#saveMetricCategories').click(function () {
+function saveMetricCategories () {
+    console.log("ENTRA?");
     var dataMetrics = getDataThreshold("tableMetrics");
-    if (dataMetrics.length < 2)
-        warningUtils("Warning", "There has to be at least 2 categories for each factor");
-    else {
-        $.ajax({
-            url: '../api/metrics/categories',
-            data: JSON.stringify(dataMetrics),
-            type: "POST",
-            contentType: "application/json",
-            error: function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 405)
-                    warningUtils("Error", "You can't have two categories with the same name");
-                else
-                    warningUtils("Error","Error on saving categories");
-            },
-            success: function() {
-                warningUtils("Ok","Metrics Categories saved successfully");
-            }
-        });
-
+    var name = document.getElementById("CategoryName").value;
+    if(name=="") {
+        console.log("ENTRA? 2");
+        warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
+        console.log(dataMetrics);
     }
-});
+    else {
+        if (dataMetrics.length < 2)
+            warningUtils("Warning", "There has to be at least 2 categories for each factor");
+        else {
+            $.ajax({
+                url: '../api/metrics/categories' + name,
+                data: JSON.stringify(dataMetrics),
+                type: "POST",
+                contentType: "application/json",
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 405)
+                        warningUtils("Error", "You can't have two categories with the same name");
+                    else
+                        warningUtils("Error", "Error on saving categories");
+                },
+                success: function () {
+                    warningUtils("Ok", "Metrics Categories saved successfully");
+                }
+            });
+
+        }
+    }
+}
 
 
 size = $('input[name=upperThres][class!="hide"]').length;
