@@ -6,8 +6,11 @@ function buildTree() {
             type: "GET",
         success: function (data) {
             classifiersTree = data;
-            var classifier1List = document.getElementById('patternList');
+            var classifier1List = document.getElementById('MetricList');
+            var classifier1Listson = document.createElement('li');
+            classifier1Listson.setAttribute("style", "height:400px; overflow: scroll;");
             classifier1List.innerHTML = "";
+            classifier1Listson.innerHTML = "";
             for (var i=0; i<data.length; i++) {
                 var classifier1 = document.createElement('li');
                 classifier1.classList.add("list-group-item");
@@ -25,11 +28,13 @@ function buildTree() {
                 var text_c1 = document.createElement('p');
                 text_c1.appendChild(document.createTextNode(data[i]));
                 classifier1.appendChild(text_c1);
-                classifier1List.appendChild(classifier1);
+                classifier1Listson.appendChild(classifier1);
+
 
 
             }
-            //document.getElementById('patternList').appendChild(classifier1List);
+            classifier1List.appendChild(classifier1Listson);
+            //document.getElementById('MetricList').appendChild(classifier1List);
 
         }
     });
@@ -42,7 +47,7 @@ $("#SICategoriesButton").click(function () {
     $("#FactorsCategories").hide();
     $("#MetricsCategories").hide();
     document.getElementById('MetricsForm').innerHTML = "";
-    document.getElementById('patternList').innerHTML = "";
+    document.getElementById('MetricList').innerHTML = "";
 });
 
 $("#FactorsCategoriesButton").click(function () {
@@ -51,7 +56,7 @@ $("#FactorsCategoriesButton").click(function () {
     $("#FactorsCategories").show();
     $("#MetricsCategories").hide();
     document.getElementById('MetricsForm').innerHTML = "";
-    document.getElementById('patternList').innerHTML = "";
+    document.getElementById('MetricList').innerHTML = "";
 });
 
 $("#MetricsCategoriesButton").click(function () {
@@ -78,7 +83,7 @@ function newCategory() {
     $("#SICategories").hide();
     $("#FactorsCategories").hide();
     $("#MetricsCategories").hide();
-    document.getElementById('patternList').innerHTML = "";
+    document.getElementById('MetricList').innerHTML = "";
 
     var patternForm = document.createElement('div');
     patternForm.setAttribute("id", "patternForm");
