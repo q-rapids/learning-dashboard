@@ -58,6 +58,13 @@ public class Metrics {
         }
     }
 
+    @GetMapping("api/metrics/list")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getList() {
+
+        return metricsController.getAllNames();
+
+    }
     @PutMapping("/api/metrics/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editMetric(@PathVariable Long id, HttpServletRequest request) {
@@ -73,8 +80,8 @@ public class Metrics {
 
     @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategoryThreshold> getMetricCategories () {
-        Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories();
+    public List<DTOCategoryThreshold> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
+        Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories(name);
         List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
         for (MetricCategory metricCategory : metricCategoryList) {
             dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
@@ -84,9 +91,11 @@ public class Metrics {
 
     @PostMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {
+    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
         try {
-            metricsController.newMetricCategories(categories);
+            boolean exists=metricsController.CheckIfNameExists(name);
+            if(exists) throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+            else metricsController.newMetricCategories(categories, name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);

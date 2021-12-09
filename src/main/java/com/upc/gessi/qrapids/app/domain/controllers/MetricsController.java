@@ -94,19 +94,39 @@ public class MetricsController {
         }
     }
 
-    public List<MetricCategory> getMetricCategories () {
+    public List<MetricCategory> getMetricCategories (String name) {
         List<MetricCategory> metricCategoryList = new ArrayList<>();
-        Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAll();
+        Iterable<MetricCategory> metricCategoryIterable;
+        if(name!="") metricCategoryIterable = metricCategoryRepository.findAllByName(name);
+        else metricCategoryIterable = metricCategoryRepository.findAll();
         metricCategoryIterable.forEach(metricCategoryList::add);
         return metricCategoryList;
     }
 
-    public void newMetricCategories (List<Map<String, String>> categories) throws CategoriesException {
+    public List<String> getAllNames() {
+        //If name doesnt exists returns true
+        Iterable<MetricCategory> categories = metricCategoryRepository.findAll();
+        List<String> names = new ArrayList<String>();
+        for(MetricCategory m : categories)  {
+            if(!names.contains(m.getName())) names.add(m.getName());
+        }
+        return names;
+
+    }
+
+    public boolean CheckIfNameExists(String name) {
+        //If name doesnt exists returns true
+        return metricCategoryRepository.existsByName(name);
+    }
+
+    public void newMetricCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
+
         if (categories.size() > 1) {
-            metricCategoryRepository.deleteAll();
+            //metricCategoryRepository.deleteAll();
             for (Map<String, String> c : categories) {
                 MetricCategory metricCategory = new MetricCategory();
-                metricCategory.setName(c.get("name"));
+                metricCategory.setName(name);
+                metricCategory.setType(c.get("type"));
                 metricCategory.setColor(c.get("color"));
                 float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
                 metricCategory.setUpperThreshold(upperThreshold/100f);
