@@ -2,6 +2,17 @@ var app = angular.module('TablesApp', []);
 app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.data = [];
+    $scope.metricCategory = ["Default"];
+
+    this.$onInit = function () {
+        var url = "../api/metrics/list";
+        $http({
+            method: "GET",
+            url: url
+        }).then(function mySuccess(response) {
+            $scope.metricCategory = response.data;
+        })
+    };
 
     $scope.getMetricsConfig = function() {
         console.log("IN getMetricsConfig");
@@ -19,7 +30,8 @@ app.controller('TablesCtrl', function($scope, $http) {
                     name: metric.name,
                     description: metric.description,
                     threshold: metric.threshold,
-                    webUrl: metric.webUrl
+                    webUrl: metric.webUrl,
+                    metricCategory: metric.categoryName
                 });
             });
             $scope.data = data;
@@ -28,13 +40,14 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    $scope.saveMetric = function(id) {
+    $scope.saveMetric = function(id, selectedCat) {
         var formData = new FormData();
         //formData.append("name", $('#QFName').val());
         //formData.append("description", $('#QFDescription').val());
         formData.append("threshold", document.getElementById("MetThreshold"+id).value);
         if(document.getElementById("MetUrl"+id).validity.valid) // if url input text is valid
             formData.append("url", document.getElementById("MetUrl"+id).value);
+        formData.append("categoryName", selectedCat);
 
         $.ajax({
             url: "../api/metrics/"+id,
@@ -51,5 +64,4 @@ app.controller('TablesCtrl', function($scope, $http) {
             }
         });
     }
-
 });

@@ -66,13 +66,15 @@ public class Metrics {
         return metricsController.getAllNames();
 
     }
+
     @PutMapping("/api/metrics/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editMetric(@PathVariable Long id, HttpServletRequest request) {
         try {
             String threshold = request.getParameter("threshold");
             String webUrl = request.getParameter("url");
-            metricsController.editMetric(id,threshold,webUrl); // at the moment is only possible change threshold
+            String categoryName = request.getParameter("categoryName");
+            metricsController.editMetric(id,threshold,webUrl,categoryName); // at the moment is only possible change threshold
         } catch (MetricNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
