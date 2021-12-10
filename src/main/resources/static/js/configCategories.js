@@ -1,5 +1,7 @@
 var serverUrl = sessionStorage.getItem("serverUrl");
 var classifiersTree;
+var previousSelectionId;
+
 function buildTree() {
         $.ajax({
             url: '../api/metrics/list',
@@ -9,6 +11,7 @@ function buildTree() {
             var classifier1List = document.getElementById('MetricList');
             var classifier1Listson = document.createElement('li');
             classifier1Listson.setAttribute("style", "height:400px; overflow: scroll;");
+            classifier1Listson.classList.add("list-group");
             classifier1List.innerHTML = "";
             classifier1Listson.innerHTML = "";
             for (var i=0; i<data.length; i++) {
@@ -16,6 +19,7 @@ function buildTree() {
                 classifier1.classList.add("list-group-item");
                 classifier1.classList.add("Classifier");
                 classifier1.setAttribute("id", "classifier" + data[i]);
+                //classifier1.setAttribute('style', 'background-color: #ffffff;');
                 classifier1.setAttribute("data-toggle", "collapse");
                 classifier1.setAttribute("data-target", ("#sonsOf" + data[i]));
                 classifier1.addEventListener("click", loadMetricsCategories.bind(null, data[i]));
@@ -48,6 +52,7 @@ $("#SICategoriesButton").click(function () {
     $("#MetricsCategories").hide();
     document.getElementById('MetricsForm').innerHTML = "";
     document.getElementById('MetricList').innerHTML = "";
+    //addButtonBehaviour();
 });
 
 $("#FactorsCategoriesButton").click(function () {
@@ -57,6 +62,7 @@ $("#FactorsCategoriesButton").click(function () {
     $("#MetricsCategories").hide();
     document.getElementById('MetricsForm').innerHTML = "";
     document.getElementById('MetricList').innerHTML = "";
+    //addButtonBehaviour();
 });
 
 $("#MetricsCategoriesButton").click(function () {
@@ -164,11 +170,21 @@ function newCategory() {
     document.getElementById('MetricsForm').innerHTML = "";
     document.getElementById('MetricsForm').appendChild(patternForm);
 
+    $('.table-addMetric').click(function () {
+        var goodCategory = {
+            type: "Good",
+            color: "#00ff00",
+            upperThreshold: 0
+        };
+        buildCategoryRow(goodCategory, "tableMetrics", true, true, true);
+    });
+
+
     /*buildCategoryRowForm("#00ff00", 100);
     buildCategoryRowForm("#ff8000", 67);
     buildCategoryRowForm("#ff0000", 33);*/
     buildDefaultThresholdTable("tableMetrics");
-    addButtonBehaviour();
+
 }
 
 function selectElement (selectedElement) {
@@ -197,7 +213,7 @@ function loadSICategories () {
         success: function(categories) {
             if (categories.length > 0) {
                 categories.forEach(function (category) {
-                    buildCategoryRow(category, "tableSI", false, true);
+                    buildCategoryRow(category, "tableSI", false, true, false);
                 });
             } else {
                 buildDefaultSITable();
@@ -213,7 +229,7 @@ function loadFactorCategories () {
         success: function(categories) {
             if (categories.length > 0) {
                 categories.forEach(function (category) {
-                    buildCategoryRow(category, "tableQF", true, true);
+                    buildCategoryRow(category, "tableQF", true, true, false);
                 });
             } else {
                 buildDefaultThresholdTable("tableQF");
@@ -279,6 +295,11 @@ function buildtable() {
 
 function loadMetricsCategories (name) {
 
+    document.getElementById("classifier"+name).setAttribute('style', 'background-color: #efeff8;')
+    if(previousSelectionId!=null) {
+        document.getElementById(previousSelectionId).removeAttribute('style');
+    }
+    previousSelectionId = "classifier"+name;
     $.ajax({
         url: '../api/metrics/categories?name=' + name,
         type: "GET",
@@ -286,9 +307,9 @@ function loadMetricsCategories (name) {
 
             if (categories.length > 0) {
                 buildtable();
-                document.getElementById('Category Name').appendChild(document.createTextNode("Category name: " +  name));
+                document.getElementById('Category Name').appendChild(document.createTextNode("Metric category name: " +  name));
                 categories.forEach(function (category) {
-                    buildCategoryRow(category, "tableMetrics", true, false);
+                    buildCategoryRow(category, "tableMetrics", true, false, true);
                 });
             } else {
                 buildDefaultThresholdTable("tableMetrics");
@@ -297,16 +318,19 @@ function loadMetricsCategories (name) {
     });
 }
 
-function buildCategoryRow (category, tableId, hasThreshold, canBeEdited) {
+function buildCategoryRow (category, tableId, hasThreshold, canBeEdited, isMetric) {
     var table = document.getElementById(tableId);
     var row = table.insertRow(-1);
 
-    var categoryName = document.createElement("td");
-    categoryName.setAttribute("contenteditable", "false");
-    categoryName.appendChild(document.createTextNode(category.name));
-    row.appendChild(categoryName);
+
 
     if(canBeEdited) {
+
+        var categoryName = document.createElement("td");
+        categoryName.setAttribute("contenteditable", "true");
+        if(isMetric)categoryName.appendChild(document.createTextNode(category.type));
+        else categoryName.appendChild(document.createTextNode(category.name));
+        row.appendChild(categoryName);
 
         var categoryColorPicker = document.createElement("input");
         categoryColorPicker.setAttribute("value", category.color);
@@ -328,6 +352,12 @@ function buildCategoryRow (category, tableId, hasThreshold, canBeEdited) {
         }
     }
     else {
+        var categoryName = document.createElement("td");
+        categoryName.setAttribute("contenteditable", "false");
+        if(isMetric)categoryName.appendChild(document.createTextNode(category.type));
+        else categoryName.appendChild(document.createTextNode(category.name));
+        row.appendChild(categoryName);
+
         var categoryColorPicker = document.createElement("input")
         categoryColorPicker.setAttribute("disabled", "true");
         categoryColorPicker.setAttribute("value", category.color);
@@ -389,19 +419,19 @@ function buildDefaultSITable () {
         name: "Good",
         color: "#00ff00"
     };
-    buildCategoryRow(goodCategory, "tableSI", false, true);
+    buildCategoryRow(goodCategory, "tableSI", false, true, false);
 
     var neutralCategory = {
         name: "Neutral",
         color: "#ff8000"
     };
-    buildCategoryRow(neutralCategory, "tableSI", false, true);
+    buildCategoryRow(neutralCategory, "tableSI", false, true, false);
 
     var badCategory = {
         name: "Bad",
         color: "#ff0000"
     };
-    buildCategoryRow(badCategory, "tableSI", false, true);
+    buildCategoryRow(badCategory, "tableSI", false, true, false);
 }
 
 function buildDefaultThresholdTable (table) {
@@ -410,21 +440,21 @@ function buildDefaultThresholdTable (table) {
         color: "#00ff00",
         upperThreshold: 1
     };
-    buildCategoryRow(goodCategory, table, true, true);
+    buildCategoryRow(goodCategory, table, true, true, false);
 
     var neutralCategory = {
         name: "Neutral",
         color: "#ff8000",
         upperThreshold: 0.67
     };
-    buildCategoryRow(neutralCategory, table, true, true);
+    buildCategoryRow(neutralCategory, table, true, true, false);
 
     var badCategory = {
         name: "Bad",
         color: "#ff0000",
         upperThreshold: 0.33
     };
-    buildCategoryRow(badCategory, table, true, true);
+    buildCategoryRow(badCategory, table, true, true, false);
 }
 
 function addButtonBehaviour () {
@@ -433,7 +463,7 @@ function addButtonBehaviour () {
             name: "Good",
             color: "#00ff00"
         };
-        buildCategoryRow(goodCategory, "tableSI", false, true);
+        buildCategoryRow(goodCategory, "tableSI", false, true, false);
     });
 
     $('.table-addQF').click(function () {
@@ -442,16 +472,16 @@ function addButtonBehaviour () {
             color: "#00ff00",
             upperThreshold: 0
         };
-        buildCategoryRow(goodCategory, "tableQF", true, true);
+        buildCategoryRow(goodCategory, "tableQF", true, true, false);
     });
 
     $('.table-addMetric').click(function () {
         var goodCategory = {
-            name: "Good",
+            type: "Good",
             color: "#00ff00",
             upperThreshold: 0
         };
-        buildCategoryRow(goodCategory, "tableMetrics", true, true);
+        buildCategoryRow(goodCategory, "tableMetrics", true, true, true);
     });
 }
 
@@ -579,11 +609,10 @@ $('#saveFactorCategories').click(function () {
 });
 
 function saveMetricCategories () {
-    console.log("ENTRA?");
+
     var dataMetrics = getDataMetricThreshold("tableMetrics");
     var name = document.getElementById("CategoryName").value;
     if(name=="") {
-        console.log("ENTRA? 2");
         warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
         console.log(dataMetrics);
     }
@@ -604,6 +633,7 @@ function saveMetricCategories () {
                 },
                 success: function () {
                     warningUtils("Ok", "Metrics Categories saved successfully");
+                    document.getElementById('MetricsForm').innerHTML = "";
                 }
             });
 
@@ -617,6 +647,7 @@ $('input[name=upperThres][class!="hide"]').each(function (i) {
     $(this).val(Math.round((size-i)*100/size));
 });
 checkFirst();
+addButtonBehaviour();
 if (sessionStorage.getItem("profile_qualitylvl") == "METRICS") {
     // hide SI Categories info
     $("#SICategories").hide();
@@ -644,4 +675,3 @@ if (sessionStorage.getItem("profile_qualitylvl") == "METRICS") {
     loadFactorCategories();
     loadMetricsCategories();
 }
-addButtonBehaviour();

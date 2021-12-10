@@ -3,6 +3,26 @@
 <head>
     <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
     <link rel="stylesheet" th:href="@{/css/products.css}" />
+    <style>
+        .Classifier, .Pattern {
+            display: flex;
+        }
+        .list-group-item:hover {
+            background-color: #efeff8;
+        }
+        #buttonsNewItem {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+        @media (max-width: 1800px) {
+            #buttonsNewItem {
+                flex-direction: column;
+                max-width: 250px;
+                margin: auto;
+            }
+        }
+    </style>
 </head>
 
 <body>

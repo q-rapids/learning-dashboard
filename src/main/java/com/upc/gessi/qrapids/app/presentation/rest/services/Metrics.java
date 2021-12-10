@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
@@ -80,13 +81,13 @@ public class Metrics {
 
     @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategoryThreshold> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
+    public List<DTOMetricCategory> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
         Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories(name);
-        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        List<DTOMetricCategory> dtoMetricCategoryList = new ArrayList<>();
         for (MetricCategory metricCategory : metricCategoryList) {
-            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
+            dtoMetricCategoryList.add(new DTOMetricCategory(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold(), metricCategory.getType()));
         }
-        return dtoCategoryList;
+        return dtoMetricCategoryList;
     }
 
     @PostMapping("/api/metrics/categories")
