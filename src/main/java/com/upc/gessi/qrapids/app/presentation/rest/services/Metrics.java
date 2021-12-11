@@ -105,6 +105,17 @@ public class Metrics {
         }
     }
 
+    @DeleteMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void newMetricsCategories (@RequestParam(value = "name", required = false) String name) {
+        try {
+             metricsController.deleteMetricCategory(name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
     @RequestMapping("/api/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {

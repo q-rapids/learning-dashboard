@@ -34,8 +34,6 @@ function buildTree() {
                 classifier1.appendChild(text_c1);
                 classifier1Listson.appendChild(classifier1);
 
-
-
             }
             classifier1List.appendChild(classifier1Listson);
             //document.getElementById('MetricList').appendChild(classifier1List);
@@ -237,7 +235,7 @@ function loadFactorCategories () {
         }
     });
 }
-function buildtable() {
+function buildtable(name) {
     $("#SICategories").hide();
     $("#FactorsCategories").hide();
     $("#MetricsCategories").hide();
@@ -282,6 +280,21 @@ function buildtable() {
     tableRow.appendChild(metricTable);
     patternForm.appendChild(tableRow);
 
+    var buttonsRow = document.createElement('div');
+    buttonsRow.classList.add("productInfoRow");
+    buttonsRow.setAttribute('id', 'buttonsRow');
+    buttonsRow.setAttribute('style', 'justify-content: space-between;');
+    var deleteButton = document.createElement('button');
+    deleteButton.classList.add("btn");
+    deleteButton.classList.add("btn-primary");
+    deleteButton.classList.add("btn-danger");
+    deleteButton.setAttribute('id', 'deleteButton');
+    deleteButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+    deleteButton.appendChild(document.createTextNode("Delete Metric Category"));
+    deleteButton.addEventListener("click", function() { deleteMetricCategories(name);});
+    buttonsRow.appendChild(deleteButton);
+    patternForm.appendChild(buttonsRow);
+
     document.getElementById('MetricsForm').innerHTML = "";
     document.getElementById('MetricsForm').appendChild(patternForm);
 
@@ -293,11 +306,32 @@ function buildtable() {
 
 }
 
+function deleteMetricCategories(name) {
+    $.ajax({
+        url: '../api/metrics/categories?name=' + name,
+        type: "DELETE",
+        success: function() {
+            warningUtils("Ok", "The metric category has been deleted successfully");
+            selectElement($(this));
+            $("#SICategories").hide();
+            $("#FactorsCategories").hide();
+            $("#MetricsCategories").hide();
+            document.getElementById('MetricsForm').innerHTML = "";
+            document.getElementById('MetricList').innerHTML = "";
+            buildTree();
+            previousSelectionId=null;
+        },
+        error: function() {
+        warningUtils("Error", "Error on deleting category");
+        }
+    });
+}
+
 function loadMetricsCategories (name) {
 
-    document.getElementById("classifier"+name).setAttribute('style', 'background-color: #efeff8;')
+    document.getElementById("classifier"+name).setAttribute('style', 'background-color: #efeff8;');
     if(previousSelectionId!=null) {
-        document.getElementById(previousSelectionId).removeAttribute('style');
+        document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
     }
     previousSelectionId = "classifier"+name;
     $.ajax({
@@ -306,7 +340,7 @@ function loadMetricsCategories (name) {
         success: function(categories) {
 
             if (categories.length > 0) {
-                buildtable();
+                buildtable(name);
                 document.getElementById('Category Name').appendChild(document.createTextNode("Metric category name: " +  name));
                 categories.forEach(function (category) {
                     buildCategoryRow(category, "tableMetrics", true, false, true);

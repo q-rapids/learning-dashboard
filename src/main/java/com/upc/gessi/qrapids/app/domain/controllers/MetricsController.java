@@ -114,6 +114,15 @@ public class MetricsController {
 
     }
 
+    public void deleteMetricCategory(String name) throws CategoriesException {
+
+        Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAllByName(name);
+        for(MetricCategory m : metricCategoryIterable)  {
+            metricCategoryRepository.deleteById(m.getId());
+        }
+
+    }
+
     public boolean CheckIfNameExists(String name) {
         //If name doesnt exists returns true
         return metricCategoryRepository.existsByName(name);
