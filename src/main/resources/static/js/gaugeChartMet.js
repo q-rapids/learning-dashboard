@@ -10,6 +10,8 @@ var id = false;
 
 var factors;
 
+const DEFAULT_CATEGORY = "Default";
+
 var url;
 if (getParameterByName('id').length !== 0) {
     id = true;
@@ -212,7 +214,19 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .style("fill", "#0579A8")
         .attr("d", arc);
 
-    categories.forEach(function (category) {
+    //filtering the appropriate categories
+    let metricCategories = categories.filter(function (cat) {
+        return cat.name === findMet.categoryName;
+    });
+
+    //if findMet.categoryName is blank or contains a deleted category, the default category is painted
+    if (metricCategories.length === 0)
+        metricCategories = categories.filter(function (cat) {
+            return cat.name === DEFAULT_CATEGORY;
+        });
+
+    metricCategories.forEach(function (category) {
+        console.log(category);
         var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
         svg.append("path")
             .datum({endAngle: threshold})
