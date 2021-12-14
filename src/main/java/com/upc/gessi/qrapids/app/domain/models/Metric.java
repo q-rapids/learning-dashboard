@@ -22,7 +22,6 @@ public class Metric {
     @Column(name = "web_url")
     private String webUrl;
     @Column(name = "category_name")
-    @ColumnDefault("Default")
     private String categoryName;
 
     @ManyToOne
@@ -35,6 +34,7 @@ public class Metric {
         this.externalId = externalId;
         this.name = name;
         this.description = description;
+        this.categoryName="Default";
         setProject(project);
     }
 
