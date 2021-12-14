@@ -105,9 +105,20 @@ public class Metrics {
         }
     }
 
+    @PutMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name", required = true) String name) {
+        try {
+             metricsController.updateMetricCategory(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
     @DeleteMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
-    public void newMetricsCategories (@RequestParam(value = "name", required = false) String name) {
+    public void deleteMetricsCategories (@RequestParam(value = "name", required = true) String name) {
         try {
              metricsController.deleteMetricCategory(name);
         } catch (CategoriesException e) {

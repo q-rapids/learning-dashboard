@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 
 @Entity
@@ -20,6 +22,7 @@ public class Metric {
     @Column(name = "web_url")
     private String webUrl;
     @Column(name = "category_name")
+    @ColumnDefault("Default")
     private String categoryName;
 
     @ManyToOne

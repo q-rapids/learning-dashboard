@@ -267,9 +267,9 @@ function buildtable(name) {
     thUpperThreshold.appendChild(document.createTextNode("Upper Threshold (%)"));
     var thEmpty = document.createElement('th');
     var thSpan=document.createElement('th');
-    //var Span = document.createElement('span');
-    //Span.setAttribute("class","table-addMetric glyphicon glyphicon-plus");
-    //thSpan.appendChild(Span);
+    var Span = document.createElement('span');
+    Span.setAttribute("class","table-addMetric glyphicon glyphicon-plus");
+    thSpan.appendChild(Span);
     metrictr.appendChild(thName);
     metrictr.appendChild(thColor);
     metrictr.appendChild(thUpperThreshold);
@@ -293,10 +293,27 @@ function buildtable(name) {
     deleteButton.appendChild(document.createTextNode("Delete Metric Category"));
     deleteButton.addEventListener("click", function() { deleteMetricCategories(name);});
     buttonsRow.appendChild(deleteButton);
+    var saveButton = document.createElement('button');
+    saveButton.classList.add("btn");
+    saveButton.classList.add("btn-primary");
+    saveButton.setAttribute('id', 'saveButton');
+    saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+    saveButton.appendChild(document.createTextNode("Save Metric Category"));
+    saveButton.addEventListener("click", function()  {updateMetricCategories(name);});
+    buttonsRow.appendChild(saveButton);
     patternForm.appendChild(buttonsRow);
 
     document.getElementById('MetricsForm').innerHTML = "";
     document.getElementById('MetricsForm').appendChild(patternForm);
+
+    $('.table-addMetric').click(function () {
+        var goodCategory = {
+            type: "Good",
+            color: "#00ff00",
+            upperThreshold: 0
+        };
+        buildCategoryRow(goodCategory, "tableMetrics", true, true, true);
+    });
 
     /*buildCategoryRowForm("#00ff00", 100);
     buildCategoryRowForm("#ff8000", 67);
@@ -305,6 +322,29 @@ function buildtable(name) {
 
 
 }
+
+function updateMetricCategories (name) {
+
+    var dataMetrics = getDataMetricThreshold("tableMetrics");
+    if (dataMetrics.length < 2)
+        warningUtils("Warning", "There has to be at least 2 categories for each factor");
+    else {
+        $.ajax({
+            url: '../api/metrics/categories?name=' + name,
+            data: JSON.stringify(dataMetrics),
+            type: "PUT",
+            contentType: "application/json",
+            error: function (jqXHR, textStatus, errorThrown) {
+                warningUtils("Error", "Error on saving categories");
+            },
+            success: function () {
+                warningUtils("Ok", "Metrics Categories saved successfully");
+
+            }
+        });
+    }
+}
+
 
 function deleteMetricCategories(name) {
     $.ajax({
@@ -343,7 +383,7 @@ function loadMetricsCategories (name) {
                 buildtable(name);
                 document.getElementById('Category Name').appendChild(document.createTextNode("Metric category name: " +  name));
                 categories.forEach(function (category) {
-                    buildCategoryRow(category, "tableMetrics", true, false, true);
+                    buildCategoryRow(category, "tableMetrics", true, true, true);
                 });
             } else {
                 buildDefaultThresholdTable("tableMetrics");
@@ -641,6 +681,8 @@ $('#saveFactorCategories').click(function () {
 
     }
 });
+
+
 
 function saveMetricCategories () {
 

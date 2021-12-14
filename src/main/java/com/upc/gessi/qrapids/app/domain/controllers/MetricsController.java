@@ -97,7 +97,7 @@ public class MetricsController {
     public List<MetricCategory> getMetricCategories (String name) {
         List<MetricCategory> metricCategoryList = new ArrayList<>();
         Iterable<MetricCategory> metricCategoryIterable;
-        if(name!="") metricCategoryIterable = metricCategoryRepository.findAllByName(name);
+        if(name!=null) metricCategoryIterable = metricCategoryRepository.findAllByName(name);
         else metricCategoryIterable = metricCategoryRepository.findAll();
         metricCategoryIterable.forEach(metricCategoryList::add);
         return metricCategoryList;
@@ -121,6 +121,11 @@ public class MetricsController {
             metricCategoryRepository.deleteById(m.getId());
         }
 
+    }
+
+    public void updateMetricCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
+        deleteMetricCategory(name);
+        newMetricCategories(categories, name);
     }
 
     public boolean CheckIfNameExists(String name) {
