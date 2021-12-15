@@ -88,7 +88,7 @@ public class MetricsController {
             Project project = projectController.findProjectByExternalId(prjExternalID);
             Metric metricsSaved = metricRepository.findByExternalIdAndProjectId(metric.getId(),project.getId());
             if (metricsSaved == null) {
-                Metric newMetric = new Metric(metric.getId(), metric.getName(),metric.getDescription(), project);
+                Metric newMetric = new Metric(metric.getId(), metric.getName(),metric.getDescription(), project, "Default");
                 metricRepository.save(newMetric);
             }
         }
