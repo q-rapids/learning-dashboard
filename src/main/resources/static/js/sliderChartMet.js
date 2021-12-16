@@ -183,7 +183,6 @@ function showMetricsSliders () {
             sliderConfig.rangeHighlights = [];
 
             let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
-
             if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName);
 
             Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
