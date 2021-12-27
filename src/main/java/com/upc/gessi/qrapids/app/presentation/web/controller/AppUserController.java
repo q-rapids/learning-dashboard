@@ -182,6 +182,7 @@ public class AppUserController {
                     userUpdate.setQuestion(user.getQuestion());
                 if (!(user.getPassword() == null || "".equals(user.getPassword())))
                     userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+                userUpdate.setAdmin(user.getAdmin());
 
                 this.userRepository.save(userUpdate);
                 return REDIRECT + this.redirectTo + "?success=Success";
