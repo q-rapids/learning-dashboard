@@ -255,13 +255,19 @@ function drawChart() {
                 return cat.name === metricsDB[i].categoryName;
             });
 
+            metricCategory.sort( function (cat1, cat2) {
+                return cat1.upperThreshold - cat2.upperThreshold;
+            });
+
+            let start = 0;
             metricCategory.forEach( function (category) {
+                let end = category.upperThreshold;
                 let lineHighCategory = {
                     type: 'line',
                     drawTime: 'beforeDatasetsDraw',
                     mode: 'horizontal',
                     scaleID: 'y-axis-0',
-                    value: category.upperThreshold,
+                    value: (start + end) / 2,
                     borderColor: category.color,
                     borderWidth: 1,
                     label: {
@@ -269,6 +275,7 @@ function drawChart() {
                         content: category.name
                     }
                 };
+                start = end;
                 annotations.push(lineHighCategory);
             });
 

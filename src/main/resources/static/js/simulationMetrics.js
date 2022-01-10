@@ -424,7 +424,12 @@ function showFactors (titles, ids, labels, values) {
             data: values[i],
             fill: false
         });
-        var cat = categories;
+
+        let catName = getFactorCategory(qualityFactors[i].metrics);
+        let cat = categories.filter( function (c) {
+            return c.name === catName;
+        });
+
         cat.sort(function (a, b) {
             return b.upperThreshold - a.upperThreshold;
         });
@@ -494,6 +499,25 @@ function showFactors (titles, ids, labels, values) {
         factorsCharts.push(chart);
         window.myLine = chart;
     }
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factors) {
+    let f1 = metricsDB.find( function (elem) {
+        return elem.name === factors[0].name
+    });
+
+    if (factors.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factors.length; ++i){
+        let f2 = metricsDB.find( function (elem) {
+            return elem.name === factors[i].name
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 $('#apply').click(function () {

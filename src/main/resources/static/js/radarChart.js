@@ -46,21 +46,27 @@ function drawChart() {
             fill: false
         });
         console.log(categories);
-        for (var k = categories.length-1; k >= 0; --k) {
-            var fill = categories.length-1-k;
-            if (k == categories.length-1) fill = true;
+
+        let catName = getFactorCategory(categoryNames[i]);
+        let cat = categories.filter( function (c) {
+            return c.name === catName;
+        });
+
+        for (var k = cat.length-1; k >= 0; --k) {
+            var fill = cat.length-1-k;
+            if (k == cat.length-1) fill = true;
             dataset.push({
-                label: categories[k].name,
+                label: cat[k].name,
                 borderWidth: 1,
-                backgroundColor: hexToRgbA(categories[k].color, 0.3),
-                borderColor: hexToRgbA(categories[k].color, 0.3),
+                backgroundColor: hexToRgbA(cat[k].color, 0.3),
+                borderColor: hexToRgbA(cat[k].color, 0.3),
                 pointHitRadius: 0,
                 pointHoverRadius: 0,
                 pointRadius: 0,
                 pointBorderWidth: 0,
                 pointBackgroundColor: 'rgba(0, 0, 0, 0)',
                 pointBorderColor: 'rgba(0, 0, 0, 0)',
-                data: [].fill.call({ length: labels[i].length }, categories[k].upperThreshold),
+                data: [].fill.call({ length: labels[i].length }, cat[k].upperThreshold),
                 fill: fill
             })
         }
@@ -126,6 +132,25 @@ function drawChart() {
             }
         }
     }
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factors) {
+    let f1 = metricsDB.find( function (elem) {
+        return elem.name === factors[0]
+    });
+
+    if (factors.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factors.length; ++i){
+        let f2 = metricsDB.find( function (elem) {
+            return elem.name === factors[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 function addWarning(div, message) {

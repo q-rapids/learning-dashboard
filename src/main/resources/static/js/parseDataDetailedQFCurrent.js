@@ -1,6 +1,8 @@
 var isdsi = false;
 var id = false;
 
+const DEFAULT_CATEGORY = "Default"
+
 var url;
 if (getParameterByName('id').length !== 0) {
     url = parseURLComposed("../api/qualityFactors/metrics/current");
@@ -17,6 +19,8 @@ var ids = [];
 var values = [];
 var warnings = [];
 var categories = [];
+let metricsDB = [];
+let categoryNames = [];
 
 function getData() {
     titles = [];
@@ -43,6 +47,7 @@ function getData() {
                 ids.push(data[i].id);
                 labels.push([]);
                 values.push([]);
+                categoryNames.push([]);
                 for (j = 0; j < data[i].metrics.length; ++j) {
                     //for each metric save name to labels vector and value to values vector
                     if (data[i].metrics[j].name.length < 27)
@@ -50,6 +55,7 @@ function getData() {
                     else
                         labels[i].push(data[i].metrics[j].name.slice(0, 23) + "...");
                     values[i].push(data[i].metrics[j].value);
+                    categoryNames[i].push(data[i].metrics[j].name);
                 }
 
                 // Warnings
@@ -108,6 +114,20 @@ function getMetricsCategories() {
         async: true,
         success: function (response) {
             categories = response;
+            getMetricsWithCategory();
+        }
+    });
+}
+
+function getMetricsWithCategory(){
+    $.ajax({
+        dataType: "json",
+        url: "../api/metrics",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (dataDB) {
+            metricsDB = dataDB;
             drawChart();
         }
     });

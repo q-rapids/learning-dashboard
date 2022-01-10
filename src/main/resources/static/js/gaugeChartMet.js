@@ -219,6 +219,11 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         return cat.name === findMet.categoryName;
     });
 
+    //ordering the result in descendent order
+    metricCategories = metricCategories.sort(function (a, b) {
+        return b.upperThreshold - a.upperThreshold;
+    });
+
     //if findMet.categoryName is blank or contains a deleted category, the default category is painted
     if (metricCategories.length === 0)
         metricCategories = categories.filter(function (cat) {
