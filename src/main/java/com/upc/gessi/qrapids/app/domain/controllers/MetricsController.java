@@ -124,6 +124,8 @@ public class MetricsController {
     }
 
     public void updateMetricCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
+
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
         deleteMetricCategory(name);
         newMetricCategories(categories, name);
     }
@@ -133,7 +135,20 @@ public class MetricsController {
         return metricCategoryRepository.existsByName(name);
     }
 
+    public boolean checkIfCategoriesHasRepeats(List<Map<String, String>> categories) {
+        List<String> repeated = new ArrayList<>();
+        for (Map<String, String> c : categories) {
+            if (repeated.contains(c.get("type"))) {
+                return true;
+            }
+            repeated.add(c.get("type"));
+        }
+        return false;
+    }
+
     public void newMetricCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
+
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
 
         if (categories.size() > 1) {
             //metricCategoryRepository.deleteAll();

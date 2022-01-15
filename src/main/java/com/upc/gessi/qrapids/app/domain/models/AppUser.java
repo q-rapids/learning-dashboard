@@ -99,6 +99,10 @@ public class AppUser implements Serializable{
         this.question = question;
     }
 
+    public void addAllowedProjects(Project project) {this.allowedProjects.add(project);}
+
+    public void removeAllAllowedProjects() {this.allowedProjects.clear();}
+
     public Long getId() {
         return id;
     }
