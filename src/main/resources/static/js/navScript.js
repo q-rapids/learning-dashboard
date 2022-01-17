@@ -503,7 +503,11 @@ $("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
 
 $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
 
-$("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
+if(configuration=="profile") $("#Configuration").attr("href", serverUrl + "/profile" );
+
+else if(configuration=="users") $("#Configuration").attr("href", serverUrl + "/users" );
+
+else $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
 
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 

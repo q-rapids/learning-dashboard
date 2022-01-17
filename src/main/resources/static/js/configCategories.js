@@ -150,6 +150,14 @@ function newCategory() {
     tableRow.appendChild(metricTable);
     patternForm.appendChild(tableRow);
 
+    var warningDiv = document.createElement('p');
+    var warningText =document.createTextNode("Two or more categories have the same name");
+    warningDiv.hidden=true;
+    warningDiv.setAttribute('style', "color:red;margin-left: 7px;");
+    warningDiv.append(warningText);
+    warningDiv.setAttribute('id', 'warningId');
+    patternForm.appendChild(warningDiv);
+
     var buttonsRow = document.createElement('div');
     buttonsRow.classList.add("productInfoRow");
     buttonsRow.setAttribute('id', 'buttonsRow');
@@ -175,6 +183,7 @@ function newCategory() {
             upperThreshold: 0
         };
         buildCategoryRow(goodCategory, "tableMetrics", true, true, true);
+        markTypeConflicts()
     });
 
 
@@ -280,6 +289,15 @@ function buildtable(name) {
     tableRow.appendChild(metricTable);
     patternForm.appendChild(tableRow);
 
+    var warningDiv = document.createElement('p');
+    var warningText =document.createTextNode("Two or more categories have the same name");
+    warningDiv.hidden=true;
+    warningDiv.setAttribute('style', "color:red;margin-right: 60px;");
+    warningDiv.append(warningText)
+    warningDiv.setAttribute('id', 'warningId');
+    warningDiv.setAttribute("align", "right")
+    patternForm.appendChild(warningDiv);
+
     var buttonsRow = document.createElement('div');
     buttonsRow.classList.add("productInfoRow");
     buttonsRow.setAttribute('id', 'buttonsRow');
@@ -289,7 +307,7 @@ function buildtable(name) {
     deleteButton.classList.add("btn-primary");
     deleteButton.classList.add("btn-danger");
     deleteButton.setAttribute('id', 'deleteButton');
-    deleteButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+    deleteButton.setAttribute('style', 'font-size: 18px; max-width: 35%;');
     deleteButton.appendChild(document.createTextNode("Delete Metric Category"));
     deleteButton.addEventListener("click", function() { deleteMetricCategories(name);});
     buttonsRow.appendChild(deleteButton);
@@ -313,6 +331,7 @@ function buildtable(name) {
             upperThreshold: 0
         };
         buildCategoryRow(goodCategory, "tableMetrics", true, true, true);
+        markTypeConflicts();
     });
 
     /*buildCategoryRowForm("#00ff00", 100);
@@ -335,7 +354,8 @@ function updateMetricCategories (name) {
             type: "PUT",
             contentType: "application/json",
             error: function (jqXHR, textStatus, errorThrown) {
-                warningUtils("Error", "Error on saving categories");
+                if (jqXHR.status == 409) warningUtils("Error", "You can't have two categories with the same name");
+                else warningUtils("Error", "Error on saving categories");
             },
             success: function () {
                 warningUtils("Ok", "Metrics Categories saved successfully");
@@ -392,6 +412,27 @@ function loadMetricsCategories (name) {
     });
 }
 
+function markTypeConflicts() {
+
+    var data=getDataMetricThreshold("tableMetrics");
+    var uniques = [];
+    var repetits = false;
+    for(let i =0; i<data.length && !repetits; i++) {
+        if(uniques.includes(data[i].type)) {
+            document.getElementById("saveButton").disabled=true;
+            document.getElementById("warningId").hidden=false;
+            //warningUtils("Warning", "Two or more category types have the same name");
+            repetits=true;
+        }
+        else uniques.push(data[i].type)
+    }
+    if(!repetits) {
+        document.getElementById("saveButton").disabled=false;
+        document.getElementById("warningId").hidden=true;
+    }
+
+}
+
 function buildCategoryRow (category, tableId, hasThreshold, canBeEdited, isMetric) {
     var table = document.getElementById(tableId);
     var row = table.insertRow(-1);
@@ -402,7 +443,11 @@ function buildCategoryRow (category, tableId, hasThreshold, canBeEdited, isMetri
 
         var categoryName = document.createElement("td");
         categoryName.setAttribute("contenteditable", "true");
-        if(isMetric)categoryName.appendChild(document.createTextNode(category.type));
+        if(isMetric) {
+            categoryName.appendChild(document.createTextNode(category.type));
+            categoryName.addEventListener("input", (event) => markTypeConflicts());
+        }
+
         else categoryName.appendChild(document.createTextNode(category.name));
         row.appendChild(categoryName);
 
@@ -510,25 +555,28 @@ function buildDefaultSITable () {
 
 function buildDefaultThresholdTable (table) {
     var goodCategory = {
+        type: "Good",
         name: "Good",
         color: "#00ff00",
         upperThreshold: 1
     };
-    buildCategoryRow(goodCategory, table, true, true, false);
+    buildCategoryRow(goodCategory, table, true, true, true);
 
     var neutralCategory = {
+        type: "Neutral",
         name: "Neutral",
         color: "#ff8000",
         upperThreshold: 0.67
     };
-    buildCategoryRow(neutralCategory, table, true, true, false);
+    buildCategoryRow(neutralCategory, table, true, true, true);
 
     var badCategory = {
+        type: "Bad",
         name: "Bad",
         color: "#ff0000",
         upperThreshold: 0.33
     };
-    buildCategoryRow(badCategory, table, true, true, false);
+    buildCategoryRow(badCategory, table, true, true, true);
 }
 
 function addButtonBehaviour () {
@@ -556,6 +604,7 @@ function addButtonBehaviour () {
             upperThreshold: 0
         };
         buildCategoryRow(goodCategory, "tableMetrics", true, true, true);
+        markTypeConflicts()
     });
 }
 
@@ -630,7 +679,7 @@ function getDataMetricThreshold (table) {
 
         data.push(h);
     });
-    console.log(data);
+    //console.log(data);
     return data;
 }
 
@@ -718,6 +767,9 @@ function saveMetricCategories () {
 }
 
 
+
+
+
 size = $('input[name=upperThres][class!="hide"]').length;
 $('input[name=upperThres][class!="hide"]').each(function (i) {
     $(this).val(Math.round((size-i)*100/size));
@@ -732,7 +784,7 @@ if (sessionStorage.getItem("profile_qualitylvl") == "METRICS") {
     $("#FactorsCategories").hide();
     $("#FactorsCategoriesButton").hide();
     // show Metric Categories info
-    loadMetricsCategories();
+    //loadMetricsCategories();
     selectElement($("#MetricsCategoriesButton"));
     $("#MetricsCategories").show();
 } else if (sessionStorage.getItem("profile_qualitylvl") == "METRICS_FACTORS") {
@@ -744,10 +796,10 @@ if (sessionStorage.getItem("profile_qualitylvl") == "METRICS") {
     selectElement($("#FactorsCategoriesButton"));
     $("#FactorsCategories").show();
     // load Metric Categories info
-    loadMetricsCategories();
+    //loadMetricsCategories();
 } else {
     // load all Categories info
     loadSICategories();
     loadFactorCategories();
-    loadMetricsCategories();
+    //loadMetricsCategories();
 }

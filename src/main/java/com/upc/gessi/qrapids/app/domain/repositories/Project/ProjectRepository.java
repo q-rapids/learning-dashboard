@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.models.Project;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ProjectRepository extends CrudRepository<Project, Long> {
@@ -13,4 +14,6 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
     List<Project> findAll();
 
     Project findByName(String name);
+
+    Optional<Project> findById(Long Id);
 }

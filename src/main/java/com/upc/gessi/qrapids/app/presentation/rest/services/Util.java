@@ -144,9 +144,9 @@ public class Util {
 
     @GetMapping("/api/allowedprojects")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getUserFromToken(@RequestParam(value = "token", required = false) String token) {
+    public List<String> getUserFromToken(@RequestParam(value = "token", required = false) String token, @RequestParam(value = "id", required = false) Long id) {
         try {
-            List<Project> l = new ArrayList<>(usersController.getAllowedProjects(token));
+            List<Project> l = new ArrayList<>(usersController.getAllowedProjects(token,id));
             List list = new ArrayList<String>();
             for(int i=0; i<l.size(); ++i) {
                 list.add(l.get(i).getExternalId());
@@ -156,6 +156,18 @@ public class Util {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    @PutMapping("/api/allowedprojects")
+    @ResponseStatus(HttpStatus.OK)
+    public Long updateUserAllowedProjects(@RequestParam(value = "id", required = false) Long id, @RequestBody List<Long> projectList )  {
+        try {
+            usersController.updateAllowedProjects(projectList, id);
+            return 0L;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @GetMapping("/api/isAdmin")
     @ResponseStatus(HttpStatus.OK)
     public Boolean getIfUserisAdminFromToken(@RequestParam(value = "token", required = false) String token) {

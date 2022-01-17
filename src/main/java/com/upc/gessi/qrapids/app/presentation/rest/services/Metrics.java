@@ -101,7 +101,7 @@ public class Metrics {
             else metricsController.newMetricCategories(categories, name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
@@ -112,7 +112,7 @@ public class Metrics {
              metricsController.updateMetricCategory(categories, name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
