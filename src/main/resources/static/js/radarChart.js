@@ -47,10 +47,22 @@ function drawChart() {
         });
         console.log(categories);
 
-        let catName = getFactorCategory(categoryNames[i]);
-        let cat = categories.filter( function (c) {
-            return c.name === catName;
-        });
+        let catName;
+        let cat;
+
+        if (typeof categoryNames !== 'undefined'){
+            //categories for detailed factors
+            if (categoryNames.length !== 0) catName = getFactorCategory(categoryNames[i]);
+            else catName = DEFAULT_CATEGORY;
+
+            cat = categories.filter( function (c) {
+                return c.name === catName;
+            });
+
+        } else {
+            //categories for detailed strategic indicators
+            cat = categories;
+        }
 
         for (var k = cat.length-1; k >= 0; --k) {
             var fill = cat.length-1-k;

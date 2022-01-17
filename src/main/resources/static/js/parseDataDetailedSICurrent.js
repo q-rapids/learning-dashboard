@@ -3,6 +3,8 @@ console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
 var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current?profile="+profileId);
 
+const DEFAULT_CATEGORY = "Default"
+
 var isdsi = true;
 
 var colorList = ['rgba(1, 119, 166, 0.6)', 'rgba(255, 153, 51, 0.6)', 'rgba(51, 204, 51, 0.6)', 'rgba(255, 80, 80, 0.6)', 'rgba(204, 201, 53, 0.6)', 'rgba(192, 96, 201, 0.6)'];

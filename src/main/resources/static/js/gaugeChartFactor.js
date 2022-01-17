@@ -163,6 +163,9 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             .attr("d", arc3);
 
         //add text under the gauge with the name of the element (strategic indicator)
+        var name;
+        if (factors[i].name.length > 23) name = factors[i].name.slice(0, 20) + "...";
+        else name = factors[i].name;
         svg.append("text")
             .attr("x", 0)
             .attr("y", 50*width/250)
@@ -170,7 +173,7 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             .attr("font-family", "sans-serif")
             .attr("fill", textColor)
             .style("font-size", "16px")
-            .text(factors[i].name);
+            .text(name);
 
 
         //add label under the name with the value description
