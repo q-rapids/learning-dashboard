@@ -205,7 +205,7 @@ public class AuthController {
             user.setAdmin( false );
             user.setUserGroup( this.userGroupRepository.findByDefaultGroupIsTrue() );
         } else {
-            user.setAdmin( true );
+            if(user.getAdmin()) user.setAdmin( true );
         }
 
         try{

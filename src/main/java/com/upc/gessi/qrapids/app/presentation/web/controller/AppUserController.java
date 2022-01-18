@@ -37,6 +37,7 @@ public class AppUserController {
     private static final String REDIRECT = "redirect:";
     private static final String ERROR = "Error";
     private static final String SUCCESS = "?success=";
+    private static final String QUESTIONS = "questions";
 
     @Autowired
 	private UserRepository userRepository;
@@ -95,6 +96,7 @@ public class AppUserController {
         view.addObject("userGroups", userGroups);
         view.addObject("defautlUserGroup", defautlUserGroup );
         view.addObject("user", new AppUser());
+        view.addObject(QUESTIONS, this.questionRepository.findAll());
 
         boolean adminSelect = ! this.userGroupRepository.existsByDefaultGroupIsTrue();
         view.addObject("admin_select", adminSelect);
