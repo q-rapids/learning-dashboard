@@ -51,8 +51,9 @@ public class DomainObjectsBuilder {
         String externalId = "duplication";
         String name = "Duplication";
         String description = "Percentage of files lying within a defined range of duplication density";
+        String category = "Duplication category";
         float threshold = 0.5f;
-        Metric metric = new Metric(externalId, name, description, project);
+        Metric metric = new Metric(externalId, name, description, project,category);
         metric.setThreshold(threshold);
         metric.setId(metricId);
         return metric;
@@ -72,7 +73,7 @@ public class DomainObjectsBuilder {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project,"Duplication category");
         metric1.setId(1L);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
         factor1.setId(1L);
@@ -89,7 +90,7 @@ public class DomainObjectsBuilder {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project,"Bugdensity category");
         metric2.setId(2L);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
         factor2.setId(2L);
@@ -106,7 +107,7 @@ public class DomainObjectsBuilder {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Tests category");
         metric3.setId(3L);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
         factor3.setId(3L);
@@ -140,7 +141,7 @@ public class DomainObjectsBuilder {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
         Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project);
         factor1.setId(1L);
@@ -171,19 +172,19 @@ public class DomainObjectsBuilder {
         Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
         factor.setId(1L);
         factor.setThreshold(0.3f);
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project,"Duplication category");
         metric1.setId(1L);
         metric1.setThreshold(null);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor);
         qfm1.setId(1L);
         qualityMetrics.add(qfm1);
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
         metric2.setId(2L);
         metric2.setThreshold(null);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor);
         qfm1.setId(2L);
         qualityMetrics.add(qfm2);
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
         metric3.setId(3L);
         metric3.setThreshold(null);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor);
@@ -199,7 +200,7 @@ public class DomainObjectsBuilder {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", si.getProject());
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", si.getProject(), "Duplication category");
         metric1.setId(1L);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", si.getProject());
         factor1.setId(1L);
@@ -216,7 +217,7 @@ public class DomainObjectsBuilder {
 
 
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", si.getProject());
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", si.getProject(), "Bugdensity category");
         metric2.setId(2L);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", si.getProject());
         factor2.setId(2L);
@@ -233,7 +234,7 @@ public class DomainObjectsBuilder {
 
 
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", si.getProject());
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", si.getProject(), "Fast Test category");
         metric3.setId(3L);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", si.getProject());
         factor3.setId(3L);
@@ -265,7 +266,7 @@ public class DomainObjectsBuilder {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject());
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject(), "Duplication category");
         metric1.setId(1L);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject());
         factor1.setId(1L);
@@ -282,7 +283,7 @@ public class DomainObjectsBuilder {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject());
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject(), "Bugdensity category");
         metric2.setId(2L);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject());
         factor2.setId(2L);
@@ -299,7 +300,7 @@ public class DomainObjectsBuilder {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject());
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject(), "Fast Test category");
         metric3.setId(3L);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", strategicIndicator.getProject());
         factor3.setId(3L);
@@ -741,27 +742,27 @@ public class DomainObjectsBuilder {
     }
 
     public List<Map<String, String>> buildRawMetricCategoryList () {
-        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryType = "Good";
         String metricGoodCategoryColor = "#00ff00";
         float metricGoodCategoryUpperThreshold = 1.0f;
         Map<String, String> metricGoodCategory = new HashMap<>();
-        metricGoodCategory.put("name", metricGoodCategoryName);
+        metricGoodCategory.put("type", metricGoodCategoryType);
         metricGoodCategory.put("color", metricGoodCategoryColor);
         metricGoodCategory.put("upperThreshold", Float.toString(metricGoodCategoryUpperThreshold));
 
-        String metricNeutralCategoryName = "Neutral";
+        String metricNeutralCategoryType = "Neutral";
         String metricNeutralCategoryColor = "#ff8000";
         float metricNeutralCategoryUpperThreshold = 0.67f;
         Map<String, String> metricNeutralCategory = new HashMap<>();
-        metricNeutralCategory.put("name", metricNeutralCategoryName);
+        metricNeutralCategory.put("type", metricNeutralCategoryType);
         metricNeutralCategory.put("color", metricNeutralCategoryColor);
         metricNeutralCategory.put("upperThreshold", Float.toString(metricNeutralCategoryUpperThreshold));
 
-        String metricBadCategoryName = "Bad";
+        String metricBadCategoryType = "Bad";
         String metricBadCategoryColor = "#ff0000";
         float metricBadCategoryUpperThreshold = 0.33f;
         Map<String, String> metricBadCategory = new HashMap<>();
-        metricBadCategory.put("name", metricBadCategoryName);
+        metricBadCategory.put("type", metricBadCategoryType);
         metricBadCategory.put("color", metricBadCategoryColor);
         metricBadCategory.put("upperThreshold", Float.toString(metricBadCategoryUpperThreshold));
 

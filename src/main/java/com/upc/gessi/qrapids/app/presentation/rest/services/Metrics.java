@@ -96,8 +96,7 @@ public class Metrics {
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
         try {
-            boolean exists=metricsController.CheckIfNameExists(name);
-            if(exists) throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+            if(categories.size()<3) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
             else metricsController.newMetricCategories(categories, name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
