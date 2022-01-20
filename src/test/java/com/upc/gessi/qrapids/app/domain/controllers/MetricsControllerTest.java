@@ -72,7 +72,8 @@ public class MetricsControllerTest {
         metricsController.newMetricCategories(categories, "TEST");
 
         // Then
-        verify(metricCategoryRepository, times(1)).deleteAll();
+        //verify(metricCategoryRepository, times(1)).deleteAll();
+        verify(metricCategoryRepository, times(1)).existsByName("TEST");
 
         ArgumentCaptor<MetricCategory> metricCategoryArgumentCaptor = ArgumentCaptor.forClass(MetricCategory.class);
         verify(metricCategoryRepository, times(3)).save(metricCategoryArgumentCaptor.capture());
