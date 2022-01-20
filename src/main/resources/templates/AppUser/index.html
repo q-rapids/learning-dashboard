@@ -186,17 +186,19 @@
         return true;
     }
 
-    $("#admin").prop('checked', true);
-    $("#admin").prop('value', true);
+    $("#admin").prop('checked', false);
+    $("#admin").prop('value', false);
 
     const someCheckbox = document.getElementById('admin');
 
     someCheckbox.addEventListener('change', e => {
         if(e.target.checked === true) {
             $("#admin").prop('value', false);
+            $("#admin").prop('checked', false);
         }
-        if(e.target.checked === false) {            c
+        if(e.target.checked === false) {
             $("#admin").prop('value', true);
+            $("#admin").prop('checked', true);
         }
     });
 

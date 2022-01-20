@@ -48,7 +48,12 @@
         </select>
     </div>
 
-    <div class="form-group" th:if="${ all }">
+    <div class="form-group" th:if="${ create_user_administration }">
+        <label for="answer">Answer *</label>
+        <input type="text" class="form-control" th:name="question" th:id="question" required="required"/>
+    </div>
+
+    <div class="form-group" th:if="${ all && !create_user_administration }">
         <label for="answer">Answer *</label>
         <input type="text" class="form-control" th:name="question" th:id="question" th:field="*{question}" required="required"/>
     </div>
