@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.util.Optional;
@@ -66,14 +68,19 @@ public class AuthController {
 
         if( users == this.FirstUserRequired ) {
 
-            ModelAndView view =  new ModelAndView("Auth/FirstLoad");
+            ModelAndView view = new ModelAndView("Auth/FirstLoad");
 
             view.addObject(QUESTIONS, this.questionRepository.findAll());
             view.addObject(APPUSER, new AppUser());
-            view.addObject("all",true);
+            view.addObject("all", true);
 
             return view;
 
+        }
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
         }
 
         // Auth client
