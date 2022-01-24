@@ -250,7 +250,11 @@ function showMetricsSliders () {
                 handle: 'triangle'
             };
             sliderConfig.rangeHighlights = [];
-            Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights.get(DEFAULT_CATEGORY));
+
+            let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
+            if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName);
+
+            Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
             div.appendChild(slider);
             div.appendChild(label);
             divNOF.append(div);
