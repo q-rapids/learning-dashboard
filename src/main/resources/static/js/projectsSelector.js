@@ -17,14 +17,6 @@ for (i = 0; i < profiles.length; i+=2) {
 getActiveUserProjects();
 
 
-
-
-
-var prj = sessionStorage.getItem("prj");
-if (prj) {
-    $("#projectsDropdownText").text(prj);
-}
-
 function getUserName () {
     jQuery.ajax({
         dataType: "json",
@@ -41,10 +33,12 @@ function getUserName () {
                     if (oldUserName!==userName) {
                         sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
                         sessionStorage.removeItem("projects");
-                        sessionStorage.removeItem("prj");
+                        sessionStorage.setItem("prj", " ");
                     }
                 }
+                else sessionStorage.setItem("userName", sessionStorage.getItem("userName"));
             }
+            else sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
             //$("#MyProfile").text(data.userName);
         },
         error: function () {
@@ -52,6 +46,14 @@ function getUserName () {
         }
     });
 }
+
+
+var prj = sessionStorage.getItem("prj");
+if (prj) {
+    $("#projectsDropdownText").text(prj);
+}
+
+
 
 function setProject(project, url) {
 
