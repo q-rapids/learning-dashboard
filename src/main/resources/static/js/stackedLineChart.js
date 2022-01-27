@@ -252,7 +252,7 @@ function drawChart() {
             var annotations = [];
 
             let metricCategory = categories.filter( function (cat) {
-                return cat.name === metricsDB[i].categoryName;
+                return cat.name === orderedMetricsDB[i].categoryName;
             });
 
             metricCategory.sort( function (cat1, cat2) {
