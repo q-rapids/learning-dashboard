@@ -46,6 +46,7 @@ function getMetricsCategoriesAndShow () {
         type: "GET",
         success: function (response) {
             categories = response;
+            removeSpaces();
             showMetricsSliders();
         }
     });
@@ -73,6 +74,13 @@ function getFactorsCategories (titles, ids, labels, values) {
             showDetailedStrategicIndicators(titles, ids, labels, values)
         }
     });
+}
+
+function removeSpaces(){
+    categories.forEach( function (cat) {
+        cat.name = cat.name.replace(/ /g, '-')
+        cat.type = cat.type.replace(/ /g, '-')
+    })
 }
 
 function showMetricsSliders () {
@@ -143,7 +151,7 @@ function showMetricsSliders () {
         });
 
         let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
-        if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName);
+        if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName.replace(/ /g, '-'));
 
         sliderConfig.rangeHighlights = [];
         Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
