@@ -172,7 +172,8 @@ function showMetricsSliders () {
             }
 
             var slider = document.createElement("input");
-            slider.id = i + "sliderValue" + metric.id;
+            //some ids may have parenthesis in their names, so we remove them
+            slider.id = i + "sliderValue" + metric.id.replace(/[()]/g, '');
             slider.style.width = "60%";
             slider.style.height = "100%";
             var value = 0;
