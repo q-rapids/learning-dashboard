@@ -31,8 +31,10 @@ function getUserName () {
             if(oldUserName!=null) {
                 if(userName!=null) {
                     if (oldUserName!==userName) {
+                        $("#projectsDropdownText").text("Projects");
                         sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
                         sessionStorage.removeItem("projects");
+
                         sessionStorage.setItem("prj", " ");
                     }
                 }
