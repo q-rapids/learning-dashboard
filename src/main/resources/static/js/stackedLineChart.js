@@ -251,9 +251,21 @@ function drawChart() {
         if (typeof categories !== 'undefined') {
             var annotations = [];
 
-            let metricCategory = categories.filter( function (cat) {
-                return cat.name === orderedMetricsDB[i].categoryName;
-            });
+            let metricCategory;
+
+            if (typeof orderedMetricsDB !== 'undefined') {
+                if (orderedMetricsDB.length !== 0) {
+                    metricCategory = categories.filter(function (cat) {
+                        return cat.name === orderedMetricsDB[i].categoryName;
+                    });
+                } else {
+                    metricCategory = categories.filter(function (cat) {
+                        return cat.name === DEFAULT_CATEGORY;
+                    });
+                }
+            } else {
+                metricCategory = categories;
+            }
 
             metricCategory.sort( function (cat1, cat2) {
                 return cat1.upperThreshold - cat2.upperThreshold;
