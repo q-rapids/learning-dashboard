@@ -44,10 +44,15 @@ function drawChart() {
         // TODO categories come diferent in Stacked Data parse
         console.log(categoriesForPolar);
 
-        let catName = getFactorCategory(metricIds[i]);
-        let cat = categoriesForPolar.filter(function (elem) {
-            return elem.name === catName;
-        });
+        let cat;
+        if (typeof metricIds !== 'undefined') {
+            let catName = getFactorCategory(metricIds[i]);
+            cat = categoriesForPolar.filter(function (elem) {
+                return elem.name === catName;
+            });
+        } else {
+            cat = categoriesForPolar;
+        }
 
         for (var k = cat.length-1; k >= 0; --k) {
             var fill = cat.length-1-k;
