@@ -40,14 +40,14 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    $scope.saveMetric = function(id, selectedCat) {
+    $scope.saveMetric = function(id) {
         var formData = new FormData();
         //formData.append("name", $('#QFName').val());
         //formData.append("description", $('#QFDescription').val());
         formData.append("threshold", document.getElementById("MetThreshold"+id).value);
         if(document.getElementById("MetUrl"+id).validity.valid) // if url input text is valid
             formData.append("url", document.getElementById("MetUrl"+id).value);
-        formData.append("categoryName", selectedCat);
+        formData.append("categoryName", document.getElementById("MetCategory"+id).value.replace('string:', ''));
 
         $.ajax({
             url: "../api/metrics/"+id,
@@ -63,5 +63,33 @@ app.controller('TablesCtrl', function($scope, $http) {
                 location.href = "../Metrics/Configuration";
             }
         });
+    }
+
+    $scope.saveAllMetrics = function () {
+        $scope.data.forEach( function (elem) {
+            let id = elem.id
+            let formData = new FormData();
+            //formData.append("name", $('#QFName').val());
+            //formData.append("description", $('#QFDescription').val());
+            formData.append("threshold", document.getElementById("MetThreshold"+id).value);
+            if(document.getElementById("MetUrl"+id).validity.valid) // if url input text is valid
+                formData.append("url", document.getElementById("MetUrl"+id).value);
+            formData.append("categoryName", document.getElementById("MetCategory"+id).value.replace('string:', ''));
+
+            $.ajax({
+                url: "../api/metrics/"+id,
+                data: formData,
+                type: "PUT",
+                contentType: false,
+                processData: false,
+                error: function(jqXHR, textStatus, errorThrown) {
+                    warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+                },
+                success: function() {
+                    console.log('Updated element with id: ' + id)
+                }
+            });
+        })
+        location.href = "../Metrics/Configuration";
     }
 });
