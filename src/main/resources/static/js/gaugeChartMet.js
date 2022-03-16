@@ -25,14 +25,20 @@ var metricsDB = [];
 
 var urlLink;
 
-var groupByFactor = new Boolean(sessionStorage.getItem("groupByFactor"));
+var groupByFactor;
+if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
+    sessionStorage.setItem("groupByFactor", "true");
+    groupByFactor = true;
+} else {
+    groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
+}
+let checkbox = document.getElementById("groupByFactorCheckbox");
+checkbox.checked = groupByFactor;
 
 
 function clickCheckbox(){
     var checkbox = document.getElementById("groupByFactorCheckbox");
-    sessionStorage.removeItem("groupByFactor");
-    if (checkbox.checked == true)
-        sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
     location.href = serverUrl + "/Metrics/CurrentChartGauge";
 }
 
