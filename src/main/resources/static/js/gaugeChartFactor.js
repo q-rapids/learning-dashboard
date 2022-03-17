@@ -163,18 +163,36 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             .attr("d", arc3);
 
         //add text under the gauge with the name of the element (strategic indicator)
-        var name;
-        if (factors[i].name.length > 23) name = factors[i].name.slice(0, 20) + "...";
-        else name = factors[i].name;
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", 50*width/250)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "sans-serif")
-            .attr("fill", textColor)
-            .style("font-size", "16px")
-            .text(name);
+        //we have to divide the name into substrings of 23 chars or less
+        let name = [];
+        const threshold = 23;
+        name[0] = factors[i].name;
+        while (name[name.length-1].length > threshold) {
+            let index = threshold;
+            let aux = name[name.length-1]
+            while (index >= 0){
+                if(aux[index] === ' ') {
+                    name[name.length-1] = aux.substring(0, index);
+                    name.push(aux.substring(index+1, aux.length));
+                    break;
+                }
+                --index;
+            }
+            if(index < 0) {
+                name[name.length-1] = name[name.length-1].substring(0, threshold);
+                name.push(aux.substring(threshold, aux.length));
+            }
+        }
 
+        for(let cont = 0; cont < name.length; ++cont){
+            svg.append("text")
+                .attr("x", 0)
+                .attr("y", 50*width/250 + 15*cont)
+                .attr("text-anchor", "middle")
+                .attr("fill", textColor)
+                .style("font-size", 11+8*width/250+"px")
+                .text(name[cont]);
+        }
 
         //add label under the name with the value description
         var valueDescriptionColor;
@@ -184,7 +202,7 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
         svg.append("text")
             .attr("class", "text"+i)
             .attr("x", 0)
-            .attr("y", 50*width/250 + 25)
+            .attr("y", 50*width/250 + 30 + (name.length - 1) * 10)
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
             .attr("fill", valueDescriptionColor)

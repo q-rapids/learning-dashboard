@@ -271,18 +271,38 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .attr("d", arc3);
 
     //add text under the gauge
-    var name;
-    if (metric.name.length > 23) name = metric.name.slice(0, 20) + "...";
-    else name = metric.name;
-    svg.append("text")
-        .attr("id", "name" + i + j)
-        .attr("x", 0)
-        .attr("y", 50*width/250)
-        .attr("text-anchor", "middle")
-        .attr("fill", textColor)
-        .attr("title", metric.name)
-        .style("font-size", 11+8*width/250+"px")
-        .text(name);
+    //we have to divide the name into substrings of 23 chars or less
+    let name = [];
+    const threshold = 23;
+    name[0] = metric.name;
+    while (name[name.length-1].length > threshold) {
+        let index = threshold;
+        let aux = name[name.length-1]
+        while (index >= 0){
+            if(aux[index] === ' ') {
+                name[name.length-1] = aux.substring(0, index);
+                name.push(aux.substring(index+1, aux.length));
+                break;
+            }
+            --index;
+        }
+        if(index < 0) {
+            name[name.length-1] = name[name.length-1].substring(0, threshold);
+            name.push(aux.substring(threshold, aux.length));
+        }
+    }
+
+    for(let cont = 0; cont < name.length; ++cont){
+        svg.append("text")
+            .attr("id", "name" + i + j + cont)
+            .attr("x", 0)
+            .attr("y", 50*width/250 + 15*cont)
+            .attr("text-anchor", "middle")
+            .attr("fill", textColor)
+            .attr("title", metric.name)
+            .style("font-size", 11+8*width/250+"px")
+            .text(name[cont]);
+    }
 
     d3.select("#name"+i+j).append("title").text(metric.name);
 
@@ -293,7 +313,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
     else text = metric.value.toFixed(2);
     svg.append("text")
         .attr("x", 0)
-        .attr("y", 50*width/250 + 30)
+        .attr("y", 50*width/250 + 30 + (name.length - 1) * 10)
         .attr("text-anchor", "middle")
         .attr("fill", textColor)
         .style("font-size", 11+6*width/250+"px")
