@@ -271,26 +271,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .attr("d", arc3);
 
     //add text under the gauge
-    //we have to divide the name into substrings of 23 chars or less
-    let name = [];
-    const threshold = 23;
-    name[0] = metric.name;
-    while (name[name.length-1].length > threshold) {
-        let index = threshold;
-        let aux = name[name.length-1]
-        while (index >= 0){
-            if(aux[index] === ' ') {
-                name[name.length-1] = aux.substring(0, index);
-                name.push(aux.substring(index+1, aux.length));
-                break;
-            }
-            --index;
-        }
-        if(index < 0) {
-            name[name.length-1] = name[name.length-1].substring(0, threshold);
-            name.push(aux.substring(threshold, aux.length));
-        }
-    }
+    let name = subdivideMetricName(metric.name, 23);
 
     for(let cont = 0; cont < name.length; ++cont){
         svg.append("text")

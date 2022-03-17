@@ -163,26 +163,7 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             .attr("d", arc3);
 
         //add text under the gauge with the name of the element (strategic indicator)
-        //we have to divide the name into substrings of 23 chars or less
-        let name = [];
-        const threshold = 23;
-        name[0] = factors[i].name;
-        while (name[name.length-1].length > threshold) {
-            let index = threshold;
-            let aux = name[name.length-1]
-            while (index >= 0){
-                if(aux[index] === ' ') {
-                    name[name.length-1] = aux.substring(0, index);
-                    name.push(aux.substring(index+1, aux.length));
-                    break;
-                }
-                --index;
-            }
-            if(index < 0) {
-                name[name.length-1] = name[name.length-1].substring(0, threshold);
-                name.push(aux.substring(threshold, aux.length));
-            }
-        }
+        let name = subdivideMetricName(factors[i].name, 23);
 
         for(let cont = 0; cont < name.length; ++cont){
             svg.append("text")
