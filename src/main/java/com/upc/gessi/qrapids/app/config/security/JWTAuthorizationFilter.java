@@ -82,7 +82,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String cookie_token = this.authTools.getCookieToken( req, COOKIE_STRING );
         String token = "";
 
-        if ( cookie_token != null && cookie_token != "" ) {
+        if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ) {
             // WeaApp Client internal application
 
             authentication = this.authTools.tokenValidation( cookie_token );

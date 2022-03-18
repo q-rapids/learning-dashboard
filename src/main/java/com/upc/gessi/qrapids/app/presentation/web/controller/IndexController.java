@@ -39,6 +39,10 @@ public class IndexController implements ErrorController {
 
         if( "401".equals( code ) )
             view = new ModelAndView("redirect:/login?error=401+Authentication+Failed:+Bad+credentials");
+        if( "403".equals( code ) ) {
+            view = new ModelAndView("redirect:/login?error=Session+timeout");
+            return view;
+        }
 
         view.addObject("error",getErrorPath());
         view.addObject("uri", uri);

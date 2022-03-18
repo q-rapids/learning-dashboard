@@ -1,8 +1,8 @@
 package com.upc.gessi.qrapids.app.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,13 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Logger;
 
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.EXPIRATION_JWT_TOKEN_TIME;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.EXPIRATION_COOKIE_TIME;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.HEADER_STRING;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.SECRET;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.TOKEN_PREFIX;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
+import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
 
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -33,6 +29,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private AuthenticationManager authenticationManager;
 	// √Tools Auth
 	AuthTools authTools;
+
+	private Logger logger = Logger.getLogger("authentication");
 
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
@@ -120,6 +118,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
 
             res.addCookie( qrapids_token_client );
+
+            logger.info("Log in of user: " + ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername());
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
 
