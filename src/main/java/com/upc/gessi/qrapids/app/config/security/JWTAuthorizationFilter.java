@@ -6,6 +6,8 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
 import com.upc.gessi.qrapids.app.domain.repositories.Route.RouteRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
@@ -66,7 +70,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         this.authTools = new AuthTools();
         this.routeFilter = new RouteFilter();
         // is an External request? true -> WebPage : false -> external
-        //boolean origin = this.authTools.originRequest( req );
+        // boolean origin = this.authTools.originRequest( req );
+
+
 
         // Authorization object
 		UsernamePasswordAuthenticationToken authentication;
@@ -76,7 +82,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String cookie_token = this.authTools.getCookieToken( req, COOKIE_STRING );
         String token = "";
 
-        if ( cookie_token != null ) {
+        if ( cookie_token != null && cookie_token != "" ) {
             // WeaApp Client internal application
 
             authentication = this.authTools.tokenValidation( cookie_token );

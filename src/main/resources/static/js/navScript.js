@@ -1,7 +1,26 @@
 var currentURL = window.location.href;
 var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
-
+var lastresfresh = new Date();
+lastresfresh= lastresfresh.getTime();
 getIfUserIsAdmin();
+refreshcookie();
+
+window.addEventListener('click', (event) => {
+    refreshcookie()
+})
+
+function refreshcookie() {
+    const d = new Date();
+    if (d.getTime()-lastresfresh>300000 && d.getTime()-lastresfresh<900000) {
+        console.log("SI");
+        lastresfresh= d.getTime();
+        token = getCookie("xFOEto4jYAjdMeR3Pas6_");
+        d.setTime(d.getTime() + (900 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = "xFOEto4jYAjdMeR3Pas6_" + "=" + token + ";" + expires + ";path=/";
+    }
+}
+
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -44,7 +63,6 @@ function getCookie(cname) {
 function getIfUserIsAdmin() {
 
     token = getCookie("xFOEto4jYAjdMeR3Pas6_");
-    console.log("TOKEN: " + token);
     if(token!="") {
         jQuery.ajax({
             dataType: "json",

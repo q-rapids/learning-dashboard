@@ -211,7 +211,7 @@ public class AuthController {
             // Join user to group to the default group, if the aplication doesn't haver default group, is admin.
             user.setAdmin( false );
             user.setUserGroup( this.userGroupRepository.findByDefaultGroupIsTrue() );
-        } else {
+        } else { // diria que aixo es pot treure
             if(user.getAdmin()) user.setAdmin( true );
         }
 

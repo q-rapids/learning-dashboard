@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.EXPIRATION_TIME;
+import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.EXPIRATION_JWT_TOKEN_TIME;
+import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.EXPIRATION_COOKIE_TIME;
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.HEADER_STRING;
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.SECRET;
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.TOKEN_PREFIX;
@@ -100,7 +101,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// Token creation
 		String token = Jwts.builder()
 				.setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_JWT_TOKEN_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
 				.compact();
 
@@ -116,7 +117,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			// Configuration
 			// Changed HttpOnly to false to read it from the application
 			qrapids_token_client.setHttpOnly( false );
-			qrapids_token_client.setMaxAge(  (int) EXPIRATION_TIME / 1000 );
+			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
 
             res.addCookie( qrapids_token_client );
 
