@@ -2,6 +2,8 @@ var isdsi = false;
 var isqf = false;
 var isdqf = true;
 
+const DEFAULT_CATEGORY = "Default"
+
 var profileId = sessionStorage.getItem("profile_id");
 var url = parseURLComposed("../api/qualityFactors/metrics/historical?profile="+profileId);
 
@@ -10,7 +12,7 @@ var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
-
+let orderedMetricsDB = [];
 var categories = [];
 
 var decisions = new Map();

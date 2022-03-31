@@ -67,6 +67,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.addFilter(new JWTAuthorizationFilter(authenticationManager(), userRepository, routeRepository ))
 
 				// this disables session creation on Spring Security
+				.sessionManagement().enableSessionUrlRewriting(false)
+				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 	}

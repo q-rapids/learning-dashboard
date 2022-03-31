@@ -10,8 +10,8 @@ public class MetricCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="name", unique = true)
-    private String name;
+    @Column(name="type")
+    private String type;
 
     @Column(name="color")
     private String color;
@@ -19,11 +19,14 @@ public class MetricCategory {
     @Column(name="upperThreshold")
     private float upperThreshold;
 
+    @Column(name = "name")
+    private String name;
 
     public MetricCategory() {
     }
 
-    public MetricCategory(String name, String color, float upperThreshold) {
+    public MetricCategory(String name, String color, float upperThreshold, String type) {
+        this.type=type;
         this.name = name;
         this.color = color;
         this.upperThreshold = upperThreshold;
@@ -43,6 +46,14 @@ public class MetricCategory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getColor() {

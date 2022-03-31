@@ -6,6 +6,8 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
 import com.upc.gessi.qrapids.app.domain.repositories.Route.RouteRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,14 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
@@ -36,7 +42,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private boolean DEBUG = false;
 
-	private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+	private Logger oldlogger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+
+    private java.util.logging.Logger logger = java.util.logging.Logger.getLogger("navigation");
 
 	public JWTAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
@@ -66,7 +74,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         this.authTools = new AuthTools();
         this.routeFilter = new RouteFilter();
         // is an External request? true -> WebPage : false -> external
-        //boolean origin = this.authTools.originRequest( req );
+        // boolean origin = this.authTools.originRequest( req );
+
+
 
         // Authorization object
 		UsernamePasswordAuthenticationToken authentication;
@@ -76,7 +86,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String cookie_token = this.authTools.getCookieToken( req, COOKIE_STRING );
         String token = "";
 
-        if ( cookie_token != null ) {
+        if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ) {
             // WeaApp Client internal application
 
             authentication = this.authTools.tokenValidation( cookie_token );
@@ -156,7 +166,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         } else {
 
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
             logMessage(origin_request + " <- -> [Final status] : " + isAllowed);
+            if(user!=null)logger.info(user.getUsername() + " goes to " + origin_request+ " " + now);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);
@@ -167,7 +180,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private void logMessage (String message) {
         if (this.DEBUG)
-            logger.info(message);
+            oldlogger.info(message);
     }
 
 	/**

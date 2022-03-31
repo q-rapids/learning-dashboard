@@ -48,7 +48,8 @@ public class AppUser implements Serializable{
             inverseJoinColumns = { @JoinColumn(name = "project_id") })
     private Set<Project> allowedProjects = new HashSet<Project>(0);
 
-	public AppUser() { }
+	public AppUser() {
+    }
 
     public AppUser(String username, String email, boolean admin, String password, UserGroup userGroup, Question appuser_question, String question) {
         this.username = username;
@@ -98,6 +99,10 @@ public class AppUser implements Serializable{
     public void setQuestion(String question) {
         this.question = question;
     }
+
+    public void addAllowedProjects(Project project) {this.allowedProjects.add(project);}
+
+    public void removeAllAllowedProjects() {this.allowedProjects.clear();}
 
     public Long getId() {
         return id;

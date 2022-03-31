@@ -3,6 +3,26 @@
 <head>
     <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
     <link rel="stylesheet" th:href="@{/css/products.css}" />
+    <style>
+        .Classifier, .Pattern {
+            display: flex;
+        }
+        .list-group-item:hover {
+            background-color: #efeff8;
+        }
+        #buttonsNewItem {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+        @media (max-width: 1800px) {
+            #buttonsNewItem {
+                flex-direction: column;
+                max-width: 250px;
+                margin: auto;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -10,16 +30,24 @@
 <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
 <div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 <br/>
+
+
 <div id="CategoriesConfigView">
     <div id="CategoriesElementSelector">
+        <div id="buttonsNewItem">
+            <button onclick="newCategory()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Category</button>
+        </div>
         <ul id="ElementList" class="list-group">
             <li id="SICategoriesButton" class="list-group-item category-element active">Strategic Indicators</li>
             <li id="FactorsCategoriesButton" class="list-group-item category-element">Factors</li>
-            <li id="MetricsCategoriesButton" class="list-group-item category-element">Metrics</li>
+            <li id="MetricsCategoriesButton" class="list-group-item category-element" style="background-color: #ffffff; color: #000000;">Metrics
+                <ul id="MetricList" class="list-group" > </ul>
+            </li>
         </ul>
     </div>
     <div id="Categories">
-        <div id="SICategories">
+        <div id="MetricsForm" ></div>
+        <div id="SICategories" style="display: none">
             <h3>Strategic Indicator Categories</h3>
             <div id="tableSIdiv" class="table-editable">
                 <table id="tableSI" class="table">

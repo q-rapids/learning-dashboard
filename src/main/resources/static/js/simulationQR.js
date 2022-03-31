@@ -3,12 +3,15 @@ var currentColor = "#696969";
 
 var patterns = [];
 
+const DEFAULT_CATEGORY = "Default"
+
 var strategicIndicators = [];
 var qualityFactors = [];
 var metrics = [];
 var detailedCharts = [];
 var factorsCharts = [];
 var categories = [];
+let metricsDB = [];
 
 var alertId;
 var patternId;
@@ -32,6 +35,20 @@ function getMetricsCategories (titles, ids, labels, values) {
         type: "GET",
         success: function (response) {
             categories = response;
+            getMetricsWithCategory(titles, ids, labels, values);
+        }
+    });
+}
+
+function getMetricsWithCategory(titles, ids, labels, values){
+    $.ajax({
+        dataType: "json",
+        url: "../api/metrics",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (dataDB) {
+            metricsDB = dataDB;
             showFactors(titles, ids, labels, values);
         }
     });
@@ -293,7 +310,11 @@ function showFactors (titles, ids, labels, values) {
             data: values[i],
             fill: false
         });
-        var cat = categories;
+
+        catName = getFactorCategory(qualityFactors[i].metrics);
+        var cat = categories.filter(function (elem) {
+            return elem.name === catName;
+        });
         cat.sort(function (a, b) {
             return b.upperThreshold - a.upperThreshold;
         });
@@ -363,6 +384,25 @@ function showFactors (titles, ids, labels, values) {
         factorsCharts.push(chart);
         window.myLine = chart;
     }
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factors) {
+    let f1 = metricsDB.find( function (elem) {
+        return elem.externalId === factors[0].id
+    });
+
+    if (factors.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factors.length; ++i){
+        let f2 = metricsDB.find( function (elem) {
+            return elem.externalId === factors[i].id
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 function loadQRPattern (patternId, alertId) {

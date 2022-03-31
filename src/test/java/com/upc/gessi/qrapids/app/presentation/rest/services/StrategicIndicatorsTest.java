@@ -1906,7 +1906,7 @@ public class StrategicIndicatorsTest {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
         factor1.setId(1L);
@@ -1923,7 +1923,7 @@ public class StrategicIndicatorsTest {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
         metric2.setId(2L);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
         factor2.setId(2L);
@@ -1940,7 +1940,7 @@ public class StrategicIndicatorsTest {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
         metric3.setId(3L);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
         factor3.setId(3L);

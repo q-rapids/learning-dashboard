@@ -2,9 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="Fragments/TemplateDashboard :: basicHeader">
+
 </head>
 
 <link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<link rel="stylesheet" th:href="@{/css/products.css}" />
 <script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
 
 
@@ -29,7 +31,7 @@
 
         <form class="full-width" th:object="${appuser}" th:action="@{/users/update}" method="POST">
 
-            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+            <input id="userEdited" type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
 
             <div class="form-group">
                 <label for="username">Username</label>
@@ -41,7 +43,30 @@
                 <input type="email" class="form-control" th:name="email" th:id="email" th:value="${appuser.getEmail()}" th:field="*{email}" />
             </div>
 
-            <button type="submit" class="btn btn-border-black">Update</button>
+            <div class="form-group">
+                <label for="admin">Admin</label>
+                <input type="checkbox"  class="form-control" style="box-shadow: none; -webkit-box-shadow: none; width: auto" th:checked="${appuser.getAdmin()}" th:value="${appuser.getAdmin()}" th:name="admin" th:id="admin" th:field="*{admin}" />
+
+                </div>
+            <div class="QFInfoRow">
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Available Projects: </p>
+                    <select id="avProjectsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                </div>
+                <div class="selectionColumn" style="padding-top:30px;">
+                    <button onclick="moveItemsLeft()" type="button" class="btn btn-default top-and-bottom-margin" id="oneLeft">&lt;</button>
+                    <button onclick="moveItemsRight()" type="button" class="btn btn-default top-and-bottom-margin" id="right" style="margin-top:3px;">&gt;</button>
+                    <button onclick="moveAllItemsRight()" type="button" class="btn btn-default top-and-bottom-margin" id="allRight" style="margin-top:3px;">&gt;&gt;</button>
+                    <button onclick="moveAllItemsLeft()" type="button" class="btn btn-default top-and-bottom-margin" id="allLeft" style="margin-top:3px;">&lt;&lt;</button>
+                </div>
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Selected Projects*: </p>
+                    <select id="selProjectsBox" multiple="multiple" style="height: 150px;"></select>
+                </div>
+            </div>
+
+            <button onclick="updateProjects()" type="submit" class="btn btn-border-black">Update</button>
 
         </form>
 
@@ -63,13 +88,14 @@
 
         <div class="divisor-black" ></div>
 
-        <form th:if="${! appuser.getAdmin()}" id="form_set_admin" class="full-width" th:object="${appuser}" th:action="@{/users/updateadmin}" method="POST">
+          <form th:if="${! appuser.getAdmin()}" id="form_set_admin" class="full-width" th:object="${appuser}" th:action="@{/users/updateadmin}" method="POST">
 
-            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+                <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
 
-            <button type="submit" class="btn btn-danger" style="margin-top: 1em;">Set Admin User </button>
+                <button type="submit" class="btn btn-danger" style="margin-top: 1em;">Set Admin User </button>
 
-        </form>
+            </form>
+
 
         <form th:if="${! appuser.getAdmin()}" id="form_set_admin" class="full-width" th:object="${appuser}" th:action="@{/users/setusergroup}" method="POST">
 
@@ -131,4 +157,5 @@
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 
 </body>
+<script type="text/javascript" th:src="@{/js/user.js}"></script>
 </html>

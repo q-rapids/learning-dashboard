@@ -1,3 +1,5 @@
+getUserName();
+
 var projects = sessionStorage.getItem("projects");
 projects = (projects) ? JSON.parse(projects) : [];
 
@@ -14,13 +16,49 @@ for (i = 0; i < profiles.length; i+=2) {
 
 getActiveUserProjects();
 
+
+function getUserName () {
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/me",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            sessionStorage.setItem("userName", data.userName);
+            var oldUserName = sessionStorage.getItem("oldUserName");
+            var userName=sessionStorage.getItem("userName");
+            if(oldUserName!=null) {
+                if(userName!=null) {
+                    if (oldUserName!==userName) {
+                        $("#projectsDropdownText").text("Projects");
+                        sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
+                        sessionStorage.removeItem("projects");
+
+                        sessionStorage.setItem("prj", " ");
+                    }
+                }
+                else sessionStorage.setItem("userName", sessionStorage.getItem("userName"));
+            }
+            else sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
+            //$("#MyProfile").text(data.userName);
+        },
+        error: function () {
+            sessionStorage.setItem("userName", "undefined");
+        }
+    });
+}
+
+
 var prj = sessionStorage.getItem("prj");
 if (prj) {
     $("#projectsDropdownText").text(prj);
 }
 
 
+
 function setProject(project, url) {
+
     sessionStorage.setItem("prj", project);
     if (url && (url != window.location.href))
         window.open(url,"_self");
