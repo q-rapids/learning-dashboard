@@ -17,6 +17,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -119,7 +121,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             res.addCookie( qrapids_token_client );
 
-            logger.info("Log in of user: " + ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername());
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+
+			logger.info("Log in: " + ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername()+ " " + now);
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
 

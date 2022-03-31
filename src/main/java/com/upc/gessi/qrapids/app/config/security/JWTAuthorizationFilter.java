@@ -23,6 +23,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +42,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private boolean DEBUG = false;
 
-	private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+	private Logger oldlogger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+
+    private java.util.logging.Logger logger = java.util.logging.Logger.getLogger("navigation");
 
 	public JWTAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
@@ -162,7 +166,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         } else {
 
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
             logMessage(origin_request + " <- -> [Final status] : " + isAllowed);
+            if(user!=null)logger.info(user.getUsername() + " goes to " + origin_request+ " " + now);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);
@@ -173,7 +180,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private void logMessage (String message) {
         if (this.DEBUG)
-            logger.info(message);
+            oldlogger.info(message);
     }
 
 	/**
