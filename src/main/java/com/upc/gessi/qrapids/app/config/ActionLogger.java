@@ -33,7 +33,7 @@ public class ActionLogger {
 //         }
 //
 //         public void traceRedirectTo(String language, String userId, String sessionId, String currentLocation, String  destination) {
-//            traceAction(language, userId, sessionId, currentLocation,REDIRECT_TO + destination + " from " + currentLocation);
+//            traceAction(language, userId, sessionId, currentLocation,REDIRECT_TO + destination + " from " + currentLocation );
 //         }
 //
 //         public void traceAction(String language, String userId, String sessionId, String currentLocation, String action) {
