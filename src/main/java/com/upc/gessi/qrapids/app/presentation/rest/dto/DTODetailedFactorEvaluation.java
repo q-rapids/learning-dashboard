@@ -19,6 +19,7 @@ public class DTODetailedFactorEvaluation {
     private String name;
     private LocalDate date;
     private Pair<Float, String> value;
+    private String description;
     private String value_description;
     private int mismatchDays;
     private List<String> missingMetrics;
@@ -31,10 +32,11 @@ public class DTODetailedFactorEvaluation {
      * @param name The parameter defines the name of the Factor
      * @param metrics The parameter define the set of metrics that compose the Quality Factors
      */
-    public DTODetailedFactorEvaluation(String id, String name, List<DTOMetricEvaluation> metrics) {
+    public DTODetailedFactorEvaluation(String id, String description, String name, List<DTOMetricEvaluation> metrics) {
         this.id = id;
         this.name = name;
         this.metrics = metrics;
+        this.description=description;
     }
 
     /**
@@ -98,4 +100,8 @@ public class DTODetailedFactorEvaluation {
     public void setMetrics(List<DTOMetricEvaluation> metrics) {
         this.metrics = metrics;
     }
+
+    public void setDescription(String description) { this.description=description;}
+
+    public String getDescription() {return this.description;}
 }

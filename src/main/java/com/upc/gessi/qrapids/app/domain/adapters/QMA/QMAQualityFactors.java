@@ -231,7 +231,7 @@ public class QMAQualityFactors {
                 // check metric composition this factor, if we don't fetch it
                 String factorExternalID = null;
                 if ((filterDB != false) && currentData) factorExternalID = qualityFactor.getID();
-                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
+                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 df.setDate(evaluation.getEvaluationDate());
                 df.setValue(Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())));
