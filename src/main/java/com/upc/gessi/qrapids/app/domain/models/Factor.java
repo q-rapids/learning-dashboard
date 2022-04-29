@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import net.bytebuddy.implementation.bind.annotation.Default;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ public class Factor {
     private boolean weighted;
     @Column(name = "threshold")
     private Float threshold;
+    @Column(name = "category_name", columnDefinition = "varchar default 'Default'")
+    private String categoryName;
 
     @ManyToOne
     @JoinColumn(name="project_id", referencedColumnName = "id")
@@ -31,15 +35,18 @@ public class Factor {
     @JoinColumn(name="quality_factor_id")
     private List<QualityFactorMetrics> qualityFactorMetricsList = new ArrayList<>();
 
+
+
     public Factor() {
     }
 
-    public Factor(String name, String description, List<QualityFactorMetrics> qualityMetrics, boolean weighted, Project project) {
+    public Factor(String name, String description, List<QualityFactorMetrics> qualityMetrics, boolean weighted, Project project, String categoryName) {
         setName(name);
         setDescription(description);
         setQualityFactorMetricsList(qualityMetrics);
         setWeighted(weighted);
         setProject(project);
+        setCategoryName(categoryName);
     }
 
     // Quality Factor without Quality Metrics
@@ -161,5 +168,13 @@ public class Factor {
 
     public void setThreshold(Float threshold) {
         this.threshold = threshold;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
