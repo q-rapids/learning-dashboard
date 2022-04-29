@@ -80,7 +80,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 		// Check the categories in the SQL database and if they are empty create the default ones
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
-		List<QFCategory> factorCategoryList = context.getBean(FactorsController.class).getFactorCategories();
+		List<QFCategory> factorCategoryList = context.getBean(FactorsController.class).getFactorCategories("Default");
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories("Default");
 
 		try {
@@ -106,10 +106,6 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			if (siCategoryList.size() == 0) {
 				context.getBean(StrategicIndicatorsController.class).newStrategicIndicatorCategories(categories);
 			}
-			// Save Factor categories
-			if (factorCategoryList.size() == 0){
-				context.getBean(FactorsController.class).newFactorCategories(categories);
-			}
 			// Declare and save Metric categories with new attributes
 
 			categories = new ArrayList<>();
@@ -134,6 +130,10 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 			if (metricCategoryList.size() == 0) {
 				context.getBean(MetricsController.class).newMetricCategories(categories, "Default");
+			}
+			// Save Factor categories
+			if (factorCategoryList.size() == 0){
+				context.getBean(FactorsController.class).newFactorCategories(categories, "Default");
 			}
 		} catch (Exception e) {
 			Logger logger = LoggerFactory.getLogger(Alerts.class);

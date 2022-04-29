@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
@@ -37,6 +38,8 @@ public class Factors {
 
     private Logger logger = LoggerFactory.getLogger(Factors.class);
 
+    /*
+    //Old get
     @GetMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategoryThreshold> getFactorCategories () {
@@ -47,7 +50,7 @@ public class Factors {
         }
         return dtoCategoryList;
     }
-
+    //Old creator
     @PostMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
@@ -57,7 +60,7 @@ public class Factors {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
         }
-    }
+    }*/
 
     @GetMapping("/api/qualityFactors/import")
     @ResponseStatus(HttpStatus.OK)
@@ -70,6 +73,59 @@ public class Factors {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+        }
+    }
+
+    @GetMapping("api/factors/list")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getList() {
+
+        return factorsController.getAllNames();
+
+    }
+
+    @GetMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOFactorCategory> getFactorCategories ( @RequestParam(value = "name", required = false) String name) {
+        Iterable<QFCategory> factorCategoryList = factorsController.getFactorCategories(name);
+        List<DTOFactorCategory> dtoFactorCategoryList = new ArrayList<>();
+        for (QFCategory factorCategory : factorCategoryList) {
+            dtoFactorCategoryList.add(new DTOFactorCategory(factorCategory.getId(), factorCategory.getName(), factorCategory.getColor(), factorCategory.getUpperThreshold(), factorCategory.getType()));
+        }
+        return dtoFactorCategoryList;
+    }
+
+    @PostMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newFactorCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
+        try {
+            if(categories.size()<3) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+            else factorsController.newFactorCategories(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
+    @PutMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateFactorsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name", required = true) String name) {
+        try {
+            factorsController.updateFactorCategory(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
+    @DeleteMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteFactorsCategories (@RequestParam(value = "name", required = true) String name) {
+        try {
+            factorsController.deleteFactorCategory(name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 

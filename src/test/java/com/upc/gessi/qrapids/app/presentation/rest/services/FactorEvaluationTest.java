@@ -86,11 +86,11 @@ public class FactorEvaluationTest {
     public void getFactorsCategories () throws Exception {
         // Given
         List<QFCategory> factorCategoryList = domainObjectsBuilder.buildFactorCategoryList();
-        when(qualityFactorsDomainController.getFactorCategories()).thenReturn(factorCategoryList);
+        when(qualityFactorsDomainController.getFactorCategories("Default")).thenReturn(factorCategoryList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/qualityFactors/categories");
+                .get("/api/factors/categories?name=Default");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -115,6 +115,8 @@ public class FactorEvaluationTest {
                                         .description("Category identifier"),
                                 fieldWithPath("[].name")
                                         .description("Category name"),
+                                fieldWithPath("[].type")
+                                        .description("Quality factors category type"),
                                 fieldWithPath("[].color")
                                         .description("Category hexadecimal color"),
                                 fieldWithPath("[].upperThreshold")
@@ -123,7 +125,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getFactorCategories();
+        verify(qualityFactorsDomainController, times(1)).getFactorCategories("Default");
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -135,7 +137,7 @@ public class FactorEvaluationTest {
         // Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/qualityFactors/categories")
+                .post("/api/factors/categories?name=test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(factorCategoriesList));
 
@@ -145,8 +147,8 @@ public class FactorEvaluationTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("[].name")
-                                        .description("Quality factors category name"),
+                                fieldWithPath("[].type")
+                                        .description("Quality factors category type"),
                                 fieldWithPath("[].color")
                                         .description("Quality factors category color"),
                                 fieldWithPath("[].upperThreshold")
@@ -154,7 +156,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).newFactorCategories(factorCategoriesList);
+        verify(qualityFactorsDomainController, times(1)).newFactorCategories(factorCategoriesList,"test");
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -164,12 +166,12 @@ public class FactorEvaluationTest {
         List<Map<String, String>> factorCategoriesList = domainObjectsBuilder.buildRawSICategoryList();
         factorCategoriesList.remove(2);
         factorCategoriesList.remove(1);
-        doThrow(new CategoriesException()).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList);
+        doThrow(new CategoriesException()).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList, "Default");
 
         //Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/qualityFactors/categories")
+                .post("/api/factors/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(factorCategoriesList));
 
