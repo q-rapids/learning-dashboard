@@ -184,9 +184,10 @@ public class Factors {
             String description = request.getParameter("description");
             String threshold = request.getParameter("threshold");
             List<String> metrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
+            String category = request.getParameter("category");
             if (!name.equals("") && !metrics.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
-                factorsController.saveQualityFactor(name, description, threshold, metrics, project);
+                factorsController.saveQualityFactorWithCategory(name, description, threshold, metrics, category, project);
                 if (!factorsController.assessQualityFactor(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -222,17 +223,19 @@ public class Factors {
             String description;
             String threshold;
             List<String> qualityMetrics;
+            String category;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
                 threshold = request.getParameter("threshold");
                 qualityMetrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
+                category = request.getParameter("category");
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
             if (!name.equals("") && !qualityMetrics.isEmpty()) {
                 Factor oldFactor = factorsController.getQualityFactorById(id);
-                factorsController.editQualityFactor(oldFactor.getId(), name, description, threshold, qualityMetrics);
+                factorsController.editQualityFactorWithCategory(oldFactor.getId(), name, description, threshold, qualityMetrics, category);
                 if (!factorsController.assessQualityFactor(name, oldFactor.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }

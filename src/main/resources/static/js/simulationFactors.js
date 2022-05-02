@@ -6,7 +6,6 @@ var strategicIndicators = [];
 var categories = [];
 var detailedCharts = [];
 
-let detailedFactorNames = [];
 let factorDB = [];
 
 const DEFAULT_CATEGORY = "Default"
@@ -196,7 +195,6 @@ function getDetailedStrategicIndicators () {
                 ids.push(data[i].id);
                 labels.push([]);
                 values.push([]);
-                detailedFactorNames.push([]);
                 for (j = 0; j < data[i].factors.length; ++j) {
                     //for each factor save name to labels vector and value to values vector
                     if (data[i].factors[j].name.length < 27)
@@ -208,7 +206,6 @@ function getDetailedStrategicIndicators () {
                         id: data[i].factors[j].id,
                         name: data[i].factors[j].name
                     });
-                    detailedFactorNames[i].push(data[i].factors[j].name);
                 }
             }
             checkFactorsSliders();
@@ -281,7 +278,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         let catName;
         let cat;
 
-        if (categories.length !== 0) catName = getFactorCategory(detailedFactorNames[i], factorDB);
+        if (categories.length !== 0) catName = getFactorCategory(strategicIndicators[i].factors, factorDB);
         else catName = DEFAULT_CATEGORY;
 
         cat = categories.filter( function (c) {
@@ -463,14 +460,14 @@ function hexToRgbA(hex,a=1){ // (hex color, opacity)
 // else the default category is returned
 function getFactorCategory(factorNames, factorList) {
     let f1 = factorList.find( function (elem) {
-        return elem.name === factorNames[0]
+        return elem.name === factorNames[0].name
     });
 
     if (factorNames.length === 1) return f1.categoryName;
 
     for(let i = 1; i < factorNames.length; ++i){
         let f2 = factorList.find( function (elem) {
-            return elem.name === factorNames[i]
+            return elem.name === factorNames[i].name
         });
         if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
         f1 = f2;

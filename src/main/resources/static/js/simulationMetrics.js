@@ -10,7 +10,6 @@ var factorsCharts = [];
 var metricCats = [];
 let factorCats = [];
 
-let detailedFactorNames = [];
 let factorsDB = [];
 
 var profileId = sessionStorage.getItem("profile_id");
@@ -230,7 +229,6 @@ function getDetailedStrategicIndicators () {
                 ids.push(data[i].id);
                 labels.push([]);
                 values.push([]);
-                detailedFactorNames.push([])
                 for (j = 0; j < data[i].factors.length; ++j) {
                     //for each factor save name to labels vector and value to values vector
                     if (data[i].factors[j].name.length < 27)
@@ -242,7 +240,6 @@ function getDetailedStrategicIndicators () {
                         id: data[i].factors[j].id,
                         name: data[i].factors[j].name
                     });
-                    detailedFactorNames[i].push(data[i].factors[j].name);
                 }
             }
             getFactorsCategories (titles, ids, labels, values);
@@ -283,7 +280,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         let catName;
         let cat;
 
-        if (factorCats.length !== 0) catName = getFactorCategory(detailedFactorNames[i], factorsDB);
+        if (factorCats.length !== 0) catName = getFactorCategory(strategicIndicators[i].factors, factorsDB);
         else catName = DEFAULT_CATEGORY;
 
         cat = factorCats.filter( function (c) {
@@ -461,7 +458,7 @@ function showFactors (titles, ids, labels, values) {
             fill: false
         });
 
-        let catName = getMetricCategory(qualityFactors[i].metrics, metricsDB);
+        let catName = getFactorCategory(qualityFactors[i].metrics, metricsDB);
         let cat = metricCats.filter( function (c) {
             return c.name === catName;
         });
@@ -540,25 +537,6 @@ function showFactors (titles, ids, labels, values) {
 // if the factors have the same category, this category is returned
 // else the default category is returned
 function getFactorCategory(factorNames, factorList) {
-    let f1 = factorList.find( function (elem) {
-        return elem.name === factorNames[0]
-    });
-
-    if (factorNames.length === 1) return f1.categoryName;
-
-    for(let i = 1; i < factorNames.length; ++i){
-        let f2 = factorList.find( function (elem) {
-            return elem.name === factorNames[i]
-        });
-        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
-        f1 = f2;
-    }
-    return f1.categoryName;
-}
-
-// if the factors have the same category, this category is returned
-// else the default category is returned
-function getMetricCategory(factorNames, factorList) {
     let f1 = factorList.find( function (elem) {
         return elem.name === factorNames[0].name
     });
