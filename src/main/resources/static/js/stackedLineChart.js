@@ -263,9 +263,22 @@ function drawChart() {
                         return cat.name === DEFAULT_CATEGORY;
                     });
                 }
+            } else if (typeof orderedFactorsDB !== 'undefined') {
+                if (orderedFactorsDB.length !== 0) {
+                    metricCategory = categories.filter(function (cat) {
+                        return cat.name === orderedFactorsDB[i].categoryName;
+                    });
+                } else {
+                    metricCategory = categories.filter(function (cat) {
+                        return cat.name === DEFAULT_CATEGORY;
+                    });
+                }
             } else {
-                metricCategory = categories;
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === DEFAULT_CATEGORY;
+                });
             }
+
 
             metricCategory.sort( function (cat1, cat2) {
                 return cat1.upperThreshold - cat2.upperThreshold;

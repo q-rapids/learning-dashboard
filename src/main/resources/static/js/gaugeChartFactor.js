@@ -5,6 +5,10 @@ var target;
 var tau = Math.PI / 2;
 var id = false;
 
+if (typeof DEFAULT_CATEGORY !== 'undefined') {
+    const DEFAULT_CATEGORY = "Default";
+}
+
 var url;
 if (getParameterByName('id').length !== 0) {
     id = true;
@@ -15,6 +19,7 @@ if (getParameterByName('id').length !== 0) {
 }
 
 var urlLink;
+let factorDB = [];
 
 function getDataFactors(width, height, chartHyperlinked, color) {
     jQuery.ajax({
@@ -24,7 +29,8 @@ function getDataFactors(width, height, chartHyperlinked, color) {
         type: "GET",
         async: true,
         success: function (data) {
-            getFactorsCat(data, width, height, chartHyperlinked, color);
+            getFactorList(data, width, height, chartHyperlinked, color);
+            //getFactorsCat(data, width, height, chartHyperlinked, color);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
@@ -35,9 +41,21 @@ function getDataFactors(width, height, chartHyperlinked, color) {
     });
 }
 
+function getFactorList(data, width, height, chartHyperlinked, color) {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: true,
+        success: function (dataF) {
+            factorDB = dataF;
+            getFactorsCat (data, width, height, chartHyperlinked, color)
+        }
+    });
+}
+
 function getFactorsCat (data, width, height, chartHyperlinked, color) {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (categories) {
@@ -128,8 +146,28 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             textColor = "#000"
         }
 
+        let findFact = factorDB.find(function (element) {
+            return element.externalId === factors[i].id;
+        });
+
+        //filtering the appropriate categories
+        let factorCategories = categories.filter(function (cat) {
+            return cat.name === findFact.categoryName;
+        });
+
+        //ordering the result in descendent order
+        factorCategories = factorCategories.sort(function (a, b) {
+            return b.upperThreshold - a.upperThreshold;
+        });
+
+        //if findMet.categoryName is blank or contains a deleted category, the default category is painted
+        if (factorCategories.length === 0)
+            factorCategories = categories.filter(function (cat) {
+                return cat.name === DEFAULT_CATEGORY;
+            });
+
         // in case of factors we have categories
-        categories.forEach(function (category) {
+        factorCategories.forEach(function (category) {
             var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
             svg.append("path")
                 .datum({endAngle: threshold})

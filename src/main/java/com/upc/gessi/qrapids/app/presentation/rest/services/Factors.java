@@ -142,7 +142,8 @@ public class Factors {
                         factor.getDescription(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
-                        factor.getWeights());
+                        factor.getWeights(),
+                        factor.getCategoryName());
                 dtoFactor.setThreshold(factor.getThreshold());
                 dtoFactorsList.add(dtoFactor);
             }
@@ -164,7 +165,8 @@ public class Factors {
                         factor.getDescription(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
-                        factor.getWeights());
+                        factor.getWeights(),
+                        factor.getCategoryName());
             dtoFactor.setThreshold(factor.getThreshold());
             return dtoFactor;
         } catch (QualityFactorNotFoundException e) {
