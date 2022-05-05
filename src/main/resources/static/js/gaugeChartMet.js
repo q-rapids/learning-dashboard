@@ -142,14 +142,29 @@ function drawChartByFactor(metrics, container, width, height, categories) {
         labelF.textContent = factors[j].name;
         divF.appendChild(labelF);
 
+        var a=document.createElement('a')
+        a.classList.add("check")
+        a.setAttribute('data-tooltip', factors[j].description)
+
+        var tooltipdiv = document.createElement('div');
+        tooltipdiv.classList.add("tooltip");
         var iconF = document.createElement('img');
         iconF.class="icons";
         iconF.src="../icons/information.png";
-        iconF.title = factors[j].description;
+        //iconF.title = factors[j].description;
         iconF.width = 38;
         iconF.height = 25;
         iconF.style = "padding-left:15px;";
-        divF.appendChild(iconF);
+        //iconF.classList.add("check")
+
+
+        var spantootlip = document.createElement('span');
+        spantootlip.classList.add("tooltiptext");
+        spantootlip.innerHTML=factors[j].description;
+        tooltipdiv.appendChild(iconF)
+        tooltipdiv.appendChild(spantootlip)
+        a.appendChild(iconF)
+        divF.appendChild(a);
 
         gaugeChart.append(divF);
         for (i = 0; i < factors[j].metrics.length; ++i) {
