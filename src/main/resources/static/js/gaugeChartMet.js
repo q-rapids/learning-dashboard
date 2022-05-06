@@ -151,13 +151,10 @@ function drawChartByFactor(metrics, container, width, height, categories) {
         var iconF = document.createElement('img');
         iconF.class="icons";
         iconF.src="../icons/information.png";
-        //iconF.title = factors[j].description;
         iconF.width = 38;
         iconF.height = 25;
         iconF.style = "padding-left:15px;";
-        //iconF.classList.add("check")
-
-
+        
         var spantootlip = document.createElement('span');
         spantootlip.classList.add("tooltiptext");
         spantootlip.innerHTML=factors[j].description;
