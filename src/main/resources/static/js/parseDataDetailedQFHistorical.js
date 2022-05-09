@@ -14,7 +14,7 @@ var labels = [];
 var value = [];
 let orderedMetricsDB = [];
 var categories = [];
-
+var groupByFactor = false;
 var decisions = new Map();
 
 function getData() {

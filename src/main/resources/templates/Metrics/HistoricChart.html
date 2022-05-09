@@ -7,7 +7,16 @@
     <div th:replace="Fragments/Template :: logo"></div>
     <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
     <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
-    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <table style="width:100%">
+        <tr>
+            <td width="80%"><div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div></td>
+            <td width="20%">
+                <form style="display: flex; justify-content: flex-end; margin-right: 5px; font-size: 12px">
+                    <input type="checkbox" id="groupByFactorCheckbox" onclick="clickCheckbox()">&nbsp;Group by factor</input>
+                </form>
+            </td>
+        </tr>
+    </table>
     <br/>
     <br/>
     <h1 id="title" align="center"></h1>

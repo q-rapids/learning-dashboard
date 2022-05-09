@@ -5,12 +5,13 @@ var isdqf = false;
 
 var qualityModelSIMetrics = new Map();
 
+const DEFAULT_CATEGORY = "Default";
 //initialize data vectors
 var texts = [];
 var value = [];
 var labels = [];
 var ids = [];
-
+var groupByFactor = false;
 var categories = [];
 
 function getData() {

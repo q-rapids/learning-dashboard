@@ -310,6 +310,10 @@ function drawChart() {
         config.push(c);
     }
 
+    //threshold that marks when to change factor
+    let factorIndex = 0;
+    let factorThreshold = 0;
+
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
         var currentURL = window.location.href;
@@ -365,6 +369,32 @@ function drawChart() {
         ctx.width = 350;
         ctx.height = 350;
         ctx.style.display = "inline";
+
+        if(groupByFactor && i === factorThreshold) {
+            let factorId;
+            let factorName;
+            if(factorIndex < factors.length) {
+                factorId = factors[factorIndex].id;
+                factorName = factors[factorIndex].name;
+
+                factorThreshold += factors[factorIndex].metrics.length
+                factorIndex++;
+            }else{
+                factorId = "withoutfactor"
+                factorName = "Metrics not associated to any factor"
+            }
+            var divF = document.createElement('div');
+            divF.style.marginTop = "3em";
+            divF.style.marginBottom = "1em";
+
+            var labelF = document.createElement('label');
+            labelF.id = factorId;
+            labelF.textContent = factorName;
+            divF.appendChild(labelF);
+
+            document.getElementById("chartContainer").appendChild(divF)
+        }
+
         document.getElementById("chartContainer").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");

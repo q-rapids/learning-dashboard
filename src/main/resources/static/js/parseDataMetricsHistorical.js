@@ -11,6 +11,16 @@ if (getParameterByName('id').length !== 0) {
     url = parseURLComposed("../api/metrics/historical?profile="+profileId);
 }
 
+var groupByFactor;
+if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
+    sessionStorage.setItem("groupByFactor", "true");
+    groupByFactor = true;
+} else {
+    groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
+}
+let checkbox = document.getElementById("groupByFactorCheckbox");
+checkbox.checked = groupByFactor;
+
 //initialize data vectors
 var texts = [];
 var ids = [];
@@ -18,12 +28,20 @@ var value = [];
 var labels = [];
 var categories = [];
 var metricsDB = [];
+let factors = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
+
+function clickCheckbox(){
+    var checkbox = document.getElementById("groupByFactorCheckbox");
+    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    location.href = serverUrl + "/Metrics/HistoricChart";
+}
 
 function getData() {
     getDecisions();
     getMetricsDB();
+    getFactors();
     texts = [];
     ids = [];
     value = [];
@@ -46,7 +64,10 @@ function getData() {
             if (getParameterByName('id').length !== 0) {
                 data = response[0].metrics;
             }
-            sortDataAlphabetically(data);
+
+            if(!groupByFactor) sortDataAlphabetically(data);
+            else data = sortDataByFactor(data);
+
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -144,6 +165,33 @@ function sortDataAlphabetically (data) {
     data.sort(compare);
 }
 
+function sortDataByFactor(data) {
+    let resultData = []
+    let writtenIds = new Set;
+    for(let i = 0; i < factors.length; ++i){
+        for(let j = 0; j < factors[i].metrics.length; ++j){
+            let elem = data.find( e => e.id === factors[i].metrics[j].id);
+            resultData.push(elem);
+            writtenIds.add(elem.id);
+        }
+    }
+    writtenIds = Array.from(writtenIds);
+    let remainingMetrics = data.filter(x => !writtenIds.includes(x.id));
+
+    let uniqueRemainingMetrics = []
+    if(remainingMetrics.length !== 0) {
+        //deleting duplicates
+        let lastId = remainingMetrics[0].id;
+        uniqueRemainingMetrics.push(remainingMetrics[0]);
+        for (let i = 1; i < remainingMetrics.length; ++i) {
+            if (remainingMetrics[i].id !== lastId) uniqueRemainingMetrics.push(remainingMetrics[i]);
+            lastId = remainingMetrics[i].id
+        }
+    }
+
+    return resultData.concat(uniqueRemainingMetrics);
+}
+
 function getMetricsCategories () {
     jQuery.ajax({
         url: "../api/metrics/categories",
@@ -162,9 +210,28 @@ function getMetricsDB() {
         url: "../api/metrics",
         cache: false,
         type: "GET",
-        async: true,
+        async: false,
         success: function (dataDB) {
             metricsDB = dataDB;
+        }
+    });
+}
+
+function getFactors() {
+    let factorUrl;
+    if (getParameterByName('id').length !== 0)
+        factorUrl = parseURLComposed("../api/qualityFactors/metrics/current");
+    else
+        factorUrl = "../api/qualityFactors/metrics/current?profile=" + profileId
+    jQuery.ajax({
+        dataType: "json",
+        url: factorUrl,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (dataF) {
+            sortDataAlphabetically(dataF);
+            factors = dataF;
         }
     });
 }
