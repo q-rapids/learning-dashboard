@@ -4,11 +4,28 @@ var currentColor = "#696969";
 var strategicIndicators = [];
 var qualityFactors = [];
 var metrics = [];
+let metricsDB = [];
 var detailedCharts = [];
 var factorsCharts = [];
 var categories = [];
 
 var profileId = sessionStorage.getItem("profile_id");
+
+const DEFAULT_CATEGORY = "Default";
+
+function getMetricsWithCategory(){
+    $.ajax({
+        dataType: "json",
+        url: "../api/metrics",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (dataDB) {
+            metricsDB = dataDB;
+            getMetricsCategoriesAndShow();
+        }
+    });
+}
 
 function getAllMetrics(){
     var url = "../api/metrics/current?profile="+profileId;
@@ -17,7 +34,7 @@ function getAllMetrics(){
         type: "GET",
         success: function (response) {
             metrics = response;
-            getMetricsCategoriesAndShow();
+            getMetricsWithCategory();
         }
     });
 }
@@ -29,6 +46,7 @@ function getMetricsCategoriesAndShow () {
         type: "GET",
         success: function (response) {
             categories = response;
+            removeSpaces();
             showMetricsSliders();
         }
     });
@@ -58,25 +76,46 @@ function getFactorsCategories (titles, ids, labels, values) {
     });
 }
 
+function removeSpaces(){
+    categories.forEach( function (cat) {
+        cat.name = cat.name.replace(/ /g, '-')
+        cat.type = cat.type.replace(/ /g, '-')
+    })
+}
+
 function showMetricsSliders () {
     // Metrics categories
-    var rangeHighlights = [];
-    var start = 0;
-    categories.sort(function (a, b) {
-        return a.upperThreshold - b.upperThreshold;
+    let rangeHighlights = new Map;
+
+    //obtaining each category name
+    let categoryNames = [];
+    for (let i = 0; i < categories.length; ++i) categoryNames.push(categories[i].name);
+    categoryNames = new Set(categoryNames);
+
+    categoryNames.forEach( function (cat) {
+        let start = 0;
+        let aux = [];
+        let catList = categories.filter( function (elem) {
+            return elem.name === cat;
+        });
+        catList.sort(function (a, b) {
+            return a.upperThreshold - b.upperThreshold;
+        });
+
+        for (let i = 0; i < catList.length; i++) {
+            let end = catList[i].upperThreshold;
+            let offset = 0;
+            if (end < 1) offset = 0.02;
+            let range = {
+                start: start,
+                end: end + offset,
+                class: catList[i].name + catList[i].type
+            };
+            aux.push(range);
+            start = end;
+        }
+        rangeHighlights.set(cat, aux);
     });
-    for (var i = 0; i < categories.length; i++) {
-        var end = categories[i].upperThreshold;
-        var offset = 0;
-        if (end < 1) offset = 0.02;
-        var range = {
-            start: start,
-            end: end + offset,
-            class: categories[i].name
-        };
-        rangeHighlights.push(range);
-        start = end;
-    }
 
     var metricsDiv = $("#metricsSliders");
     metrics.forEach(function (metric) {
@@ -106,8 +145,16 @@ function showMetricsSliders () {
             step: 0.01,
             value: value
         };
+
+        let findMet = metricsDB.find(function (element) {
+            return element.externalId === metric.id;
+        });
+
+        let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
+        if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName.replace(/ /g, '-'));
+
         sliderConfig.rangeHighlights = [];
-        Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
+        Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
         // Add original value
         var start, end;
         if (metric.value === 0) {
@@ -132,14 +179,14 @@ function showMetricsSliders () {
     });
     $(".slider-rangeHighlight").css("background", currentColor);
     for (var j = 0; j < categories.length; j++) {
-        $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
+        $(".slider-rangeHighlight." + categories[j].name + categories[j].type).css("background", categories[j].color)
     }
     if (qualityFactors.length > 0)
         checkMetricsSliders();
 }
 
 function getDetailedStrategicIndicators () {
-        jQuery.ajax({
+    jQuery.ajax({
         dataType: "json",
         url: "../api/strategicIndicators/qualityFactors/current?profile="+profileId,
         cache: false,
@@ -385,7 +432,12 @@ function showFactors (titles, ids, labels, values) {
             data: values[i],
             fill: false
         });
-        var cat = categories;
+
+        let catName = getFactorCategory(qualityFactors[i].metrics);
+        let cat = categories.filter( function (c) {
+            return c.name === catName;
+        });
+
         cat.sort(function (a, b) {
             return b.upperThreshold - a.upperThreshold;
         });
@@ -455,6 +507,25 @@ function showFactors (titles, ids, labels, values) {
         factorsCharts.push(chart);
         window.myLine = chart;
     }
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factors) {
+    let f1 = metricsDB.find( function (elem) {
+        return elem.name === factors[0].name
+    });
+
+    if (factors.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factors.length; ++i){
+        let f2 = metricsDB.find( function (elem) {
+            return elem.name === factors[i].name
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 $('#apply').click(function () {

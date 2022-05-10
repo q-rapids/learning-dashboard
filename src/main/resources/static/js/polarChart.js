@@ -43,22 +43,33 @@ function drawChart() {
         });
         // TODO categories come diferent in Stacked Data parse
         console.log(categoriesForPolar);
-        for (var k = categoriesForPolar.length-1; k >= 0; --k) {
-            var fill = categoriesForPolar.length-1-k;
-            if (k == categoriesForPolar.length-1) fill = true;
+
+        let cat;
+        if (typeof metricIds !== 'undefined') {
+            let catName = getFactorCategory(metricIds[i]);
+            cat = categoriesForPolar.filter(function (elem) {
+                return elem.name === catName;
+            });
+        } else {
+            cat = categoriesForPolar;
+        }
+
+        for (var k = cat.length-1; k >= 0; --k) {
+            var fill = cat.length-1-k;
+            if (k == cat.length-1) fill = true;
             // TODO  categories dataset backgroundColor a param = 0.0 -> no fill
             dataset.push({
-                label: categoriesForPolar[k].name,
+                label: cat[k].name,
                 borderWidth: 2,
-                backgroundColor: hexToRgbA(categoriesForPolar[k].color, 0.0),
-                borderColor: hexToRgbA(categoriesForPolar[k].color, 1),
+                backgroundColor: hexToRgbA(cat[k].color, 0.0),
+                borderColor: hexToRgbA(cat[k].color, 1),
                 pointHitRadius: 0,
                 pointHoverRadius: 0,
                 pointRadius: 0,
                 pointBorderWidth: 0,
                 pointBackgroundColor: 'rgba(0, 0, 0, 0)',
                 pointBorderColor: 'rgba(0, 0, 0, 0)',
-                data: [].fill.call({ length: labels[i].length }, categoriesForPolar[k].upperThreshold),
+                data: [].fill.call({ length: labels[i].length }, cat[k].upperThreshold),
                 fill: fill
             })
         }
@@ -145,6 +156,25 @@ function drawChart() {
             }
         }
     }
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factors) {
+    let f1 = metricsDB.find( function (elem) {
+        return elem.externalId === factors[0]
+    });
+
+    if (factors.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factors.length; ++i){
+        let f2 = metricsDB.find( function (elem) {
+            return elem.externalId === factors[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 function addWarning(div, message) {

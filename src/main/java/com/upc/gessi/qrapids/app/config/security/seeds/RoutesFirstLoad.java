@@ -36,6 +36,34 @@ public class RoutesFirstLoad {
 
         // REST - Strategic indicators
 
+        // Changed to the routes the user can NOT acces
+        routes.add( new Route( "REST : Strategic Indicators - Prediction Chart", "/StrategicIndicators/PredictionChart") );
+        routes.add( new Route( "REST : Detailed Strategic Indicators - Prediction Chart", "/DetailedStrategicIndicators/PredictionChart") );
+        routes.add( new Route( "REST : Quality Factors - Prediction Chart", "/QualityFactors/PredictionChart") );
+        routes.add( new Route( "REST : Detailed Quality Factors - Prediction Chart", "/DetailedQualityFactors/PredictionChart") );
+        routes.add( new Route( "REST : Metrics - Prediction Chart", "/Metrics/PredictionChart") );
+
+        routes.add( new Route( "REST : Strategic Indicators - Current Evaluation", "/QualityRequirements") );
+
+        routes.add( new Route( "REST : Decisions", "/Decisions") );
+
+        routes.add( new Route( "REST : Reporting", "/Reporting") );
+
+        routes.add( new Route( "REST : Phases", "/Phases") );
+
+        routes.add( new Route( "REST : Products - Configuration", "/Products/Configuration") );
+        routes.add( new Route( "REST : Strategic Indicators - Configuration", "/StrategicIndicators/Configuration") );
+        routes.add( new Route( "REST : Quality Factors - Configuration", "/QualityFactors/Configuration") );
+        routes.add( new Route( "REST : Metrics - Configuration", "/Metrics/Configuration") );
+        routes.add( new Route( "REST : Metrics - Configuration", "/Metrics/Configuration#loaded") );
+        routes.add( new Route( "REST : Categories - Configuration", "/Categories/Configuration") );
+        routes.add( new Route( "REST : Profiles - Configuration", "/Profiles/Configuration") );
+        routes.add( new Route( "REST : QRPatterns - Configuration", "/QRPatterns/Configuration") );
+        routes.add( new Route( "REST : profile", "/profile") );
+        routes.add( new Route( "REST : users", "/users") );
+
+
+        /*
         routes.add( new Route( "REST : Strategic Indicators - Current Evaluation", "/CurrentEvaluation") );
         routes.add( new Route( "REST : Strategic Indicators - Historical Data", "/HistoricalData") );
         routes.add( new Route( "REST : Strategic Indicators - Detailed Strategic Indicators", "/DetailedStrategicIndicators") );
@@ -77,7 +105,7 @@ public class RoutesFirstLoad {
         routes.add( new Route( "User Groups Administration", "/usergroups/*") );
 
         // User profile viewer and editable content
-        routes.add( new Route( "User edit profile", "/profile/*", true) );
+        routes.add( new Route( "User edit profile", "/profile/*", true) );*/
 
         for( Route route : routes ) {
             Route curr = this.routeRepository.findByName( route.getName() );

@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.web.controller.Auth;
 
+import com.upc.gessi.qrapids.app.config.ActionLogger;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Question;
@@ -7,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -16,11 +18,16 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
+import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.HEADER_STRING;
 
 /**
  * Authentication Controller
@@ -47,6 +54,8 @@ public class AuthController {
     private AuthTools authTools;
     private long FirstUserRequired = 0;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private Logger logger = Logger.getLogger("authentication");
+
 
     public AuthController(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -66,14 +75,19 @@ public class AuthController {
 
         if( users == this.FirstUserRequired ) {
 
-            ModelAndView view =  new ModelAndView("Auth/FirstLoad");
+            ModelAndView view = new ModelAndView("Auth/FirstLoad");
 
             view.addObject(QUESTIONS, this.questionRepository.findAll());
             view.addObject(APPUSER, new AppUser());
-            view.addObject("all",true);
+            view.addObject("all", true);
 
             return view;
 
+        }
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
         }
 
         // Auth client
@@ -107,10 +121,23 @@ public class AuthController {
 	@GetMapping("/logout_user")
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 
+        String header = request.getHeader(HEADER_STRING);
+        String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
+        AppUser user = null;
+        user = this.userRepository.findByUsername( this.authTools.getUserToken( cookie_token ) );
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
 		Cookie cookie = new Cookie(COOKIE_STRING, null); // Not necessary, but saves bandwidth.
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
 		response.addCookie(cookie);
+
+        ActionLogger al = new ActionLogger();
+        al.traceExitApp(user.getUsername());
+
+        logger.info("Log out: " + user.getUsername() + " " + now);
 
 		return "redirect:/login";
 	}
@@ -204,8 +231,8 @@ public class AuthController {
             // Join user to group to the default group, if the aplication doesn't haver default group, is admin.
             user.setAdmin( false );
             user.setUserGroup( this.userGroupRepository.findByDefaultGroupIsTrue() );
-        } else {
-            user.setAdmin( true );
+        } else { // diria que aixo es pot treure
+            if(user.getAdmin()) user.setAdmin( true );
         }
 
         try{

@@ -5,6 +5,8 @@ import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 @Entity
@@ -12,7 +14,7 @@ import java.util.List;
 public class AppUser implements Serializable{
 
     // SerialVersion UID
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 12L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +42,14 @@ public class AppUser implements Serializable{
     @Column(name="question")
     private String question;
 
-	public AppUser() { }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable( name = "user_project",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "project_id") })
+    private Set<Project> allowedProjects = new HashSet<Project>(0);
+
+	public AppUser() {
+    }
 
     public AppUser(String username, String email, boolean admin, String password, UserGroup userGroup, Question appuser_question, String question) {
         this.username = username;
@@ -91,6 +100,10 @@ public class AppUser implements Serializable{
         this.question = question;
     }
 
+    public void addAllowedProjects(Project project) {this.allowedProjects.add(project);}
+
+    public void removeAllAllowedProjects() {this.allowedProjects.clear();}
+
     public Long getId() {
         return id;
     }
@@ -111,6 +124,10 @@ public class AppUser implements Serializable{
 
 	    return password;
 
+    }
+
+    public Set<Project> getAllowedProjects() {
+        return allowedProjects;
     }
 
     public UserGroup getUserGroup() {

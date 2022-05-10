@@ -18,6 +18,7 @@ var value = [];
 var labels = [];
 var categories = [];
 var metricsDB = [];
+var orderedMetricsDB = [];
 var decisions = new Map();
 
 function getData() {
@@ -120,9 +121,18 @@ function getData() {
                     val.push(decisionsIgnore);
                 value.push(val);
             }
+            sortMetricsDB();
             getMetricsCategories();
         }
     });
+}
+
+function sortMetricsDB () {
+    ids.forEach( function (id) {
+        orderedMetricsDB.push(
+            metricsDB.find(elem => elem.externalId === id)
+        )
+    })
 }
 
 function sortDataAlphabetically (data) {

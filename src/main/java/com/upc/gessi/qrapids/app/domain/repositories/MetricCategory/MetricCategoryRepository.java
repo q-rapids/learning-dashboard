@@ -8,4 +8,11 @@ import java.util.List;
 public interface MetricCategoryRepository extends CrudRepository<MetricCategory, Long> {
 
     List<MetricCategory> findAllByOrderByUpperThresholdAsc();
+
+    Boolean existsByName(String name);
+
+    List<MetricCategory> findAllByName(String name);
+
+    MetricCategory findByName(String name);
+
 }

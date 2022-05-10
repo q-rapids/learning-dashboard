@@ -31,10 +31,6 @@
 <script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChartMet.js}"></script>
 <script>
     window.onload = function() {
-        var groupByFactor = new Boolean(sessionStorage.getItem("groupByFactor"));
-        if (groupByFactor.valueOf() == true) {
-            document.getElementById("groupByFactorCheckbox").setAttribute("checked","checked");
-        }
         getData(200, 200, true);
     };
 </script>

@@ -1,14 +1,16 @@
 package com.upc.gessi.qrapids.app.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upc.gessi.qrapids.app.config.ActionLogger;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -17,14 +19,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Logger;
 
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.EXPIRATION_TIME;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.HEADER_STRING;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.SECRET;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.TOKEN_PREFIX;
-import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
+import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
 
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -100,7 +101,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// Token creation
 		String token = Jwts.builder()
 				.setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_JWT_TOKEN_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
 				.compact();
 
@@ -114,10 +115,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Cookie qrapids_token_client = new Cookie( COOKIE_STRING, token);
 
 			// Configuration
-			qrapids_token_client.setHttpOnly( true );
-			qrapids_token_client.setMaxAge(  (int) EXPIRATION_TIME / 1000 );
+			// Changed HttpOnly to false to read it from the application
+			qrapids_token_client.setHttpOnly( false );
+			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
 
             res.addCookie( qrapids_token_client );
+
+			ActionLogger al = new ActionLogger();
+			al.traceEnterApp(((User) auth.getPrincipal()).getUsername());
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
 

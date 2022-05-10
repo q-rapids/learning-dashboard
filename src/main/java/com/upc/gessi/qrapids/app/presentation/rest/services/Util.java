@@ -1,21 +1,29 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
+import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class Util {
+
+    @Autowired
+    private UsersController usersController;
 
     @Value("${rawdata.dashboard}")
     private String rawdataDashboard;
@@ -131,6 +139,42 @@ public class Util {
             return "{}";
         } else {
             return "{\"userName\":\"" + authentication.getName() + "\"}";
+        }
+    }
+
+    @GetMapping("/api/allowedprojects")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getUserFromToken(@RequestParam(value = "token", required = false) String token, @RequestParam(value = "id", required = false) Long id) {
+        try {
+            List<Project> l = new ArrayList<>(usersController.getAllowedProjects(token,id));
+            List list = new ArrayList<String>();
+            for(int i=0; i<l.size(); ++i) {
+                list.add(l.get(i).getExternalId());
+            }
+            return list;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PutMapping("/api/allowedprojects")
+    @ResponseStatus(HttpStatus.OK)
+    public Long updateUserAllowedProjects(@RequestParam(value = "id", required = false) Long id, @RequestBody List<Long> projectList )  {
+        try {
+            usersController.updateAllowedProjects(projectList, id);
+            return 0L;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/isAdmin")
+    @ResponseStatus(HttpStatus.OK)
+    public Boolean getIfUserisAdminFromToken(@RequestParam(value = "token", required = false) String token) {
+        try {
+            return usersController.getIfAdmin(token);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }

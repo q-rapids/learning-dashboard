@@ -1,5 +1,28 @@
 var currentURL = window.location.href;
 var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
+var lastresfresh = new Date();
+lastresfresh= lastresfresh.getTime();
+getIfUserIsAdmin();
+refreshcookie();
+
+window.addEventListener('click', (event) => {
+    refreshcookie()
+})
+
+function refreshcookie() {
+    const d = new Date();
+    if (d.getTime()-lastresfresh>300000 && d.getTime()-lastresfresh<900000) {
+        lastresfresh= d.getTime();
+        token = getCookie("xFOEto4jYAjdMeR3Pas6_");
+        d.setTime(d.getTime() + (900 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = "xFOEto4jYAjdMeR3Pas6_" + "=" + token + ";" + expires + ";path=/";
+    }
+    if(d.getTime()-lastresfresh>=900000) {
+        window.location.reload();
+    }
+}
+
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -21,6 +44,46 @@ if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
 else {
     connect();
     checkAlertsPending();
+}
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function getIfUserIsAdmin() {
+
+    token = getCookie("xFOEto4jYAjdMeR3Pas6_");
+    if(token!="") {
+        jQuery.ajax({
+            dataType: "json",
+            url: "../api/isAdmin?token="+token,
+            cache: false,
+            type: "GET",
+            async: false,
+            success: function (data) {
+                sessionStorage.setItem("isAdmin", data);
+                console.log("DATA:" + data);
+                console.log(typeof(data));
+                return data;
+            },
+            error: function() {
+                console.log("ERROR");
+            }
+        });
+    }
+    return false;
 }
 
 function getUserName () {
@@ -110,6 +173,7 @@ if (!(products = sessionStorage.getItem("products"))) {
 }
 if (!(configuration = sessionStorage.getItem("configuration"))) {
     configuration = "StrategicIndicators";
+    if(configuration=="profiles") configuration = "StrategicIndicators";
 }
 if (!(simulation = sessionStorage.getItem("simulation"))) {
     simulation = "Factors";
@@ -444,7 +508,7 @@ $("#QRSimulation").attr("href", serverUrl + "/Simulation/QR");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
 
-$("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
+ $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
 
 $("#Decisions").attr("href", serverUrl + "/Decisions");
 
@@ -459,7 +523,11 @@ $("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
 
 $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
 
-$("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
+if(configuration=="profile") $("#Configuration").attr("href", serverUrl + "/profile" );
+
+else if(configuration=="users") $("#Configuration").attr("href", serverUrl + "/users" );
+
+else $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
 
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 
@@ -482,6 +550,8 @@ $("#usersConfig").attr("href", serverUrl + "/users");
 $("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
 
 $("#Reporting").attr("href", serverUrl + "/Reporting");
+
+
 
 $("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
 $("#LogoutProfileConfig").click(function () {
@@ -694,4 +764,17 @@ window.onload = function() {
         if (!window.location.href.match("/QualityAlerts"))  // correct alerts new status bug
             window.location.reload();
     }
+}
+
+var isAdmin=sessionStorage.getItem("isAdmin");
+console.log(typeof(isAdmin));
+if(isAdmin=="false") {
+    $("#Configuration").hide();
+    $("#RawDataAssessment").hide();
+    $("#PhasesAssessment").hide();
+    $("#QualityRequirements").hide();
+    $("#Decisions").hide();
+    $("#Prediction").hide();
+    $("#Reporting").hide();
+    $("#MyProfile").hide();
 }
