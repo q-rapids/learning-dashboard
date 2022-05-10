@@ -57,13 +57,6 @@ public class IndexController implements ErrorController {
         if( "401".equals( code ) )
             view = new ModelAndView("redirect:/login?error=401+Authentication+Failed:+Bad+credentials");
         if( "403".equals( code ) ) {
-            String header = request.getHeader(HEADER_STRING);
-            String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
-            AppUser user = null;
-            user = this.userRepository.findByUsername( this.authTools.getUserToken( cookie_token ) );
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            logger.info("Log out: " + user.getUsername() + " " + now);
             view = new ModelAndView("redirect:/login?error=Session+timeout");
             return view;
         }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+     <property name="LOGS_HOME" value="logs/app.log" />
+
+     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_HOME}</file>
+         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+             <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+             <!-- each archived file, size max 10MB -->
+             <maxFileSize>20MB</maxFileSize>
+             <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+             <totalSizeCap>20GB</totalSizeCap>
+             <!-- 60 days to keep -->
+             <maxHistory>60</maxHistory>
+         </rollingPolicy>
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS},%msg%n</pattern>
+        </encoder>
+         <filter class="com.upc.gessi.qrapids.app.config.SampleFilter"/>
+     </appender>
+
+    <root level="debug">
+        <appender-ref ref="FILE-ROLLING" />
+    </root>
+</configuration>
