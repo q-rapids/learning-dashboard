@@ -256,7 +256,7 @@ function drawChart() {
             if (typeof orderedMetricsDB !== 'undefined') {
                 if (orderedMetricsDB.length !== 0) {
                     metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedMetricsDB[i].categoryName;
+                        if (typeof orderedMetricsDB[i] !== 'undefined') return cat.name === orderedMetricsDB[i].categoryName;
                     });
                 } else {
                     metricCategory = categories.filter(function (cat) {

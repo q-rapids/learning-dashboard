@@ -202,6 +202,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -232,6 +233,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -383,6 +386,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -417,6 +421,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -567,6 +573,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -603,6 +610,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -785,6 +794,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(f.getId())))
                 .andExpect(jsonPath("$[0].name", is(f.getName())))
+                .andExpect(jsonPath("$[0].description", is(f.getDescription())))
                 .andExpect(jsonPath("$[0].date[0]", is(f.getDate().getYear())))
                 .andExpect(jsonPath("$[0].date[1]", is(f.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].date[2]", is(f.getDate().getDayOfMonth())))
@@ -821,6 +831,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value.first")
@@ -875,6 +887,7 @@ public class FactorEvaluationTest {
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
+        String factorDescription = "Performance of the tests";
         String projectExternalId = "test";
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
@@ -895,6 +908,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(factorId)))
                 .andExpect(jsonPath("$[0].name", is(factorName)))
+                .andExpect(jsonPath("$[0].description", is(factorDescription)))
                 .andExpect(jsonPath("$[0].date", is(nullValue())))
                 .andExpect(jsonPath("$[0].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].value_description", is(nullValue())))
@@ -932,6 +946,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -986,6 +1002,7 @@ public class FactorEvaluationTest {
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
+        String factorDescription = "Performance of the tests";
         String projectExternalId = "test";
         DTOFactorEvaluation factorEvaluation = domainObjectsBuilder.buildDTOFactor();
 
@@ -1022,6 +1039,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(factorId)))
                 .andExpect(jsonPath("$[0].name", is(factorName)))
+                .andExpect(jsonPath("$[0].description", is(factorDescription)))
                 .andExpect(jsonPath("$[0].date", is(nullValue())))
                 .andExpect(jsonPath("$[0].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].value_description", is(nullValue())))
@@ -1061,6 +1079,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
