@@ -2,8 +2,6 @@ var isdsi = false;
 var isqf = true;
 var isdqf = false;
 
-const DEFAULT_CATEGORY = "Default"
-
 var qualityModelSIMetrics = new Map();
 
 var url;

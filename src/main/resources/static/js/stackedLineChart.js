@@ -250,46 +250,35 @@ function drawChart() {
         //Add category lines
         if (typeof categories !== 'undefined') {
             var annotations = [];
-
-            let metricCategory;
-
-            if (typeof orderedMetricsDB !== 'undefined') {
-                if (orderedMetricsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedMetricsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
+            var lineHighCategory = {
+                type: 'line',
+                drawTime: 'beforeDatasetsDraw',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: categories[1].upperThreshold,
+                borderColor: categories[0].color,
+                borderWidth: 1,
+                label: {
+                    enabled: false,
+                    content: categories[0].name
                 }
-            } else {
-                metricCategory = categories;
-            }
+            };
+            annotations.push(lineHighCategory);
 
-            metricCategory.sort( function (cat1, cat2) {
-                return cat1.upperThreshold - cat2.upperThreshold;
-            });
-
-            let start = 0;
-            metricCategory.forEach( function (category) {
-                let end = category.upperThreshold;
-                let lineHighCategory = {
-                    type: 'line',
-                    drawTime: 'beforeDatasetsDraw',
-                    mode: 'horizontal',
-                    scaleID: 'y-axis-0',
-                    value: (start + end) / 2,
-                    borderColor: category.color,
-                    borderWidth: 1,
-                    label: {
-                        enabled: false,
-                        content: category.name
-                    }
-                };
-                start = end;
-                annotations.push(lineHighCategory);
-            });
+            var lineLowCategory = {
+                type: 'line',
+                drawTime: 'beforeDatasetsDraw',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: categories[categories.length - 1].upperThreshold,
+                borderColor: categories[categories.length - 1].color,
+                borderWidth: 1,
+                label: {
+                    enabled: false,
+                    content: categories[categories.length - 1].name
+                }
+            };
+            annotations.push(lineLowCategory);
 
             c.options.annotation.annotations = annotations;
         }

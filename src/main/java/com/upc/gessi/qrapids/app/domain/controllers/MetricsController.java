@@ -13,9 +13,7 @@ import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -90,77 +88,25 @@ public class MetricsController {
             Project project = projectController.findProjectByExternalId(prjExternalID);
             Metric metricsSaved = metricRepository.findByExternalIdAndProjectId(metric.getId(),project.getId());
             if (metricsSaved == null) {
-                Metric newMetric = new Metric(metric.getId(), metric.getName(),metric.getDescription(), project, "Default");
+                Metric newMetric = new Metric(metric.getId(), metric.getName(),metric.getDescription(), project);
                 metricRepository.save(newMetric);
             }
         }
     }
 
-    public List<MetricCategory> getMetricCategories (String name) {
+    public List<MetricCategory> getMetricCategories () {
         List<MetricCategory> metricCategoryList = new ArrayList<>();
-        Iterable<MetricCategory> metricCategoryIterable;
-        if(name!=null) metricCategoryIterable = metricCategoryRepository.findAllByName(name);
-        else metricCategoryIterable = metricCategoryRepository.findAll();
+        Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAll();
         metricCategoryIterable.forEach(metricCategoryList::add);
         return metricCategoryList;
     }
 
-    public List<String> getAllNames() {
-        //If name doesnt exists returns true
-        Iterable<MetricCategory> categories = metricCategoryRepository.findAll();
-        List<String> names = new ArrayList<String>();
-        for(MetricCategory m : categories)  {
-            if(!names.contains(m.getName())) names.add(m.getName());
-        }
-        return names;
-
-    }
-
-    public void deleteMetricCategory(String name) throws CategoriesException {
-
-        Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAllByName(name);
-        for(MetricCategory m : metricCategoryIterable)  {
-            metricCategoryRepository.deleteById(m.getId());
-        }
-
-    }
-
-    public void updateMetricCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
-
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
-        deleteMetricCategory(name);
-        newMetricCategories(categories, name);
-    }
-
-    public boolean CheckIfNameExists(String name) {
-        //If name doesnt exists returns true
-        return metricCategoryRepository.existsByName(name);
-    }
-
-    public boolean checkIfCategoriesHasRepeats(List<Map<String, String>> categories) {
-        List<String> repeated = new ArrayList<>();
-        for (Map<String, String> c : categories) {
-            if (repeated.contains(c.get("type"))) {
-                return true;
-            }
-            repeated.add(c.get("type"));
-        }
-        return false;
-    }
-
-    public void newMetricCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
-
-        boolean exists=CheckIfNameExists(name);
-        if(exists) throw new CategoriesException();
-
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
-
-        if (categories.size() > 2) {
-            //metricCategoryRepository.deleteAll();
+    public void newMetricCategories (List<Map<String, String>> categories) throws CategoriesException {
+        if (categories.size() > 1) {
+            metricCategoryRepository.deleteAll();
             for (Map<String, String> c : categories) {
                 MetricCategory metricCategory = new MetricCategory();
-                metricCategory.setName(name);
-                metricCategory.setType(c.get("type"));
+                metricCategory.setName(c.get("name"));
                 metricCategory.setColor(c.get("color"));
                 float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
                 metricCategory.setUpperThreshold(upperThreshold/100f);
@@ -220,19 +166,14 @@ public class MetricsController {
         return qmaMetrics.getAllMetrics(projectExternalId, profileId);
     }
 
-    public Metric editMetric(Long id, String threshold, String webUrl, String categoryName) throws MetricNotFoundException {
+    public Metric editMetric(Long id, String threshold, String webUrl) throws MetricNotFoundException {
         Metric metric = getMetricById(id);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             metric.setThreshold(Float.parseFloat(threshold));
         else
             metric.setThreshold(null);
-        metric.setCategoryName(categoryName);
         metric.setWebUrl(webUrl); // set kibana url
         metricRepository.save(metric);
         return metric;
-    }
-
-    public List<MetricCategory> getMetricCategories() {
-        return (List<MetricCategory>) metricCategoryRepository.findAll();
     }
 }

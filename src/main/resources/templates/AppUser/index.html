@@ -93,14 +93,44 @@
 
                     <article class="text-frame" style="padding-top:1em;margin-rigth:1em;">
 
-                        <h3>Create User</h3>
+                        <h3>Register</h3>
 
                         <div class="divisor-black"></div>
 
                         <br/>
 
-                        <div th:replace="Fragments/RegisterForm :: form(all=true, username_mod=false, create_user_administration=true)"></div>
+                        <form class="full-width" th:object="${user}" th:action="@{/users/}" method="POST">
 
+                            <div class="form-group">
+                                <label for="username">Username *</label>
+                                <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email address *</label>
+                                <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" />
+                            </div>
+
+                            <!--div class="checkbox">
+                                <label>
+                                    <input type="checkbox" th:name="admin" th:id="admin" th:field="*{admin}" /> Admin
+                                </label>
+                            </div-->
+
+                            <!--div id="group_option" class="form-group">
+                                <label for="user_group">User group</label>
+                                <select class="selectpicker" th:name="userGroup" data-width="50%">
+
+                                    <option th:each="userGroup : ${ userGroups }"
+                                            th:value="${userGroup.getId()}"
+                                            th:text="${userGroup.getName()}"></option>
+
+                                </select>
+                            </div-->
+
+
+                            <button type="submit" class="btn btn-border-black">Submit</button>
+                        </form>
 
                     </article>
 
@@ -156,51 +186,6 @@
         e.preventDefault()
         $(this).tab('show')
     })
-
-</script>
-
-<script>
-
-
-    $("#form_password_text").hide();
-    // Handlers
-    $('.nav,ul li a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-    })
-
-    function formValidation ( event ) {
-
-        var pass = $('#password').val(),
-            confirmation = $('#password_confirmation').val();
-
-        if (! ( pass === confirmation ) ) {
-
-            $("#form_password").addClass("has-error");
-            $("#form_password_text").show();
-            $("#form_confirmation").addClass("has-error");
-
-            return false;
-        }
-
-        return true;
-    }
-
-    $("#admin").prop('checked', false);
-    $("#admin").prop('value', false);
-
-    const someCheckbox = document.getElementById('admin');
-
-    someCheckbox.addEventListener('change', e => {
-        if(e.target.checked === true) {
-            $("#admin").prop('value', false);
-            $("#admin").prop('checked', false);
-        }
-        if(e.target.checked === false) {
-            $("#admin").prop('value', true);
-            $("#admin").prop('checked', true);
-        }
-    });
 
 </script>
 

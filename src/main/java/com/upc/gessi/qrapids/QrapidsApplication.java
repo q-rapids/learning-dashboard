@@ -81,7 +81,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		// Check the categories in the SQL database and if they are empty create the default ones
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
 		List<QFCategory> factorCategoryList = context.getBean(FactorsController.class).getFactorCategories();
-		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories("Default");
+		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
 
 		try {
 			// Declare default categories
@@ -110,30 +110,9 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			if (factorCategoryList.size() == 0){
 				context.getBean(FactorsController.class).newFactorCategories(categories);
 			}
-			// Declare and save Metric categories with new attributes
-
-			categories = new ArrayList<>();
-			cat1 = new HashMap<>();
-			cat1.put("color", "#00ff00");
-			cat1.put("type", "Good");
-			cat1.put("name", "Default");
-			cat1.put("upperThreshold", "100");
-			categories.add(cat1);
-			cat2 = new HashMap<>();
-			cat2.put("color", "#ff8000");
-			cat2.put("type", "Normal");
-			cat2.put("name", "Default");
-			cat2.put("upperThreshold", "67");
-			categories.add(cat2);
-			cat3 = new HashMap<>();
-			cat3.put("color", "#ff0000");
-			cat3.put("type", "Bad");
-			cat3.put("name", "Default");
-			cat3.put("upperThreshold", "33");
-			categories.add(cat3);
-
+			// Save Metric categories
 			if (metricCategoryList.size() == 0) {
-				context.getBean(MetricsController.class).newMetricCategories(categories, "Default");
+				context.getBean(MetricsController.class).newMetricCategories(categories);
 			}
 		} catch (Exception e) {
 			Logger logger = LoggerFactory.getLogger(Alerts.class);

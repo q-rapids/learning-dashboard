@@ -5,12 +5,8 @@ import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
-import com.upc.gessi.qrapids.app.domain.repositories.Route.RouteRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,14 +15,10 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
@@ -38,22 +30,17 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UserRepository userRepository;
 
-    private RouteRepository routeRepository;
-
 	private boolean DEBUG = false;
 
-	private Logger oldlogger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
-
-    private java.util.logging.Logger logger = java.util.logging.Logger.getLogger("navigation");
+	private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
 	public JWTAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
 	}
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager, UserRepository userRepository, RouteRepository routeRepository ) {
+    public JWTAuthorizationFilter(AuthenticationManager authManager, UserRepository userRepository ) {
         super(authManager);
         this.userRepository = userRepository;
-        this.routeRepository = routeRepository;
     }
 
 	/**
@@ -74,9 +61,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         this.authTools = new AuthTools();
         this.routeFilter = new RouteFilter();
         // is an External request? true -> WebPage : false -> external
-        // boolean origin = this.authTools.originRequest( req );
-
-
+        //boolean origin = this.authTools.originRequest( req );
 
         // Authorization object
 		UsernamePasswordAuthenticationToken authentication;
@@ -86,7 +71,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String cookie_token = this.authTools.getCookieToken( req, COOKIE_STRING );
         String token = "";
 
-        if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ) {
+        if ( cookie_token != null ) {
             // WeaApp Client internal application
 
             authentication = this.authTools.tokenValidation( cookie_token );
@@ -140,19 +125,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             user = this.userRepository.findByUsername( this.authTools.getUserToken( token ) );
 
 
-            if ( user!=null && user.getAdmin() )
+            if ( user.getAdmin() )
                 isAllowed = true;
 
 
             // Test elements and try to verify if the current route is allowed for the current user
             else{
-                //isAllowed = true;
                 // Cast set object ot List of AppUSers
-                // Old version that checks if the route is allowed for a not admin user
-                //routes.addAll( user.getUserGroup().getRoutes() );
-                //isAllowed = this.routeFilter.filterShiled( origin_request, token, routes );
-                // New version.
-                isAllowed = !this.routeFilter.filterShiled( origin_request, token, routeRepository.findAll());
+                routes.addAll( user.getUserGroup().getRoutes() );
+                isAllowed = this.routeFilter.filterShiled( origin_request, token, routes );
             }
 
         }
@@ -166,10 +147,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         } else {
 
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
             logMessage(origin_request + " <- -> [Final status] : " + isAllowed);
-            if(user!=null)logger.info(user.getUsername() + " goes to " + origin_request+ " " + now);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);
@@ -180,7 +158,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private void logMessage (String message) {
         if (this.DEBUG)
-            oldlogger.info(message);
+            logger.info(message);
     }
 
 	/**

@@ -8,8 +8,6 @@ if (serverUrl) {
 var isdsi = false;
 var colorList = ['rgba(1, 119, 166, 0.6)', 'rgba(255, 153, 51, 0.6)', 'rgba(51, 204, 51, 0.6)', 'rgba(255, 80, 80, 0.6)', 'rgba(204, 201, 53, 0.6)', 'rgba(192, 96, 201, 0.6)'];
 
-const DEFAULT_CATEGORY = "Default"
-
 //initialize data vectors
 var ids = [];
 var colorsForPolar = [];
@@ -18,8 +16,6 @@ var labels = [];
 var weights = [];
 var weightedValues = [];
 var assessmentValues = [];
-let metricIds = [];
-let metricsDB = [];
 
 var categories = [];
 var categoriesForPolar = [];
@@ -38,7 +34,6 @@ function getData() {
 
     getCategories();
     getMetricsCategories();
-    getMetricsWithCategory();
 
     //get data from API
     jQuery.ajax({
@@ -66,7 +61,6 @@ function getData() {
                             var w = weights.push([]);
                             var wv = weightedValues.push([]);
                             var av = assessmentValues.push([]);
-                            let m = metricIds.push([]);
                             for (k = 0; k < data[i].factors[j].metrics.length; ++k) { // while metrics
                                 if (data[i].factors[j].metrics[k].name.length < 27)
                                     labels[l - 1].push(data[i].factors[j].metrics[k].name);
@@ -76,7 +70,6 @@ function getData() {
                                 weightedValues[wv - 1].push(data[i].factors[j].metrics[k].weightedValue);
                                 assessmentValues[av - 1].push(data[i].factors[j].metrics[k].assessmentValue);
                                 colorsForPolar[c - 1].push(colorList[k%colorList.length]);
-                                metricIds[m - 1].push(data[i].factors[j].metrics[k].id);
                             }
                         }
                     }
@@ -164,19 +157,5 @@ function getCategories() {
             color: cat[cat.length-1].color, // low category
             pos: cat[cat.length-1].upperThreshold,
         });
-    });
-}
-
-function getMetricsWithCategory(){
-    $.ajax({
-        dataType: "json",
-        url: "../api/metrics",
-        cache: false,
-        type: "GET",
-        async: true,
-        success: function (dataDB) {
-            metricsDB = dataDB;
-            drawChart();
-        }
     });
 }

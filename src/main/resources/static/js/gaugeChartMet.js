@@ -10,8 +10,6 @@ var id = false;
 
 var factors;
 
-const DEFAULT_CATEGORY = "Default";
-
 var url;
 if (getParameterByName('id').length !== 0) {
     id = true;
@@ -25,20 +23,14 @@ var metricsDB = [];
 
 var urlLink;
 
-var groupByFactor;
-if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
-    sessionStorage.setItem("groupByFactor", "true");
-    groupByFactor = true;
-} else {
-    groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
-}
-let checkbox = document.getElementById("groupByFactorCheckbox");
-checkbox.checked = groupByFactor;
+var groupByFactor = new Boolean(sessionStorage.getItem("groupByFactor"));
 
 
 function clickCheckbox(){
     var checkbox = document.getElementById("groupByFactorCheckbox");
-    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    sessionStorage.removeItem("groupByFactor");
+    if (checkbox.checked == true)
+        sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
     location.href = serverUrl + "/Metrics/CurrentChartGauge";
 }
 
@@ -220,24 +212,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .style("fill", "#0579A8")
         .attr("d", arc);
 
-    //filtering the appropriate categories
-    let metricCategories = categories.filter(function (cat) {
-        return cat.name === findMet.categoryName;
-    });
-
-    //ordering the result in descendent order
-    metricCategories = metricCategories.sort(function (a, b) {
-        return b.upperThreshold - a.upperThreshold;
-    });
-
-    //if findMet.categoryName is blank or contains a deleted category, the default category is painted
-    if (metricCategories.length === 0)
-        metricCategories = categories.filter(function (cat) {
-            return cat.name === DEFAULT_CATEGORY;
-        });
-
-    metricCategories.forEach(function (category) {
-        console.log(category);
+    categories.forEach(function (category) {
         var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
         svg.append("path")
             .datum({endAngle: threshold})
@@ -271,19 +246,18 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .attr("d", arc3);
 
     //add text under the gauge
-    let name = subdivideMetricName(metric.name, 23);
-
-    for(let cont = 0; cont < name.length; ++cont){
-        svg.append("text")
-            .attr("id", "name" + i + j + cont)
-            .attr("x", 0)
-            .attr("y", 50*width/250 + 15*cont)
-            .attr("text-anchor", "middle")
-            .attr("fill", textColor)
-            .attr("title", metric.name)
-            .style("font-size", 11+8*width/250+"px")
-            .text(name[cont]);
-    }
+    var name;
+    if (metric.name.length > 23) name = metric.name.slice(0, 20) + "...";
+    else name = metric.name;
+    svg.append("text")
+        .attr("id", "name" + i + j)
+        .attr("x", 0)
+        .attr("y", 50*width/250)
+        .attr("text-anchor", "middle")
+        .attr("fill", textColor)
+        .attr("title", metric.name)
+        .style("font-size", 11+8*width/250+"px")
+        .text(name);
 
     d3.select("#name"+i+j).append("title").text(metric.name);
 
@@ -294,7 +268,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
     else text = metric.value.toFixed(2);
     svg.append("text")
         .attr("x", 0)
-        .attr("y", 50*width/250 + 30 + (name.length - 1) * 10)
+        .attr("y", 50*width/250 + 30)
         .attr("text-anchor", "middle")
         .attr("fill", textColor)
         .style("font-size", 11+6*width/250+"px")
