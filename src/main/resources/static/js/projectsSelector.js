@@ -1,5 +1,3 @@
-getUserName();
-
 var projects = sessionStorage.getItem("projects");
 projects = (projects) ? JSON.parse(projects) : [];
 
@@ -14,51 +12,13 @@ for (i = 0; i < profiles.length; i+=2) {
     $("#profilesDropdownItems").append('<li><a onclick="setProfile(\''+profiles[i]+','+profiles[i+1]+'\')" href="#">'+ profiles[i+1] +'</a></li>');
 }
 
-getActiveUserProjects();
-
-
-function getUserName () {
-    jQuery.ajax({
-        dataType: "json",
-        url: "../api/me",
-        cache: false,
-        type: "GET",
-        async: true,
-        success: function (data) {
-            sessionStorage.setItem("userName", data.userName);
-            var oldUserName = sessionStorage.getItem("oldUserName");
-            var userName=sessionStorage.getItem("userName");
-            if(oldUserName!=null) {
-                if(userName!=null) {
-                    if (oldUserName!==userName) {
-                        $("#projectsDropdownText").text("Projects");
-                        sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
-                        sessionStorage.removeItem("projects");
-
-                        sessionStorage.setItem("prj", " ");
-                    }
-                }
-                else sessionStorage.setItem("userName", sessionStorage.getItem("userName"));
-            }
-            else sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
-            //$("#MyProfile").text(data.userName);
-        },
-        error: function () {
-            sessionStorage.setItem("userName", "undefined");
-        }
-    });
-}
-
-
 var prj = sessionStorage.getItem("prj");
 if (prj) {
     $("#projectsDropdownText").text(prj);
 }
 
 
-
 function setProject(project, url) {
-
     sessionStorage.setItem("prj", project);
     if (url && (url != window.location.href))
         window.open(url,"_self");
@@ -108,9 +68,8 @@ function getProjects(profileID) {
         async: false,
         success: function (data) {
             var prj_externalId = [];
-            var ap = sessionStorage.getItem("allowedProjects");
             for (i = 0; i < data.length; i++) {
-                if(ap.includes(data[i].externalId)) prj_externalId.push(data[i].externalId);
+                prj_externalId.push(data[i].externalId);
             }
             sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
             if (data.length === 0) { //For testing purposes
@@ -131,7 +90,6 @@ function getProfiles() {
         async: false,
         success: function (data) {
             var profiles = [];
-
             profiles.push(null);
             profiles.push("Without Profile");
             $("#profilesDropdownItems").append('<li><a onclick="setProfile(\'' + null +','+ "Without Profile" + '\')" href="#">' + "Without Profile" + '</a></li>');
@@ -158,45 +116,6 @@ function setProfile(input) {
     $("#profilesDropdownText").text(input[1]);
     // refresh projects list
     getProjects(input[0]);
-}
-
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-
-function getActiveUserProjects() {
-
-    token = getCookie("xFOEto4jYAjdMeR3Pas6_");
-    console.log("TOKEN: " + token);
-    if(token!="") {
-        jQuery.ajax({
-            dataType: "json",
-            url: "../api/allowedprojects?token="+token,
-            cache: false,
-            type: "GET",
-            async: false,
-            success: function (data) {
-                console.log("DATA:" + data[0]);
-                sessionStorage.setItem("allowedProjects", data);
-            },
-            error: function() {
-                console.log("ERROR");
-            }
-        });
-    }
-
 }
 
 function showProjectSelector (projects) {

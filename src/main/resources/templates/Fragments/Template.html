@@ -5,27 +5,27 @@
     <meta charset="UTF-8" />
     <title>Q-Rapids</title>
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/auth/auth.css" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/auth/auth.css}" />
 
-    <link rel='shortcut icon' type='image/x-icon' href="/favicon.ico"/>
+    <link rel='shortcut icon' type='image/x-icon' th:href="@{/favicon.ico}"/>
 
-    <script type="text/javascript" src="/js/lib/moment.js"></script>
-    <script type="text/javascript" src="/js/lib/Chart.min.js"></script>
-    <script type="text/javascript" src="/js/lib/angular.min.js"></script>
-    <script type="text/javascript" src="/js/app/app.services.js"></script>
+    <script type="text/javascript" th:src="@{/js/lib/moment.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/angular.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/app/app.services.js}"></script>
 
-    <script type="text/javascript" src="/js/lib/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/lib/jquery.min.js}"></script>
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="/js/bootstrap.min.js"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
 
-    <script type="text/javascript" src="/js/lib/sockjs.min.js"></script>
-    <script type="text/javascript" src="/js/lib/stomp.min.js"></script>
-    <link rel="stylesheet" href="/css/animate.css" />
-    <script type="text/javascript" src="/js/lib/bootstrap-notify.min.js"></script>
-    <script type="text/javascript" src="/js/notificationsHandler.js"></script>
+    <script type="text/javascript" th:src="@{/js/lib/sockjs.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/stomp.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <script type="text/javascript" th:src="@{/js/lib/bootstrap-notify.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/notificationsHandler.js}"></script>
 
 </head>
 
@@ -36,7 +36,7 @@
         <div class="col-xs-10" style="margin-top: 10px;">
             <h2 class="title" style="margin-left: 10px;color: #0177a6;" >
                 <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
-                Learning dashboard
+                Q-Rapids: Quality-aware rapid software development
             </h2>
         </div>
         <div class="col-xs-2" style="margin-top: 10px;" align="center">

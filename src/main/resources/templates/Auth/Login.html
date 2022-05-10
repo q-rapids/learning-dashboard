@@ -17,7 +17,7 @@
             <div class="header-panel">
 
                 <figure>
-                    <img src="/icons/qrapids.png" class="img-rounded" alt="" />
+                    <img th:src="@{/icons/qrapids.png}" class="img-rounded" alt="" />
                 </figure>
 
             </div>
@@ -43,7 +43,7 @@
             <div class="divisor"></div>
 
             <div class="body-panel">
-                <form method="POST" action="/login">
+                <form th:method="POST" th:action="@{/login}">
                     <br/>
                     <br/>
                     <br/>
@@ -65,15 +65,13 @@
 
                     <!-- let's go! -->
                     <button type="submit" class="btn btn-border">Login</button>
-                    <!--Not giving students access to sign up -->
-                    <!--a th:href="@{/signup}" class="has-text-white">Register </a-->
+                    <a th:href="@{/signup}" class="has-text-white">Register </a>
 
                 </form>
 
                 <br/>
                 <br/>
-                <!--Not giving students access to change the password -->
-                <!--a th:href="@{/reset-password}" class="has-text-white">Recover my password</a-->
+                <a th:href="@{/reset-password}" class="has-text-white">Recover my password</a>
 
             </div>
 

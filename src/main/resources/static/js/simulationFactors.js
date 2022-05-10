@@ -78,8 +78,7 @@ function showQualityFactorSliders () {
         div.appendChild(document.createElement('br'));
 
         var slider = document.createElement("input");
-        //some ids may have parenthesis in their names, so we remove them
-        slider.id = "sliderValue" + qualityFactor.id.replace(/[()]/g, '');
+        slider.id = "sliderValue" + qualityFactor.id;
         slider.style.width = "70%";
         var sliderConfig = {
             id: "slider" + qualityFactor.id,

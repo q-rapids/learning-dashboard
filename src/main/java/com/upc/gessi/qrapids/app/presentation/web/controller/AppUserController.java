@@ -37,7 +37,6 @@ public class AppUserController {
     private static final String REDIRECT = "redirect:";
     private static final String ERROR = "Error";
     private static final String SUCCESS = "?success=";
-    private static final String QUESTIONS = "questions";
 
     @Autowired
 	private UserRepository userRepository;
@@ -96,7 +95,6 @@ public class AppUserController {
         view.addObject("userGroups", userGroups);
         view.addObject("defautlUserGroup", defautlUserGroup );
         view.addObject("user", new AppUser());
-        view.addObject(QUESTIONS, this.questionRepository.findAll());
 
         boolean adminSelect = ! this.userGroupRepository.existsByDefaultGroupIsTrue();
         view.addObject("admin_select", adminSelect);
@@ -184,7 +182,6 @@ public class AppUserController {
                     userUpdate.setQuestion(user.getQuestion());
                 if (!(user.getPassword() == null || "".equals(user.getPassword())))
                     userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-                userUpdate.setAdmin(user.getAdmin());
 
                 this.userRepository.save(userUpdate);
                 return REDIRECT + this.redirectTo + "?success=Success";

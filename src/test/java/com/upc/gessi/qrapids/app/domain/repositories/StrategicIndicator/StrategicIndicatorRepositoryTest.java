@@ -43,7 +43,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project,"Duplication category");
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
         metric1.setId(1L);
         entityManager.merge(metric1);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
@@ -64,7 +64,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
         metric2.setId(2L);
         entityManager.merge(metric2);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
@@ -85,7 +85,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project,"Fast Test category");
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
         metric3.setId(3L);
         entityManager.merge(metric3);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
@@ -118,7 +118,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor4 with its metric composition
         List<QualityFactorMetrics> qualityMetrics4 = new ArrayList<>();
-        Metric metric4 = new Metric("nonblockingfiles","Non-blocking Files", "Density of non-blocking source files",project, "Non-blocking Files category");
+        Metric metric4 = new Metric("nonblockingfiles","Non-blocking Files", "Density of non-blocking source files",project);
         metric4.setId(4L);
         entityManager.merge(metric4);
         Factor factor4 =  new Factor("blockingcode", " \tDensity of blocking code", project);
@@ -139,7 +139,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor5 with its metric composition
         List<QualityFactorMetrics> qualityMetrics5 = new ArrayList<>();
-        Metric metric5 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
+        Metric metric5 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
         metric5.setId(5L);
         entityManager.merge(metric5);
         Factor factor5 =  new Factor("testingstatus", "Performance of testing phases", project);
@@ -160,7 +160,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor6 with its metric composition
         List<QualityFactorMetrics> qualityMetrics6 = new ArrayList<>();
-        Metric metric6 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
+        Metric metric6 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
         metric6.setId(6L);
         entityManager.merge(metric6);
         Factor factor6 =  new Factor("qualityissuespecification", "Percentage of issues planned for the next release that are completely specified and ready to be developed", project);
@@ -215,7 +215,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project1, "Duplication category");
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project1);
         metric1.setId(1L);
         entityManager.merge(metric1);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project1);
@@ -236,7 +236,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project1, "Bugdensity category");
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project1);
         metric2.setId(2L);
         entityManager.merge(metric2);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project1);
@@ -257,7 +257,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project1, "Fast Tests category");
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project1);
         metric3.setId(3L);
         entityManager.merge(metric3);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project1);
@@ -290,7 +290,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor4 with its metric composition
         List<QualityFactorMetrics> qualityMetrics4 = new ArrayList<>();
-        Metric metric4 = new Metric("nonblockingfiles","Non-blocking Files", "Density of non-blocking source files",project2, "Non-blocking Files category");
+        Metric metric4 = new Metric("nonblockingfiles","Non-blocking Files", "Density of non-blocking source files",project2);
         metric4.setId(4L);
         entityManager.merge(metric4);
         Factor factor4 =  new Factor("blockingcode", " \tDensity of blocking code", project2);
@@ -311,7 +311,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor5 with its metric composition
         List<QualityFactorMetrics> qualityMetrics5 = new ArrayList<>();
-        Metric metric5 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project2, "Fast Tests category");
+        Metric metric5 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project2);
         metric5.setId(5L);
         entityManager.merge(metric5);
         Factor factor5 =  new Factor("testingstatus", "Performance of testing phases", project2);
@@ -332,7 +332,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor6 with its metric composition
         List<QualityFactorMetrics> qualityMetrics6 = new ArrayList<>();
-        Metric metric6 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project2, "Bugdensity category");
+        Metric metric6 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project2);
         metric6.setId(6L);
         entityManager.merge(metric6);
         Factor factor6 =  new Factor("qualityissuespecification", "Percentage of issues planned for the next release that are completely specified and ready to be developed", project2);
@@ -383,7 +383,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
         metric1.setId(1L);
         entityManager.merge(metric1);
         Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
@@ -404,7 +404,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
         metric2.setId(2L);
         entityManager.merge(metric2);
         Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
@@ -425,7 +425,7 @@ public class StrategicIndicatorRepositoryTest {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
         metric3.setId(3L);
         entityManager.merge(metric3);
         Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
