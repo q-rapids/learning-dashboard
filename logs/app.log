@@ -290,3 +290,272 @@ java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
 2022-04-30 17:02:34.714,GET "/login?error=Session+timeout", parameters={masked}
 2022-04-30 17:02:34.721,"ERROR" dispatch for POST "/error?t=1651330954716", parameters={masked}
 2022-04-30 17:02:34.775,GET "/login?error=Session+timeout", parameters={masked}
+2022-05-11 12:55:40.269,GET "/login", parameters={}
+2022-05-11 12:55:45.738,aleix2 enters app
+2022-05-11 12:55:45.853,GET "/StrategicIndicators/CurrentChart", parameters={}
+2022-05-11 12:55:48.091,GET "/StrategicIndicators/CurrentChart", parameters={}
+2022-05-11 12:55:50.104,GET "/Metrics/CurrentChartGauge", parameters={}
+2022-05-11 12:55:50.774,request [GET http://localhost:9200/strategic_indicators.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:55:50.788,"ERROR" dispatch for GET "/error?profile=null&_=1652266548275&prj=demo", parameters={masked}
+2022-05-11 12:55:51.830,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:55:51.832,"ERROR" dispatch for GET "/error?profile=null&_=1652266550288&prj=demo", parameters={masked}
+2022-05-11 12:55:52.566,GET "/Metrics/CurrentTable", parameters={}
+2022-05-11 12:55:53.243,GET "/Metrics/CurrentTable", parameters={}
+2022-05-11 12:55:54.948,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:55:54.949,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:55:54.949,"ERROR" dispatch for GET "/error?profile=null&prj=demo", parameters={masked}
+2022-05-11 12:55:54.950,"ERROR" dispatch for GET "/error?profile=null&prj=demo", parameters={masked}
+2022-05-11 12:55:55.669,GET "/Metrics/CurrentChartGauge", parameters={}
+2022-05-11 12:55:57.435,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:55:57.437,"ERROR" dispatch for GET "/error?profile=null&_=1652266555957&prj=demo", parameters={masked}
+2022-05-11 12:55:57.685,GET "/Metrics/HistoricChart", parameters={}
+2022-05-11 12:56:00.346,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:56:00.347,"ERROR" dispatch for GET "/error?profile=null&_=1652266557933&prj=demo", parameters={masked}
+2022-05-11 12:56:01.435,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] failed
+java.net.ConnectException: Timeout connecting to [localhost/127.0.0.1:9200]
+	at org.apache.http.nio.pool.RouteSpecificPool.timeout(RouteSpecificPool.java:169)
+	at org.apache.http.nio.pool.AbstractNIOConnPool.requestTimeout(AbstractNIOConnPool.java:628)
+	at org.apache.http.nio.pool.AbstractNIOConnPool$InternalSessionRequestCallback.timeout(AbstractNIOConnPool.java:894)
+	at org.apache.http.impl.nio.reactor.SessionRequestImpl.timeout(SessionRequestImpl.java:183)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processTimeouts(DefaultConnectingIOReactor.java:210)
+	at org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor.processEvents(DefaultConnectingIOReactor.java:155)
+	at org.apache.http.impl.nio.reactor.AbstractMultiworkerIOReactor.execute(AbstractMultiworkerIOReactor.java:351)
+	at org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager.execute(PoolingNHttpClientConnectionManager.java:221)
+	at org.apache.http.impl.nio.client.CloseableHttpAsyncClientBase$1.run(CloseableHttpAsyncClientBase.java:64)
+	at java.lang.Thread.run(Thread.java:748)
+2022-05-11 12:56:01.437,"ERROR" dispatch for GET "/error?profile=null&from=2022-04-27&to=2022-05-11&_=1652266557934&prj=demo", parameters={masked}
+2022-05-11 12:59:26.822,GET "/Metrics/HistoricChart", parameters={}
+2022-05-11 12:59:29.100,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 503 Service Unavailable]
+2022-05-11 12:59:29.302,"ERROR" dispatch for GET "/error?profile=null&_=1652266767309&prj=demo", parameters={masked}
+2022-05-11 12:59:29.470,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 503 Service Unavailable]
+2022-05-11 12:59:29.474,"ERROR" dispatch for GET "/error?profile=null&from=2022-04-27&to=2022-05-11&_=1652266767310&prj=demo", parameters={masked}
+2022-05-11 12:59:31.712,GET "/Metrics/CurrentChartGauge", parameters={}
+2022-05-11 12:59:32.945,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 503 Service Unavailable]
+2022-05-11 12:59:32.949,"ERROR" dispatch for GET "/error?profile=null&_=1652266772096&prj=demo", parameters={masked}
+2022-05-11 12:59:36.922,GET "/Metrics/CurrentChartGauge", parameters={}
+2022-05-11 12:59:38.262,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 503 Service Unavailable]
+2022-05-11 12:59:38.264,"ERROR" dispatch for GET "/error?profile=null&_=1652266777297&prj=demo", parameters={masked}
+2022-05-11 12:59:45.351,GET "/logout_user", parameters={}
+2022-05-11 12:59:45.414,aleix2 exits app
+2022-05-11 12:59:45.426,GET "/login", parameters={}
+2022-05-11 12:59:49.628,aleix2 enters app
+2022-05-11 12:59:49.691,GET "/StrategicIndicators/CurrentChart", parameters={}
+2022-05-11 12:59:51.180,request [GET http://localhost:9200/strategic_indicators.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:52.831,GET "/Metrics/CurrentChartGauge", parameters={}
+2022-05-11 12:59:54.000,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.376,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.419,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.449,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.470,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.490,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.509,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.534,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.552,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.571,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.587,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.603,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.619,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.634,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.647,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:54.663,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:58.021,GET "/Metrics/HistoricChart", parameters={}
+2022-05-11 12:59:59.621,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.636,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.648,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.667,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.687,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.712,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.732,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.746,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.756,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.771,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.787,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.800,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.813,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.826,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 12:59:59.843,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:00.282,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.047,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.058,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.068,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.080,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.087,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.102,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.112,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.120,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.128,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.137,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.147,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.155,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.163,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.171,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.180,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:06.388,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.718,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.728,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.738,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.746,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.754,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.764,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.776,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.785,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.791,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.800,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.808,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.816,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.828,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.839,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:09.849,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:10.125,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.702,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.712,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.719,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.726,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.732,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.739,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.746,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.752,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.760,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.767,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.774,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.784,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.790,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.809,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:17.816,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:00:18.002,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:20.065,GET "/Metrics/HistoricChart", parameters={}
+2022-05-11 13:02:23.740,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.823,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.840,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.850,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.859,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.869,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.876,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.885,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.893,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.901,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.910,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.918,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.925,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.934,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:23.941,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:02:24.324,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:49.578,GET "/Metrics/HistoricChart", parameters={}
+2022-05-11 13:04:53.690,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.793,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.810,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.821,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.831,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.839,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.848,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.858,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.866,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.876,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.886,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.896,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.905,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.917,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:53.925,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:04:54.477,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:36.710,GET "/Metrics/HistoricChart", parameters={}
+2022-05-11 13:05:40.478,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.624,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.646,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.660,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.672,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.682,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.694,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.707,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.718,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.731,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.743,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.753,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.766,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.778,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:40.788,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:41.189,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:54.912,GET "/Metrics/CurrentChartGauge", parameters={}
+2022-05-11 13:05:56.136,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.368,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.376,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.384,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.392,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.398,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.404,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.410,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.416,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.421,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.429,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.436,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.444,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.449,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.456,request [GET http://localhost:9200/metrics.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:56.462,request [GET http://localhost:9200/factors.demo/_search?typed_keys=true&ignore_unavailable=false&expand_wildcards=open&allow_no_indices=true&search_type=query_then_fetch&batched_reduce_size=512] returned [HTTP/1.1 200 OK]
+2022-05-11 13:05:58.990,GET "/logout_user", parameters={}
+2022-05-11 13:05:59.004,"ERROR" dispatch for GET "/error", parameters={}

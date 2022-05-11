@@ -373,9 +373,11 @@ function drawChart() {
         if(groupByFactor && i === factorThreshold) {
             let factorId;
             let factorName;
+            let factorDescription;
             if(factorIndex < factors.length) {
                 factorId = factors[factorIndex].id;
                 factorName = factors[factorIndex].name;
+                factorDescription=factors[factorIndex].description
 
                 factorThreshold += factors[factorIndex].metrics.length
                 factorIndex++;
@@ -391,6 +393,27 @@ function drawChart() {
             labelF.id = factorId;
             labelF.textContent = factorName;
             divF.appendChild(labelF);
+
+            var b=document.createElement('a')
+            b.classList.add("check")
+            b.setAttribute('data-tooltip', factorDescription)
+
+            var tooltipdiv = document.createElement('div');
+            tooltipdiv.classList.add("tooltip");
+            var iconF = document.createElement('img');
+            iconF.class="icons";
+            iconF.src="../icons/information.png";
+            iconF.width = 38;
+            iconF.height = 25;
+            iconF.style = "padding-left:15px;";
+
+            var spantootlip = document.createElement('span');
+            spantootlip.classList.add("tooltiptext");
+            spantootlip.innerHTML=factors[j].description;
+            tooltipdiv.appendChild(iconF)
+            tooltipdiv.appendChild(spantootlip)
+            b.appendChild(iconF)
+            divF.appendChild(b);
 
             document.getElementById("chartContainer").appendChild(divF)
         }
