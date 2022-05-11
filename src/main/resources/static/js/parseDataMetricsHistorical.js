@@ -171,26 +171,14 @@ function sortDataByFactor(data) {
     let writtenIds = new Set;
     for(let i = 0; i < factors.length; ++i){
         for(let j = 0; j < factors[i].metrics.length; ++j){
-            let elem = data.find( e => e.id === factors[i].metrics[j].id);
-            resultData.push(elem);
-            writtenIds.add(elem.id);
+            let elems = data.filter( e => e.id === factors[i].metrics[j].id);
+            resultData = resultData.concat(elems);
+            writtenIds.add(elems[0].id);
         }
     }
     writtenIds = Array.from(writtenIds);
     let remainingMetrics = data.filter(x => !writtenIds.includes(x.id));
-
-    let uniqueRemainingMetrics = []
-    if(remainingMetrics.length !== 0) {
-        //deleting duplicates
-        let lastId = remainingMetrics[0].id;
-        uniqueRemainingMetrics.push(remainingMetrics[0]);
-        for (let i = 1; i < remainingMetrics.length; ++i) {
-            if (remainingMetrics[i].id !== lastId) uniqueRemainingMetrics.push(remainingMetrics[i]);
-            lastId = remainingMetrics[i].id
-        }
-    }
-
-    return resultData.concat(uniqueRemainingMetrics);
+    return resultData.concat(remainingMetrics);
 }
 
 function getMetricsCategories () {
