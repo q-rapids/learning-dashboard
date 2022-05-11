@@ -178,7 +178,6 @@ function sortDataByFactor(data) {
     }
     writtenIds = Array.from(writtenIds);
     let remainingMetrics = data.filter(x => !writtenIds.includes(x.id));
-
     return resultData.concat(remainingMetrics);
 }
 
