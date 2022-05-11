@@ -15,7 +15,7 @@ const DEFAULT_CATEGORY = "Default";
 var url;
 if (getParameterByName('id').length !== 0) {
     id = true;
-    url = parseURLComposed("../api/qualityFactors/metrics/current");
+    url = parseURLComposed("../api/qualityFactors/metrics/currentcurrent");
 } else {
     var profileId = sessionStorage.getItem("profile_id");
     url = parseURLComposed("../api/metrics/current?profile="+profileId);
@@ -132,6 +132,7 @@ function drawChart(metrics, container, width, height, categories) {
 function drawChartByFactor(metrics, container, width, height, categories) {
     var gaugeChart = $("#gaugeChart");
     for (j = 0; j < factors.length; j++) {
+        console.log(factors[j]);
         var divF = document.createElement('div');
         divF.style.marginTop = "1em";
         divF.style.marginBottom = "1em";
@@ -140,6 +141,27 @@ function drawChartByFactor(metrics, container, width, height, categories) {
         labelF.id = factors[j].id;
         labelF.textContent = factors[j].name;
         divF.appendChild(labelF);
+
+        var a=document.createElement('a')
+        a.classList.add("check")
+        a.setAttribute('data-tooltip', factors[j].description)
+
+        var tooltipdiv = document.createElement('div');
+        tooltipdiv.classList.add("tooltip");
+        var iconF = document.createElement('img');
+        iconF.class="icons";
+        iconF.src="../icons/information.png";
+        iconF.width = 38;
+        iconF.height = 25;
+        iconF.style = "padding-left:15px;";
+        
+        var spantootlip = document.createElement('span');
+        spantootlip.classList.add("tooltiptext");
+        spantootlip.innerHTML=factors[j].description;
+        tooltipdiv.appendChild(iconF)
+        tooltipdiv.appendChild(spantootlip)
+        a.appendChild(iconF)
+        divF.appendChild(a);
 
         gaugeChart.append(divF);
         for (i = 0; i < factors[j].metrics.length; ++i) {

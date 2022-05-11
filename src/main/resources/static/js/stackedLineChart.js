@@ -256,7 +256,17 @@ function drawChart() {
             if (typeof orderedMetricsDB !== 'undefined') {
                 if (orderedMetricsDB.length !== 0) {
                     metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedMetricsDB[i].categoryName;
+                        if (typeof orderedMetricsDB[i] !== 'undefined') return cat.name === orderedMetricsDB[i].categoryName;
+                    });
+                } else {
+                    metricCategory = categories.filter(function (cat) {
+                        return cat.name === DEFAULT_CATEGORY;
+                    });
+                }
+            } else if (typeof orderedFactorsDB !== 'undefined') {
+                if (orderedFactorsDB.length !== 0) {
+                    metricCategory = categories.filter(function (cat) {
+                        return cat.name === orderedFactorsDB[i].categoryName;
                     });
                 } else {
                     metricCategory = categories.filter(function (cat) {
@@ -264,8 +274,11 @@ function drawChart() {
                     });
                 }
             } else {
-                metricCategory = categories;
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === DEFAULT_CATEGORY;
+                });
             }
+
 
             metricCategory.sort( function (cat1, cat2) {
                 return cat1.upperThreshold - cat2.upperThreshold;
@@ -296,6 +309,10 @@ function drawChart() {
 
         config.push(c);
     }
+
+    //threshold that marks when to change factor
+    let factorIndex = 0;
+    let factorThreshold = 0;
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
@@ -352,6 +369,32 @@ function drawChart() {
         ctx.width = 350;
         ctx.height = 350;
         ctx.style.display = "inline";
+
+        if(groupByFactor && i === factorThreshold) {
+            let factorId;
+            let factorName;
+            if(factorIndex < factors.length) {
+                factorId = factors[factorIndex].id;
+                factorName = factors[factorIndex].name;
+
+                factorThreshold += factors[factorIndex].metrics.length
+                factorIndex++;
+            }else{
+                factorId = "withoutfactor"
+                factorName = "Metrics not associated to any factor"
+            }
+            var divF = document.createElement('div');
+            divF.style.marginTop = "3em";
+            divF.style.marginBottom = "1em";
+
+            var labelF = document.createElement('label');
+            labelF.id = factorId;
+            labelF.textContent = factorName;
+            divF.appendChild(labelF);
+
+            document.getElementById("chartContainer").appendChild(divF)
+        }
+
         document.getElementById("chartContainer").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");

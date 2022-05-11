@@ -1,10 +1,14 @@
 var isdsi = true;
+var groupByFactor = false;
+
 console.log("sessionStorage: profile_id");
 console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
 var url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical?profile="+profileId);
 
 var qualityModelSIMetrics = new Map();
+
+const DEFAULT_CATEGORY = "Default";
 
 //initialize data vectors
 var texts = [];

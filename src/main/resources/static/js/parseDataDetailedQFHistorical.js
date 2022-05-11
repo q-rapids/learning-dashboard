@@ -1,6 +1,7 @@
 var isdsi = false;
 var isqf = false;
 var isdqf = true;
+var groupByFactor = false;
 
 const DEFAULT_CATEGORY = "Default"
 
