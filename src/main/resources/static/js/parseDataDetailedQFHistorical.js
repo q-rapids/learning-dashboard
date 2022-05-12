@@ -12,7 +12,7 @@ var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
-let orderedMetricsDB = [];
+let metricsDB = [];
 var categories = [];
 var groupByFactor = false;
 var decisions = new Map();
@@ -135,6 +135,20 @@ function getMetricsCategories () {
         async: true,
         success: function (response) {
             categories = response;
+            getMetricsWithCategory();
+        }
+    });
+}
+
+function getMetricsWithCategory(){
+    $.ajax({
+        dataType: "json",
+        url: "../api/metrics",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (dataDB) {
+            metricsDB = dataDB;
             drawChart();
         }
     });

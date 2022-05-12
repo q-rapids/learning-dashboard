@@ -250,35 +250,29 @@ function drawChart() {
         //Add category lines
         if (typeof categories !== 'undefined') {
             var annotations = [];
-
             let metricCategory;
 
-            if (typeof orderedMetricsDB !== 'undefined') {
-                if (orderedMetricsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedMetricsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
-            } else if (typeof orderedFactorsDB !== 'undefined') {
-                if (orderedFactorsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedFactorsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
+            if (typeof orderedMetricsDB !== 'undefined' && orderedMetricsDB.length !== 0) {
+                //for Historic Metrics (parseDataMetricsHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedMetricsDB[i].categoryName;
+                });
+            } else if (typeof orderedFactorsDB !== 'undefined' && orderedFactorsDB.length !== 0) {
+                //for Historic Factors (parseDataQFHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedFactorsDB[i].categoryName;
+                });
+            } else if (typeof metricsDB !== 'undefined' && metricsDB.length !== 0) {
+                //for Historic Detailed Factors (parseDataDetailedQFHistorical.js)
+                let catName = getFactorCategory(labels[i], metricsDB);
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === catName;
+                });
             } else {
                 metricCategory = categories.filter(function (cat) {
                     return cat.name === DEFAULT_CATEGORY;
                 });
             }
-
 
             metricCategory.sort( function (cat1, cat2) {
                 return cat1.upperThreshold - cat2.upperThreshold;
@@ -487,6 +481,25 @@ function fitToContent() {
 
         chart.update();
     });
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0]
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 function normalRange() {
