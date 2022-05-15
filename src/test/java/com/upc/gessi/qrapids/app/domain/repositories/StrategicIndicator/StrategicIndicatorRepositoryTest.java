@@ -32,7 +32,7 @@ public class StrategicIndicatorRepositoryTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2");
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project);
 
         String strategicIndicator1Name = "Product Quality";
@@ -198,13 +198,13 @@ public class StrategicIndicatorRepositoryTest {
         String project1ExternalId = "test1";
         String project1Name = "Test";
         String project1Description = "Test project";
-        Project project1 = new Project(project1ExternalId, project1Name, project1Description, null, true, "testURL1", "testURL2");
+        Project project1 = new Project(project1ExternalId, project1Name, project1Description, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project1);
 
         String project2ExternalId = "test";
         String project2Name = "Test";
         String project2Description = "Test project";
-        Project project2 = new Project(project2ExternalId, project2Name, project2Description, null, true, "testURL1", "testURL2");
+        Project project2 = new Project(project2ExternalId, project2Name, project2Description, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project2);
 
         String strategicIndicator1Name = "Product Quality";
@@ -372,7 +372,7 @@ public class StrategicIndicatorRepositoryTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2");
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project);
 
         String strategicIndicator1Name = "Product Quality";

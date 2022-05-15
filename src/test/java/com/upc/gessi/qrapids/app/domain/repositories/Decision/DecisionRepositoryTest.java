@@ -26,7 +26,7 @@ public class DecisionRepositoryTest {
     @Test
     public void findByProject_Id() {
         // Given
-        Project project = new Project("test", "Test", null, null, true, "testurl1", "testurl2");
+        Project project = new Project("test", "Test", null, null, true, "testurl1", "testurl2",false);
         entityManager.persist(project);
 
         Decision decision = new Decision();

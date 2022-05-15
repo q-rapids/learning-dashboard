@@ -1421,7 +1421,7 @@ public class FactorEvaluationTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testurl1", "testurl2");
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testurl1", "testurl2",false);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 

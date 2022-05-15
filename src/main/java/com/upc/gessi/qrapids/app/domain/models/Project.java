@@ -25,10 +25,12 @@ public class Project {
     private String taigaURL;
     @Column(name = "githubURL")
     private String githubURL;
+    @Column(name = "isGlobal")
+    private Boolean isGlobal;
 
     public Project(){}
     
-    public Project(String externalId, String name, String description, byte[] logo, boolean active, String taigaURL, String githubURL) {
+    public Project(String externalId, String name, String description, byte[] logo, boolean active, String taigaURL, String githubURL,Boolean isGlobal) {
     	this.externalId = externalId;
     	this.name = name;
     	this.description = description;
@@ -36,6 +38,7 @@ public class Project {
     	this.active = active;
     	this.taigaURL=taigaURL;
     	this.githubURL=githubURL;
+        this.isGlobal=isGlobal;
     }
     
     public Long getId() {
@@ -101,4 +104,8 @@ public class Project {
     public String getGithubURL() {return githubURL;}
 
     public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
+
+    public Boolean getIsGlobal() { return isGlobal;}
+
+    public void setIsGlobal(Boolean global) { isGlobal = global;}
 }

@@ -71,7 +71,7 @@ public class ProfilesController {
                 List<DTOProject> relatedProjects = new ArrayList<>();
                 List<Pair<Long, Boolean>> relatedAllSIs = new ArrayList<>();
                 for (ProfileProjects pp : profile.getProfileProjectsList()) {
-                    DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId(), pp.getProject().getTaigaURL(), pp.getProject().getGithubURL());
+                    DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId(), pp.getProject().getTaigaURL(), pp.getProject().getGithubURL(), pp.getProject().getIsGlobal());
                     relatedProjects.add(project);
                     Pair<Long, Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
                     relatedAllSIs.add(allSI);
@@ -99,7 +99,7 @@ public class ProfilesController {
             List<DTOProject> relatedProjects = new ArrayList<>();
             List<Pair<Long,Boolean>> relatedAllSIs = new ArrayList<>();
             for (ProfileProjects pp : pr.getProfileProjectsList()) {
-                DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId(), pp.getProject().getTaigaURL(), pp.getProject().getGithubURL());
+                DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId(), pp.getProject().getTaigaURL(), pp.getProject().getGithubURL(), pp.getProject().getIsGlobal());
                 relatedProjects.add(project);
                 Pair<Long,Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
                 relatedAllSIs.add(allSI);

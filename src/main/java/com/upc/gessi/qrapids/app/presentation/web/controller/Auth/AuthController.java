@@ -121,11 +121,9 @@ public class AuthController {
 	@GetMapping("/logout_user")
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 
-        String header = request.getHeader(HEADER_STRING);
         String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
-        AppUser user = null;
-        user = this.userRepository.findByUsername( this.authTools.getUserToken( cookie_token ) );
-
+        String user = null;
+        user = this.authTools.getUser( cookie_token );
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
 
@@ -135,9 +133,9 @@ public class AuthController {
 		response.addCookie(cookie);
 
         ActionLogger al = new ActionLogger();
-        al.traceExitApp(user.getUsername());
+        al.traceExitApp(user);
 
-        logger.info("Log out: " + user.getUsername() + " " + now);
+        logger.info("Log out: " + user + " " + now);
 
 		return "redirect:/login";
 	}

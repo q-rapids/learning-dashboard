@@ -6,7 +6,7 @@ var currentSelectionId;
 var projects;
 var areProducts = false;
 var serverUrl = sessionStorage.getItem("serverUrl");
-
+var globalChecked;
 
 function buildFirstPartOfTree() {
 	var url = "/api/projects";
@@ -134,7 +134,7 @@ function getChosenProject(currentProjectId) {
         success: function (data) {
         	var projectForm = document.createElement('div');
     		projectForm.setAttribute("id", "projectForm");
-    		
+			globalChecked=data.isGlobal
     		var title1Row = document.createElement('div');
     		title1Row.classList.add("productInfoRow");
     		var title1P = document.createElement('p');
@@ -208,7 +208,7 @@ function getChosenProject(currentProjectId) {
 			TaigaUrlRow.classList.add("productInfoRow");
 			var TaigaURLp = document.createElement('p');
 			TaigaURLp.appendChild(document.createTextNode("Taiga URL:"));
-			TaigaURLp.setAttribute('style', 'font-size: 18px; width: 18%');
+			TaigaURLp.setAttribute('style', 'font-size: 18px; width: 15%');
 			TaigaUrlRow.appendChild(TaigaURLp);
 			var inputTaigaUrl = document.createElement("input");
 			inputTaigaUrl.setAttribute('id', 'inputTaigaUrl');
@@ -226,11 +226,11 @@ function getChosenProject(currentProjectId) {
 				githubURLList=data.githubURL.split(";");
 			}
 
-				var firstGithubUrlRow = document.createElement('div');
+			var firstGithubUrlRow = document.createElement('div');
 			firstGithubUrlRow.classList.add("productInfoRow");
 			var firstGithubURLp = document.createElement('p');
 			firstGithubURLp.appendChild(document.createTextNode("First Github URL:"));
-			firstGithubURLp.setAttribute('style', 'font-size: 18px; width: 30%');
+			firstGithubURLp.setAttribute('style', 'font-size: 18px; width: 20%');
 			firstGithubUrlRow.appendChild(firstGithubURLp);
 			var inputfirstGithubUrl = document.createElement("input");
 			inputfirstGithubUrl.setAttribute('id', 'inputfirstGithubUrl');
@@ -246,7 +246,7 @@ function getChosenProject(currentProjectId) {
 			secondGithubUrlRow.classList.add("productInfoRow");
 			var secondGithubURLp = document.createElement('p');
 			secondGithubURLp.appendChild(document.createTextNode("Second Github URL:"));
-			secondGithubURLp.setAttribute('style', 'font-size: 18px; width: 30%');
+			secondGithubURLp.setAttribute('style', 'font-size: 18px; width: 20%');
 			secondGithubUrlRow.appendChild(secondGithubURLp);
 			var inputsecondGithubUrl = document.createElement("input");
 			inputsecondGithubUrl.setAttribute('id', 'inputsecondGithubUrl');
@@ -257,6 +257,20 @@ function getChosenProject(currentProjectId) {
 			inputsecondGithubUrl.setAttribute('placeholder', 'Write the second Github URL');
 			secondGithubUrlRow.appendChild(inputsecondGithubUrl);
 			projectForm.appendChild(secondGithubUrlRow);
+
+			var globalCheckRow = document.createElement("div");
+			globalCheckRow.classList.add("productInfoRow")
+			var globalCheckp =document.createElement("p");
+			globalCheckp.appendChild(document.createTextNode("Is global:"))
+			globalCheckp.setAttribute('style', 'font-size: 18px; width: 8%');
+			globalCheckRow.appendChild(globalCheckp);
+			var globalCheckInput =document.createElement("input");
+			globalCheckInput.setAttribute('id', 'globalCheckInput');
+			globalCheckInput.setAttribute('type', 'checkbox');
+			globalCheckInput.checked=globalChecked;
+			globalCheckInput.setAttribute("onchange", 'check()');
+			globalCheckRow.appendChild(globalCheckInput);
+			projectForm.appendChild(globalCheckRow);
     		
     		var changeLogoRow = document.createElement('div');
     		changeLogoRow.classList.add("productInfoRow");
@@ -357,6 +371,11 @@ function getChosenProject(currentProjectId) {
     });
 }
 
+function check() {
+	if(globalChecked) globalChecked=false
+	else globalChecked=true
+}
+
 function saveProject() {
 		
     if ($('#projectName').val() != "") {
@@ -372,7 +391,7 @@ function saveProject() {
 	        if($('#inputsecondGithubUrl').val()!="" && $('#inputfirstGithubUrl').val()!="" ) formData.append("githubURL", $('#inputfirstGithubUrl').val()+";"+$('#inputsecondGithubUrl').val());
 	        else if($('#inputsecondGithubUrl').val()=="")  formData.append("githubURL", $('#inputfirstGithubUrl').val());
 			else if($('#inputfirstGithubUrl').val()=="")  formData.append("githubURL", $('#inputsecondGithubUrl').val());
-
+			formData.append("isGlobal", globalChecked);
 	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {
 				url = serverUrl + url;

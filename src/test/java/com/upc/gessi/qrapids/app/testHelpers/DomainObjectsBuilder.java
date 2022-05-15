@@ -27,7 +27,8 @@ public class DomainObjectsBuilder {
         String projectBacklogId = "prj-1";
         String projectBacklogURL1 = "testurl1";
         String projectBacklogURL2= "testurl2";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectBacklogURL1,projectBacklogURL2);
+        Boolean projectIsGlobal = false;
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectBacklogURL1,projectBacklogURL2,projectIsGlobal);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
         return project;

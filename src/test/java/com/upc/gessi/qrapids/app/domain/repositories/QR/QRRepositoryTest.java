@@ -32,7 +32,7 @@ public class QRRepositoryTest {
         String projectExternalId = "project1";
         String projectName = "Project 1";
         String projectDescription = "test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2");
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project);
 
         String alertIdElement = "id";
@@ -81,13 +81,13 @@ public class QRRepositoryTest {
         String project1ExternalId = "project1";
         String project1Name = "Project 1";
         String project1Description = "test project";
-        Project project1 = new Project(project1ExternalId, project1Name, project1Description, null, true, "testURL1", "testURL2");
+        Project project1 = new Project(project1ExternalId, project1Name, project1Description, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project1);
 
         String project2ExternalId = "project2";
         String project2Name = "Project 2";
         String project2Description = "test project";
-        Project project2 = new Project(project2ExternalId, project2Name, project2Description, null, true, "testURL1", "testURL2");
+        Project project2 = new Project(project2ExternalId, project2Name, project2Description, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project2);
 
         String alertIdElement = "id";
@@ -151,13 +151,13 @@ public class QRRepositoryTest {
         String project1ExternalId = "project1";
         String project1Name = "Project 1";
         String project1Description = "test project";
-        Project project1 = new Project(project1ExternalId, project1Name, project1Description, null, true, "testURL1", "testURL2");
+        Project project1 = new Project(project1ExternalId, project1Name, project1Description, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project1);
 
         String project2ExternalId = "project2";
         String project2Name = "Project 2";
         String project2Description = "test project";
-        Project project2 = new Project(project2ExternalId, project2Name, project2Description, null, true, "testURL1", "testURL2");
+        Project project2 = new Project(project2ExternalId, project2Name, project2Description, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project2);
 
         String alertIdElement = "id";
