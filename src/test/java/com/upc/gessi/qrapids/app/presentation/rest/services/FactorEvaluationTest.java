@@ -222,6 +222,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andDo(document("qf/current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -270,7 +271,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken")
                         )
                 ));
 
@@ -311,6 +314,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$.missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$.strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$.formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$.type",is(nullValue())))
                 .andDo(document("qf/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -352,9 +356,10 @@ public class FactorEvaluationTest {
                                 fieldWithPath("strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("formattedDate")
-                                        .description("Readable quality factor evaluation date")
-                        )
-                ));
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("type")
+                                        .description("Datasource from where the data is taken"))
+                        ));
 
 
         // Verify mock interactions
@@ -406,6 +411,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andDo(document("qf/historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -458,7 +464,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken")
                         )
                 ));
 
@@ -494,6 +502,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].datasource", is(nullValue())))
+                .andExpect(jsonPath("$[0].type", is(nullValue())))
                 .andExpect(jsonPath("$[0].rationale", is(dtoFactorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].confidence80", is(dtoFactorEvaluation.getConfidence80())))
                 .andExpect(jsonPath("$[0].confidence95", is(dtoFactorEvaluation.getConfidence95())))
@@ -502,6 +511,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].type",is(nullValue())))
                 .andDo(document("qf/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -540,8 +550,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].formattedDate")
-                                        .description("Readable quality factor evaluation date")
-                        )
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -595,6 +606,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(HelperFunctions.getFloatAsDouble(dtoDetailedFactorEvaluation.getMetrics().get(0).getConfidence95().getSecond()))))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andDo(document("qf/prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -655,8 +667,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -718,6 +731,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].type", is(nullValue())))
                 .andDo(document("qf/simulation",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -763,7 +777,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].formattedDate")
-                                        .description("Readable quality factor evaluation date")
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken")
                         )
                 ));
 
@@ -817,6 +833,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
+                .andExpect(jsonPath("$[0].type",is(nullValue())))
                 .andDo(document("metrics/current-qf",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -870,8 +887,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -912,6 +930,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].date", is(nullValue())))
                 .andExpect(jsonPath("$[0].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].value_description", is(nullValue())))
+                .andExpect(jsonPath("$[0].type", is(nullValue())))
                 .andExpect(jsonPath("$[0].mismatchDays", is(0)))
                 .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluation.getId())))
@@ -983,8 +1002,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1043,6 +1063,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].date", is(nullValue())))
                 .andExpect(jsonPath("$[0].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].value_description", is(nullValue())))
+                .andExpect(jsonPath("$[0].type", is(nullValue())))
                 .andExpect(jsonPath("$[0].mismatchDays", is(0)))
                 .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluation.getId())))
@@ -1124,8 +1145,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1196,6 +1218,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].type",is(nullValue())))
                 .andDo(document("qualityFactors/historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1238,7 +1261,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].formattedDate")
-                                        .description("Readable quality factor evaluation date")
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken")
                         )
                 ));
 
@@ -1327,6 +1352,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].type",is(nullValue())))
                 .andDo(document("qualityFactors/prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1377,8 +1403,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].formattedDate")
-                                        .description("Readable quality factor evaluation date")
-                        )
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1394,14 +1421,14 @@ public class FactorEvaluationTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testurl1", "testurl2");
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
         // define factor with its metric composition
         List<QualityFactorMetrics> qualityMetrics = new ArrayList<>();
 
-        Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
+        Factor factor =  new Factor("codequality", "Quality of the implemented code", project, "testType");
         factor.setId(1L);
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
@@ -1443,8 +1470,10 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0]", is("1")))
                 .andExpect(jsonPath("$[0].metrics[1]", is("2")))
                 .andExpect(jsonPath("$[0].metrics[2]", is("3")))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andExpect(jsonPath("$[0].weighted", is(factor.isWeighted())))
                 .andExpect(jsonPath("$[0].metricsWeights", is(factor.getWeights())))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andDo(document("qualityFactors/get-all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1469,7 +1498,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].weighted")
                                         .description("Quality factor is weighted or not"),
                                 fieldWithPath("[].metricsWeights")
-                                        .description("List of the metrics composing the quality factor with their corresponding weights"))
+                                        .description("List of the metrics composing the quality factor with their corresponding weights"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1501,6 +1532,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$.metrics[2]", is(factor.getMetricsIds().get(2))))
                 .andExpect(jsonPath("$.weighted", is(factor.isWeighted())))
                 .andExpect(jsonPath("$.metricsWeights", is(factor.getWeights())))
+                .andExpect(jsonPath("$.type", is("testType")))
                 .andDo(document("qualityFactors/get-one",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1525,7 +1557,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("weighted")
                                         .description("Quality factor is weighted or not"),
                                 fieldWithPath("metricsWeights[]")
-                                        .description("List of the metrics composing the quality factor with their corresponding weights"))
+                                        .description("List of the metrics composing the quality factor with their corresponding weights"),
+                                fieldWithPath("type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1565,7 +1599,8 @@ public class FactorEvaluationTest {
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
                 .param("threshold", factor.getThreshold().toString())
-                .param("metrics", String.join(",", factor.getMetrics()));
+                .param("metrics", String.join(",", factor.getMetrics()))
+                .param("type", factor.getType());
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated())
@@ -1582,14 +1617,16 @@ public class FactorEvaluationTest {
                                 parameterWithName("threshold")
                                         .description("Quality factor minimum acceptable value"),
                                 parameterWithName("metrics")
-                                        .description("Comma separated values of the metrics identifiers which belong to the quality factor"))
+                                        .description("Comma separated values of the metrics identifiers which belong to the quality factor"),
+                                parameterWithName("type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
         verifyNoMoreInteractions(projectsController);
 
-        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(project));
+        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(project), eq(factor.getType()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1610,6 +1647,7 @@ public class FactorEvaluationTest {
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
                 .param("threshold", factor.getThreshold().toString())
+                .param("type", factor.getType())
                 .param("metrics", String.join(",", factor.getMetrics()));
 
         this.mockMvc.perform(requestBuilder)
@@ -1623,7 +1661,7 @@ public class FactorEvaluationTest {
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
         verifyNoMoreInteractions(projectsController);
 
-        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getMetrics()), eq(project));
+        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getMetrics()), eq(project),eq(factor.getType()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1644,6 +1682,7 @@ public class FactorEvaluationTest {
                 .param("description", factor.getDescription())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getWeights()))
+                .param("type", factor.getType())
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1664,13 +1703,15 @@ public class FactorEvaluationTest {
                                         .description("Quality factor description"),
                                 parameterWithName("threshold")
                                         .description("Quality factor minimum acceptable value"),
+                                parameterWithName("type")
+                                        .description("Datasource from where the data is taken"),
                                 parameterWithName("metrics")
                                         .description("Comma separated values of the metrics identifiers which belong to the quality factor and their corresponding weights (-1 if no weighted)"))
                 ));
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getWeights()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getWeights()),eq(factor.getType()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1691,6 +1732,7 @@ public class FactorEvaluationTest {
                 .param("description", factor.getDescription())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getWeights()))
+                .param("type", factor.getType())
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1708,7 +1750,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getWeights()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getWeights()),eq(factor.getType()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), project.getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1729,6 +1771,7 @@ public class FactorEvaluationTest {
                 .param("description", factor.getDescription())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getMetrics()))
+                .param("type", factor.getType())
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1746,7 +1789,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()),eq(factor.getType()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), project.getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1786,7 +1829,7 @@ public class FactorEvaluationTest {
         Factor factor = domainObjectsBuilder.buildFactor(project);
 
         when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
-        when(qualityFactorsDomainController.editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()))).thenThrow(new DataIntegrityViolationException(""));
+        when(qualityFactorsDomainController.editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()),eq(factor.getType()))).thenThrow(new DataIntegrityViolationException(""));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/qualityFactors/{id}", factor.getId())
@@ -1794,6 +1837,7 @@ public class FactorEvaluationTest {
                 .param("description", factor.getDescription())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getMetrics()))
+                .param("type",factor.getType())
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1811,7 +1855,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()),eq(factor.getType()));
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 

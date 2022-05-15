@@ -10,10 +10,12 @@ public class DTOProject {
     private byte[] logo;
     private boolean active;
     private String backlogId;
+    private String taigaURL;
+    private String githubURL;
     
     public DTOProject(){}
     
-    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId) {
+    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, String taigaURL, String githubURL) {
     	this.id = id;
     	this.externalId = externalId;
     	this.name = name;
@@ -21,6 +23,8 @@ public class DTOProject {
     	this.logo = logo;
     	this.active = active;
     	this.backlogId = backlogId;
+    	this.taigaURL = taigaURL;
+    	this.githubURL = githubURL;
     }
     
     public Long getId() {
@@ -78,4 +82,12 @@ public class DTOProject {
     public void setBacklogId(String backlogId) {
         this.backlogId = backlogId;
     }
+
+    public String getTaigaURL() {return taigaURL;}
+
+    public void setTaigaURL(String taigaURL) {this.taigaURL=taigaURL;}
+
+    public String getGithubURL() {return githubURL;}
+
+    public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
 }

@@ -76,6 +76,8 @@ public class Projects {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String backlogId = request.getParameter("backlogId");
+            String taigaURL= request.getParameter("taigaURL");
+            String githubURL= request.getParameter("githubURL");
             byte[] logoBytes = null;
             if (logo != null) {
                 logoBytes = IOUtils.toByteArray(logo.getInputStream());
@@ -85,7 +87,7 @@ public class Projects {
                 logoBytes = p.getLogo();
             }
             if (projectsController.checkProjectByName(id, name)) {
-                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId);
+                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, taigaURL, githubURL);
                 projectsController.updateProject(p);
             } else {
                 throw new ElementAlreadyPresentException();

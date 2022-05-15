@@ -22,6 +22,8 @@ public class Factor {
     private boolean weighted;
     @Column(name = "threshold")
     private Float threshold;
+    @Column(name = "type")
+    private String type;
 
     @ManyToOne
     @JoinColumn(name="project_id", referencedColumnName = "id")
@@ -43,10 +45,11 @@ public class Factor {
     }
 
     // Quality Factor without Quality Metrics
-    public Factor(String name, String description, Project project) {
+    public Factor(String name, String description, Project project, String type) {
         setName(name);
         setDescription(description);
         setProject(project);
+        setType(type);
     }
 
     // Imported Quality Factor without Quality Metrics
@@ -162,4 +165,8 @@ public class Factor {
     public void setThreshold(Float threshold) {
         this.threshold = threshold;
     }
+
+    public void setType(String type) { this.type = type;}
+
+    public String getType() {return type;}
 }

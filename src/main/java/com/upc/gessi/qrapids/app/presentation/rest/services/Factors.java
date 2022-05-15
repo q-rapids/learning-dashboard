@@ -86,7 +86,8 @@ public class Factors {
                         factor.getDescription(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
-                        factor.getWeights());
+                        factor.getWeights(),
+                        factor.getType());
                 dtoFactor.setThreshold(factor.getThreshold());
                 dtoFactorsList.add(dtoFactor);
             }
@@ -108,7 +109,8 @@ public class Factors {
                         factor.getDescription(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
-                        factor.getWeights());
+                        factor.getWeights(),
+                        factor.getType());
             dtoFactor.setThreshold(factor.getThreshold());
             return dtoFactor;
         } catch (QualityFactorNotFoundException e) {
@@ -125,10 +127,11 @@ public class Factors {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String threshold = request.getParameter("threshold");
+            String type = request.getParameter("type");
             List<String> metrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
             if (!name.equals("") && !metrics.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
-                factorsController.saveQualityFactor(name, description, threshold, metrics, project);
+                factorsController.saveQualityFactor(name, description, threshold, metrics, project, type);
                 if (!factorsController.assessQualityFactor(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -163,18 +166,20 @@ public class Factors {
             String name;
             String description;
             String threshold;
+            String type;
             List<String> qualityMetrics;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
                 threshold = request.getParameter("threshold");
+                type=request.getParameter("type");
                 qualityMetrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
             if (!name.equals("") && !qualityMetrics.isEmpty()) {
                 Factor oldFactor = factorsController.getQualityFactorById(id);
-                factorsController.editQualityFactor(oldFactor.getId(), name, description, threshold, qualityMetrics);
+                factorsController.editQualityFactor(oldFactor.getId(), name, description, threshold, qualityMetrics,type);
                 if (!factorsController.assessQualityFactor(name, oldFactor.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
@@ -321,7 +326,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id, f.getDescription(),f.getName(),metrics);
+            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id, f.getDescription(),f.getName(),metrics, f.getType());
             df.setValue(f.getValue());
             df.setDate(f.getDate());
             result.add(df);
@@ -342,7 +347,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(),f.getName(),metrics));
+            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(),f.getName(),metrics, f.getType()));
             return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
@@ -361,7 +366,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(), f.getName(),metrics));
+            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(), f.getName(),metrics,f.getType()));
             return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);

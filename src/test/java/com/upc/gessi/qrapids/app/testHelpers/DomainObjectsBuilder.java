@@ -25,7 +25,9 @@ public class DomainObjectsBuilder {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        String projectBacklogURL1 = "testurl1";
+        String projectBacklogURL2= "testurl2";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectBacklogURL1,projectBacklogURL2);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
         return project;
@@ -75,7 +77,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project,"Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project, "type");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -92,7 +94,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project,"Bugdensity category");
         metric2.setId(2L);
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project, "testType");
         factor2.setId(2L);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
@@ -109,7 +111,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Tests category");
         metric3.setId(3L);
-        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project, "testType");
         factor3.setId(3L);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
@@ -143,7 +145,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project);
+        Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project, "testType");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -169,7 +171,7 @@ public class DomainObjectsBuilder {
         // define factor with its metric composition
         List<QualityFactorMetrics> qualityMetrics = new ArrayList<>();
 
-        Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
+        Factor factor =  new Factor("codequality", "Quality of the implemented code", project, "testType");
         factor.setId(1L);
         factor.setThreshold(0.3f);
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project,"Duplication category");
@@ -202,7 +204,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", si.getProject(), "Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", si.getProject());
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", si.getProject(), "testType");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -219,7 +221,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", si.getProject(), "Bugdensity category");
         metric2.setId(2L);
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", si.getProject());
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", si.getProject(), "testType");
         factor2.setId(2L);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
@@ -236,7 +238,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", si.getProject(), "Fast Test category");
         metric3.setId(3L);
-        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", si.getProject());
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", si.getProject(), "testType");
         factor3.setId(3L);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
@@ -268,7 +270,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject(), "Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject());
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -285,7 +287,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject(), "Bugdensity category");
         metric2.setId(2L);
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject());
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType");
         factor2.setId(2L);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
@@ -302,7 +304,7 @@ public class DomainObjectsBuilder {
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject(), "Fast Test category");
         metric3.setId(3L);
-        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", strategicIndicator.getProject());
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", strategicIndicator.getProject(), "testType");
         factor3.setId(3L);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
@@ -490,7 +492,7 @@ public class DomainObjectsBuilder {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        return new DTODetailedFactorEvaluation(factorId, factorDescription, factorName, dtoMetricEvaluationList);
+        return new DTODetailedFactorEvaluation(factorId, factorDescription, factorName, dtoMetricEvaluationList, "testType");
     }
 
     public DTODetailedFactorEvaluation buildDTOQualityFactorForPrediction () {
@@ -519,7 +521,7 @@ public class DomainObjectsBuilder {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        return new DTODetailedFactorEvaluation(factorId,factorDescription, factorName, dtoMetricEvaluationList);
+        return new DTODetailedFactorEvaluation(factorId,factorDescription, factorName, dtoMetricEvaluationList, "testType");
     }
 
     public DTOFactorEvaluation buildDTOFactor () {

@@ -7,6 +7,8 @@ var angle;
 var target;
 var tau = Math.PI / 2;
 var id = false;
+var urlTaiga;
+var urlGithub;
 
 var factors;
 
@@ -43,12 +45,13 @@ function clickCheckbox(){
 }
 
 function getData(width, height) {
+    getCurrentProject()
     jQuery.ajax({
         dataType: "json",
         url: url,
         cache: false,
         type: "GET",
-        async: true,
+        async: false,
         success: function (data) {
             sortDataAlphabetically(data);
             jQuery.ajax({
@@ -56,7 +59,7 @@ function getData(width, height) {
                 url: "../api/metrics",
                 cache: false,
                 type: "GET",
-                async: true,
+                async: false,
                 success: function (dataDB) {
                     metricsDB = dataDB;
                     getFactors(data, width, height);
@@ -83,7 +86,7 @@ function getFactors(data, width, height) {
         url: url,
         cache: false,
         type: "GET",
-        async: true,
+        async: false,
         success: function (dataF) {
             sortMyDataAlphabetically(dataF);
             factors = dataF;
@@ -107,7 +110,7 @@ function getMetricsCategories (data, width, height) {
     jQuery.ajax({
         url: "../api/metrics/categories",
         type: "GET",
-        async: true,
+        async: false,
         success: function (categories) {
             console.log("groupByFactor " + groupByFactor);
             if (id) { // in case we show metrics for one detailed factor
@@ -129,35 +132,93 @@ function drawChart(metrics, container, width, height, categories) {
     }
 }
 
-function drawChartByFactor(metrics, container, width, height, categories) {
+function getCurrentProject() {
+
+    var urlp = "/api/projects";
+    jQuery.ajax({
+        dataType: "json",
+        url: urlp,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            for(var i=0; i<data.length; i++) {
+                if(data[i].name===sessionStorage.getItem("prj")) {
+                    urlTaiga = data[i].taigaURL;
+                    urlGithub = data[i].githubURL;
+                }
+            }
+        }
+    });
+}
+
+function drawChartByFactor(metrics, container, width, height, categories, projecturls) {
     var gaugeChart = $("#gaugeChart");
     for (j = 0; j < factors.length; j++) {
-        console.log(factors[j]);
         var divF = document.createElement('div');
         divF.style.marginTop = "1em";
         divF.style.marginBottom = "1em";
+        if (factors[j].type === "Taiga") {
+            if (urlTaiga !== undefined) {
+                var a = document.createElement('a')
+                a.href=urlTaiga;
+                var icon = document.createElement("img");
+                icon.src = "../icons/taiga_icon.png"
+                icon.width = 38;
+                icon.height = 25;
+                icon.style = "padding-right:15px;";
+                a.appendChild(icon)
+                divF.appendChild(a);
+            }
+        }
+        if (factors[j].type === "Github") {
+            if (urlGithub !== undefined) {
+                var list = urlGithub.split(";");
+                var a = document.createElement('a')
+                a.href=list[0];
+                var icon1 = document.createElement("img");
+                icon1.src = "../icons/github_icon.png"
+                icon1.width = 38;
+                icon1.height = 25;
+                icon1.style = "padding-right:15px;";
+                a.appendChild(icon1)
+                divF.appendChild(a);
+                if (list.length == 2) {
+                    var a = document.createElement('a')
+                    a.href=list[1];
+                    var icon2 = document.createElement("img");
+                    icon2.src = "../icons/github_icon.png"
+                    icon2.width = 38;
+                    icon2.height = 25;
+                    icon2.style = "padding-right:15px;";
+                    a.appendChild(icon2)
+                    divF.appendChild(a);
+                }
+            }
+        }
+
 
         var labelF = document.createElement('label');
         labelF.id = factors[j].id;
         labelF.textContent = factors[j].name;
         divF.appendChild(labelF);
 
-        var a=document.createElement('a')
+        var a = document.createElement('a')
         a.classList.add("check")
         a.setAttribute('data-tooltip', factors[j].description)
 
         var tooltipdiv = document.createElement('div');
         tooltipdiv.classList.add("tooltip");
         var iconF = document.createElement('img');
-        iconF.class="icons";
-        iconF.src="../icons/information.png";
+        iconF.class = "icons";
+        iconF.src = "../icons/information.png";
         iconF.width = 38;
         iconF.height = 25;
         iconF.style = "padding-left:15px;";
-        
+
         var spantootlip = document.createElement('span');
         spantootlip.classList.add("tooltiptext");
-        spantootlip.innerHTML=factors[j].description;
+        spantootlip.innerHTML = factors[j].description;
         tooltipdiv.appendChild(iconF)
         tooltipdiv.appendChild(spantootlip)
         a.appendChild(iconF)

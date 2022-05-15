@@ -21,15 +21,21 @@ public class Project {
     private boolean active;
     @Column(name = "backlogId")
     private String backlogId;
-    
+    @Column(name = "taigaURL")
+    private String taigaURL;
+    @Column(name = "githubURL")
+    private String githubURL;
+
     public Project(){}
     
-    public Project(String externalId, String name, String description, byte[] logo, boolean active) {
+    public Project(String externalId, String name, String description, byte[] logo, boolean active, String taigaURL, String githubURL) {
     	this.externalId = externalId;
     	this.name = name;
     	this.description = description;
     	this.logo = logo;
     	this.active = active;
+    	this.taigaURL=taigaURL;
+    	this.githubURL=githubURL;
     }
     
     public Long getId() {
@@ -87,4 +93,12 @@ public class Project {
     public void setBacklogId(String backlogId) {
         this.backlogId = backlogId;
     }
+
+    public String getTaigaURL() {return taigaURL;}
+
+    public void setTaigaURL(String taigaURL) {this.taigaURL=taigaURL;}
+
+    public String getGithubURL() {return githubURL;}
+
+    public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
 }

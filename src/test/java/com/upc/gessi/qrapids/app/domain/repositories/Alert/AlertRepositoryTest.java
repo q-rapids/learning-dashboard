@@ -74,7 +74,7 @@ public class AlertRepositoryTest {
     @Test
     public void countByProject_IdAndStatus() {
         // Given
-        Project project1 = new Project("test", "Test", null, null, true);
+        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2");
         entityManager.persist(project1);
 
         Alert alert1 = new Alert();
@@ -87,7 +87,7 @@ public class AlertRepositoryTest {
         alert2.setStatus(AlertStatus.VIEWED);
         entityManager.persist(alert2);
 
-        Project project2 = new Project("test2", "Test 2", null, null, true);
+        Project project2 = new Project("test2", "Test 2", null, null, true, "testurl1", "testurl2");
         entityManager.persist(project2);
 
         Alert alert3 = new Alert();
@@ -106,7 +106,7 @@ public class AlertRepositoryTest {
     @Test
     public void countByProject_IdAndReqAssociatIsTrueAndStatusEquals() {
         // Given
-        Project project1 = new Project("test", "Test", null, null, true);
+        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2");
         entityManager.persist(project1);
 
         Alert alert1 = new Alert();
@@ -127,7 +127,7 @@ public class AlertRepositoryTest {
         alert3.setReqAssociat(true);
         entityManager.persist(alert3);
 
-        Project project2 = new Project("test2", "Test 2", null, null, true);
+        Project project2 = new Project("test2", "Test 2", null, null, true, "testurl1", "testurl2");
         entityManager.persist(project2);
 
         Alert alert4 = new Alert();
@@ -146,7 +146,7 @@ public class AlertRepositoryTest {
 
     @Test
     public void getAlerts () {
-        Project project1 = new Project("test", "Test", null, null, true);
+        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2");
         project1 = entityManager.persist(project1);
 
         Alert alert1 = new Alert("duplication", "Duplication", AlertType.METRIC, 0.4f, 0.5f, "duplication", new Date(), AlertStatus.NEW, true, project1);
@@ -166,7 +166,7 @@ public class AlertRepositoryTest {
 
     @Test
     public void getAlertsByName () {
-        Project project1 = new Project("test", "Test", null, null, true);
+        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2");
         entityManager.persist(project1);
 
         Alert alert1 = new Alert("duplication", "Duplication", AlertType.METRIC, 0.4f, 0.5f, "duplication", new Date(), AlertStatus.NEW, true, project1);

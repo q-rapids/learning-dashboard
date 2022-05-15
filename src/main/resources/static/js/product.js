@@ -203,6 +203,60 @@ function getChosenProject(currentProjectId) {
 			inputBacklogId.setAttribute('placeholder', 'Write the project backlog ID here');
 			backlogIdRow.appendChild(inputBacklogId);
 			projectForm.appendChild(backlogIdRow);
+
+			var TaigaUrlRow = document.createElement('div');
+			TaigaUrlRow.classList.add("productInfoRow");
+			var TaigaURLp = document.createElement('p');
+			TaigaURLp.appendChild(document.createTextNode("Taiga URL:"));
+			TaigaURLp.setAttribute('style', 'font-size: 18px; width: 18%');
+			TaigaUrlRow.appendChild(TaigaURLp);
+			var inputTaigaUrl = document.createElement("input");
+			inputTaigaUrl.setAttribute('id', 'inputTaigaUrl');
+			inputTaigaUrl.setAttribute('type', 'text');
+			var TaigaURL = "";
+			if (data.taigaURL) TaigaURL = data.taigaURL;
+			inputTaigaUrl.setAttribute('value', TaigaURL);
+			inputTaigaUrl.setAttribute('style', 'width: 100%;');
+			inputTaigaUrl.setAttribute('placeholder', 'Write the Taiga URL');
+			TaigaUrlRow.appendChild(inputTaigaUrl);
+			projectForm.appendChild(TaigaUrlRow);
+
+			var githubURLList=[];
+			if (data.githubURL) {
+				githubURLList=data.githubURL.split(";");
+			}
+
+				var firstGithubUrlRow = document.createElement('div');
+			firstGithubUrlRow.classList.add("productInfoRow");
+			var firstGithubURLp = document.createElement('p');
+			firstGithubURLp.appendChild(document.createTextNode("First Github URL:"));
+			firstGithubURLp.setAttribute('style', 'font-size: 18px; width: 30%');
+			firstGithubUrlRow.appendChild(firstGithubURLp);
+			var inputfirstGithubUrl = document.createElement("input");
+			inputfirstGithubUrl.setAttribute('id', 'inputfirstGithubUrl');
+			inputfirstGithubUrl.setAttribute('type', 'text');
+			if(githubURLList[0]) inputfirstGithubUrl.setAttribute('value', githubURLList[0]);
+			else inputfirstGithubUrl.setAttribute('value', "");
+			inputfirstGithubUrl.setAttribute('style', 'width: 100%;');
+			inputfirstGithubUrl.setAttribute('placeholder', 'Write the first Github URL');
+			firstGithubUrlRow.appendChild(inputfirstGithubUrl);
+			projectForm.appendChild(firstGithubUrlRow);
+
+			var secondGithubUrlRow = document.createElement('div');
+			secondGithubUrlRow.classList.add("productInfoRow");
+			var secondGithubURLp = document.createElement('p');
+			secondGithubURLp.appendChild(document.createTextNode("Second Github URL:"));
+			secondGithubURLp.setAttribute('style', 'font-size: 18px; width: 30%');
+			secondGithubUrlRow.appendChild(secondGithubURLp);
+			var inputsecondGithubUrl = document.createElement("input");
+			inputsecondGithubUrl.setAttribute('id', 'inputsecondGithubUrl');
+			inputsecondGithubUrl.setAttribute('type', 'text');
+			if(githubURLList[1]) inputsecondGithubUrl.setAttribute('value', githubURLList[1]);
+			else inputsecondGithubUrl.setAttribute('value', "");
+			inputsecondGithubUrl.setAttribute('style', 'width: 100%;');
+			inputsecondGithubUrl.setAttribute('placeholder', 'Write the second Github URL');
+			secondGithubUrlRow.appendChild(inputsecondGithubUrl);
+			projectForm.appendChild(secondGithubUrlRow);
     		
     		var changeLogoRow = document.createElement('div');
     		changeLogoRow.classList.add("productInfoRow");
@@ -314,6 +368,10 @@ function saveProject() {
 	        formData.append("description", $('#projectDescription').val());
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
 	        formData.append("backlogId", $("#projectBacklogId").val());
+	        formData.append("taigaURL", $('#inputTaigaUrl').val());
+	        if($('#inputsecondGithubUrl').val()!="" && $('#inputfirstGithubUrl').val()!="" ) formData.append("githubURL", $('#inputfirstGithubUrl').val()+";"+$('#inputsecondGithubUrl').val());
+	        else if($('#inputsecondGithubUrl').val()=="")  formData.append("githubURL", $('#inputfirstGithubUrl').val());
+			else if($('#inputfirstGithubUrl').val()=="")  formData.append("githubURL", $('#inputsecondGithubUrl').val());
 
 	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {

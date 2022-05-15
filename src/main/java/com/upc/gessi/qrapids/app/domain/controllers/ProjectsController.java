@@ -43,7 +43,7 @@ public class ProjectsController {
 
     public DTOProject getProjectByExternalId(String externalId) throws ProjectNotFoundException {
         Project p = projectRepository.findByExternalId(externalId);
-        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL());
     }
 
     public List<DTOProject> getProjects(Long id) throws ProjectNotFoundException {
@@ -59,7 +59,7 @@ public class ProjectsController {
         List<Project> projectsBD = new ArrayList<>();
         projectIterable.forEach(projectsBD::add);
         for (Project p : projectsBD) {
-            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL());
             projects.add(project);
         }
         Collections.sort(projects, new Comparator<DTOProject>() {
@@ -76,7 +76,7 @@ public class ProjectsController {
         DTOProject dtoProject = null;
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
-            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId());
+            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getTaigaURL(), project.getGithubURL());
         }
         return dtoProject;
     }
@@ -87,7 +87,7 @@ public class ProjectsController {
     }
 
     public void updateProject(DTOProject p) {
-        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
+        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getTaigaURL(), p.getGithubURL());
         project.setId(p.getId());
         project.setBacklogId(p.getBacklogId());
         projectRepository.save(project);
@@ -107,7 +107,7 @@ public class ProjectsController {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {
-                Project newProject = new Project(project, project, "No description specified", null, true);
+                Project newProject = new Project(project, project, "No description specified", null, true,null,null);
                 projectRepository.save(newProject);
             }
         }

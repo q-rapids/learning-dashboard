@@ -184,11 +184,19 @@ public class FactorsController {
             throw new QualityFactorNotFoundException();
         }
     }
+    public Factor getQualityFactorByExternalId (String qualityFactorExternalId) throws QualityFactorNotFoundException {
+        Optional<Factor> qualityFactorOptional = qualityFactorRepository.findByExternalId(qualityFactorExternalId);
+        if (qualityFactorOptional.isPresent()) {
+            return qualityFactorOptional.get();
+        } else {
+            throw new QualityFactorNotFoundException();
+        }
+    }
 
-    public Factor saveQualityFactor(String name, String description, String threshold, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
+    public Factor saveQualityFactor(String name, String description, String threshold, List<String> qualityMetrics, Project project, String type) throws MetricNotFoundException {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
-        qualityFactor = new Factor (name, description, project);
+        qualityFactor = new Factor (name, description, project, type);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             qualityFactor.setThreshold(Float.parseFloat(threshold));
         else
@@ -227,10 +235,11 @@ public class FactorsController {
         return weighted;
     }
 
-    public Factor editQualityFactor(Long factorId, String name, String description, String threshold, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+    public Factor editQualityFactor(Long factorId, String name, String description, String threshold, List<String> qualityMetrics, String type) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
         Factor factor = getQualityFactorById(factorId);
         factor.setName(name);
         factor.setDescription(description);
+        factor.setType(type);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             factor.setThreshold(Float.parseFloat(threshold));
         else

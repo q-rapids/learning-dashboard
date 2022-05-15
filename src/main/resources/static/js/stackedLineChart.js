@@ -1,7 +1,8 @@
 var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
-
+var urlTaiga;
+var urlGithub;
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
 var decisionIgnoreColor = 'rgb(189,0,0)';
 var decisionAddColor = 'rgb(62,208,62)';
@@ -29,7 +30,28 @@ Chart.plugins.register({
     }
 });
 
+function getCurrentProject() {
+
+    var urlp = "/api/projects";
+    jQuery.ajax({
+        dataType: "json",
+        url: urlp,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            for(var i=0; i<data.length; i++) {
+                if(data[i].name===sessionStorage.getItem("prj")) {
+                    urlTaiga = data[i].taigaURL;
+                    urlGithub = data[i].githubURL;
+                }
+            }
+        }
+    });
+}
+
 function drawChart() {
+    getCurrentProject()
     config = [];
     for (var i = 0; i < texts.length; ++i) {    //create config for each chart
         var c = {
@@ -374,11 +396,13 @@ function drawChart() {
             let factorId;
             let factorName;
             let factorDescription;
+            let factorType;
             if(factorIndex < factors.length) {
                 factorId = factors[factorIndex].id;
                 factorName = factors[factorIndex].name;
                 factorDescription=factors[factorIndex].description
                 factorThreshold += factors[factorIndex].metrics.length
+                factorType=factors[factorIndex].type
                 factorIndex++;
             }else{
                 factorId = "withoutfactor"
@@ -388,13 +412,52 @@ function drawChart() {
             divF.style.marginTop = "3em";
             divF.style.marginBottom = "1em";
 
+            if (factorType === "Taiga") {
+                if (urlTaiga !== undefined) {
+                    var b = document.createElement('a')
+                    b.href=urlTaiga;
+                    var icon = document.createElement("img");
+                    icon.src = "../icons/taiga_icon.png"
+                    icon.width = 38;
+                    icon.height = 25;
+                    icon.style = "padding-right:15px;";
+                    b.appendChild(icon)
+                    divF.appendChild(b);
+                }
+            }
+            if (factorType === "Github") {
+                if (urlGithub !== undefined) {
+                    var list = urlGithub.split(";");
+                    var b = document.createElement('a')
+                    b.href=list[0];
+                    var icon1 = document.createElement("img");
+                    icon1.src = "../icons/github_icon.png"
+                    icon1.width = 38;
+                    icon1.height = 25;
+                    icon1.style = "padding-right:15px;";
+                    b.appendChild(icon1)
+                    divF.appendChild(b);
+                    if (list.length == 2) {
+                        var b = document.createElement('a')
+                        b.href=list[1];
+                        var icon2 = document.createElement("img");
+                        icon2.src = "../icons/github_icon.png"
+                        icon2.width = 38;
+                        icon2.height = 25;
+                        icon2.style = "padding-right:15px;";
+                        b.appendChild(icon2)
+                        divF.appendChild(b);
+                    }
+                }
+            }
+
             var labelF = document.createElement('label');
             labelF.id = factorId;
             labelF.textContent = factorName;
             divF.appendChild(labelF);
-            var b=document.createElement('a')
-            b.classList.add("check")
-            b.setAttribute('data-tooltip', factorDescription)
+            var c=document.createElement('a')
+            c.classList.add("check")
+            c.setAttribute('data-tooltip', factorDescription)
 
             var tooltipdiv = document.createElement('div');
             tooltipdiv.classList.add("tooltip");
@@ -410,8 +473,8 @@ function drawChart() {
             spantootlip.innerHTML=factors[j].description;
             tooltipdiv.appendChild(iconF)
             tooltipdiv.appendChild(spantootlip)
-            b.appendChild(iconF)
-            divF.appendChild(b);
+            c.appendChild(iconF)
+            divF.appendChild(c);
             document.getElementById("chartContainer").appendChild(divF)
         }
 
