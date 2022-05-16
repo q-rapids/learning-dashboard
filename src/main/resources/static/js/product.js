@@ -284,6 +284,35 @@ function getChosenProject(currentProjectId) {
     		inputChangeLogo.setAttribute('type', 'file');
     		changeLogoRow.appendChild(inputChangeLogo);
     		projectForm.appendChild(changeLogoRow);
+
+    		var divNames = document.createElement("div");
+    		divNames.classList.add("productInfoRow")
+			var tableRow = document.createElement('table');
+			tableRow.classList.add("table");
+			tableRow.setAttribute("id", "tableNames")
+			var projetctr = document.createElement('tr');
+			var projectbody = document.createElement('tbody');
+			var thName=document.createElement('th');
+			thName.appendChild(document.createTextNode("Name"));
+			var thTaiga=document.createElement('th');
+			thTaiga.appendChild(document.createTextNode("Taiga username"));
+			var thGithub=document.createElement('th');
+			thGithub.appendChild(document.createTextNode("Github username"));
+			var thEmpty = document.createElement('th');
+			var thSpan=document.createElement('th');
+			var Span = document.createElement('span');
+			Span.setAttribute("class","table-addNames glyphicon glyphicon-plus");
+			Span.addEventListener("click", function()  {buildRow("tablenames");});
+			thSpan.appendChild(Span);
+			projetctr.appendChild(thName);
+			projetctr.appendChild(thTaiga);
+			projetctr.appendChild(thGithub);
+			projetctr.appendChild(thEmpty);
+			projetctr.appendChild(thSpan);
+			projectbody.appendChild(projetctr);
+			tableRow.append(projectbody);
+			divNames.append(tableRow);
+			projectForm.appendChild(divNames);
     		
     		var saveBtnRow = document.createElement('div');
     		saveBtnRow.classList.add("productInfoRow");
@@ -369,6 +398,37 @@ function getChosenProject(currentProjectId) {
     		currentProject = currentProjectId;
         }
     });
+}
+
+function buildRow() {
+	var table = document.getElementById("tableNames");
+	var row = table.insertRow(-1);
+
+	var name = document.createElement("td");
+	name.setAttribute("contenteditable", "true");
+	name.setAttribute("style", "width:30%;border:1px solid lightgray")
+	row.appendChild(name);
+	var taigaName = document.createElement("td");
+	taigaName.setAttribute("contenteditable", "true");
+	taigaName.setAttribute("style", "border:1px solid lightgray")
+	row.appendChild(taigaName);
+	var githubName = document.createElement("td");
+	githubName.setAttribute("contenteditable", "true");
+	githubName.setAttribute("style", "border:1px solid lightgray")
+	row.appendChild(githubName);
+
+	var thEmpty = document.createElement('th');
+	row.appendChild(thEmpty)
+
+	var removeIcon = document.createElement("span");
+	removeIcon.classList.add("glyphicon", "glyphicon-remove");
+	var remove = document.createElement("td");
+	remove.addEventListener("click", function () {
+		$(this).parents('tr').detach();
+	});
+	remove.appendChild(removeIcon);
+
+	row.appendChild(remove);
 }
 
 function check() {
