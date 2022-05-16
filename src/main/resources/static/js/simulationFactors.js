@@ -42,6 +42,7 @@ function getFactorsCategories (titles, ids, labels, values) {
         type: "GET",
         success: function (response) {
             categories = response;
+            removeSpaces();
             showDetailedStrategicIndicators(titles, ids, labels, values)
         }
     });
@@ -282,7 +283,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         else catName = DEFAULT_CATEGORY;
 
         cat = categories.filter( function (c) {
-            return c.name === catName;
+            return c.name === catName.replace(/\s/g, '-');
         });
 
         cat.sort(function (a, b) {
@@ -388,13 +389,14 @@ $('#apply').click(function () {
             });
             dataset.data.push(newFactor.value);
         }
-        if (detailedCharts[i].data.datasets.length > 4) {
+        let cat = categories.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label)
+        if (detailedCharts[i].data.datasets.length > cat.length+1) {
             detailedCharts[i].data.datasets[0].data = dataset.data;
         } else {
             detailedCharts[i].data.datasets.unshift(dataset);
             // change categories fill property (we add simulated data)
-            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill +1;
-            detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill +1;
+            for(let j = 3; j < detailedCharts[i].data.datasets.length; ++j)
+                detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill +1;
         }
         detailedCharts[i].update();
     }
@@ -432,12 +434,13 @@ $('#restore').click(function () {
 
 function removeSimulation() {
     d3.selectAll('.simulation').remove();
-    if (detailedCharts[0].data.datasets.length > 4) {
-        for (var i = 0; i < detailedCharts.length; i++) {
+    for (var i = 0; i < detailedCharts.length; i++) {
+        let cat = categories.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label)
+        if (detailedCharts[i].data.datasets.length > cat.length+1) {
             detailedCharts[i].data.datasets.shift();
             // change categories fill property (we remove simulated data)
-            detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill -1;
-            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill -1;
+            for(let j = 2; j < detailedCharts[i].data.datasets.length; ++j)
+                detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill -1;
             detailedCharts[i].update();
         }
     }

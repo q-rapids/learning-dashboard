@@ -48,8 +48,7 @@ function getMetricsCategoriesAndShow () {
         url : url,
         type: "GET",
         success: function (response) {
-            metricCats = response;
-            removeSpaces();
+            metricCats = removeSpaces(response);
             showMetricsSliders();
         }
     });
@@ -61,7 +60,7 @@ function getMetricsCategories (titles, ids, labels, values) {
         url : url,
         type: "GET",
         success: function (response) {
-            metricCats = response;
+            metricCats = removeSpaces(response)
             showFactors(titles, ids, labels, values);
         }
     });
@@ -73,7 +72,7 @@ function getFactorsCategories (titles, ids, labels, values) {
         url : url,
         type: "GET",
         success: function (response) {
-            factorCats = response;
+            factorCats= removeSpaces(response)
             getFactorsList(titles, ids, labels, values)
         }
     });
@@ -91,11 +90,12 @@ function getFactorsList(titles, ids, labels, values) {
     });
 }
 
-function removeSpaces(){
-    metricCats.forEach( function (cat) {
+function removeSpaces(cats){
+    cats.forEach( function (cat) {
         cat.name = cat.name.replace(/\s/g, '-')
         cat.type = cat.type.replace(/\s/g, '-')
     })
+    return cats;
 }
 
 function showMetricsSliders () {
@@ -284,7 +284,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         else catName = DEFAULT_CATEGORY;
 
         cat = factorCats.filter( function (c) {
-            return c.name === catName;
+            return c.name === catName.replace(/\s/g, '-');
         });
 
         cat.sort(function (a, b) {
@@ -460,7 +460,7 @@ function showFactors (titles, ids, labels, values) {
 
         let catName = getFactorCategory(qualityFactors[i].metrics, metricsDB);
         let cat = metricCats.filter( function (c) {
-            return c.name === catName;
+            return c.name === catName.replace(/\s/g, '-');;
         });
 
         cat.sort(function (a, b) {
@@ -583,13 +583,14 @@ $('#apply').click(function () {
             dataset.data.push(newMetric.value);
         }
 
-        if (factorsCharts[i].data.datasets.length > 4)
+        let cat = metricCats.filter( c => c.name === factorsCharts[i].data.datasets[(factorsCharts[i].data.datasets.length)-1].label)
+        if (factorsCharts[i].data.datasets.length > cat.length+1) {
             factorsCharts[i].data.datasets[0].data = dataset.data;
-        else {
+        } else {
             factorsCharts[i].data.datasets.unshift(dataset);
             // change categories fill property (we add simulated data)
-            factorsCharts[i].data.datasets[3].fill = factorsCharts[i].data.datasets[3].fill +1;
-            factorsCharts[i].data.datasets[4].fill = factorsCharts[i].data.datasets[4].fill +1;
+            for(let j = 3; j < factorsCharts[i].data.datasets.length; ++j)
+                factorsCharts[i].data.datasets[j].fill = factorsCharts[i].data.datasets[j].fill +1;
         }
         factorsCharts[i].update();
     }
@@ -637,13 +638,14 @@ $('#apply').click(function () {
                             dataset.data.push(newFactor.value.first);
                     }
 
-                    if (detailedCharts[i].data.datasets.length > 4)
+                    let cat = factorCats.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label)
+                    if (detailedCharts[i].data.datasets.length > cat.length+1) {
                         detailedCharts[i].data.datasets[0].data = dataset.data;
-                    else {
+                    } else {
                         detailedCharts[i].data.datasets.unshift(dataset);
                         // change categories fill property (we add simulated data)
-                        detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill + 1;
-                        detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill + 1;
+                        for(let j = 3; j < detailedCharts[i].data.datasets.length; ++j)
+                            detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill +1;
                     }
                     detailedCharts[i].update();
                 }
@@ -694,22 +696,25 @@ $('#restore').click(function () {
 
 function removeSimulation() {
     d3.selectAll('.simulation').remove();
-    if (factorsCharts[0].data.datasets.length > 4) {
-        for (var i = 0; i < factorsCharts.length; i++) {
+    for (var i = 0; i < factorsCharts.length; i++) {
+        let cat = metricCats.filter( c => c.name === factorsCharts[i].data.datasets[(factorsCharts[i].data.datasets.length)-1].label.replace(/\s/g, '-'))
+        if (factorsCharts[i].data.datasets.length > cat.length+1) {
             factorsCharts[i].data.datasets.shift();
             // change categories fill property (we remove simulated data)
-            factorsCharts[i].data.datasets[2].fill = factorsCharts[i].data.datasets[2].fill -1;
-            factorsCharts[i].data.datasets[3].fill = factorsCharts[i].data.datasets[3].fill -1;
+            for(let j = 2; j < factorsCharts[i].data.datasets.length; ++j)
+                factorsCharts[i].data.datasets[j].fill = factorsCharts[i].data.datasets[j].fill -1;
             factorsCharts[i].update();
         }
     }
+
     if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
-        if (detailedCharts[0].data.datasets.length > 4) {
-            for (var i = 0; i < detailedCharts.length; i++) {
+        for (var i = 0; i < detailedCharts.length; i++) {
+            let cat = factorCats.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label.replace(/\s/g, '-'))
+            if (detailedCharts[i].data.datasets.length > cat.length+1) {
                 detailedCharts[i].data.datasets.shift();
                 // change categories fill property (we remove simulated data)
-                detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill - 1;
-                detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill - 1;
+                for(let j = 2; j < detailedCharts[i].data.datasets.length; ++j)
+                    detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill -1;
                 detailedCharts[i].update();
             }
         }
