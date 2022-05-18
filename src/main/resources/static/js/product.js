@@ -120,7 +120,10 @@ function clickOnTree(e){
 	}
 }
 
+
 function getChosenProject(currentProjectId) {
+
+
 	var url = "/api/projects/" + currentProjectId;
 	if (serverUrl) {
 		url = serverUrl + url;
@@ -422,7 +425,7 @@ function buildRow() {
 
 	var removeIcon = document.createElement("span");
 	removeIcon.classList.add("glyphicon", "glyphicon-remove");
-	var remove = document.createElement("td");
+	var remove = document.createElement("th");
 	remove.addEventListener("click", function () {
 		$(this).parents('tr').detach();
 	});
@@ -452,11 +455,20 @@ function saveProject() {
 	        else if($('#inputsecondGithubUrl').val()=="")  formData.append("githubURL", $('#inputfirstGithubUrl').val());
 			else if($('#inputfirstGithubUrl').val()=="")  formData.append("githubURL", $('#inputsecondGithubUrl').val());
 			formData.append("isGlobal", globalChecked);
+			var table = document.getElementById("tableNames");
+			var cells = table.getElementsByTagName("td");
+			var studentsList = [];
+			for (var i = 0; i < cells.length; i++) {
+				if(cells[i].innerHTML=="") {
+					studentsList.push("empty");
+				}
+				else studentsList.push(cells[i].innerHTML);
+			}
+			formData.append("studentsList", studentsList.toString())
 	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
-	
 	        $.ajax({
 	            url: url,
 	            data: formData,
@@ -475,12 +487,11 @@ function saveProject() {
 	            	/*buildFirstPartOfTree();
 	            	getChosenProject(currentProjectId);*/
 	            	location.href = serverUrl + "/Products/Configuration";
-	            	
 	            }
 	        });
     	} else {
     		warningUtils("Error", "The logo exceeds its maximum permitted size of 1Mb.");
-        } 
+        }
     } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 };
 
