@@ -68,7 +68,10 @@ public class Projects {
     @ResponseStatus(HttpStatus.OK)
     public DTOProject getProjectById(@PathVariable String id) {
         try {
-            return projectsController.getProjectById(id);
+            List<DTOStudent> s = studentsController.getStudentsFromProject(Long.parseLong(id));
+            DTOProject p = projectsController.getProjectById(id);
+            p.setStudents(s);
+            return p;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -99,19 +102,24 @@ public class Projects {
                 DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, taigaURL, githubURL, isGlobal);
                 projectsController.updateProject(p);
                 List<DTOStudent> dtostudents = new ArrayList<>();
-                for(int i = 0; i<students.length; i+=3) {
-                    if(students[i].equals("empty")) {
-                        students[i]=null;
-                    }
-                    if(students[i + 1].equals("empty")) {
-                        students[i+1]=null;
-                    }
-                    if(students[i + 2].equals("empty")) {
-                        students[i+2]=null;
-                    }
-                    dtostudents.add(new DTOStudent(students[i], students[i+1], students[i+2], p));
+                if(students.length==0) {
+                    studentsController.deleteStudentsFromPorjectId(id);
                 }
-                studentsController.updateStudents(dtostudents);
+                else {
+                    for (int i = 0; i < students.length; i += 3) {
+                        if (students[i].equals("empty")) {
+                            students[i] = null;
+                        }
+                        if (students[i + 1].equals("empty")) {
+                            students[i + 1] = null;
+                        }
+                        if (students[i + 2].equals("empty")) {
+                            students[i + 2] = null;
+                        }
+                        dtostudents.add(new DTOStudent(students[i], students[i + 1], students[i + 2], p));
+                    }
+                    studentsController.updateStudents(dtostudents);
+                }
             } else {
                 throw new ElementAlreadyPresentException();
             }

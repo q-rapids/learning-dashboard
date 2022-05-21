@@ -123,7 +123,6 @@ function clickOnTree(e){
 
 function getChosenProject(currentProjectId) {
 
-
 	var url = "/api/projects/" + currentProjectId;
 	if (serverUrl) {
 		url = serverUrl + url;
@@ -224,10 +223,8 @@ function getChosenProject(currentProjectId) {
 			TaigaUrlRow.appendChild(inputTaigaUrl);
 			projectForm.appendChild(TaigaUrlRow);
 
-			var githubURLList=[];
-			if (data.githubURL) {
-				githubURLList=data.githubURL.split(";");
-			}
+			var githubURL="";
+			if (data.githubURL) githubURL=data.githubURL;
 
 			var firstGithubUrlRow = document.createElement('div');
 			firstGithubUrlRow.classList.add("productInfoRow");
@@ -238,28 +235,11 @@ function getChosenProject(currentProjectId) {
 			var inputfirstGithubUrl = document.createElement("input");
 			inputfirstGithubUrl.setAttribute('id', 'inputfirstGithubUrl');
 			inputfirstGithubUrl.setAttribute('type', 'text');
-			if(githubURLList[0]) inputfirstGithubUrl.setAttribute('value', githubURLList[0]);
-			else inputfirstGithubUrl.setAttribute('value', "");
+			inputfirstGithubUrl.setAttribute('value', githubURL);
 			inputfirstGithubUrl.setAttribute('style', 'width: 100%;');
-			inputfirstGithubUrl.setAttribute('placeholder', 'Write the first Github URL');
+			inputfirstGithubUrl.setAttribute('placeholder', 'Write the Github URL. In case there are more than one separate them by a ";"');
 			firstGithubUrlRow.appendChild(inputfirstGithubUrl);
 			projectForm.appendChild(firstGithubUrlRow);
-
-			var secondGithubUrlRow = document.createElement('div');
-			secondGithubUrlRow.classList.add("productInfoRow");
-			var secondGithubURLp = document.createElement('p');
-			secondGithubURLp.appendChild(document.createTextNode("Second Github URL:"));
-			secondGithubURLp.setAttribute('style', 'font-size: 18px; width: 20%');
-			secondGithubUrlRow.appendChild(secondGithubURLp);
-			var inputsecondGithubUrl = document.createElement("input");
-			inputsecondGithubUrl.setAttribute('id', 'inputsecondGithubUrl');
-			inputsecondGithubUrl.setAttribute('type', 'text');
-			if(githubURLList[1]) inputsecondGithubUrl.setAttribute('value', githubURLList[1]);
-			else inputsecondGithubUrl.setAttribute('value', "");
-			inputsecondGithubUrl.setAttribute('style', 'width: 100%;');
-			inputsecondGithubUrl.setAttribute('placeholder', 'Write the second Github URL');
-			secondGithubUrlRow.appendChild(inputsecondGithubUrl);
-			projectForm.appendChild(secondGithubUrlRow);
 
 			var globalCheckRow = document.createElement("div");
 			globalCheckRow.classList.add("productInfoRow")
@@ -290,6 +270,13 @@ function getChosenProject(currentProjectId) {
 
     		var divNames = document.createElement("div");
     		divNames.classList.add("productInfoRow")
+			var namesP = document.createElement('p');
+			namesP.appendChild(document.createTextNode("Project Team Members"));
+			namesP.setAttribute('style', 'font-size: 25px; margin-right: 1%');
+			divNames.appendChild(namesP)
+			projectForm.appendChild(divNames);
+			var divFormNames= document.createElement("div");
+			divFormNames.classList.add("productInfoRow");
 			var tableRow = document.createElement('table');
 			tableRow.classList.add("table");
 			tableRow.setAttribute("id", "tableNames")
@@ -305,7 +292,7 @@ function getChosenProject(currentProjectId) {
 			var thSpan=document.createElement('th');
 			var Span = document.createElement('span');
 			Span.setAttribute("class","table-addNames glyphicon glyphicon-plus");
-			Span.addEventListener("click", function()  {buildRow("tablenames");});
+			Span.addEventListener("click", function()  {buildRow("","","");});
 			thSpan.appendChild(Span);
 			projetctr.appendChild(thName);
 			projetctr.appendChild(thTaiga);
@@ -314,9 +301,9 @@ function getChosenProject(currentProjectId) {
 			projetctr.appendChild(thSpan);
 			projectbody.appendChild(projetctr);
 			tableRow.append(projectbody);
-			divNames.append(tableRow);
-			projectForm.appendChild(divNames);
-    		
+			divFormNames.append(tableRow);
+			projectForm.appendChild(divFormNames);
+
     		var saveBtnRow = document.createElement('div');
     		saveBtnRow.classList.add("productInfoRow");
     		saveBtnRow.setAttribute('style', 'justify-content: space-between');
@@ -397,27 +384,35 @@ function getChosenProject(currentProjectId) {
     		document.getElementById('productInfo').innerHTML = "";
     		document.getElementById('productInfo').appendChild(projectForm);
     		document.getElementById('productInfo').appendChild(logoColumn);
-    		
+
+			for(let i = 0 ; i<data.students.length; i++) {
+				var s = data.students[i];
+				buildRow(s.studentName, s.taigaUsername, s.githubUsername);
+			}
+
     		currentProject = currentProjectId;
         }
     });
 }
 
-function buildRow() {
+function buildRow(studentName, taigaUsername, githubUsername) {
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 
 	var name = document.createElement("td");
 	name.setAttribute("contenteditable", "true");
 	name.setAttribute("style", "width:30%;border:1px solid lightgray")
+	name.innerHTML=studentName;
 	row.appendChild(name);
 	var taigaName = document.createElement("td");
 	taigaName.setAttribute("contenteditable", "true");
 	taigaName.setAttribute("style", "border:1px solid lightgray")
+	taigaName.innerHTML=taigaUsername;
 	row.appendChild(taigaName);
 	var githubName = document.createElement("td");
 	githubName.setAttribute("contenteditable", "true");
 	githubName.setAttribute("style", "border:1px solid lightgray")
+	githubName.innerHTML=githubUsername;
 	row.appendChild(githubName);
 
 	var thEmpty = document.createElement('th');
@@ -451,10 +446,8 @@ function saveProject() {
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
 	        formData.append("backlogId", $("#projectBacklogId").val());
 	        formData.append("taigaURL", $('#inputTaigaUrl').val());
-	        if($('#inputsecondGithubUrl').val()!="" && $('#inputfirstGithubUrl').val()!="" ) formData.append("githubURL", $('#inputfirstGithubUrl').val()+";"+$('#inputsecondGithubUrl').val());
-	        else if($('#inputsecondGithubUrl').val()=="")  formData.append("githubURL", $('#inputfirstGithubUrl').val());
-			else if($('#inputfirstGithubUrl').val()=="")  formData.append("githubURL", $('#inputsecondGithubUrl').val());
-			formData.append("isGlobal", globalChecked);
+			formData.append("githubURL", $('#inputfirstGithubUrl').val());
+	        formData.append("isGlobal", globalChecked);
 			var table = document.getElementById("tableNames");
 			var cells = table.getElementsByTagName("td");
 			var studentsList = [];

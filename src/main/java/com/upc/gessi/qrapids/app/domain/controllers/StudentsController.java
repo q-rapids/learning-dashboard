@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +24,9 @@ public class StudentsController {
 
     public List<DTOStudent> getStudentsFromProject(Long projectId){
         List<Student> students =studentRepository.findAllByProjectId(projectId);
-        List<DTOStudent> dtoStudents = null;
+        List<DTOStudent> dtoStudents = new ArrayList<>();
         for(Student s:students) {
-            DTOProject dtoProject = new DTOProject(s.getProject().getId(), s.getProject().getExternalId(), s.getProject().getName(), s.getProject().getDescription(), s.getProject().getLogo(), s.getProject().getActive(), s.getProject().getBacklogId(), s.getProject().getTaigaURL(), s.getProject().getGithubURL(), s.getProject().getIsGlobal());
-
-            dtoStudents.add(new DTOStudent(s.getName(),s.getTaigaUsername(),s.getGithubUsername(),dtoProject));
+            dtoStudents.add(new DTOStudent(s.getName(),s.getTaigaUsername(),s.getGithubUsername()));
         }
         return dtoStudents;
     }
@@ -41,9 +40,13 @@ public class StudentsController {
             Optional<Project> p = projectRepository.findById(s.getProject().getId());
             if(p.isPresent()) {
                 Project project = p.get();
-                Student student = new Student(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), project);
+                Student student = new Student(s.getStudentName(), s.getTaigaUsername(), s.getGithubUsername(), project);
                 studentRepository.save(student);
             }
         }
+    }
+
+    public void deleteStudentsFromPorjectId(Long id) {
+        studentRepository.deleteAllByProjectId(id);
     }
 }

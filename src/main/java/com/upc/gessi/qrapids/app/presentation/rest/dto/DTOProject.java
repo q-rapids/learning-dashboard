@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 
+import java.util.List;
 
 public class DTOProject {
     private Long id;
@@ -13,6 +14,7 @@ public class DTOProject {
     private String taigaURL;
     private String githubURL;
     private Boolean isGlobal;
+    private List<DTOStudent> students;
     
     public DTOProject(){}
     
@@ -96,4 +98,8 @@ public class DTOProject {
     public Boolean getIsGlobal() { return isGlobal;}
 
     public void setIsGlobal(Boolean global) { isGlobal = global;}
+
+    public List<DTOStudent> getStudents() { return students; }
+
+    public void setStudents(List<DTOStudent> students) {this.students=students;}
 }

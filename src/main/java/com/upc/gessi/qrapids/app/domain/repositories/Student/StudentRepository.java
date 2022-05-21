@@ -9,5 +9,6 @@ import java.util.List;
 public interface StudentRepository extends CrudRepository<Student, Long> {
     List<Student> findAllByProjectId(Long projectId);
 
+    void deleteAllByProjectId(Long projectId);
 
 }

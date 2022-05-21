@@ -4,13 +4,13 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.domain.repositories.Student.StudentRepository;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +26,9 @@ public class ProjectsController {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private StudentsController studentsController;
 
     @Autowired
     private QMAProjects qmaProjects;
