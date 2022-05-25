@@ -4,17 +4,21 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDates;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectHistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProjectHistoricDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -29,6 +33,9 @@ public class ProjectsController {
 
     @Autowired
     private QMAProjects qmaProjects;
+
+    @Autowired
+    private ProjectHistoricDatesRepository datesRepository;
 
     @Autowired
     private Backlog backlog;
@@ -121,5 +128,15 @@ public class ProjectsController {
     public List<DTOPhase> getPhasesForProject (String projectExternalId, LocalDate date) throws ProjectNotFoundException {
         Project project = findProjectByExternalId(projectExternalId);
         return backlog.getPhases(project.getBacklogId(), date);
+    }
+
+    public List<DTOProjectHistoricDate> getHistoricChartDates(Long project_id) {
+        List<DTOProjectHistoricDate> historicDatesDTO = new ArrayList<>();
+        List<ProjectHistoricDates> projectDates = datesRepository.findByProject(project_id);
+
+        for(ProjectHistoricDates projectDate : projectDates) {
+            historicDatesDTO.add(new DTOProjectHistoricDate(projectDate.getId(), projectDate.getName(), projectDate.getProject(), projectDate.getFrom_date(), projectDate.getTo_date()));
+        }
+        return historicDatesDTO;
     }
 }
