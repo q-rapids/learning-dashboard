@@ -4,7 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDates;
+import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDate;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectHistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
@@ -18,7 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -132,11 +133,26 @@ public class ProjectsController {
 
     public List<DTOProjectHistoricDate> getHistoricChartDates(Long project_id) {
         List<DTOProjectHistoricDate> historicDatesDTO = new ArrayList<>();
-        List<ProjectHistoricDates> projectDates = datesRepository.findByProject(project_id);
+        List<ProjectHistoricDate> projectDates = datesRepository.findByProject(project_id);
 
-        for(ProjectHistoricDates projectDate : projectDates) {
+        for(ProjectHistoricDate projectDate : projectDates) {
             historicDatesDTO.add(new DTOProjectHistoricDate(projectDate.getId(), projectDate.getName(), projectDate.getProject(), projectDate.getFrom_date(), projectDate.getTo_date()));
         }
         return historicDatesDTO;
+    }
+
+    public void createHistoricDate(Long project_id, String from_date, String to_date, String name) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ProjectHistoricDate newHistoricDate = new ProjectHistoricDate();
+        newHistoricDate.setProject(project_id);
+        newHistoricDate.setName(name);
+        //date handling
+        Date from_tmp = sdf.parse(from_date);
+        Date to_tmp = sdf.parse(to_date);
+
+        newHistoricDate.setFrom_date(new java.sql.Date(from_tmp.getTime()));
+        newHistoricDate.setTo_date(new java.sql.Date(to_tmp.getTime()));
+
+        datesRepository.save(newHistoricDate);
     }
 }

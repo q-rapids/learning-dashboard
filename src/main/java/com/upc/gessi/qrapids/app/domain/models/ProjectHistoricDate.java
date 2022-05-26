@@ -5,8 +5,12 @@ import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
-@Table(name="project_historic_dates")
-public class ProjectHistoricDates implements Serializable {
+@Table(name="project_historic_dates",
+        uniqueConstraints= {
+                @UniqueConstraint(columnNames = {"name", "project_id"})
+        })
+
+public class ProjectHistoricDate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -18,10 +22,10 @@ public class ProjectHistoricDates implements Serializable {
     @Column(name = "to_date")
     private Date to_date;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "project_id")
+    @Column(name = "project_id", nullable = false)
     private Long project;
 
     public Long getProject() {

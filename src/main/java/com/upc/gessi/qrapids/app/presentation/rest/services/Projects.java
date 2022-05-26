@@ -100,11 +100,22 @@ public class Projects {
         }
     }
 
-    @GetMapping("api/project/{id}/historicdates")
+    @GetMapping("api/project/{project_id}/historicdates")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOProjectHistoricDate> getHistoricChartDates (@PathVariable Long id) {
+    public List<DTOProjectHistoricDate> getHistoricChartDates (@PathVariable Long project_id) {
         try {
-            return projectsController.getHistoricChartDates(id);
+            return projectsController.getHistoricChartDates(project_id);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @PostMapping("api/project/{project_id}/historicdates")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newHistoricChartDates (@PathVariable Long project_id, @RequestParam ("from_date") String from_date, @RequestParam ("to_date") String to_date, @RequestParam ("name") String name) {
+        try {
+            projectsController.createHistoricDate(project_id, from_date, to_date, name);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
