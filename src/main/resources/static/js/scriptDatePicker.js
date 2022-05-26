@@ -18,7 +18,42 @@ if ((currentURL.search("/Historic") !== -1) || (currentURL.search("/Reporting") 
     configurePrediction();
 }
 
+function getProjectId () {
+    let prjName = sessionStorage.getItem("prj");
+    let ret;
+    jQuery.ajax({
+        url: "/api/projects",
+        type: "GET",
+        async: false,
+        success: function (data) {
+            let res = data.find(project => project.externalId === prjName);
+            ret = res.id;
+        }
+    });
+    return ret;
+}
+
+function getHistoricSprintDates () {
+
+    let currentProjectId = getProjectId();
+    let url = "/api/project/" + currentProjectId + "/historicdates";
+    let ret;
+    jQuery.ajax({
+        url: url,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            ret = data;
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            warningUtils("Warning", "Error in project sprint fetch.");
+        }
+    });
+    return ret;
+}
+
 function configureHistoric () {
+    let sprintDates = getHistoricSprintDates();
     config.maxDate = today;
     $('#datepickerFrom').datepicker(config);
     $('#datepickerTo').datepicker(config);
@@ -36,6 +71,15 @@ function configureHistoric () {
         $('#intervalsDropdown').append('<li><a onclick="thisMonth();$(\'#chartContainer\').empty();getData()" href="#">This month</a></li>');
         $('#intervalsDropdown').append('<li><a onclick="thisYear();$(\'#chartContainer\').empty();getData()" href="#">This year</a></li>');
     }
+
+    sprintDates.forEach( function (elem) {
+        if (window.location.href.match("/Reporting")) { // reporting page intervals
+            $('#intervalsDropdown').append('<li><a onclick="setSprintDates(\'' + elem.from_date + ', ' + elem.to_date + '\');" href="#">' + elem.name + '</a></li>');
+        }else{
+            $('#intervalsDropdown').append('<li><a onclick="setSprintDates(\'' + elem.from_date + ', ' + elem.to_date + '\');$(\'#chartContainer\').empty();getData()" href="#">' + elem.name + '</a></li>');
+        }
+    });
+
     var historicFrom;
     var historicTo;
     // we are navegating -> no params
@@ -286,6 +330,14 @@ function thisYear() {
     var textDate = parseDate(date);
     $('#datepickerFrom').datepicker().value(textDate);
     sessionStorage.setItem("historicFromDate", textDate);
+}
+
+function setSprintDates(from, to) {
+    $('#datepickerTo').datepicker().value(to);
+    sessionStorage.setItem("historicToDate", to);
+
+    $('#datepickerFrom').datepicker().value(from);
+    sessionStorage.setItem("historicFromDate", from);
 }
 
 // Prediction intervals
