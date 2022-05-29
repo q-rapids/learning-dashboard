@@ -79,7 +79,9 @@ public class ProjectsController {
         DTOProject dtoProject = null;
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
+            List<DTOStudent> s = studentsController.getStudentsFromProject(Long.parseLong(id));
             dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getTaigaURL(), project.getGithubURL(), project.getIsGlobal());
+            dtoProject.setStudents(s);
         }
         return dtoProject;
     }

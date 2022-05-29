@@ -120,7 +120,7 @@ public class AuthController {
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 
         String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
-        if(cookie_token!=null) {
+        if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ){
             String user = null;
             user = this.authTools.getUser(cookie_token);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");

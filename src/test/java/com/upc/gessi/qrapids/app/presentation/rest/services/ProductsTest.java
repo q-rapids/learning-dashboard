@@ -112,6 +112,7 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].projects[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].projects[0].githubURL", is("testURL2")))
                 .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
                 .andDo(document("products/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -145,7 +146,9 @@ public class ProductsTest {
                                 fieldWithPath("[].projects[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("[].projects[].isGlobal")
-                                        .description("Is a global project?"))
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].projects[].students")
+                                        .description("Students of the project"))
 
                 ));
 
@@ -195,6 +198,7 @@ public class ProductsTest {
                 .andExpect(jsonPath("$.projects[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$.projects[0].githubURL", is("testURL2")))
                 .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$.projects[0].students", is(nullValue())))
                 .andDo(document("products/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -232,7 +236,9 @@ public class ProductsTest {
                                 fieldWithPath("projects[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("projects[].isGlobal")
-                                        .description("Is a global project?"))
+                                        .description("Is a global project?"),
+                                fieldWithPath("projects[].students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions

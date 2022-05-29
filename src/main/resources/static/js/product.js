@@ -7,6 +7,9 @@ var projects;
 var areProducts = false;
 var serverUrl = sessionStorage.getItem("serverUrl");
 var globalChecked;
+var metrics = [];
+var selectedStudent;
+var tempId=-1;
 
 function buildFirstPartOfTree() {
 	var url = "/api/projects";
@@ -283,21 +286,27 @@ function getChosenProject(currentProjectId) {
 			var projetctr = document.createElement('tr');
 			var projectbody = document.createElement('tbody');
 			var thName=document.createElement('th');
-			thName.appendChild(document.createTextNode("Name"));
+			thName.appendChild(document.createTextNode("Name*"));
 			var thTaiga=document.createElement('th');
 			thTaiga.appendChild(document.createTextNode("Taiga username"));
 			var thGithub=document.createElement('th');
 			thGithub.appendChild(document.createTextNode("Github username"));
 			var thEmpty = document.createElement('th');
+			var thEmpty2 = document.createElement('th');
 			var thSpan=document.createElement('th');
 			var Span = document.createElement('span');
 			Span.setAttribute("class","table-addNames glyphicon glyphicon-plus");
-			Span.addEventListener("click", function()  {buildRow("","","");});
+			Span.addEventListener("click", function()  {
+				selectedStudent=tempId;
+				//since Id can not be negative this would not have conflicts
+				tempId=tempId-1;
+				buildRow("","","", selectedStudent);});
 			thSpan.appendChild(Span);
 			projetctr.appendChild(thName);
 			projetctr.appendChild(thTaiga);
 			projetctr.appendChild(thGithub);
 			projetctr.appendChild(thEmpty);
+			projetctr.appendChild(thEmpty2);
 			projetctr.appendChild(thSpan);
 			projectbody.appendChild(projetctr);
 			tableRow.append(projectbody);
@@ -387,7 +396,7 @@ function getChosenProject(currentProjectId) {
 
 			for(let i = 0 ; i<data.students.length; i++) {
 				var s = data.students[i];
-				buildRow(s.studentName, s.taigaUsername, s.githubUsername);
+				buildRow(s.studentName, s.taigaUsername, s.githubUsername, s.student_id);
 			}
 
     		currentProject = currentProjectId;
@@ -395,25 +404,42 @@ function getChosenProject(currentProjectId) {
     });
 }
 
-function buildRow(studentName, taigaUsername, githubUsername) {
+function buildRow(studentName, taigaUsername, githubUsername, studentId) {
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
-
 	var name = document.createElement("td");
 	name.setAttribute("contenteditable", "true");
-	name.setAttribute("style", "width:30%;border:1px solid lightgray")
+	name.setAttribute("id" , "studentName" + studentId)
+	name.setAttribute("style", "max-width:33%;border:1px solid lightgray")
 	name.innerHTML=studentName;
 	row.appendChild(name);
 	var taigaName = document.createElement("td");
 	taigaName.setAttribute("contenteditable", "true");
-	taigaName.setAttribute("style", "border:1px solid lightgray")
+	taigaName.setAttribute("style", "max-width:33%;border:1px solid lightgray")
+	taigaName.setAttribute("id" , "studentTaigaName" + studentId)
 	taigaName.innerHTML=taigaUsername;
 	row.appendChild(taigaName);
 	var githubName = document.createElement("td");
 	githubName.setAttribute("contenteditable", "true");
-	githubName.setAttribute("style", "border:1px solid lightgray")
+	githubName.setAttribute("style", "max-width:33%;border:1px solid lightgray")
+	githubName.setAttribute("id" , "studentGithubName" + studentId)
 	githubName.innerHTML=githubUsername;
 	row.appendChild(githubName);
+
+	var metricButton = document.createElement("th");
+	metricButton.setAttribute("style", "padding-left:6%")
+	var selMetricsBtn = document.createElement('button');
+	selMetricsBtn.classList.add("btn");
+	selMetricsBtn.setAttribute('id', 'selMetricsBtn'+studentId);
+	var editIcon = document.createElement('img');
+	editIcon.classList.add("icons");
+	editIcon.src = '../icons/edit.png';
+	selMetricsBtn.appendChild(editIcon);
+	selMetricsBtn.addEventListener("click", function () {
+		openMetricsModal(studentId)
+	});
+	metricButton.appendChild(selMetricsBtn);
+	row.appendChild(metricButton);
 
 	var thEmpty = document.createElement('th');
 	row.appendChild(thEmpty)
@@ -421,12 +447,183 @@ function buildRow(studentName, taigaUsername, githubUsername) {
 	var removeIcon = document.createElement("span");
 	removeIcon.classList.add("glyphicon", "glyphicon-remove");
 	var remove = document.createElement("th");
+	remove.setAttribute("id", "remove" + studentId)
 	remove.addEventListener("click", function () {
-		$(this).parents('tr').detach();
+		deleteStudent(studentId);
 	});
+
 	remove.appendChild(removeIcon);
 
 	row.appendChild(remove);
+	row.setAttribute("id", "row" + studentId);
+}
+
+function deleteStudent(studentId) {
+	if (studentId >= 0) {
+		jQuery.ajax({
+			url: "../api/metrics/student/" + studentId,
+			type: "DELETE",
+			contentType: false,
+			processData: false,
+			success: function () {
+				var delRow = document.getElementById("row" + studentId);
+				delRow.remove()
+				warningUtils("Ok", "Student deleted successfully");
+			},
+			error: function (jqXHR) {
+				warningUtils("Error", "Datasource connection failed.");
+			}
+		});
+	}
+	else {
+		var delRow = document.getElementById("row" + studentId);
+		delRow.remove()
+	}
+}
+
+function openMetricsModal(studentId) {
+	selectedStudent=studentId
+	showMetrics(studentId);
+	$("#metricsModal").modal();
+};
+
+$("#dismissMetricsButton").click(function () {
+	$("#metricsModal").modal("hide");
+});
+
+$("#acceptMetricsButton").click(function () {
+
+	var name = document.getElementById("studentName"+selectedStudent).innerHTML
+	if(name==="") {
+		$("#metricsModal").modal("hide");
+		warningUtils("Warning", "The name is empty");
+	}
+	else {
+		var userSelectedMetrics="";
+		$('#selMetricsBox').children().each (function (i, option) {
+			userSelectedMetrics+=option.value+",";
+		});
+		if(userSelectedMetrics=="") {
+			userSelectedMetrics=","
+		}
+		var taigaName = document.getElementById("studentTaigaName"+selectedStudent).innerHTML
+		var githubName = document.getElementById("studentGithubName"+selectedStudent).innerHTML
+		if(taigaName === "") taigaName="empty"
+		if(githubName === "") githubName="empty"
+		var formData = new FormData();
+		formData.append("studentId", selectedStudent)
+		formData.append("userTemp", userSelectedMetrics)
+		formData.append("projectId", sessionStorage.getItem("prj"))
+		formData.append("studentsList", name+","+taigaName+","+githubName)
+		jQuery.ajax({
+			data: formData,
+			url: "../api/metrics/student",
+			type: "PUT",
+			contentType: false,
+			processData: false,
+			success: function (data) {
+				$("#metricsModal").modal("hide");
+				if(selectedStudent<0) {
+					var row = document.getElementById("row" + selectedStudent)
+					row.setAttribute("id", "row" + data);
+					var name = document.getElementById("studentName" + selectedStudent)
+					name.setAttribute("id", "studentName" + data)
+					var taigaName = document.getElementById("studentTaigaName" + selectedStudent)
+					taigaName.setAttribute("id", "studentTaigaName" + data)
+					var githubName = document.getElementById("studentGithubName" + selectedStudent)
+					githubName.setAttribute("id", "studentGithubName" + data)
+					var selMetricsBtn = document.getElementById("selMetricsBtn"+selectedStudent)
+					selMetricsBtn.removeEventListener("click", function () {
+						openMetricsModal(selectedStudent)
+					});
+					selMetricsBtn.setAttribute("id", "selMetricsBtn"+data)
+					selMetricsBtn.addEventListener("click", function () {
+						openMetricsModal(data)
+					});
+					var remove = document.getElementById("remove"+selectedStudent)
+					remove.setAttribute("id", "remove"+data)
+					remove.removeEventListener("click", function () {
+						deleteStudent(selectedStudent)
+					});
+					remove.addEventListener("click", function () {
+						deleteStudent(data);
+					});
+					selectedStudent = data;
+				}
+				warningUtils("Ok", "Student saved successfully");
+			},
+			error: function(jqXHR) {
+				$("#metricsModal").modal("hide");
+				warningUtils("Error", "Datasource connection failed.");
+			}
+		});
+	}
+
+
+
+});
+
+function updateSelectedMetrics() {
+	for(var i=0; i<userSelectedMetrics.length; ++i) {
+		if(userSelectedMetrics[i][0]==selectedStudent) {
+			userSelectedMetrics.splice(i,1)
+			i=i-1;
+		}
+	}
+	$('#selMetricsBox').children().each (function (i, option) {
+		userSelectedMetrics.push([selectedStudent, option.value]);
+	});
+	$("#metricsModal").modal("hide");
+}
+
+function moveMetricItemsLeft() {
+	$('#selMetricsBox').find(':selected').appendTo('#avMetricsBox');
+};
+
+function moveAllMetricsItemsLeft() {
+	$('#selMetricsBox').children().appendTo('#avMetricsBox');
+};
+
+function moveMetricItemsRight() {
+	$('#avMetricsBox').find(':selected').appendTo('#selMetricsBox');
+};
+
+function moveAllMetricItemsRight() {
+	$('#avMetricsBox').children().appendTo('#selMetricsBox');
+};
+
+function showMetrics(studentId) {
+	jQuery.ajax({
+		dataType: "json",
+		url: "../api/metrics?prj="+sessionStorage.getItem("prj"),
+		cache: false,
+		type: "GET",
+		async: false,
+		success: function (data) {
+			$('#avMetricsBox').empty();
+			$('#selMetricsBox').empty();
+			data.forEach(function (metric) {
+				if(metric.student==null) {
+					$('#avMetricsBox').append($('<option>', {
+						value: metric.id,
+						text: metric.name
+					}));
+				}
+				if(metric.student!=null && studentId !== undefined && metric.student.id===studentId) {
+					$('#avMetricsBox').append($('<option>', {
+						value: metric.id,
+						text: metric.name
+					}));
+					$('#avMetricsBox').find("option[value='" + metric.id + "']").appendTo('#selMetricsBox');
+				}
+
+			});
+		},
+		error: function(jqXHR) {
+			warningUtils("Error", "Datasource connection failed.");
+			$("#metricsModal").modal("hide");
+		}
+	});
 }
 
 function check() {
@@ -434,9 +631,11 @@ function check() {
 	else globalChecked=true
 }
 
+
+
 function saveProject() {
-		
-    if ($('#projectName').val() != "") {
+
+	if ($('#projectName').val() != "" && !nameEmpty) {
     	var loadedFile = $('#projectLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
 	        var formData = new FormData();
@@ -448,16 +647,7 @@ function saveProject() {
 	        formData.append("taigaURL", $('#inputTaigaUrl').val());
 			formData.append("githubURL", $('#inputfirstGithubUrl').val());
 	        formData.append("isGlobal", globalChecked);
-			var table = document.getElementById("tableNames");
-			var cells = table.getElementsByTagName("td");
-			var studentsList = [];
-			for (var i = 0; i < cells.length; i++) {
-				if(cells[i].innerHTML=="") {
-					studentsList.push("empty");
-				}
-				else studentsList.push(cells[i].innerHTML);
-			}
-			formData.append("studentsList", studentsList.toString())
+
 	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {
 				url = serverUrl + url;

@@ -171,6 +171,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -194,7 +195,9 @@ public class ProjectsTest {
                                 fieldWithPath("[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("[].isGlobal")
-                                        .description("Is a global project?"))
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions
@@ -235,6 +238,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("profile/projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -258,7 +262,9 @@ public class ProjectsTest {
                                 fieldWithPath("[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("[].isGlobal")
-                                        .description("Is a global project?"))
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions
@@ -404,6 +410,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$.taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$.githubURL", is("testURL2")))
                 .andExpect(jsonPath("$.isGlobal",is(false)))
+                .andExpect(jsonPath("$.students", is(nullValue())))
                 .andDo(document("projects/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -431,7 +438,9 @@ public class ProjectsTest {
                                 fieldWithPath("githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("isGlobal")
-                                        .description("Is a global project?"))
+                                        .description("Is a global project?"),
+                                fieldWithPath("students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions

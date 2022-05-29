@@ -125,6 +125,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$[0].projects[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].projects[0].githubURL", is("testURL2")))
                 .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
                 .andExpect(jsonPath("$[0].allSIs", hasSize(1)))
                 .andExpect(jsonPath("$[0].allSIs[0].first", is(projectId.intValue())))
                 .andExpect(jsonPath("$[0].allSIs[0].second", is(true)))
@@ -170,6 +171,8 @@ public class ProfilesTest {
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("[].projects[].isGlobal")
                                         .description("Is a global project?"),
+                                fieldWithPath("[].projects[].students")
+                                        .description("Students of the project"),
                                 fieldWithPath("[].allSIs")
                                         .description("List of pairs which specify for each project of profile, if it show all strategic indicators or not"),
                                 fieldWithPath("[].allSIs[].first")
@@ -237,6 +240,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$.projects[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$.projects[0].githubURL", is("testURL2")))
                 .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$.projects[0].students", is(nullValue())))
                 .andExpect(jsonPath("$.allSIs", hasSize(1)))
                 .andExpect(jsonPath("$.allSIs[0].first", is(projectId.intValue())))
                 .andExpect(jsonPath("$.allSIs[0].second", is(true)))
@@ -286,6 +290,8 @@ public class ProfilesTest {
                                         .description("Github repositories URLs separated by a ';'"),
                                 fieldWithPath("projects[].isGlobal")
                                         .description("Is a global project?"),
+                                fieldWithPath("projects[].students")
+                                        .description("Students of the project"),
                                 fieldWithPath("allSIs")
                                         .description("List of pairs which specify for each project of profile, if it show all strategic indicators or not"),
                                 fieldWithPath("allSIs[].first")
