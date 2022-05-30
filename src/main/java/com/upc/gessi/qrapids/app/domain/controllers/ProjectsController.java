@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDate;
@@ -141,18 +142,32 @@ public class ProjectsController {
         return historicDatesDTO;
     }
 
-    public void createHistoricDate(Long project_id, String from_date, String to_date, String name) throws ParseException {
+    public void createHistoricDate(List<Map<String, String>> sprints, Long project_id) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        ProjectHistoricDate newHistoricDate = new ProjectHistoricDate();
-        newHistoricDate.setProject(project_id);
-        newHistoricDate.setName(name);
-        //date handling
-        Date from_tmp = sdf.parse(from_date);
-        Date to_tmp = sdf.parse(to_date);
+        for(Map<String, String> sprint : sprints) {
+            ProjectHistoricDate newHistoricDate = new ProjectHistoricDate();
+            newHistoricDate.setProject(project_id);
+            newHistoricDate.setName(sprint.get("name"));
+            //date handling
+            Date from_tmp = sdf.parse(sprint.get("from"));
+            Date to_tmp = sdf.parse(sprint.get("to"));
 
-        newHistoricDate.setFrom_date(new java.sql.Date(from_tmp.getTime()));
-        newHistoricDate.setTo_date(new java.sql.Date(to_tmp.getTime()));
+            newHistoricDate.setFrom_date(new java.sql.Date(from_tmp.getTime()));
+            newHistoricDate.setTo_date(new java.sql.Date(to_tmp.getTime()));
 
-        datesRepository.save(newHistoricDate);
+            datesRepository.save(newHistoricDate);
+        }
+    }
+
+    public void updateHistoricDate(List<Map<String, String>> sprints, Long project_id) throws ParseException {
+        deleteMetricCategory(project_id);
+        createHistoricDate(sprints, project_id);
+    }
+
+    public void deleteMetricCategory(Long project_id) {
+        Iterable<ProjectHistoricDate> projectHistoricDateIterable = datesRepository.findByProject(project_id);
+        for(ProjectHistoricDate p : projectHistoricDateIterable)  {
+            datesRepository.deleteById(p.getId());
+        }
     }
 }

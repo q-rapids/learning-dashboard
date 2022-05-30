@@ -216,7 +216,55 @@ function getChosenProject(currentProjectId) {
     		inputChangeLogo.setAttribute('type', 'file');
     		changeLogoRow.appendChild(inputChangeLogo);
     		projectForm.appendChild(changeLogoRow);
-    		
+
+			let sprintDates = document.createElement('div');
+			sprintDates.classList.add("productInfoRow");
+			sprintDates.setAttribute('style', 'resize: vertical;');
+			let sprintDatesP = document.createElement('p');
+			sprintDatesP.appendChild(document.createTextNode("Project Sprints: "));
+			sprintDatesP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+			sprintDates.appendChild(sprintDatesP);
+
+			//creating sprint table
+			var sprintTable = document.createElement('table');
+			var tableRow = document.createElement('div');
+			tableRow.classList.add("productInfoRow");
+			sprintTable.setAttribute('id', "tableSprintDates");
+			sprintTable.setAttribute('class', "table");
+			var sprinttr = document.createElement('tr');
+			var sprinttbody = document.createElement('tbody');
+			var thName=document.createElement('th');
+			thName.appendChild(document.createTextNode("Name"));
+			var thFrom=document.createElement('th');
+			thFrom.appendChild(document.createTextNode("From"));
+			var thTo=document.createElement('th');
+			thTo.appendChild(document.createTextNode("To"));
+			var thEmpty = document.createElement('th');
+			var thSpan=document.createElement('th');
+			var Span = document.createElement('span');
+			Span.setAttribute("class","table-addSprint glyphicon glyphicon-plus");
+
+			thSpan.addEventListener("click", function () {
+				var today = new Date();
+				var dateTo = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+				var dateFrom = today.getMonth() !== 0 ? today.getFullYear()+'-'+(today.getMonth())+'-'+today.getDate() : today.getFullYear()-1 +'- 12 -'+today.getDate();
+				buildSprintRow("tableSprintDates", "null", "Sprint", dateFrom, dateTo)
+			});
+
+			thSpan.appendChild(Span);
+			sprinttr.appendChild(thName);
+			sprinttr.appendChild(thFrom);
+			sprinttr.appendChild(thTo);
+			sprinttr.appendChild(thEmpty);
+			sprinttr.appendChild(thSpan);
+			sprinttbody.appendChild(sprinttr);
+			sprintTable.appendChild(sprinttbody);
+			tableRow.appendChild(sprintTable);
+			sprintDates.appendChild(tableRow);
+			projectForm.appendChild(sprintDates);
+
+			getAndInsertProjectSprints(currentProjectId);
+
     		var saveBtnRow = document.createElement('div');
     		saveBtnRow.classList.add("productInfoRow");
     		saveBtnRow.setAttribute('style', 'justify-content: space-between');
@@ -275,7 +323,7 @@ function getChosenProject(currentProjectId) {
 			};
 			saveBtnRow.appendChild(phasesBtn);
 
-    		var saveBtn = document.createElement('button');
+			var saveBtn = document.createElement('button');
     		saveBtn.classList.add("btn");
     		saveBtn.classList.add("btn-primary");
     		saveBtn.setAttribute("id", "saveBtn");
@@ -297,7 +345,7 @@ function getChosenProject(currentProjectId) {
     		document.getElementById('productInfo').innerHTML = "";
     		document.getElementById('productInfo').appendChild(projectForm);
     		document.getElementById('productInfo').appendChild(logoColumn);
-    		
+
     		currentProject = currentProjectId;
         }
     });
@@ -319,7 +367,10 @@ function saveProject() {
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
-	
+
+			let sprintData = getProjectSprintData();
+			if(!checkSprintData(sprintData)) return;
+
 	        $.ajax({
 	            url: url,
 	            data: formData,
@@ -337,8 +388,7 @@ function saveProject() {
 	            success: function() {
 	            	/*buildFirstPartOfTree();
 	            	getChosenProject(currentProjectId);*/
-	            	location.href = serverUrl + "/Products/Configuration";
-	            	
+					saveProjectSprint(sprintData, currentProject);
 	            }
 	        });
     	} else {
@@ -346,6 +396,25 @@ function saveProject() {
         } 
     } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 };
+
+function saveProjectSprint (sprintData, projectId) {
+	let url = "/api/project/" + projectId + "/historicdates";
+	$.ajax({
+		url: url,
+		data: JSON.stringify(sprintData),
+		type: "PUT",
+		contentType: "application/json",
+		error: function (jqXHR, textStatus, errorThrown) {
+			if (jqXHR.status == 409)
+				warningUtils("Error", "You can't have two sprints with the same name");
+			else
+				warningUtils("Error", "Error on saving categories");
+		},
+		success: function () {
+			location.href = serverUrl + "/Products/Configuration";
+		}
+	});
+}
 
 function getChosenProduct(currentProductId) {
 	var url = "/api/products/" + currentProductId;
@@ -800,6 +869,56 @@ function newProduct() {
 	document.getElementById('productInfo').appendChild(productForm);
 }
 
+function buildSprintRow (tableId, sprintId, name, fromDate, toDate) {
+	var table = document.getElementById(tableId);
+	var row = table.insertRow(-1);
+
+	var categoryName = document.createElement("td");
+	categoryName.setAttribute("id", "sprintName" + sprintId)
+	categoryName.setAttribute("contenteditable", "true");
+	categoryName.appendChild(document.createTextNode(name));
+	row.appendChild(categoryName);
+
+	var dateFrom = document.createElement("td");
+	dateFrom.setAttribute("class", "form-group");
+	var dateFromInput = document.createElement("input");
+	dateFromInput.setAttribute("id", "dateFrom" + sprintId)
+	dateFromInput.setAttribute("width", "250")
+	dateFromInput.setAttribute("class", "form-control")
+	dateFromInput.setAttribute("value", fromDate)
+	dateFrom.appendChild(dateFromInput)
+	row.appendChild(dateFrom);
+
+	var dateTo = document.createElement("td");
+	dateTo.setAttribute("class", "form-group");
+	var dateToInput = document.createElement("input");
+	dateToInput.setAttribute("id", "dateTo" + sprintId)
+	dateToInput.setAttribute("width", "250")
+	dateToInput.setAttribute("class", "form-control")
+	dateToInput.setAttribute("value", toDate)
+	dateTo.appendChild(dateToInput)
+	row.appendChild(dateTo);
+}
+
+function getAndInsertProjectSprints(projectId){
+	let url = "/api/project/" + projectId + "/historicdates";
+	jQuery.ajax({
+		url: url,
+		type: "GET",
+		async: true,
+		error: function(jqXHR, textStatus, errorThrown) {
+			if (jqXHR.status == 500) warningUtils("Warning", "There is no information to show about sprints.");
+		},
+		success: function (sprintDates) {
+			if (sprintDates.length > 0) {
+				sprintDates.forEach(function (sprint) {
+					buildSprintRow("tableSprintDates", sprint.id, sprint.name, sprint.from_date, sprint.to_date)
+				});
+			} else warningUtils("Warning", "There is no information to show about sprints."); //TODO change this
+		}
+	})
+}
+
 function saveNewProduct() {
 	var selectedProjects = [];
 
@@ -846,6 +965,46 @@ function saveNewProduct() {
         } 
     } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 };
+
+function checkSprintData(data) {
+	let res = true;
+	data.forEach( function (elem) {
+		if(elem.name === '') {
+			warningUtils("Warning", "Name can't be empty");
+			res = false;
+		} else if( new Date(elem.from) > new Date(elem.to)) {
+			warningUtils("Warning", "Error on sprint " + elem.name + ": \"From date\" must be before the \"To date\"");
+			res = false;
+		}
+	})
+	return res;
+}
+
+function getProjectSprintData () {
+	var $rows = $('#tableSprintDates').find('tr:not(:hidden)');
+	var headers = ["name", "from", "to"];
+	var data = [];
+
+	// Turn all existing rows into a loopable array
+	$rows.slice(1).each(function () {
+		var $td = $(this).find('td');
+		var h = {};
+		h["id"] = $td[0].id.replace("sprintName", "")
+		// Use the headers from earlier to name our hash keys
+		headers.forEach(function (header, i) {
+			if (i%3 == 0)
+				h[header] = $td.eq(i).text();
+			else if (i%3 == 1)
+				h[header] = $td.eq(i).children()[0].value;
+			else
+				h[header] = $td.eq(i).children()[0].value;
+		});
+
+		data.push(h);
+	});
+	//console.log(data);
+	return data;
+}
 
 function goToDetailedEvaluation() {
 	location.href = serverUrl + "/Products/DetailedEvaluation";

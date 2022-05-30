@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class Projects {
@@ -113,9 +114,20 @@ public class Projects {
 
     @PostMapping("api/project/{project_id}/historicdates")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newHistoricChartDates (@PathVariable Long project_id, @RequestParam ("from_date") String from_date, @RequestParam ("to_date") String to_date, @RequestParam ("name") String name) {
+    public void newHistoricChartDates (@RequestBody List<Map<String, String>> sprints, @PathVariable Long project_id) {
         try {
-            projectsController.createHistoricDate(project_id, from_date, to_date, name);
+            projectsController.createHistoricDate(sprints, project_id);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @PutMapping("api/project/{project_id}/historicdates")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void updateHistoricChartDates (@RequestBody List<Map<String, String>> sprints, @PathVariable Long project_id) {
+        try {
+            projectsController.updateHistoricDate(sprints, project_id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
