@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upc.gessi.qrapids.app.config.ActionLogger;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import io.jsonwebtoken.Jwts;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -31,8 +33,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private AuthenticationManager authenticationManager;
 	// √Tools Auth
 	AuthTools authTools;
-
-	private Logger logger = Logger.getLogger("authentication");
 
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
@@ -121,10 +121,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             res.addCookie( qrapids_token_client );
 
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-			LocalDateTime now = LocalDateTime.now();
-
-			logger.info("Log in: " + ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername()+ " " + now);
+			ActionLogger al = new ActionLogger();
+			al.traceEnterApp(((User) auth.getPrincipal()).getUsername());
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
 

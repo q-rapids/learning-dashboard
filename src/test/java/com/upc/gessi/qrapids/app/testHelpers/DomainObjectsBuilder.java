@@ -476,6 +476,7 @@ public class DomainObjectsBuilder {
     public DTODetailedFactorEvaluation buildDTOQualityFactor () {
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
+        String factorDescription = "Performance of the tests";
 
         String metricId = "fasttests";
         String metricName = "Fast Tests";
@@ -489,12 +490,13 @@ public class DomainObjectsBuilder {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        return new DTODetailedFactorEvaluation(factorId, factorName, dtoMetricEvaluationList);
+        return new DTODetailedFactorEvaluation(factorId, factorDescription, factorName, dtoMetricEvaluationList);
     }
 
     public DTODetailedFactorEvaluation buildDTOQualityFactorForPrediction () {
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
+        String factorDescription = "Performance of the tests";
 
         String metricId = "fasttests";
         String metricName = "Fast Tests";
@@ -517,7 +519,7 @@ public class DomainObjectsBuilder {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        return new DTODetailedFactorEvaluation(factorId, factorName, dtoMetricEvaluationList);
+        return new DTODetailedFactorEvaluation(factorId,factorDescription, factorName, dtoMetricEvaluationList);
     }
 
     public DTOFactorEvaluation buildDTOFactor () {

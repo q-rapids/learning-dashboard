@@ -1581,6 +1581,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -1614,6 +1615,8 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -1683,6 +1686,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -1720,6 +1724,8 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -1790,6 +1796,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -1829,6 +1836,8 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")

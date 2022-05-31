@@ -268,11 +268,13 @@ function drawChart() {
                 metricCategory = categories.filter(function (cat) {
                     return cat.name === catName;
                 });
+
             } else {
                 metricCategory = categories.filter(function (cat) {
                     return cat.name === DEFAULT_CATEGORY;
                 });
             }
+
 
             metricCategory.sort( function (cat1, cat2) {
                 return cat1.upperThreshold - cat2.upperThreshold;
@@ -385,7 +387,6 @@ function drawChart() {
             labelF.id = factorId;
             labelF.textContent = factorName;
             divF.appendChild(labelF);
-
             document.getElementById("chartContainer").appendChild(divF)
         }
 

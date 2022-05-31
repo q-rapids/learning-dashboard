@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.web.controller.Auth;
 
+import com.upc.gessi.qrapids.app.config.ActionLogger;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Question;
@@ -132,6 +133,9 @@ public class AuthController {
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
 		response.addCookie(cookie);
+
+        ActionLogger al = new ActionLogger();
+        al.traceExitApp(user.getUsername());
 
         logger.info("Log out: " + user.getUsername() + " " + now);
 

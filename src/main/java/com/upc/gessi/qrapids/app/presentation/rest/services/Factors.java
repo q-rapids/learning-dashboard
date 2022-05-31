@@ -382,7 +382,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id,f.getName(),metrics);
+            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id, f.getDescription(),f.getName(),metrics);
             df.setValue(f.getValue());
             df.setDate(f.getDate());
             result.add(df);
@@ -403,7 +403,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            result.add(new DTODetailedFactorEvaluation(id,f.getName(),metrics));
+            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(),f.getName(),metrics));
             return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
@@ -422,7 +422,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            result.add(new DTODetailedFactorEvaluation(id,f.getName(),metrics));
+            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(), f.getName(),metrics));
             return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);

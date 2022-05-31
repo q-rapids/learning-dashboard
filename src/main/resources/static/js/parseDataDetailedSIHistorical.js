@@ -1,4 +1,6 @@
 var isdsi = true;
+var groupByFactor = false;
+
 console.log("sessionStorage: profile_id");
 console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
