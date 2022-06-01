@@ -117,6 +117,7 @@ function getProjects(profileID) {
                 setProject(" ");
             } else {
                 showProjectSelector(prj_externalId);
+
             }
         }
     });
@@ -179,7 +180,6 @@ function getCookie(cname) {
 function getActiveUserProjects() {
 
     token = getCookie("xFOEto4jYAjdMeR3Pas6_");
-    console.log("TOKEN: " + token);
     if(token!="") {
         jQuery.ajax({
             dataType: "json",
@@ -275,9 +275,11 @@ function showProjectSelector (projects) {
             });
         }
         setProject($this.text(), url);
+
     });
 
     $("#projectsModal").modal();
+
 }
 
 function setQueryStringParameter(uri, key, value) {

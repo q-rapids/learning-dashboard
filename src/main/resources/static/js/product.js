@@ -232,7 +232,7 @@ function getChosenProject(currentProjectId) {
 			var firstGithubUrlRow = document.createElement('div');
 			firstGithubUrlRow.classList.add("productInfoRow");
 			var firstGithubURLp = document.createElement('p');
-			firstGithubURLp.appendChild(document.createTextNode("First Github URL:"));
+			firstGithubURLp.appendChild(document.createTextNode("Github URL:"));
 			firstGithubURLp.setAttribute('style', 'font-size: 18px; width: 20%');
 			firstGithubUrlRow.appendChild(firstGithubURLp);
 			var inputfirstGithubUrl = document.createElement("input");
@@ -270,48 +270,6 @@ function getChosenProject(currentProjectId) {
     		inputChangeLogo.setAttribute('type', 'file');
     		changeLogoRow.appendChild(inputChangeLogo);
     		projectForm.appendChild(changeLogoRow);
-
-    		var divNames = document.createElement("div");
-    		divNames.classList.add("productInfoRow")
-			var namesP = document.createElement('p');
-			namesP.appendChild(document.createTextNode("Project Team Members"));
-			namesP.setAttribute('style', 'font-size: 25px; margin-right: 1%');
-			divNames.appendChild(namesP)
-			projectForm.appendChild(divNames);
-			var divFormNames= document.createElement("div");
-			divFormNames.classList.add("productInfoRow");
-			var tableRow = document.createElement('table');
-			tableRow.classList.add("table");
-			tableRow.setAttribute("id", "tableNames")
-			var projetctr = document.createElement('tr');
-			var projectbody = document.createElement('tbody');
-			var thName=document.createElement('th');
-			thName.appendChild(document.createTextNode("Name*"));
-			var thTaiga=document.createElement('th');
-			thTaiga.appendChild(document.createTextNode("Taiga username"));
-			var thGithub=document.createElement('th');
-			thGithub.appendChild(document.createTextNode("Github username"));
-			var thEmpty = document.createElement('th');
-			var thEmpty2 = document.createElement('th');
-			var thSpan=document.createElement('th');
-			var Span = document.createElement('span');
-			Span.setAttribute("class","table-addNames glyphicon glyphicon-plus");
-			Span.addEventListener("click", function()  {
-				selectedStudent=tempId;
-				//since Id can not be negative this would not have conflicts
-				tempId=tempId-1;
-				buildRow("","","", selectedStudent);});
-			thSpan.appendChild(Span);
-			projetctr.appendChild(thName);
-			projetctr.appendChild(thTaiga);
-			projetctr.appendChild(thGithub);
-			projetctr.appendChild(thEmpty);
-			projetctr.appendChild(thEmpty2);
-			projetctr.appendChild(thSpan);
-			projectbody.appendChild(projetctr);
-			tableRow.append(projectbody);
-			divFormNames.append(tableRow);
-			projectForm.appendChild(divFormNames);
 
     		var saveBtnRow = document.createElement('div');
     		saveBtnRow.classList.add("productInfoRow");
@@ -380,6 +338,62 @@ function getChosenProject(currentProjectId) {
     		saveBtn.onclick = saveProject;
     		saveBtnRow.appendChild(saveBtn);
 			projectForm.appendChild(saveBtnRow);
+
+			var divNames = document.createElement("div");
+			divNames.classList.add("productInfoRow")
+			var namesP = document.createElement('p');
+			namesP.appendChild(document.createTextNode("Project Team Members"));
+			namesP.setAttribute('style', 'font-size: 25px; margin-right: 1%');
+			var divNames2 = document.createElement("div");
+			divNames2.classList.add("productInfoRow")
+			var namesExplanation = document.createElement('p');
+			namesExplanation.appendChild(document.createTextNode("Press the icon with the pencil to assign metrics and save the student"));
+			namesExplanation.setAttribute('style', 'font-size: 15px; margin-right: 1%');
+			divNames.appendChild(namesP)
+			divNames2.appendChild(namesExplanation)
+			projectForm.appendChild(divNames);
+			projectForm.appendChild(divNames2);
+			var divFormNames= document.createElement("div");
+			divFormNames.classList.add("productInfoRow");
+			var tableRow = document.createElement('table');
+			tableRow.classList.add("table");
+			tableRow.setAttribute("id", "tableNames")
+			var projetctr = document.createElement('tr');
+			var projectbody = document.createElement('tbody');
+			var thName=document.createElement('th');
+			thName.appendChild(document.createTextNode("Name*"));
+			thName.setAttribute("style", "width:20%")
+			var thTaiga=document.createElement('th');
+			thTaiga.appendChild(document.createTextNode("Taiga username"));
+			thTaiga.setAttribute("style", "width:25%")
+			var thGithub=document.createElement('th');
+			thGithub.appendChild(document.createTextNode("Github username"));
+			thGithub.setAttribute("style", "width:25%")
+			var thMetric = document.createElement('th');
+			thMetric.appendChild(document.createTextNode("Assign metrics and save student*"))
+			thMetric.setAttribute("style", "width:15%;text-align: center")
+			var thEmpty2 = document.createElement('th');
+			thEmpty2.setAttribute("style", "width:2%")
+			var thSpan=document.createElement('th');
+			var Span = document.createElement('span');
+			Span.setAttribute("class","table-addNames glyphicon glyphicon-plus");
+			Span.setAttribute("style", "padding-left:40%;width:15%")
+			Span.addEventListener("click", function()  {
+				selectedStudent=tempId;
+				//since Id can not be negative this would not have conflicts
+				tempId=tempId-1;
+				buildRow("","","", selectedStudent);});
+			thSpan.appendChild(Span);
+			projetctr.appendChild(thName);
+			projetctr.appendChild(thTaiga);
+			projetctr.appendChild(thGithub);
+			projetctr.appendChild(thMetric);
+			projetctr.appendChild(thEmpty2);
+			projetctr.appendChild(thSpan);
+			projectbody.appendChild(projetctr);
+			tableRow.append(projectbody);
+			divFormNames.append(tableRow);
+			projectForm.appendChild(divFormNames);
     		
     		var logoColumn = document.createElement('div');
     		logoColumn.classList.add("logoColumn");
@@ -404,33 +418,62 @@ function getChosenProject(currentProjectId) {
     });
 }
 
+function fieldEdited(studentName, taigaUsername, githubUsername, studentId) {
+	var warning = document.getElementById("warning"+studentId);
+	if(studentId<0 && warning!=null) {
+		warning.hidden=false;
+	}
+	else {
+		var name = document.getElementById("studentName" + studentId).innerHTML
+		var taigaName = document.getElementById("studentTaigaName" + studentId).innerHTML
+		var githubName = document.getElementById("studentGithubName" + studentId).innerHTML
+		if(name!==studentName || taigaName!==taigaUsername || githubName!==githubUsername) {
+			warning.hidden=false;
+		}
+		else{
+			warning.hidden=true;
+		}
+
+	}
+
+}
+
 function buildRow(studentName, taigaUsername, githubUsername, studentId) {
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 	var name = document.createElement("td");
 	name.setAttribute("contenteditable", "true");
 	name.setAttribute("id" , "studentName" + studentId)
-	name.setAttribute("style", "max-width:33%;border:1px solid lightgray")
+	name.setAttribute("style", "border:1px solid lightgray")
+	name.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, studentId)});
 	name.innerHTML=studentName;
 	row.appendChild(name);
 	var taigaName = document.createElement("td");
 	taigaName.setAttribute("contenteditable", "true");
-	taigaName.setAttribute("style", "max-width:33%;border:1px solid lightgray")
+	taigaName.setAttribute("style", "border:1px solid lightgray")
 	taigaName.setAttribute("id" , "studentTaigaName" + studentId)
+	taigaName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, studentId)});
 	taigaName.innerHTML=taigaUsername;
 	row.appendChild(taigaName);
 	var githubName = document.createElement("td");
 	githubName.setAttribute("contenteditable", "true");
-	githubName.setAttribute("style", "max-width:33%;border:1px solid lightgray")
+	githubName.setAttribute("style", "border:1px solid lightgray")
 	githubName.setAttribute("id" , "studentGithubName" + studentId)
+	githubName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, studentId) });
 	githubName.innerHTML=githubUsername;
 	row.appendChild(githubName);
 
 	var metricButton = document.createElement("th");
-	metricButton.setAttribute("style", "padding-left:6%")
+	//metricButton.setAttribute("style", "padding-left:5%")
+	var warning = document.createElement("p")
+	warning.appendChild(document.createTextNode("The student was not saved"));
+	warning.setAttribute("style", "color:red;font-size: 12px;padding-left:2%;width:150%")
+	warning.setAttribute("id", "warning"+studentId)
+	if(studentId>0) warning.hidden=true;
 	var selMetricsBtn = document.createElement('button');
 	selMetricsBtn.classList.add("btn");
 	selMetricsBtn.setAttribute('id', 'selMetricsBtn'+studentId);
+	selMetricsBtn.setAttribute("style","margin-left:40%")
 	var editIcon = document.createElement('img');
 	editIcon.classList.add("icons");
 	editIcon.src = '../icons/edit.png';
@@ -439,13 +482,17 @@ function buildRow(studentName, taigaUsername, githubUsername, studentId) {
 		openMetricsModal(studentId)
 	});
 	metricButton.appendChild(selMetricsBtn);
+	metricButton.appendChild(warning)
 	row.appendChild(metricButton);
 
 	var thEmpty = document.createElement('th');
 	row.appendChild(thEmpty)
 
-	var removeIcon = document.createElement("span");
-	removeIcon.classList.add("glyphicon", "glyphicon-remove");
+	var removeIcon = document.createElement("button");
+	removeIcon.classList="btn btn-primary btn-danger"
+	removeIcon.style="font-size: 15px;"
+	removeIcon.appendChild(document.createTextNode("Delete Student"));
+	//removeIcon.classList.add("glyphicon", "glyphicon-remove");
 	var remove = document.createElement("th");
 	remove.setAttribute("id", "remove" + studentId)
 	remove.addEventListener("click", function () {
@@ -493,8 +540,8 @@ $("#dismissMetricsButton").click(function () {
 
 $("#acceptMetricsButton").click(function () {
 
-	var name = document.getElementById("studentName"+selectedStudent).innerHTML
-	if(name==="") {
+	var nameText = document.getElementById("studentName"+selectedStudent).innerHTML
+	if(nameText==="") {
 		$("#metricsModal").modal("hide");
 		warningUtils("Warning", "The name is empty");
 	}
@@ -506,15 +553,15 @@ $("#acceptMetricsButton").click(function () {
 		if(userSelectedMetrics=="") {
 			userSelectedMetrics=","
 		}
-		var taigaName = document.getElementById("studentTaigaName"+selectedStudent).innerHTML
-		var githubName = document.getElementById("studentGithubName"+selectedStudent).innerHTML
-		if(taigaName === "") taigaName="empty"
-		if(githubName === "") githubName="empty"
+		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).innerHTML
+		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerHTML
+		if(taigaNameText === "") taigaName="empty"
+		if(githubNameText === "") githubName="empty"
 		var formData = new FormData();
 		formData.append("studentId", selectedStudent)
 		formData.append("userTemp", userSelectedMetrics)
 		formData.append("projectId", sessionStorage.getItem("prj"))
-		formData.append("studentsList", name+","+taigaName+","+githubName)
+		formData.append("studentsList", nameText+","+taigaNameText+","+githubNameText)
 		jQuery.ajax({
 			data: formData,
 			url: "../api/metrics/student",
@@ -527,27 +574,37 @@ $("#acceptMetricsButton").click(function () {
 					var row = document.getElementById("row" + selectedStudent)
 					row.setAttribute("id", "row" + data);
 					var name = document.getElementById("studentName" + selectedStudent)
-					name.setAttribute("id", "studentName" + data)
+					var nameClone = name.cloneNode(true)
+					nameClone.setAttribute("id", "studentName" + data)
+					nameClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, data) })
+					name.parentNode.replaceChild(nameClone,name)
 					var taigaName = document.getElementById("studentTaigaName" + selectedStudent)
-					taigaName.setAttribute("id", "studentTaigaName" + data)
+					var taigaClone = taigaName.cloneNode(true)
+					taigaClone.setAttribute("id", "studentTaigaName" + data)
+					taigaClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, data) })
+					taigaName.parentNode.replaceChild(taigaClone, taigaName)
 					var githubName = document.getElementById("studentGithubName" + selectedStudent)
-					githubName.setAttribute("id", "studentGithubName" + data)
+					var githubClone=githubName.cloneNode(true)
+					githubClone.setAttribute("id", "studentGithubName" + data)
+					githubClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, data) })
+					githubName.parentNode.replaceChild(githubClone,githubName)
 					var selMetricsBtn = document.getElementById("selMetricsBtn"+selectedStudent)
-					selMetricsBtn.removeEventListener("click", function () {
-						openMetricsModal(selectedStudent)
-					});
-					selMetricsBtn.setAttribute("id", "selMetricsBtn"+data)
-					selMetricsBtn.addEventListener("click", function () {
+					var selMetricsClone = selMetricsBtn.cloneNode(true)
+					selMetricsClone.setAttribute("id", "selMetricsBtn"+data)
+					selMetricsClone.addEventListener("click", function () {
 						openMetricsModal(data)
 					});
+					selMetricsBtn.parentNode.replaceChild(selMetricsClone,selMetricsBtn)
+					var warning = document.getElementById("warning"+selectedStudent);
+					warning.hidden=true;
+					warning.setAttribute("id", "warning" + data)
 					var remove = document.getElementById("remove"+selectedStudent)
-					remove.setAttribute("id", "remove"+data)
-					remove.removeEventListener("click", function () {
-						deleteStudent(selectedStudent)
-					});
-					remove.addEventListener("click", function () {
+					var removeClone = remove.cloneNode(true)
+					removeClone.setAttribute("id", "remove"+data)
+					removeClone.addEventListener("click", function () {
 						deleteStudent(data);
 					});
+					remove.parentNode.replaceChild(removeClone, remove)
 					selectedStudent = data;
 				}
 				warningUtils("Ok", "Student saved successfully");
