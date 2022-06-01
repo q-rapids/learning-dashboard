@@ -3,9 +3,13 @@ package com.upc.gessi.qrapids.app.config.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upc.gessi.qrapids.app.config.ActionLogger;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
+import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +23,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,11 +36,14 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;
+
+	private UsersController usersController;
 	// √Tools Auth
 	AuthTools authTools;
 
-	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, UsersController usersController) {
 		this.authenticationManager = authenticationManager;
+		this.usersController=usersController;
 	}
 
 	/**
@@ -122,9 +130,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             res.addCookie( qrapids_token_client );
 
 			ActionLogger al = new ActionLogger();
-			al.traceEnterApp(((User) auth.getPrincipal()).getUsername());
+			String username = ((User) auth.getPrincipal()).getUsername();
+			al.traceEnterApp(username);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			this.usersController.setLastConnection(username, now);
+			//userController.setLastConnection(username, dtf.format(now));
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
+
+
 
 		} else {
 			// API send header with token auth

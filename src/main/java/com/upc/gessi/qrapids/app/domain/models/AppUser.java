@@ -4,10 +4,9 @@ import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 
 @Entity
 @Table(name = "AppUser ")
@@ -41,6 +40,9 @@ public class AppUser implements Serializable{
 
     @Column(name="question")
     private String question;
+
+    @Column(name="last_connection")
+    private LocalDateTime last_connection;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "user_project",
@@ -125,6 +127,10 @@ public class AppUser implements Serializable{
 	    return password;
 
     }
+
+    public void setDate(LocalDateTime date) {this.last_connection=date;}
+
+    public LocalDateTime getDate() {return last_connection;}
 
     public Set<Project> getAllowedProjects() {
         return allowedProjects;

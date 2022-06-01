@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.config.security;
 
+import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Route.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+	UsersController usersController;
 
 	@Autowired
 	private RouteRepository routeRepository;
@@ -63,7 +67,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated()
 				.and()
 
-				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
+				.addFilter(new JWTAuthenticationFilter(authenticationManager(),usersController))
 				.addFilter(new JWTAuthorizationFilter(authenticationManager(), userRepository, routeRepository ))
 
 				// this disables session creation on Spring Security
