@@ -1405,6 +1405,7 @@ public class FactorEvaluationTest {
 
         Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
         factor.setId(1L);
+        factor.setCategoryName("Codequality category");
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor);
@@ -1440,6 +1441,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].externalId", is(factor.getExternalId())))
                 .andExpect(jsonPath("$[0].name", is(factor.getName())))
                 .andExpect(jsonPath("$[0].description", is(factor.getDescription())))
+                .andExpect(jsonPath("$[0].categoryName", is(factor.getCategoryName())))
                 .andExpect(jsonPath("$[0].threshold", is(factor.getThreshold())))
                 .andExpect(jsonPath("$[0].metrics", hasSize(3)))
                 .andExpect(jsonPath("$[0].metrics[0]", is("1")))
@@ -1462,6 +1464,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].description")
                                         .description("Quality factor description"),
+                                fieldWithPath("[].categoryName")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].threshold")
                                         .description("Quality factor minimum acceptable value"),
                                 fieldWithPath("[].metrics")
@@ -1496,6 +1500,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$.externalId", is(factor.getExternalId())))
                 .andExpect(jsonPath("$.name", is(factor.getName())))
                 .andExpect(jsonPath("$.description", is(factor.getDescription())))
+                .andExpect(jsonPath("$.categoryName", is(factor.getCategoryName())))
                 .andExpect(jsonPath("$.threshold", is(Double.valueOf(factor.getThreshold().toString()))))
                 .andExpect(jsonPath("$.metrics", hasSize(3)))
                 .andExpect(jsonPath("$.metrics[0]", is(factor.getMetricsIds().get(0))))
@@ -1518,6 +1523,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("description")
                                         .description("Quality factor description"),
+                                fieldWithPath("categoryName")
+                                        .description("Quality factor category"),
                                 fieldWithPath("threshold")
                                         .description("Quality factor minimum acceptable value"),
                                 fieldWithPath("metrics")
@@ -1566,6 +1573,7 @@ public class FactorEvaluationTest {
                 .param("prj", project.getExternalId())
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
+                .param("category", factor.getCategoryName())
                 .param("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getMetrics()));
 
@@ -1581,6 +1589,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor name"),
                                 parameterWithName("description")
                                         .description("Quality factor description"),
+                                parameterWithName("category")
+                                        .description("Quality factor category"),
                                 parameterWithName("threshold")
                                         .description("Quality factor minimum acceptable value"),
                                 parameterWithName("metrics")
@@ -1591,7 +1601,7 @@ public class FactorEvaluationTest {
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
         verifyNoMoreInteractions(projectsController);
 
-        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(project));
+        verify(qualityFactorsDomainController, times(1)).saveQualityFactorWithCategory(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(factor.getCategoryName()), eq(project));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1611,6 +1621,7 @@ public class FactorEvaluationTest {
                 .param("prj", project.getExternalId())
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
+                .param("category", factor.getCategoryName())
                 .param("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getMetrics()));
 
@@ -1625,7 +1636,7 @@ public class FactorEvaluationTest {
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
         verifyNoMoreInteractions(projectsController);
 
-        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getMetrics()), eq(project));
+        verify(qualityFactorsDomainController, times(1)).saveQualityFactorWithCategory(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getMetrics()), eq(factor.getCategoryName()), eq(project));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1644,6 +1655,7 @@ public class FactorEvaluationTest {
                 .multipart("/api/qualityFactors/{id}", factor.getId())
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
+                .param("category", factor.getCategoryName())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getWeights()))
                 .with(new RequestPostProcessor() {
@@ -1664,6 +1676,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor name"),
                                 parameterWithName("description")
                                         .description("Quality factor description"),
+                                parameterWithName("category")
+                                        .description("Quality factor category"),
                                 parameterWithName("threshold")
                                         .description("Quality factor minimum acceptable value"),
                                 parameterWithName("metrics")
@@ -1672,7 +1686,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()) , eq(factor.getWeights()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactorWithCategory(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getWeights()), eq(factor.getCategoryName()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1691,6 +1705,7 @@ public class FactorEvaluationTest {
                 .multipart("/api/qualityFactors/{id}", factor.getId())
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
+                .param("category", factor.getCategoryName())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getWeights()))
                 .with(new RequestPostProcessor() {
@@ -1710,7 +1725,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getWeights()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactorWithCategory(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getWeights()), eq(factor.getCategoryName()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), project.getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1729,6 +1744,7 @@ public class FactorEvaluationTest {
                 .multipart("/api/qualityFactors/{id}", factor.getId())
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
+                .param("category", factor.getCategoryName())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getMetrics()))
                 .with(new RequestPostProcessor() {
@@ -1748,7 +1764,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactorWithCategory(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(factor.getCategoryName()));
         verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), project.getExternalId());
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1788,12 +1804,13 @@ public class FactorEvaluationTest {
         Factor factor = domainObjectsBuilder.buildFactor(project);
 
         when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
-        when(qualityFactorsDomainController.editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()))).thenThrow(new DataIntegrityViolationException(""));
+        when(qualityFactorsDomainController.editQualityFactorWithCategory(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(factor.getCategoryName()))).thenThrow(new DataIntegrityViolationException(""));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/qualityFactors/{id}", factor.getId())
                 .param("name", factor.getName())
                 .param("description", factor.getDescription())
+                .param("category", factor.getCategoryName())
                 .param ("threshold", factor.getThreshold().toString())
                 .param("metrics", String.join(",", factor.getMetrics()))
                 .with(new RequestPostProcessor() {
@@ -1813,7 +1830,7 @@ public class FactorEvaluationTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
-        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()));
+        verify(qualityFactorsDomainController, times(1)).editQualityFactorWithCategory(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getThreshold().toString()), eq(factor.getMetrics()), eq(factor.getCategoryName()));
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 

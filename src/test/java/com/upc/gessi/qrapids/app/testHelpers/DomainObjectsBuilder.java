@@ -171,6 +171,7 @@ public class DomainObjectsBuilder {
 
         Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
         factor.setId(1L);
+        factor.setCategoryName("Codequality category");
         factor.setThreshold(0.3f);
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project,"Duplication category");
         metric1.setId(1L);
