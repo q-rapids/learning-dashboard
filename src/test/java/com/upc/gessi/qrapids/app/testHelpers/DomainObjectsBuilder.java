@@ -649,24 +649,27 @@ public class DomainObjectsBuilder {
 
     public List<QFCategory> buildFactorCategoryList () {
         Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
+        String factorGoodCategoryName = "Default";
+        String factorGoodCategoryType = "Good";
         String factorGoodCategoryColor = "#00ff00";
         float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold,factorGoodCategoryType);
         factorGoodCategory.setId(factorGoodCategoryId);
 
         Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
+        String factorNeutralCategoryName = "Default";
+        String factorNeutralCategoryType = "Neutral";
         String factorNeutralCategoryColor = "#ff8000";
         float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold,factorNeutralCategoryType);
         factorNeutralCategory.setId(factorNeutralCategoryId);
 
         Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
+        String factorBadCategoryType = "Bad";
+        String factorBadCategoryName = "Default";
         String factorBadCategoryColor = "#ff0000";
         float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold,factorBadCategoryType);
         factorBadCategory.setId(factorBadCategoryId);
 
         List<QFCategory> factorCategoryList = new ArrayList<>();
@@ -678,27 +681,27 @@ public class DomainObjectsBuilder {
     }
 
     public List<Map<String,String>> buildRawFactorCategoryList () {
-        String factorGoodCategoryName = "Good";
+        String factorGoodCategoryType = "Good";
         String factorGoodCategoryColor = "#00ff00";
         float factorGoodCategoryUpperThreshold = 1.0f;
         Map<String, String> factorGoodCategory = new HashMap<>();
-        factorGoodCategory.put("name", factorGoodCategoryName);
+        factorGoodCategory.put("type", factorGoodCategoryType);
         factorGoodCategory.put("color", factorGoodCategoryColor);
         factorGoodCategory.put("upperThreshold", Float.toString(factorGoodCategoryUpperThreshold));
 
-        String factorNeutralCategoryName = "Neutral";
+        String factorNeutralCategoryType = "Neutral";
         String factorNeutralCategoryColor = "#ff8000";
         float factorNeutralCategoryUpperThreshold = 0.67f;
         Map<String, String> factorNeutralCategory = new HashMap<>();
-        factorNeutralCategory.put("name", factorNeutralCategoryName);
+        factorNeutralCategory.put("type", factorNeutralCategoryType);
         factorNeutralCategory.put("color", factorNeutralCategoryColor);
         factorNeutralCategory.put("upperThreshold", Float.toString(factorNeutralCategoryUpperThreshold));
 
-        String factorBadCategoryName = "Bad";
+        String factorBadCategoryType = "Bad";
         String factorBadCategoryColor = "#ff0000";
         float factorBadCategoryUpperThreshold = 0.33f;
         Map<String, String> factorBadCategory = new HashMap<>();
-        factorBadCategory.put("name", factorBadCategoryName);
+        factorBadCategory.put("type", factorBadCategoryType);
         factorBadCategory.put("color", factorBadCategoryColor);
         factorBadCategory.put("upperThreshold", Float.toString(factorBadCategoryUpperThreshold));
 

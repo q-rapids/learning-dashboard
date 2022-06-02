@@ -22,6 +22,11 @@ var categoriesForPolar = [];
 
 var metrics = false;
 
+let factorDB = [];
+let factorCategoryNames = [];
+
+const DEFAULT_CATEGORY = "Default"
+
 function getData() {
     //empty previous data
     ids = [];
@@ -34,6 +39,7 @@ function getData() {
 
     getCategories();
     getFactorsCategories();
+    getFactorList();
 
     //get data from API
     jQuery.ajax({
@@ -58,6 +64,7 @@ function getData() {
                     weights.push([]);
                     weightedValues.push([]);
                     assessmentValues.push([]);
+                    factorCategoryNames.push([]);
                     for (j = 0; j < data[i].factors.length; j++) { // while factors
                         //for each factor save name to labels vector and value to values vector
                         if (data[i].factors[j].name.length < 27)
@@ -68,6 +75,7 @@ function getData() {
                         weightedValues[i].push(data[i].factors[j].weightedValue);
                         assessmentValues[i].push(data[i].factors[j].assessmentValue);
                         colorsForPolar[i].push(colorList[j%colorList.length]);
+                        factorCategoryNames[i].push(data[i].factors[j].name);
                     }
                 }
             } else { // if individual DSI is required
@@ -116,11 +124,23 @@ function sortDataAlphabetically (data) {
 
 function getFactorsCategories() {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (response) {
             categoriesForPolar = response;
+        }
+    });
+}
+
+function getFactorList() {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: true,
+        success: function (dataF) {
+            factorDB = dataF;
+            drawChart();
         }
     });
 }

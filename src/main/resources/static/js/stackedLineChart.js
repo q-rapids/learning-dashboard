@@ -250,29 +250,25 @@ function drawChart() {
         //Add category lines
         if (typeof categories !== 'undefined') {
             var annotations = [];
-
             let metricCategory;
 
-            if (typeof orderedMetricsDB !== 'undefined') {
-                if (orderedMetricsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        if (typeof orderedMetricsDB[i] !== 'undefined') return cat.name === orderedMetricsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
-            } else if (typeof orderedFactorsDB !== 'undefined') {
-                if (orderedFactorsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedFactorsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
+            if (typeof orderedMetricsDB !== 'undefined' && orderedMetricsDB.length !== 0) {
+                //for Historic Metrics (parseDataMetricsHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedMetricsDB[i].categoryName;
+                });
+            } else if (typeof orderedFactorsDB !== 'undefined' && orderedFactorsDB.length !== 0) {
+                //for Historic Factors (parseDataQFHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedFactorsDB[i].categoryName;
+                });
+            } else if (typeof metricsDB !== 'undefined' && metricsDB.length !== 0) {
+                //for Historic Detailed Factors (parseDataDetailedQFHistorical.js)
+                let catName = getFactorCategory(labels[i], metricsDB);
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === catName;
+                });
+
             } else {
                 metricCategory = categories.filter(function (cat) {
                     return cat.name === DEFAULT_CATEGORY;
@@ -373,11 +369,10 @@ function drawChart() {
         if(groupByFactor && i === factorThreshold) {
             let factorId;
             let factorName;
-            let factorDescription;
             if(factorIndex < factors.length) {
                 factorId = factors[factorIndex].id;
                 factorName = factors[factorIndex].name;
-                factorDescription=factors[factorIndex].description
+
                 factorThreshold += factors[factorIndex].metrics.length
                 factorIndex++;
             }else{
@@ -392,26 +387,6 @@ function drawChart() {
             labelF.id = factorId;
             labelF.textContent = factorName;
             divF.appendChild(labelF);
-            var b=document.createElement('a')
-            b.classList.add("check")
-            b.setAttribute('data-tooltip', factorDescription)
-
-            var tooltipdiv = document.createElement('div');
-            tooltipdiv.classList.add("tooltip");
-            var iconF = document.createElement('img');
-            iconF.class="icons";
-            iconF.src="../icons/information.png";
-            iconF.width = 38;
-            iconF.height = 25;
-            iconF.style = "padding-left:15px;";
-
-            var spantootlip = document.createElement('span');
-            spantootlip.classList.add("tooltiptext");
-            spantootlip.innerHTML=factors[j].description;
-            tooltipdiv.appendChild(iconF)
-            tooltipdiv.appendChild(spantootlip)
-            b.appendChild(iconF)
-            divF.appendChild(b);
             document.getElementById("chartContainer").appendChild(divF)
         }
 
@@ -507,6 +482,25 @@ function fitToContent() {
 
         chart.update();
     });
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0]
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 function normalRange() {

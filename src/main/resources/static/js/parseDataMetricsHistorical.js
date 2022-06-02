@@ -166,7 +166,6 @@ function sortDataAlphabetically (data) {
 }
 
 function sortDataByFactor(data) {
-    if(data.length === 0) return data;
     let resultData = []
     let writtenIds = new Set;
     for(let i = 0; i < factors.length; ++i){
