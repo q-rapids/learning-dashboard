@@ -8,7 +8,6 @@ var groupByFactor = false;
 const DEFAULT_CATEGORY = "Default"
 var qualityModelSIMetrics = new Map();
 
-const DEFAULT_CATEGORY = "Default";
 //initialize data vectors
 var texts = [];
 var value = [];
