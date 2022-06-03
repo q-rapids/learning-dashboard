@@ -1,20 +1,23 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import java.sql.Date;
+import java.util.List;
 
-public class DTOProjectHistoricDate {
+public class DTOHistoricDate {
     private Long id;
     private String name;
-    private Long project_id;
+    private String label;
     private Date from_date;
     private Date to_date;
+    private List<Long> project_ids;
 
-    public DTOProjectHistoricDate(Long id, String name, Long project_id, Date from_date, Date to_date) {
+    public DTOHistoricDate(Long id, String name, String label, Date from_date, Date to_date, List<Long> project_ids) {
         this.id = id;
         this.name = name;
-        this.project_id = project_id;
+        this.label = label;
         this.from_date = from_date;
         this.to_date = to_date;
+        this.project_ids = project_ids;
     }
 
     public Long getId() {
@@ -33,14 +36,6 @@ public class DTOProjectHistoricDate {
         this.name = name;
     }
 
-    public Long getProject_id() {
-        return project_id;
-    }
-
-    public void setProject_id(Long project_id) {
-        this.project_id = project_id;
-    }
-
     public Date getFrom_date() {
         return from_date;
     }
@@ -55,5 +50,21 @@ public class DTOProjectHistoricDate {
 
     public void setTo_date(Date to_date) {
         this.to_date = to_date;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public List<Long> getProject_ids() {
+        return project_ids;
+    }
+
+    public void setProject_ids(List<Long> project_ids) {
+        this.project_ids = project_ids;
     }
 }

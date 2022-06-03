@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<br/>
+<div id="iterationView">
+    <div id="iterationTree">
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <button onclick="newIteration()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Iteration</button>
+        </div>
+        <br/>
+        <ul id="iterationList" class="list-group">
+        </ul>
+    </div>
+    <div id="iterationInfo" style="display: none">
+        <div id="iterationForm">
+            <div class="iterationInfoRow">
+                <p id = "iterationInfoTitle" style="font-size: 36px; margin-right: 1%">Iteration Information</p>
+            </div>
+            <div class="iterationInfoRow">
+                <p style="font-size: 18px; margin-right: 1%;">Name*: </p>
+                <input id="iterationName" style="width: 100%;" type="text" placeholder="Write the iteration name here"></input>
+            </div>
+            <div class="iterationInfoRow">
+                <p style="font-size: 18px; margin-right: 1%;">Subject: </p>
+                <input id="iterationLabel" style="width: 100%;" type="text" placeholder="(Optional) Write the iteration subject here"></input>
+            </div>
+            <div class="iterationInfoRow">
+                <p style="font-size: 18px; margin-right: 1%;">Dates*:  </p>
+                <div class="input-group date" data-provide="datepicker">
+                    <input id="iterationFromDate" type="text" style="width: 100%" placeholder="YYYY-MM-DD"></input>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+                <div class="input-group date" data-provide="datepicker">
+                    <input id="iterationToDate" type="text" style="width: 100%" placeholder="YYYY-MM-DD"></input>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="iterationInfoRow" style="margin-bottom: 1%">
+                <p id="iterationCompositionTitle" style="font-size: 36px; margin-right: 1%">Associated Projects</p>
+            </div>
+            <div class="iterationInfoRow" style="margin-top: 0%; margin-bottom: 1.5%"><p id="iterationCompositionWarning" style="font-size: 14px"></p></div>
+            <div class="iterationInfoRow">
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Available Projects: </p>
+                    <select id="avIterationBox" multiple="multiple" style="height: 150px;">
+
+                    </select>
+                </div>
+                <div class="selectionColumn" style="padding-top:30px;">
+                    <button onclick="moveItemsLeft()" class="btn btn-default top-and-bottom-margin" id="oneLeft">&lt;</button>
+                    <button onclick="moveItemsRight()" class="btn btn-default top-and-bottom-margin" id="right" style="margin-top:3px;">&gt;</button>
+                    <button onclick="moveAllItemsRight()" class="btn btn-default top-and-bottom-margin" id="allRight" style="margin-top:3px;">&gt;&gt;</button>
+                    <button onclick="moveAllItemsLeft()" class="btn btn-default top-and-bottom-margin" id="allLeft" style="margin-top:3px;">&lt;&lt;</button>
+                </div>
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Selected Projects*: </p>
+                    <select id="selIterationBox" multiple="multiple" style="height: 150px;"></select>
+                </div>
+            </div>
+            <div class="iterationInfoRow" style="justify-content: space-between">
+                <button class="btn btn-primary btn-danger" id="iterationDeleteBtn" style="font-size: 18px; max-width: 30%;" >Delete Iteration</button>
+                <button class="btn btn-primary" id="iterationSaveBtn" style="font-size: 18px; max-width: 30%;">Save Iteration</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+
+<script type="text/javascript" th:src="@{/js/iteration.js}"></script>
+
+</html>

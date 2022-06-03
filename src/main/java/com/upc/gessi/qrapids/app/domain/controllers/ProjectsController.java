@@ -2,19 +2,21 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
-import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
+import com.upc.gessi.qrapids.app.domain.exceptions.HistoricChartDatesNotFoundExeption;
+import com.upc.gessi.qrapids.app.domain.models.HistoricDates;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDate;
+import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDates;
+import com.upc.gessi.qrapids.app.domain.repositories.Dates.HistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectHistoricDatesRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Dates.ProjectHistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProjectHistoricDate;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,10 @@ public class ProjectsController {
     private QMAProjects qmaProjects;
 
     @Autowired
-    private ProjectHistoricDatesRepository datesRepository;
+    private ProjectHistoricDatesRepository projectHistoricDatesRepository;
+
+    @Autowired
+    private HistoricDatesRepository historicDatesRepository;
 
     @Autowired
     private Backlog backlog;
@@ -132,42 +137,69 @@ public class ProjectsController {
         return backlog.getPhases(project.getBacklogId(), date);
     }
 
-    public List<DTOProjectHistoricDate> getHistoricChartDates(Long project_id) {
-        List<DTOProjectHistoricDate> historicDatesDTO = new ArrayList<>();
-        List<ProjectHistoricDate> projectDates = datesRepository.findByProject(project_id);
+    public DTOHistoricDate getHistoricChartDatesByDateId(Long date_id) throws HistoricChartDatesNotFoundExeption {
+        List<Long> project_ids = new ArrayList<>();
+        Optional<HistoricDates> historicDate = historicDatesRepository.findById(date_id);
+        if(!historicDate.isPresent()){
+            throw new HistoricChartDatesNotFoundExeption();
+        }
+        List<ProjectHistoricDates> projectHistoricDates = projectHistoricDatesRepository.findByDate_id(date_id);
+        for(ProjectHistoricDates projectHistoricDate : projectHistoricDates){
+            project_ids.add(projectHistoricDate.getProject_id());
+        }
+        return new DTOHistoricDate(historicDate.get().getId(), historicDate.get().getName(),
+                historicDate.get().getLabel(), historicDate.get().getFrom_date(), historicDate.get().getTo_date(), project_ids);
+    }
 
-        for(ProjectHistoricDate projectDate : projectDates) {
-            historicDatesDTO.add(new DTOProjectHistoricDate(projectDate.getId(), projectDate.getName(), projectDate.getProject(), projectDate.getFrom_date(), projectDate.getTo_date()));
+
+    public List<DTOHistoricDate> getHistoricChartDatesByProjectId(Long project_id) throws HistoricChartDatesNotFoundExeption {
+        List<DTOHistoricDate> historicDatesDTO = new ArrayList<>();
+        List<ProjectHistoricDates> projectHistoricDates = projectHistoricDatesRepository.findByProject_id(project_id);
+
+        for(ProjectHistoricDates projectHistoricDate : projectHistoricDates) {
+            historicDatesDTO.add(getHistoricChartDatesByDateId(projectHistoricDate.getDate_id()));
         }
         return historicDatesDTO;
     }
 
-    public void createHistoricDate(List<Map<String, String>> sprints, Long project_id) throws ParseException {
+    public void createHistoricDate(Map<String, String> dates, List<Long> project_ids) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        for(Map<String, String> sprint : sprints) {
-            ProjectHistoricDate newHistoricDate = new ProjectHistoricDate();
-            newHistoricDate.setProject(project_id);
-            newHistoricDate.setName(sprint.get("name"));
-            //date handling
-            Date from_tmp = sdf.parse(sprint.get("from"));
-            Date to_tmp = sdf.parse(sprint.get("to"));
+        Date from_tmp = sdf.parse(dates.get("fromDate"));
+        Date to_tmp = sdf.parse(dates.get("toDate"));
 
-            newHistoricDate.setFrom_date(new java.sql.Date(from_tmp.getTime()));
-            newHistoricDate.setTo_date(new java.sql.Date(to_tmp.getTime()));
+        HistoricDates newHistoricDate = new HistoricDates();
+        newHistoricDate.setFrom_date(new java.sql.Date(from_tmp.getTime()));
+        newHistoricDate.setTo_date(new java.sql.Date(to_tmp.getTime()));
+        newHistoricDate.setName(dates.get("name"));
+        newHistoricDate.setLabel(dates.get("label"));
 
-            datesRepository.save(newHistoricDate);
+        newHistoricDate = historicDatesRepository.save(newHistoricDate);
+        historicDatesRepository.flush();
+
+        for(Long project_id : project_ids) {
+            ProjectHistoricDates newProjectHistoricDates = new ProjectHistoricDates();
+            newProjectHistoricDates.setDate_id(newHistoricDate.getId());
+            newProjectHistoricDates.setProject_id(project_id);
+            projectHistoricDatesRepository.save(newProjectHistoricDates);
         }
     }
 
-    public void updateHistoricDate(List<Map<String, String>> sprints, Long project_id) throws ParseException {
-        deleteMetricCategory(project_id);
-        createHistoricDate(sprints, project_id);
+    public void updateHistoricDate(Map<String, String> dates, List<Long> project_ids, Long dateId) throws ParseException {
+        deleteHistoricDate(dateId);
+        createHistoricDate(dates, project_ids);
     }
 
-    public void deleteMetricCategory(Long project_id) {
-        Iterable<ProjectHistoricDate> projectHistoricDateIterable = datesRepository.findByProject(project_id);
-        for(ProjectHistoricDate p : projectHistoricDateIterable)  {
-            datesRepository.deleteById(p.getId());
+    public void deleteHistoricDate(Long dateId) {
+        historicDatesRepository.deleteById(dateId);
+        projectHistoricDatesRepository.deleteByDate_id(dateId);
+    }
+
+    public List<DTOHistoricDate> getAllHistoricChartDates() throws HistoricChartDatesNotFoundExeption {
+        List<Long> ids = historicDatesRepository.getAllIds();
+        List<DTOHistoricDate> dtoHistoricDates = new ArrayList<>();
+        for(Long id : ids) {
+            dtoHistoricDates.add(getHistoricChartDatesByDateId(id));
         }
+        return dtoHistoricDates;
     }
 }

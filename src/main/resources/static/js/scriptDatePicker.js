@@ -74,9 +74,9 @@ function configureHistoric () {
 
     sprintDates.forEach( function (elem) {
         if (window.location.href.match("/Reporting")) { // reporting page intervals
-            $('#intervalsDropdown').append('<li><a onclick="setSprintDates(\'' + elem.from_date + ', ' + elem.to_date + '\');" href="#">' + elem.name + '</a></li>');
+            $('#intervalsDropdown').append('<li><a onclick="setSprintDates(\'' + elem.from_date + '\', \'' + elem.to_date + '\');" href="#">' + elem.name + '</a></li>');
         }else{
-            $('#intervalsDropdown').append('<li><a onclick="setSprintDates(\'' + elem.from_date + ', ' + elem.to_date + '\');$(\'#chartContainer\').empty();getData()" href="#">' + elem.name + '</a></li>');
+            $('#intervalsDropdown').append('<li><a onclick="setSprintDates(\'' + elem.from_date + '\', \'' + elem.to_date + '\');$(\'#chartContainer\').empty();getData()" href="#">' + elem.name + '</a></li>');
         }
     });
 

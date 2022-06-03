@@ -5,12 +5,11 @@ import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
-@Table(name="project_historic_dates",
+@Table(name="historic_dates",
         uniqueConstraints= {
-                @UniqueConstraint(columnNames = {"name", "project_id"})
-        })
-
-public class ProjectHistoricDate implements Serializable {
+                @UniqueConstraint(columnNames = {"name", "label"})
+    })
+public class HistoricDates implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -25,15 +24,15 @@ public class ProjectHistoricDate implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "project_id", nullable = false)
-    private Long project;
+    @Column(name = "label")
+    private String label;
 
-    public Long getProject() {
-        return project;
+    public String getLabel() {
+        return label;
     }
 
-    public void setProject(Long project) {
-        this.project = project;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getName() {
