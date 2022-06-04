@@ -59,6 +59,7 @@ public class RoutesFirstLoad {
         routes.add( new Route( "REST : Categories - Configuration", "/Categories/Configuration") );
         routes.add( new Route( "REST : Profiles - Configuration", "/Profiles/Configuration") );
         routes.add( new Route( "REST : QRPatterns - Configuration", "/QRPatterns/Configuration") );
+        routes.add( new Route( "REST : Updates - Configuration", "/Updates/Configuration") );
         routes.add( new Route( "REST : profile", "/profile") );
         routes.add( new Route( "REST : users", "/users") );
 

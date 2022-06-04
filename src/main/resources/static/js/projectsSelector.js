@@ -60,6 +60,7 @@ if (prj) {
 function setProject(project, url) {
 
     sessionStorage.setItem("prj", project);
+    sessionStorage.setItem("update", "true");
     if (url && (url != window.location.href))
         window.open(url,"_self");
     else
@@ -293,3 +294,56 @@ $("#projectModalButton").click(function () {
     setProfile(profileID+','+profileName);
     $("#projectsModal").modal();
 });
+
+function fillupdateModal(onlylast) {
+    var url = "../api/update/year";
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            var td=document.getElementById("updateText")
+            td.innerHTML="";
+            if(!onlylast) {
+                for (var i = 0; i < data.length; i++) {
+                    var dateP = document.createElement("p")
+                    dateP.innerHTML = data[i].date;
+                    dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
+                    var updateP = document.createElement("div")
+                    updateP.innerHTML = data[i].update;
+                    updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
+                    td.appendChild(dateP)
+                    td.appendChild(updateP)
+                }
+            }
+            else {
+                console.log("--------------------------------------------------------------------------------- AQUI SI UPDATES??")
+                console.log(data[data.length-1])
+                var dateP = document.createElement("p")
+                dateP.innerHTML = data[data.length-1].date;
+                dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
+                var updateP = document.createElement("div")
+                updateP.innerHTML = data[data.length-1].update;
+                updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
+                td.appendChild(dateP)
+                td.appendChild(updateP)
+                $("#updateModal").modal()
+            }
+        }
+    });
+};
+
+function showUpdates() {
+
+    var update = sessionStorage.getItem("update");
+    if(update === "true") {
+        fillupdateModal(true)
+        var update = sessionStorage.getItem("false");
+    }
+}
+
+showUpdates();
+
+

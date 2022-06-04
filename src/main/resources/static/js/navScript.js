@@ -1,6 +1,7 @@
 var currentURL = window.location.href;
-var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, userName;
 var lastresfresh = new Date();
+var configuration="StrategicIndicators"
 lastresfresh= lastresfresh.getTime();
 getIfUserIsAdmin();
 refreshcookie();
@@ -372,6 +373,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "users";
     else if (currentURL.match("/usergroups"))
         id = "usergroups";
+    else if (currentURL.match("/Updates"))
+        id = "Updates";
     highlightAndSaveCurrentConfiguration(id);
 }
 
@@ -527,7 +530,11 @@ if(configuration=="profile") $("#Configuration").attr("href", serverUrl + "/prof
 
 else if(configuration=="users") $("#Configuration").attr("href", serverUrl + "/users" );
 
-else $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
+else {
+    if(configuration==="") $("#Configuration").attr("href", serverUrl + "/StrategicIndicators/Configuration");
+
+    else $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
+}
 
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 
@@ -542,6 +549,8 @@ $("#ProfilesConfig").attr("href", serverUrl + "/Profiles/Configuration");
 $("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 
 $("#QRPatternsConfig").attr("href", serverUrl + "/QRPatterns/Configuration");
+
+$("#UpdatesConfig").attr("href", serverUrl + "/Updates/Configuration");
 
 $("#profileConfig").attr("href", serverUrl + "/profile");
 
@@ -755,6 +764,42 @@ function profileQualityLevelFilter() {
         }
     });
 }
+function fillupdateModal(onlylast) {
+    var url = "../api/update/year";
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            var td=document.getElementById("updateText")
+            td.innerHTML="";
+            if(!onlylast) {
+                for (var i = 0; i < data.length; i++) {
+                    var dateP = document.createElement("p")
+                    dateP.innerHTML = data[i].date;
+                    dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
+                    var updateP = document.createElement("div")
+                    updateP.innerHTML = data[i].update;
+                    updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
+                    td.appendChild(dateP)
+                    td.appendChild(updateP)
+                }
+            }
+            else {
+                var dateP = document.createElement("p")
+                dateP.innerHTML = data[data.length-1].date;
+                dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
+                var updateP = document.createElement("div")
+                updateP.innerHTML = data[data.length-1].update;
+                updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
+                td.appendChild(dateP)
+                td.appendChild(updateP)
+            }
+        }
+    });
+};
 
 profileQualityLevelFilter();
 
