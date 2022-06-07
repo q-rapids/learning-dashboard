@@ -3,6 +3,9 @@
 <head>
     <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
     <link rel="stylesheet" th:href="@{/css/products.css}" />
+    <link rel="stylesheet" th:href="@{/css/gijgo.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}" />
+    <script type="text/javascript" th:src="@{/js/lib/gijgo.min.js}"></script>
 </head>
 
 <body>
@@ -35,16 +38,12 @@
             <div class="iterationInfoRow">
                 <p style="font-size: 18px; margin-right: 1%;">Dates*:  </p>
                 <div class="input-group date" data-provide="datepicker">
+                    <label class="control-label">From: </label>
                     <input id="iterationFromDate" type="text" style="width: 100%" placeholder="YYYY-MM-DD"></input>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
                 </div>
                 <div class="input-group date" data-provide="datepicker">
+                    <label class="control-label">To: </label>
                     <input id="iterationToDate" type="text" style="width: 100%" placeholder="YYYY-MM-DD"></input>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
                 </div>
             </div>
 

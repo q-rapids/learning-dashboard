@@ -3,6 +3,14 @@ let projects = [];
 let currentIterationId;
 let httpMethod;
 
+var config = {
+    format: 'yyyy-mm-dd',
+    weekStartDay: 1,
+    calendarWeeks: true,
+    uiLibrary: 'bootstrap',
+    iconsLibrary: 'fontawesome'
+};
+
 function getProjects() {
     var url = "/api/projects";
     if (serverUrl) {
@@ -68,6 +76,8 @@ function newIteration() {
     $('#iterationLabel').val("");
     $('#iterationFromDate').val("");
     $('#iterationToDate').val("");
+    $('#iterationFromDate').datepicker(config);
+    $('#iterationToDate').datepicker(config);
 
     showProjects();
 }
@@ -164,6 +174,8 @@ function clickOnTree(e){
     $('#iterationLabel').val(iterationData.label);
     $('#iterationFromDate').val(iterationData.from_date);
     $('#iterationToDate').val(iterationData.to_date);
+    $('#iterationFromDate').datepicker(config);
+    $('#iterationToDate').datepicker(config);
 
     if (projects.length > 0) {
         showProjects();
