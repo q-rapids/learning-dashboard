@@ -32,6 +32,10 @@ function buildIterationList() {
         type: "GET",
         async: true,
         success: function (data) {
+            data.sort(function (a, b) {
+                if(a.name === b.name) return a.label > b.label;
+                else return a.name > b.name;
+            })
             iterations = data;
             var iterationList = document.getElementById('iterationList');
             for (var i = 0; i < data.length; i++) {
