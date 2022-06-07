@@ -1430,7 +1430,7 @@ public class FactorEvaluationTest {
         // define factor with its metric composition
         List<QualityFactorMetrics> qualityMetrics = new ArrayList<>();
 
-        Factor factor =  new Factor("codequality", "Quality of the implemented code", project, "testType");
+        Factor factor =  new Factor("codequality", "Quality of the implemented code", project, "testType", "Default");
         factor.setId(1L);
         factor.setCategoryName("Codequality category");
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");

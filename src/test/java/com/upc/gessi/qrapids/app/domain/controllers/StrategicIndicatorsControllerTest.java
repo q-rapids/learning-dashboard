@@ -613,7 +613,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject(), "Fast Tests category");
-        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType");
+        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
         qualityMetrics3.add(qfm3);
@@ -627,7 +627,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject(), "Duplication category");
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType");
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
         qualityMetrics1.add(qfm1);
@@ -641,7 +641,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject(), "Bugdensity category");
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType");
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
         qualityMetrics2.add(qfm2);
@@ -773,7 +773,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject(),"Fast Test category");
-        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType");
+        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
         qualityMetrics3.add(qfm3);
@@ -787,7 +787,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject(),"Duplication category");
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType");
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
         qualityMetrics1.add(qfm1);
@@ -801,7 +801,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject(), "Bugdensity category");
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType");
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
         qualityMetrics2.add(qfm2);
@@ -915,7 +915,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject(),"Fast Test category");
-        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType");
+        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
         qualityMetrics3.add(qfm3);
@@ -929,7 +929,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject(), "Duplication category");
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType");
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
         qualityMetrics1.add(qfm1);
@@ -943,7 +943,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject(),"Bugdensity category");
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType");
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
         qualityMetrics2.add(qfm2);
@@ -1069,7 +1069,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject(),"Fast Test category");
-        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType");
+        Factor factor3 =  new Factor("testingperformance", "Performance of testing phases", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
         qualityMetrics3.add(qfm3);
@@ -1083,7 +1083,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject(),"Duplication category");
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType");
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
         qualityMetrics1.add(qfm1);
@@ -1097,7 +1097,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject(), "Bugdensity category");
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType");
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject(), "testType", "Default");
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
         qualityMetrics2.add(qfm2);
@@ -1247,7 +1247,7 @@ public class StrategicIndicatorsControllerTest {
 
         when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), null,false)).thenReturn(dtoDetailedStrategicIndicatorList);
         for (DTOFactorEvaluation qf : dtoFactorEvaluationList) {
-            Factor f = new Factor(qf.getId(), qf.getDescription(), project, qf.getType());
+            Factor f = new Factor(qf.getId(), qf.getDescription(), project, qf.getType(), qf.getDatasource());
             f.setId(1L);
             when(factorsController.findFactorByExternalIdAndProjectId(any(String.class), eq(project.getId()))).thenReturn(f);
         }
@@ -1258,7 +1258,7 @@ public class StrategicIndicatorsControllerTest {
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project, "testType");
+        Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project, "testType", "Default");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);

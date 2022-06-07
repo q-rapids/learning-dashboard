@@ -1941,7 +1941,7 @@ public class StrategicIndicatorsTest {
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project, "testType");
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project, "testType", "Default");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -1958,7 +1958,7 @@ public class StrategicIndicatorsTest {
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
         metric2.setId(2L);
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project, "testType");
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project, "testType", "Default");
         factor2.setId(2L);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
@@ -1975,7 +1975,7 @@ public class StrategicIndicatorsTest {
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
         metric3.setId(3L);
-        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project, "testType");
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project, "testType", "Default");
         factor3.setId(3L);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
