@@ -1,12 +1,15 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
+import com.google.gson.JsonObject;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
+import com.upc.gessi.qrapids.app.domain.models.HistoricDateAPIBody;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -20,7 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class Projects {
@@ -93,6 +98,63 @@ public class Projects {
         } catch (ElementAlreadyPresentException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @GetMapping("api/project/{project_id}/historicdates")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOHistoricDate> getHistoricChartDates (@PathVariable Long project_id) {
+        try {
+            return projectsController.getHistoricChartDatesByProjectId(project_id);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @GetMapping("api/project/historicdates")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOHistoricDate> getHistoricChartDates () {
+        try {
+            return projectsController.getAllHistoricChartDates();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @PostMapping("api/project/historicdates")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newHistoricChartDates (@RequestBody HistoricDateAPIBody body) {
+        try {
+            if(body.getIteration() == null || body.getProject_ids() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            projectsController.createHistoricDate(body.getIteration(), body.getProject_ids());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @PutMapping("api/project/historicdates/{historic_date_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateHistoricChartDates (@RequestBody HistoricDateAPIBody body, @PathVariable Long historic_date_id) {
+        try {
+            if(body.getIteration() == null || body.getProject_ids() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            projectsController.updateHistoricDate(body.getIteration(), body.getProject_ids(), historic_date_id);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("api/project/historicdates/{historic_date_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteHistoricChartDates (@PathVariable Long historic_date_id) {
+        try {
+            projectsController.deleteHistoricDate(historic_date_id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
