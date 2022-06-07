@@ -373,6 +373,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "users";
     else if (currentURL.match("/usergroups"))
         id = "usergroups";
+    else if (currentURL.match("/Iterations"))
+        id = "Iterations";
     highlightAndSaveCurrentConfiguration(id);
 }
 

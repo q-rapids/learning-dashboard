@@ -692,7 +692,7 @@ function check() {
 
 function saveProject() {
 
-	if ($('#projectName').val() != "" && !nameEmpty) {
+	if ($('#projectName').val() != "") {
     	var loadedFile = $('#projectLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
 	        var formData = new FormData();
