@@ -143,7 +143,7 @@ public class Factors {
                         factor.getMetricsIds(),
                         factor.isWeighted(),
                         factor.getWeights(),
-                        factor.getType()),
+                        factor.getType(),
                         factor.getCategoryName());
 
                 dtoFactor.setThreshold(factor.getThreshold());
@@ -168,7 +168,7 @@ public class Factors {
                         factor.getMetricsIds(),
                         factor.isWeighted(),
                         factor.getWeights(),
-                        factor.getType()),
+                        factor.getType(),
                         factor.getCategoryName());
 
             dtoFactor.setThreshold(factor.getThreshold());

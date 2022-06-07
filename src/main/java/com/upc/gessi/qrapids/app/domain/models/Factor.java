@@ -53,7 +53,7 @@ public class Factor {
     }
 
     // Quality Factor without Quality Metrics
-    public Factor(String name, String description, Project project, String type) {
+    public Factor(String name, String description, Project project, String type, String category) {
         setName(name);
         setDescription(description);
         setProject(project);

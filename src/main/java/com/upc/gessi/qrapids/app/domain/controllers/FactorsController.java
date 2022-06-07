@@ -268,25 +268,10 @@ public class FactorsController {
         }
     }
 
-    public Factor saveQualityFactor(String name, String description, String threshold, List<String> qualityMetrics, Project project, String type) throws MetricNotFoundException {
+    public Factor saveQualityFactorWithCategory(String name, String description, String threshold, List<String> qualityMetrics, String type, String category, Project project) throws MetricNotFoundException {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
-        qualityFactor = new Factor (name, description, project, type);
-        if (!threshold.isEmpty()) // check if threshold is specified and then set it
-            qualityFactor.setThreshold(Float.parseFloat(threshold));
-        else
-            qualityFactor.setThreshold(null);
-        qualityFactorRepository.save(qualityFactor);
-        boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
-        qualityFactor.setWeighted(weighted);
-        qualityFactorRepository.save(qualityFactor);
-        return qualityFactor;
-    }
-
-    public Factor saveQualityFactorWithCategory(String name, String description, String threshold, List<String> qualityMetrics, String category, Project project) throws MetricNotFoundException {
-        Factor qualityFactor;
-        // create Quality Factor minim (without quality factors and weighted)
-        qualityFactor = new Factor (name, description, project);
+        qualityFactor = new Factor (name, description, project, type, category);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             qualityFactor.setThreshold(Float.parseFloat(threshold));
         else
@@ -342,11 +327,12 @@ public class FactorsController {
         return  factor;
     }
 
-    public Factor editQualityFactorWithCategory(Long factorId, String name, String description, String threshold, List<String> qualityMetrics, String category) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+    public Factor editQualityFactorWithCategory(Long factorId, String name, String description, String threshold, List<String> qualityMetrics, String type, String category) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
         Factor factor = getQualityFactorById(factorId);
         factor.setName(name);
         factor.setDescription(description);
         factor.setCategoryName(category);
+        factor.setType(type);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             factor.setThreshold(Float.parseFloat(threshold));
         else
