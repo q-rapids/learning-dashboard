@@ -30,6 +30,10 @@ public class Metric {
     @JoinColumn(name="projectId", referencedColumnName = "id")
     private Project project;
 
+    @ManyToOne
+    @JoinColumn(name="studentId", referencedColumnName = "id")
+    private Student student;
+
     public Metric(){}
 
     public Metric(String externalId, String name, String description, Project project, String categoryName) {
@@ -103,4 +107,8 @@ public class Metric {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+
+    public Student getStudent() {return this.student;}
+
+    public void setStudent(Student student) {this.student=student;}
 }

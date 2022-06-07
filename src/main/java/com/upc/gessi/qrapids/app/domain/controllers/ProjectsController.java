@@ -6,12 +6,14 @@ import com.upc.gessi.qrapids.app.domain.exceptions.HistoricChartDatesNotFoundExe
 import com.upc.gessi.qrapids.app.domain.models.HistoricDates;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDates;
 import com.upc.gessi.qrapids.app.domain.repositories.Dates.HistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Dates.ProjectHistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.domain.repositories.Student.StudentRepository;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
@@ -19,7 +21,6 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +35,9 @@ public class ProjectsController {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private StudentsController studentsController;
 
     @Autowired
     private QMAProjects qmaProjects;
@@ -57,7 +61,7 @@ public class ProjectsController {
 
     public DTOProject getProjectByExternalId(String externalId) throws ProjectNotFoundException {
         Project p = projectRepository.findByExternalId(externalId);
-        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(),p.getIsGlobal());
     }
 
     public List<DTOProject> getProjects(Long id) throws ProjectNotFoundException {
@@ -73,7 +77,7 @@ public class ProjectsController {
         List<Project> projectsBD = new ArrayList<>();
         projectIterable.forEach(projectsBD::add);
         for (Project p : projectsBD) {
-            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(),p.getIsGlobal());
             projects.add(project);
         }
         Collections.sort(projects, new Comparator<DTOProject>() {
@@ -90,7 +94,9 @@ public class ProjectsController {
         DTOProject dtoProject = null;
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
-            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId());
+            List<DTOStudent> s = studentsController.getStudentsFromProject(Long.parseLong(id));
+            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getTaigaURL(), project.getGithubURL(), project.getIsGlobal());
+            dtoProject.setStudents(s);
         }
         return dtoProject;
     }
@@ -101,7 +107,7 @@ public class ProjectsController {
     }
 
     public void updateProject(DTOProject p) {
-        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
+        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getTaigaURL(), p.getGithubURL(),p.getIsGlobal());
         project.setId(p.getId());
         project.setBacklogId(p.getBacklogId());
         projectRepository.save(project);
@@ -121,7 +127,7 @@ public class ProjectsController {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {
-                Project newProject = new Project(project, project, "No description specified", null, true);
+                Project newProject = new Project(project, project, "No description specified", null, true,null,null,false);
                 projectRepository.save(newProject);
             }
         }

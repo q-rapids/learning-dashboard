@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.google.gson.JsonObject;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import com.upc.gessi.qrapids.app.domain.models.HistoricDateAPIBody;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
@@ -9,6 +10,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
@@ -19,19 +21,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 public class Projects {
 
     @Autowired
     private ProjectsController projectsController;
+
+    @Autowired
+    private StudentsController studentsController;
 
     private Logger logger = LoggerFactory.getLogger(Projects.class);
 
@@ -66,7 +72,8 @@ public class Projects {
     @ResponseStatus(HttpStatus.OK)
     public DTOProject getProjectById(@PathVariable String id) {
         try {
-            return projectsController.getProjectById(id);
+            DTOProject p = projectsController.getProjectById(id);
+            return p;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -81,6 +88,9 @@ public class Projects {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String backlogId = request.getParameter("backlogId");
+            String taigaURL= request.getParameter("taigaURL");
+            String githubURL= request.getParameter("githubURL");
+            Boolean isGlobal = Boolean.parseBoolean(request.getParameter("isGlobal"));
             byte[] logoBytes = null;
             if (logo != null) {
                 logoBytes = IOUtils.toByteArray(logo.getInputStream());
@@ -90,7 +100,7 @@ public class Projects {
                 logoBytes = p.getLogo();
             }
             if (projectsController.checkProjectByName(id, name)) {
-                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId);
+                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, taigaURL, githubURL, isGlobal);
                 projectsController.updateProject(p);
             } else {
                 throw new ElementAlreadyPresentException();

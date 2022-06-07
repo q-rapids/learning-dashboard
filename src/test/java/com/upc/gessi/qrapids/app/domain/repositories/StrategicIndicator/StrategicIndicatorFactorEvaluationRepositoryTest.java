@@ -31,7 +31,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
         entityManager.persist(project);
 
         String strategicIndicator1Name = "Product Quality";
@@ -45,7 +45,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
         entityManager.merge(metric1);
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project, "testType");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -66,7 +66,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
         metric2.setId(2L);
         entityManager.merge(metric2);
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project, "testType");
         factor2.setId(2L);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
@@ -87,7 +87,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
         metric3.setId(3L);
         entityManager.merge(metric3);
-        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project, "testType");
         factor3.setId(3L);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
@@ -120,7 +120,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         Metric metric4 = new Metric("nonblockingfiles","Non-blocking Files", "Density of non-blocking source files",project, "Non-blocking Files category");
         metric4.setId(4L);
         entityManager.merge(metric4);
-        Factor factor4 =  new Factor("blockingcode", " \tDensity of blocking code", project);
+        Factor factor4 =  new Factor("blockingcode", " \tDensity of blocking code", project, "testType");
         factor4.setId(4L);
         QualityFactorMetrics qfm4 = new QualityFactorMetrics(-1f, metric4, factor4);
         qfm4.setId(4L);
@@ -141,7 +141,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         Metric metric5 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
         metric5.setId(5L);
         entityManager.merge(metric5);
-        Factor factor5 =  new Factor("testingstatus", "Performance of testing phases", project);
+        Factor factor5 =  new Factor("testingstatus", "Performance of testing phases", project, "testType");
         factor5.setId(5L);
         QualityFactorMetrics qfm5 = new QualityFactorMetrics(-1f, metric5, factor5);
         qfm5.setId(5L);
@@ -162,7 +162,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         Metric metric6 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
         metric6.setId(6L);
         entityManager.merge(metric6);
-        Factor factor6 =  new Factor("qualityissuespecification", "Percentage of issues planned for the next release that are completely specified and ready to be developed", project);
+        Factor factor6 =  new Factor("qualityissuespecification", "Percentage of issues planned for the next release that are completely specified and ready to be developed", project, "testType");
         factor6.setId(6L);
         QualityFactorMetrics qfm6 = new QualityFactorMetrics(-1f, metric6, factor6);
         qfm6.setId(6L);

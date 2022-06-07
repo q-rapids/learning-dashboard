@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 
+import java.util.List;
 
 public class DTOProject {
     private Long id;
@@ -10,10 +11,14 @@ public class DTOProject {
     private byte[] logo;
     private boolean active;
     private String backlogId;
+    private String taigaURL;
+    private String githubURL;
+    private Boolean isGlobal;
+    private List<DTOStudent> students;
     
     public DTOProject(){}
     
-    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId) {
+    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, String taigaURL, String githubURL, Boolean isGlobal) {
     	this.id = id;
     	this.externalId = externalId;
     	this.name = name;
@@ -21,6 +26,9 @@ public class DTOProject {
     	this.logo = logo;
     	this.active = active;
     	this.backlogId = backlogId;
+    	this.taigaURL = taigaURL;
+    	this.githubURL = githubURL;
+    	this.isGlobal=isGlobal;
     }
     
     public Long getId() {
@@ -78,4 +86,20 @@ public class DTOProject {
     public void setBacklogId(String backlogId) {
         this.backlogId = backlogId;
     }
+
+    public String getTaigaURL() {return taigaURL;}
+
+    public void setTaigaURL(String taigaURL) {this.taigaURL=taigaURL;}
+
+    public String getGithubURL() {return githubURL;}
+
+    public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
+
+    public Boolean getIsGlobal() { return isGlobal;}
+
+    public void setIsGlobal(Boolean global) { isGlobal = global;}
+
+    public List<DTOStudent> getStudents() { return students; }
+
+    public void setStudents(List<DTOStudent> students) {this.students=students;}
 }

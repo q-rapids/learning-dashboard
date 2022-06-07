@@ -86,6 +86,7 @@ function clickOnTree(e){
             $("#QFDescription").val(qf.description);
             $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
             $("#QFThreshold").val(qf.threshold);
+            $("#QFType").val(qf.type);
             $("#QFCategory").val(qf.categoryName)
             $("#QFCompositionTitle").text("Quality Factor Composition");
             $("#QFCompositionWarning").text("Warning: Changing the composition of Quality Factor will affect its historical data interpretation."); // add warning
@@ -127,6 +128,7 @@ function newQF() {
     $("#QFDescription").val("");
     $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
     $("#QFThreshold").val("");
+    $("#QFType").val("");
     $("#QFCategory").val("Default")
     $("#QFCompositionTitle").text("Step 2 - Select the corresponding metrics");
     $("#QFCompositionWarning").text(""); // clean warning
@@ -379,12 +381,14 @@ $("#saveQF").click(function () {
         console.log(qualityMetrics);
         console.log(httpMethod);
         console.log(postUrl);
+        console.log($('#QFType').val());
 
         var formData = new FormData();
         formData.append("name", $('#QFName').val());
         formData.append("description", $('#QFDescription').val());
         formData.append("threshold", $('#QFThreshold').val());
         formData.append("metrics", qualityMetrics);
+        formData.append("type", $('#QFType').val());
         formData.append("category", $('#QFCategory').val())
         $.ajax({
             url: postUrl,
