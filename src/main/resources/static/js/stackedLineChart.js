@@ -118,7 +118,7 @@ function drawChart() {
                             labelString: 'value'
                         },
                         ticks: {
-                            max: 1.2,
+                            max: 1.0,
                             min: 0
                         }
                     }]
@@ -272,29 +272,25 @@ function drawChart() {
         //Add category lines
         if (typeof categories !== 'undefined') {
             var annotations = [];
-
             let metricCategory;
 
-            if (typeof orderedMetricsDB !== 'undefined') {
-                if (orderedMetricsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        if (typeof orderedMetricsDB[i] !== 'undefined') return cat.name === orderedMetricsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
-            } else if (typeof orderedFactorsDB !== 'undefined') {
-                if (orderedFactorsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedFactorsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
+            if (typeof orderedMetricsDB !== 'undefined' && orderedMetricsDB.length !== 0) {
+                //for Historic Metrics (parseDataMetricsHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedMetricsDB[i].categoryName;
+                });
+            } else if (typeof orderedFactorsDB !== 'undefined' && orderedFactorsDB.length !== 0) {
+                //for Historic Factors (parseDataQFHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedFactorsDB[i].categoryName;
+                });
+            } else if (typeof metricsDB !== 'undefined' && metricsDB.length !== 0) {
+                //for Historic Detailed Factors (parseDataDetailedQFHistorical.js)
+                let catName = getFactorCategory(labels[i], metricsDB);
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === catName;
+                });
+
             } else {
                 metricCategory = categories.filter(function (cat) {
                     return cat.name === DEFAULT_CATEGORY;
@@ -455,9 +451,10 @@ function drawChart() {
             labelF.id = factorId;
             labelF.textContent = factorName;
             divF.appendChild(labelF);
-            var c=document.createElement('a')
-            c.classList.add("check")
-            c.setAttribute('data-tooltip', factorDescription)
+
+            var b=document.createElement('a')
+            b.classList.add("check")
+            b.setAttribute('data-tooltip', factorDescription)
 
             var tooltipdiv = document.createElement('div');
             tooltipdiv.classList.add("tooltip");
@@ -470,11 +467,18 @@ function drawChart() {
 
             var spantootlip = document.createElement('span');
             spantootlip.classList.add("tooltiptext");
-            spantootlip.innerHTML=factors[j].description;
             tooltipdiv.appendChild(iconF)
             tooltipdiv.appendChild(spantootlip)
-            c.appendChild(iconF)
-            divF.appendChild(c);
+
+            b.appendChild(iconF)
+            if (factorIndex < factors.length) {
+                spantootlip.innerHTML = factors[factorIndex].description;
+            }
+            if (factorId != "withoutfactor"){
+                console.log(factorId);
+                divF.appendChild(b);
+            }
+
             document.getElementById("chartContainer").appendChild(divF)
         }
 
@@ -572,9 +576,28 @@ function fitToContent() {
     });
 }
 
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0]
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
+}
+
 function normalRange() {
     charts.forEach(function (chart) {
-        chart.config.options.scales.yAxes[0].ticks.max = 1.2;
+        chart.config.options.scales.yAxes[0].ticks.max = 1.0;
         chart.config.options.scales.yAxes[0].ticks.min = 0;
 
         chart.config.options.legend.onClick = function(e, legendItem) {

@@ -7,7 +7,10 @@ var metrics = [];
 let metricsDB = [];
 var detailedCharts = [];
 var factorsCharts = [];
-var categories = [];
+var metricCats = [];
+let factorCats = [];
+
+let factorsDB = [];
 
 var profileId = sessionStorage.getItem("profile_id");
 
@@ -45,8 +48,7 @@ function getMetricsCategoriesAndShow () {
         url : url,
         type: "GET",
         success: function (response) {
-            categories = response;
-            removeSpaces();
+            metricCats = removeSpaces(response);
             showMetricsSliders();
         }
     });
@@ -58,29 +60,42 @@ function getMetricsCategories (titles, ids, labels, values) {
         url : url,
         type: "GET",
         success: function (response) {
-            categories = response;
+            metricCats = removeSpaces(response)
             showFactors(titles, ids, labels, values);
         }
     });
 }
 
 function getFactorsCategories (titles, ids, labels, values) {
-    var url = "../api/qualityFactors/categories";
+    var url = "../api/factors/categories";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
-            categories = response;
+            factorCats= removeSpaces(response)
+            getFactorsList(titles, ids, labels, values)
+        }
+    });
+}
+
+function getFactorsList(titles, ids, labels, values) {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: false,
+        success: function (dataF) {
+            factorsDB = dataF;
             showDetailedStrategicIndicators(titles, ids, labels, values)
         }
     });
 }
 
-function removeSpaces(){
-    categories.forEach( function (cat) {
-        cat.name = cat.name.replace(/ /g, '-')
-        cat.type = cat.type.replace(/ /g, '-')
+function removeSpaces(cats){
+    cats.forEach( function (cat) {
+        cat.name = cat.name.replace(/\s/g, '-')
+        cat.type = cat.type.replace(/\s/g, '-')
     })
+    return cats;
 }
 
 function showMetricsSliders () {
@@ -89,13 +104,13 @@ function showMetricsSliders () {
 
     //obtaining each category name
     let categoryNames = [];
-    for (let i = 0; i < categories.length; ++i) categoryNames.push(categories[i].name);
+    for (let i = 0; i < metricCats.length; ++i) categoryNames.push(metricCats[i].name);
     categoryNames = new Set(categoryNames);
 
     categoryNames.forEach( function (cat) {
         let start = 0;
         let aux = [];
-        let catList = categories.filter( function (elem) {
+        let catList = metricCats.filter( function (elem) {
             return elem.name === cat;
         });
         catList.sort(function (a, b) {
@@ -151,7 +166,7 @@ function showMetricsSliders () {
         });
 
         let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
-        if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName.replace(/ /g, '-'));
+        if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName.replace(/\s/g, '-'));
 
         sliderConfig.rangeHighlights = [];
         Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
@@ -178,8 +193,8 @@ function showMetricsSliders () {
         $("#"+slider.id).slider(sliderConfig);
     });
     $(".slider-rangeHighlight").css("background", currentColor);
-    for (var j = 0; j < categories.length; j++) {
-        $(".slider-rangeHighlight." + categories[j].name + categories[j].type).css("background", categories[j].color)
+    for (var j = 0; j < metricCats.length; j++) {
+        $(".slider-rangeHighlight." + metricCats[j].name + metricCats[j].type).css("background", metricCats[j].color)
     }
     if (qualityFactors.length > 0)
         checkMetricsSliders();
@@ -262,10 +277,20 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
             data: values[i],
             fill: false
         });
-        var cat = categories;
+        let catName;
+        let cat;
+
+        if (factorCats.length !== 0) catName = getFactorCategory(strategicIndicators[i].factors, factorsDB);
+        else catName = DEFAULT_CATEGORY;
+
+        cat = factorCats.filter( function (c) {
+            return c.name === catName.replace(/\s/g, '-');
+        });
+
         cat.sort(function (a, b) {
             return b.upperThreshold - a.upperThreshold;
         });
+
         for (var k = cat.length-1; k >= 0; --k) {
             var fill = cat.length-1-k;
             if (k == cat.length-1) fill = true;
@@ -433,9 +458,9 @@ function showFactors (titles, ids, labels, values) {
             fill: false
         });
 
-        let catName = getFactorCategory(qualityFactors[i].metrics);
-        let cat = categories.filter( function (c) {
-            return c.name === catName;
+        let catName = getFactorCategory(qualityFactors[i].metrics, metricsDB);
+        let cat = metricCats.filter( function (c) {
+            return c.name === catName.replace(/\s/g, '-');;
         });
 
         cat.sort(function (a, b) {
@@ -511,16 +536,16 @@ function showFactors (titles, ids, labels, values) {
 
 // if the factors have the same category, this category is returned
 // else the default category is returned
-function getFactorCategory(factors) {
-    let f1 = metricsDB.find( function (elem) {
-        return elem.name === factors[0].name
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0].name
     });
 
-    if (factors.length === 1) return f1.categoryName;
+    if (factorNames.length === 1) return f1.categoryName;
 
-    for(let i = 1; i < factors.length; ++i){
-        let f2 = metricsDB.find( function (elem) {
-            return elem.name === factors[i].name
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i].name
         });
         if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
         f1 = f2;
@@ -558,13 +583,14 @@ $('#apply').click(function () {
             dataset.data.push(newMetric.value);
         }
 
-        if (factorsCharts[i].data.datasets.length > 4)
+        let cat = metricCats.filter( c => c.name === factorsCharts[i].data.datasets[(factorsCharts[i].data.datasets.length)-1].label)
+        if (factorsCharts[i].data.datasets.length > cat.length+1) {
             factorsCharts[i].data.datasets[0].data = dataset.data;
-        else {
+        } else {
             factorsCharts[i].data.datasets.unshift(dataset);
             // change categories fill property (we add simulated data)
-            factorsCharts[i].data.datasets[3].fill = factorsCharts[i].data.datasets[3].fill +1;
-            factorsCharts[i].data.datasets[4].fill = factorsCharts[i].data.datasets[4].fill +1;
+            for(let j = 3; j < factorsCharts[i].data.datasets.length; ++j)
+                factorsCharts[i].data.datasets[j].fill = factorsCharts[i].data.datasets[j].fill +1;
         }
         factorsCharts[i].update();
     }
@@ -612,13 +638,14 @@ $('#apply').click(function () {
                             dataset.data.push(newFactor.value.first);
                     }
 
-                    if (detailedCharts[i].data.datasets.length > 4)
+                    let cat = factorCats.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label)
+                    if (detailedCharts[i].data.datasets.length > cat.length+1) {
                         detailedCharts[i].data.datasets[0].data = dataset.data;
-                    else {
+                    } else {
                         detailedCharts[i].data.datasets.unshift(dataset);
                         // change categories fill property (we add simulated data)
-                        detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill + 1;
-                        detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill + 1;
+                        for(let j = 3; j < detailedCharts[i].data.datasets.length; ++j)
+                            detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill +1;
                     }
                     detailedCharts[i].update();
                 }
@@ -669,22 +696,25 @@ $('#restore').click(function () {
 
 function removeSimulation() {
     d3.selectAll('.simulation').remove();
-    if (factorsCharts[0].data.datasets.length > 4) {
-        for (var i = 0; i < factorsCharts.length; i++) {
+    for (var i = 0; i < factorsCharts.length; i++) {
+        let cat = metricCats.filter( c => c.name === factorsCharts[i].data.datasets[(factorsCharts[i].data.datasets.length)-1].label.replace(/\s/g, '-'))
+        if (factorsCharts[i].data.datasets.length > cat.length+1) {
             factorsCharts[i].data.datasets.shift();
             // change categories fill property (we remove simulated data)
-            factorsCharts[i].data.datasets[2].fill = factorsCharts[i].data.datasets[2].fill -1;
-            factorsCharts[i].data.datasets[3].fill = factorsCharts[i].data.datasets[3].fill -1;
+            for(let j = 2; j < factorsCharts[i].data.datasets.length; ++j)
+                factorsCharts[i].data.datasets[j].fill = factorsCharts[i].data.datasets[j].fill -1;
             factorsCharts[i].update();
         }
     }
+
     if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
-        if (detailedCharts[0].data.datasets.length > 4) {
-            for (var i = 0; i < detailedCharts.length; i++) {
+        for (var i = 0; i < detailedCharts.length; i++) {
+            let cat = factorCats.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label.replace(/\s/g, '-'))
+            if (detailedCharts[i].data.datasets.length > cat.length+1) {
                 detailedCharts[i].data.datasets.shift();
                 // change categories fill property (we remove simulated data)
-                detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill - 1;
-                detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill - 1;
+                for(let j = 2; j < detailedCharts[i].data.datasets.length; ++j)
+                    detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill -1;
                 detailedCharts[i].update();
             }
         }

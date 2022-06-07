@@ -540,6 +540,8 @@ $("#ProductsConfig").attr("href", serverUrl + "/Products/Configuration");
 
 $("#ProfilesConfig").attr("href", serverUrl + "/Profiles/Configuration");
 
+$("#IterationsConfig").attr("href", serverUrl + "/Iterations/Configuration");
+
 $("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 
 $("#QRPatternsConfig").attr("href", serverUrl + "/QRPatterns/Configuration");

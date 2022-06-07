@@ -102,7 +102,7 @@ function drawChart() {
                             labelString: 'value'
                         },
                         ticks: {
-                            max: 1.2,
+                            max: 1.0,
                             min: 0
                         }
                     }]
@@ -552,7 +552,7 @@ function fitToContent() {
 
 function normalRange() {
     charts.forEach(function (chart) {
-        chart.config.options.scales.yAxes[0].ticks.max = 1.2;
+        chart.config.options.scales.yAxes[0].ticks.max = 1.0;
         chart.config.options.scales.yAxes[0].ticks.min = 0;
 
         chart.config.options.legend.onClick = function(e, legendItem) {

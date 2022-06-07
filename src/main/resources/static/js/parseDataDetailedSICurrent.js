@@ -18,6 +18,8 @@ var colors = [];
 var warnings = [];
 
 var categories = [];
+let factorCategoryNames = [];
+let factorDB = [];
 
 function getData() {
     //empty previous data
@@ -51,6 +53,7 @@ function getData() {
                 labels.push([]);
                 values.push([]);
                 colors.push([]);
+                factorCategoryNames.push([]);
                 for (j = 0; j < data[i].factors.length; ++j) {
                     //for each factor save name to labels vector and value to values vector
                     if (data[i].factors[j].name.length < 27)
@@ -59,6 +62,7 @@ function getData() {
                         labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
                     values[i].push(data[i].factors[j].value.first);
                     colors[i].push(colorList[j%colorList.length]);
+                    factorCategoryNames[i].push(data[i].factors[j].name);
                 }
 
                 // Warnings
@@ -110,11 +114,23 @@ function sortDataAlphabetically (data) {
 
 function getFactorsCategories() {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (response) {
             categories = response;
+            getFactorList();
+        }
+    });
+}
+
+function getFactorList() {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: true,
+        success: function (dataF) {
+            factorDB = dataF;
             drawChart();
         }
     });
