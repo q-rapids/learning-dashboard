@@ -42,6 +42,9 @@ public class StudentsController {
         Optional<Student> s = studentRepository.findStudentById(Long.parseLong(studentID));
         if(s.isPresent()) {
             Student student = s.get();
+            student.setName(students.getStudentName());
+            student.setGithubUsername(students.getGithubUsername());
+            student.setTaigaUsername(students.getTaigaUsername());
             studentRepository.save(student);
             List<Metric> metrics = metricRepository.findAllByStudentId(student.getId());
             for (Metric m : metrics) {

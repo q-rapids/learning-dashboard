@@ -607,6 +607,10 @@ $("#acceptMetricsButton").click(function () {
 					remove.parentNode.replaceChild(removeClone, remove)
 					selectedStudent = data;
 				}
+				else {
+					var warning = document.getElementById("warning"+selectedStudent);
+					warning.hidden=true;
+				}
 				warningUtils("Ok", "Student saved successfully");
 			},
 			error: function(jqXHR) {

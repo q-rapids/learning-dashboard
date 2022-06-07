@@ -183,7 +183,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
                 icon1.style = "padding-right:15px;";
                 a.appendChild(icon1)
                 divF.appendChild(a);
-                if (list.length == 2) {
+                if (list.length >= 2) {
                     var a = document.createElement('a')
                     a.href=list[1];
                     var icon2 = document.createElement("img");
