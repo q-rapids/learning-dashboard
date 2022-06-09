@@ -11,6 +11,7 @@ var urlTaiga;
 var urlGithub;
 
 var factors;
+var students;
 
 const DEFAULT_CATEGORY = "Default";
 
@@ -28,6 +29,8 @@ var metricsDB = [];
 var urlLink;
 
 var groupByFactor;
+var groupByStudent=sessionStorage.getItem("groupByStudent");
+
 if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
     sessionStorage.setItem("groupByFactor", "true");
     groupByFactor = true;
@@ -37,10 +40,31 @@ if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
 let checkbox = document.getElementById("groupByFactorCheckbox");
 checkbox.checked = groupByFactor;
 
+let studentCheckbox = document.getElementById("groupByStudentCheckbox");
+studentCheckbox.checked =  sessionStorage.getItem("groupByStudent") === "true";
+groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
+
+
 
 function clickCheckbox(){
     var checkbox = document.getElementById("groupByFactorCheckbox");
+    var studentCheckbox = document.getElementById("groupByStudentCheckbox");
+    if(checkbox.checked) {
+        studentCheckbox.checked=false
+    }
     sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    sessionStorage.setItem("groupByStudent", studentCheckbox.checked.toString());
+    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+}
+
+function clickStudentCheckbox() {
+    var studentCheckbox = document.getElementById("groupByStudentCheckbox");
+    var checkbox = document.getElementById("groupByFactorCheckbox");
+    if(studentCheckbox.checked) {
+        checkbox.checked=false
+    }
+    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    sessionStorage.setItem("groupByStudent", studentCheckbox.checked.toString());
     location.href = serverUrl + "/Metrics/CurrentChartGauge";
 }
 
@@ -62,7 +86,9 @@ function getData(width, height) {
                 async: false,
                 success: function (dataDB) {
                     metricsDB = dataDB;
-                    getFactors(data, width, height);
+                    if (groupByStudent.valueOf() == true) getStudents(data,width,height)
+                    else getFactors(data, width, height);
+
                     //getMetricsCategories(data, width, height);
                 }});
         },
@@ -72,6 +98,26 @@ function getData(width, height) {
             else if (jqXHR.status == 400) {
                 warningUtils("Error", "Datasource connection failed.");
             }
+        }
+    });
+}
+
+function getStudents(data, width, height) {
+    if (id)
+        url = parseURLComposed("../api/metrics/student");
+    else
+        url = "../api/metrics/student"
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (dataS) {
+            students = dataS;
+            console.log("students");
+            console.log(students);
+            getMetricsCategories(data, width, height);
         }
     });
 }
@@ -116,10 +162,14 @@ function getMetricsCategories (data, width, height) {
             if (id) { // in case we show metrics for one detailed factor
                 if (groupByFactor.valueOf() == true)
                     drawChartByFactor(data[0].metrics, "#gaugeChart", width, height, categories);
+                else if (groupByStudent.valueOf() == true)
+                    drawChartByStudent(data[0].metrics, "#gaugeChart", width, height, categories);
                 else drawChart(data[0].metrics, "#gaugeChart", width, height, categories);
             } else { // in case we show all metrics
                 if (groupByFactor.valueOf() == true)
                     drawChartByFactor(data, "#gaugeChart", width, height, categories);
+                else if (groupByStudent.valueOf() == true)
+                    drawChartByStudent(data[0].metrics, "#gaugeChart", width, height, categories);
                 else drawChart(data, "#gaugeChart", width, height, categories);
             }
         }
@@ -150,6 +200,26 @@ function getCurrentProject() {
             }
         }
     });
+}
+
+function drawChartByStudent(metrics, container, width, height, categories, projecturls) {
+    var gaugeChart = $("#gaugeChart");
+    for (j = 0; j < students.length; j++) {
+        var divF = document.createElement('div');
+        divF.style.marginTop = "1em";
+        divF.style.marginBottom = "1em";
+
+        var labelF = document.createElement('label');
+        labelF.setAttribute("style", "font-size:20px")
+        //labelF.id = students[j].id;
+        labelF.textContent = students[j].studentName;
+        divF.appendChild(labelF);
+
+        gaugeChart.append(divF);
+        for (i = 0; i < students[j].metrics.length; ++i) {
+            drawMetricGauge(j, i, students[j].metrics[i], container, width, height, categories);
+        }
+    }
 }
 
 function drawChartByFactor(metrics, container, width, height, categories, projecturls) {

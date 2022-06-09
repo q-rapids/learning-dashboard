@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 public interface StudentRepository extends CrudRepository<Student, Long> {
+    List<Student> findAllByProjectIdOrderByName(Long projectId);
+
     List<Student> findAllByProjectId(Long projectId);
 
     void deleteAllByProjectId(Long projectId);
