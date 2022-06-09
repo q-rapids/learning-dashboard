@@ -12,6 +12,8 @@ var urlGithub;
 
 var factors;
 var students;
+var global = false;
+
 
 const DEFAULT_CATEGORY = "Default";
 
@@ -32,7 +34,7 @@ var groupByFactor = true;
 var groupByStudent = false;
 var groupByTeam = false;
 
-function setUpGroupSelector(global){
+function setUpGroupSelector(){
 
     if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
         //inizializing groupBy cookies
@@ -153,13 +155,36 @@ function getFactors(data, width, height) {
         type: "GET",
         async: false,
         success: function (dataF) {
-            sortMyDataAlphabetically(dataF);
-            factors = dataF;
-            console.log("factors");
-            console.log(factors);
-            getMetricsCategories(data, width, height);
+            if (global){
+                factors = filterGlobalFactor(dataF);
+                console.log("factors");
+                console.log(factors);
+                getMetricsCategories(data, width, height);
+            } else {
+                sortMyDataAlphabetically(dataF);
+                factors = dataF;
+                console.log("factors");
+                console.log(factors);
+                getMetricsCategories(data, width, height);
+            }
         }
     });
+}
+
+function filterGlobalFactor (factors) {
+    if(groupByTeam) {
+        factors = factors.filter( f => f.name.includes("Team"))
+        sortDataAlphabetically(factors)
+        /*
+        factors.sort( function (a, b) {
+            if (a.type === b.type) return a.name > b.name;
+            else return a.type === "Github";
+        })*/
+    } else {
+        factors = factors.filter( f => !f.name.includes("Team"))
+        sortDataAlphabetically(factors)
+    }
+    return factors;
 }
 
 function sortMyDataAlphabetically (factors) {
@@ -179,13 +204,13 @@ function getMetricsCategories (data, width, height) {
         success: function (categories) {
             console.log("groupByFactor " + groupByFactor);
             if (id) { // in case we show metrics for one detailed factor
-                if (groupByFactor.valueOf() == true)
+                if (groupByFactor.valueOf() == true || groupByTeam.valueOf() == true)
                     drawChartByFactor(data[0].metrics, "#gaugeChart", width, height, categories);
                 else if (groupByStudent.valueOf() == true)
                     drawChartByStudent(data[0].metrics, "#gaugeChart", width, height, categories);
                 else drawChart(data[0].metrics, "#gaugeChart", width, height, categories);
             } else { // in case we show all metrics
-                if (groupByFactor.valueOf() == true)
+                if (groupByFactor.valueOf() == true || groupByTeam.valueOf() == true)
                     drawChartByFactor(data, "#gaugeChart", width, height, categories);
                 else if (groupByStudent.valueOf() == true)
                     drawChartByStudent(data[0].metrics, "#gaugeChart", width, height, categories);
@@ -213,7 +238,8 @@ function getCurrentProject() {
         success: function (data) {
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
-                    setUpGroupSelector(data[i].isGlobal)
+                    global = data[i].isGlobal
+                    setUpGroupSelector()
                     urlTaiga = data[i].taigaURL;
                     urlGithub = data[i].githubURL;
                 }
@@ -319,25 +345,28 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             drawMetricGauge(j, i, factors[j].metrics[i], container, width, height, categories);
         }
     }
-    // Add metrics without factor
-    var divNOF = document.createElement('div');
-    divNOF.id = "divwithoutfactor";
-    divNOF.style.marginTop = "1em";
-    divNOF.style.marginBottom = "1em";
 
-    var labelNOF = document.createElement('label');
-    labelNOF.id = "withoutfactor";
-    labelNOF.textContent = "Metrics not associated to any factor";
-    divNOF.appendChild(labelNOF);
+    if(!global) {
+        // Add metrics without factor
+        var divNOF = document.createElement('div');
+        divNOF.id = "divwithoutfactor";
+        divNOF.style.marginTop = "1em";
+        divNOF.style.marginBottom = "1em";
 
-    metrics.forEach(function (metric) {
-        var msvg = document.getElementById(metric.id);
-        if (!msvg) {
-            if (!document.getElementById("divwithoutfactor"))
-                gaugeChart.append(divNOF);
-            drawMetricGauge(j, i, metric, container, width, height, categories);
-        }
-    });
+        var labelNOF = document.createElement('label');
+        labelNOF.id = "withoutfactor";
+        labelNOF.textContent = "Metrics not associated to any factor";
+        divNOF.appendChild(labelNOF);
+
+        metrics.forEach(function (metric) {
+            var msvg = document.getElementById(metric.id);
+            if (!msvg) {
+                if (!document.getElementById("divwithoutfactor"))
+                    gaugeChart.append(divNOF);
+                drawMetricGauge(j, i, metric, container, width, height, categories);
+            }
+        });
+    }
 }
 
 function drawMetricGauge(j, i, metric, container, width, height, categories) {
