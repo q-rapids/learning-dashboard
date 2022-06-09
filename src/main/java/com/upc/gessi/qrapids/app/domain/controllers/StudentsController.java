@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
+import com.upc.gessi.qrapids.app.domain.models.Factor;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Student;
@@ -11,6 +12,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudentMetrics;
+import com.upc.gessi.qrapids.app.presentation.rest.services.Factors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,9 @@ public class StudentsController {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private QualityFactorMetricsController qualityFactorMetricsController;
+
     public List<DTOStudent> getStudentsFromProject(Long projectId){
         List<Student> students =studentRepository.findAllByProjectId(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();
@@ -50,12 +55,18 @@ public class StudentsController {
         List<Student> students =studentRepository.findAllByProjectIdOrderByName(projectId);
         List<DTOStudentMetrics> dtoStudentMetrics = new ArrayList<>();
         for(Student s : students) {
-            List<Metric> metrics = metricRepository.findAllByStudentId(s.getId());
-            List<DTOMetricEvaluation> metricList = new ArrayList<>();
+            List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
+            List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
+            List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
             for(Metric m : metrics) {
-               metricList.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                String typeOffactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
+                if(typeOffactor.equals("Taiga")) metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                else if(typeOffactor.equals("Github")) metricListGithub.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
             }
-            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricList);
+            for(DTOMetricEvaluation dto : metricListTaiga) {
+                metricListGithub.add(dto);
+            }
+            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub);
             dtoStudentMetrics.add(temp);
         }
         return dtoStudentMetrics;

@@ -22,5 +22,7 @@ public interface QualityFactorRepository extends CrudRepository<Factor, Long> {
 
     Optional<Factor> findByExternalId(String qualityFactorExternalId);
 
+    Optional<Factor> findById(Long id);
+
     Optional<Factor> findByExternalIdAndProject_Id(String qualityFactorExternalId, Long projectId);
 }
