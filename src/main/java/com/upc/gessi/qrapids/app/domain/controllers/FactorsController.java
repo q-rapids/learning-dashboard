@@ -268,6 +268,15 @@ public class FactorsController {
         }
     }
 
+    public Factor getQualityFactorByExternalIdAndProjectId (String qualityFactorExternalId, Long projectId) throws QualityFactorNotFoundException {
+        Optional<Factor> qualityFactorOptional = qualityFactorRepository.findByExternalIdAndProject_Id(qualityFactorExternalId, projectId);
+        if (qualityFactorOptional.isPresent()) {
+            return qualityFactorOptional.get();
+        } else {
+            throw new QualityFactorNotFoundException();
+        }
+    }
+
     public Factor saveQualityFactorWithCategory(String name, String description, String threshold, List<String> qualityMetrics, String type, String category, Project project) throws MetricNotFoundException {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)

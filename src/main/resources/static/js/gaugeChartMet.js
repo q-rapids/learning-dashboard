@@ -28,43 +28,62 @@ var metricsDB = [];
 
 var urlLink;
 
-var groupByFactor;
-var groupByStudent=sessionStorage.getItem("groupByStudent");
+var groupByFactor = true;
+var groupByStudent = false;
+var groupByTeam = false;
 
-if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
-    sessionStorage.setItem("groupByFactor", "true");
-    groupByFactor = true;
-} else {
-    groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
-}
-let checkbox = document.getElementById("groupByFactorCheckbox");
-checkbox.checked = groupByFactor;
+function setUpGroupSelector(global){
 
-let studentCheckbox = document.getElementById("groupByStudentCheckbox");
-studentCheckbox.checked =  sessionStorage.getItem("groupByStudent") === "true";
-groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
-
-
-
-function clickCheckbox(){
-    var checkbox = document.getElementById("groupByFactorCheckbox");
-    var studentCheckbox = document.getElementById("groupByStudentCheckbox");
-    if(checkbox.checked) {
-        studentCheckbox.checked=false
+    if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
+        //inizializing groupBy cookies
+        sessionStorage.setItem("groupByFactor", "true");
+        sessionStorage.setItem("groupByStudent", "false");
+        sessionStorage.setItem("groupByTeam", "false");
     }
-    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
-    sessionStorage.setItem("groupByStudent", studentCheckbox.checked.toString());
+
+    groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
+    groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
+    groupByTeam = sessionStorage.getItem("groupByTeam") === "true";
+
+    $("#selectorDropdownItems").append('<li><a onclick="clickFactorSelector()" href="#"> Group by factor </a></li>');
+    if(global){
+        $("#selectorDropdownItems").append('<li><a onclick="clickTeamSelector()" href="#"> Group by team </a></li>');
+    }else{
+        $("#selectorDropdownItems").append('<li><a onclick="clickStudentSelector()" href="#"> Group by student </a></li>');
+    }
+
+    if(groupByTeam) $("#selectorDropdownText").text('Group by team');
+    else if(groupByStudent) $("#selectorDropdownText").text('Group by student');
+    else $("#selectorDropdownText").text('Group by factor');
+}
+
+function clickFactorSelector(){
+    sessionStorage.setItem("groupByFactor", "true");
+    sessionStorage.setItem("groupByStudent", "false");
+    sessionStorage.setItem("groupByTeam", "false");
+
+    $("#selectorDropdownText").text('Group by factor');
+
     location.href = serverUrl + "/Metrics/CurrentChartGauge";
 }
 
-function clickStudentCheckbox() {
-    var studentCheckbox = document.getElementById("groupByStudentCheckbox");
-    var checkbox = document.getElementById("groupByFactorCheckbox");
-    if(studentCheckbox.checked) {
-        checkbox.checked=false
-    }
-    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
-    sessionStorage.setItem("groupByStudent", studentCheckbox.checked.toString());
+function clickStudentSelector() {
+    sessionStorage.setItem("groupByFactor", "false");
+    sessionStorage.setItem("groupByStudent", "true");
+    sessionStorage.setItem("groupByTeam", "false");
+
+    $("#selectorDropdownText").text('Group by student');
+
+    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+}
+
+function clickTeamSelector() {
+    sessionStorage.setItem("groupByFactor", "false");
+    sessionStorage.setItem("groupByStudent", "false");
+    sessionStorage.setItem("groupByTeam", "true");
+
+    $("#selectorDropdownText").text('Group by team');
+
     location.href = serverUrl + "/Metrics/CurrentChartGauge";
 }
 
@@ -194,6 +213,7 @@ function getCurrentProject() {
         success: function (data) {
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
+                    setUpGroupSelector(data[i].isGlobal)
                     urlTaiga = data[i].taigaURL;
                     urlGithub = data[i].githubURL;
                 }
