@@ -16,4 +16,6 @@ public interface MetricRepository extends CrudRepository<Metric, Long> {
     Metric findByExternalIdAndProjectId(String metricExternalId, Long ProjectId);
 
     List<Metric> findAllByStudentId(Long id);
+
+    List<Metric> findAllByStudentIdOrderByName(Long id);
 }
