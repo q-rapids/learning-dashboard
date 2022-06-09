@@ -133,8 +133,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			String username = ((User) auth.getPrincipal()).getUsername();
 			al.traceEnterApp(username);
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-			LocalDateTime now = LocalDateTime.now();
-			this.usersController.setLastConnection(username, now);
 			//userController.setLastConnection(username, dtf.format(now));
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");

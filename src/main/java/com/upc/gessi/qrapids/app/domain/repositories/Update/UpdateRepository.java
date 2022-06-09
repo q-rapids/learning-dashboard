@@ -15,5 +15,5 @@ public interface UpdateRepository  extends CrudRepository<Update, Long> {
 
     //List<Update> findAllOrderByDateDesc();
 
-    List<Update> findAllByDateAfterOrderByDateAsc(LocalDate date);
+    List<Update> findAllByDateAfterOrderByDateDesc(LocalDate date);
 }

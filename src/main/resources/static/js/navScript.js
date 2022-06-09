@@ -75,8 +75,6 @@ function getIfUserIsAdmin() {
             async: false,
             success: function (data) {
                 sessionStorage.setItem("isAdmin", data);
-                console.log("DATA:" + data);
-                console.log(typeof(data));
                 return data;
             },
             error: function() {
@@ -764,7 +762,7 @@ function profileQualityLevelFilter() {
         }
     });
 }
-function fillupdateModal(onlylast) {
+function fillupdateModal() {
     var url = "../api/update/year";
     jQuery.ajax({
         dataType: "json",
@@ -775,24 +773,12 @@ function fillupdateModal(onlylast) {
         success: function (data) {
             var td=document.getElementById("updateText")
             td.innerHTML="";
-            if(!onlylast) {
-                for (var i = 0; i < data.length; i++) {
-                    var dateP = document.createElement("p")
-                    dateP.innerHTML = data[i].date;
-                    dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
-                    var updateP = document.createElement("div")
-                    updateP.innerHTML = data[i].update;
-                    updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
-                    td.appendChild(dateP)
-                    td.appendChild(updateP)
-                }
-            }
-            else {
+            for (var i = 0; i < data.length; i++) {
                 var dateP = document.createElement("p")
-                dateP.innerHTML = data[data.length-1].date;
+                dateP.innerHTML = "<strong>" +  data[i].name + "</strong>" + " " + data[i].date;
                 dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
                 var updateP = document.createElement("div")
-                updateP.innerHTML = data[data.length-1].update;
+                updateP.innerHTML = data[i].update;
                 updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
                 td.appendChild(dateP)
                 td.appendChild(updateP)
@@ -812,7 +798,6 @@ window.onload = function() {
 }
 
 var isAdmin=sessionStorage.getItem("isAdmin");
-console.log(typeof(isAdmin));
 if(isAdmin=="false") {
     $("#Configuration").hide();
     $("#RawDataAssessment").hide();
