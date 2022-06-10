@@ -90,6 +90,14 @@ public class Metrics {
         return studentsController.getStudentWithMetricsFromProject(prj);
     }
 
+    @GetMapping("/api/metrics/student/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetricsHistorical> getStudentsAndMetricsHistorical(@RequestParam(value = "prj") String prj,  @RequestParam(value = "profile", required = false) String profileId, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
+
+        return studentsController.getStudentWithHistoricalMetricsFromProject(prj, LocalDate.parse(from), LocalDate.parse(to), profileId);
+    }
+
+
     @PutMapping("/api/metrics/student")
     @ResponseStatus(HttpStatus.OK)
     public Long updateMetricStudent(HttpServletRequest request) {

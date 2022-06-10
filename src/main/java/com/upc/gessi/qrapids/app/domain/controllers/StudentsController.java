@@ -8,15 +8,13 @@ import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Student.StudentRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudentMetrics;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Factors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +68,30 @@ public class StudentsController {
             dtoStudentMetrics.add(temp);
         }
         return dtoStudentMetrics;
+    }
+
+    public List<DTOStudentMetricsHistorical> getStudentWithHistoricalMetricsFromProject(String projectName, LocalDate from, LocalDate to, String profileId) throws IOException {
+        Project p = projectRepository.findByExternalId(projectName);
+        Long projectId = p.getId();
+        String projectExternalId = p.getExternalId();
+        List<Student> students =studentRepository.findAllByProjectIdOrderByName(projectId);
+        List<DTOStudentMetricsHistorical> dtoStudentMetricsHistorical = new ArrayList<>();
+        for(Student s : students) {
+            List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
+            List<List<DTOMetricEvaluation>> metricListTaiga = new ArrayList<>();
+            List<List<DTOMetricEvaluation>> metricListGithub = new ArrayList<>();
+            for(Metric m : metrics) {
+                String typeOffactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
+                if(typeOffactor.equals("Taiga")) metricListTaiga.add(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                else if(typeOffactor.equals("Github")) metricListGithub.add(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+            }
+            for(List<DTOMetricEvaluation> list : metricListTaiga) {
+                metricListGithub.add(list);
+            }
+            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub);
+            dtoStudentMetricsHistorical.add(temp);
+        }
+        return dtoStudentMetricsHistorical;
     }
 
     public Long updateStudents(String studentID, DTOStudent students, String[] userMetrics, String externalId) {

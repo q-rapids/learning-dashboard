@@ -19,6 +19,7 @@ var labels = [];
 var categories = [];
 var metricsDB = [];
 let factors = [];
+var students = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
 
@@ -58,7 +59,11 @@ function clickFactorSelector(){
 
     $("#selectorDropdownText").text('Group by factor');
 
-    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+    groupByFactor = true;
+    groupByStudent = false;
+    groupByTeam = false;
+
+    location.href = serverUrl + "/Metrics/HistoricChart";
 }
 
 function clickStudentSelector() {
@@ -68,7 +73,11 @@ function clickStudentSelector() {
 
     $("#selectorDropdownText").text('Group by student');
 
-    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+    groupByFactor = false;
+    groupByStudent = true;
+    groupByTeam = false;
+
+    location.href = serverUrl + "/Metrics/HistoricChart";
 }
 
 function clickTeamSelector() {
@@ -78,17 +87,21 @@ function clickTeamSelector() {
 
     $("#selectorDropdownText").text('Group by team');
 
-    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+    groupByFactor = false;
+    groupByStudent = false;
+    groupByTeam = true;
+
+    location.href = serverUrl + "/Metrics/HistoricChart";
 }
 
-function getCurrentProject() {
+function getCurrentProjects() {
     var urlp = "/api/projects";
     jQuery.ajax({
         dataType: "json",
         url: urlp,
         cache: false,
         type: "GET",
-        async: false,
+        async: true,
         success: function (data) {
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
@@ -100,10 +113,10 @@ function getCurrentProject() {
 }
 
 function getData() {
-    getCurrentProject();
     getDecisions();
     getMetricsDB();
     getFactors();
+
     texts = [];
     ids = [];
     value = [];
@@ -210,6 +223,114 @@ function getData() {
     });
 }
 
+function getDataStudents() {
+
+    getDecisions();
+    getMetricsDB();
+
+    texts = [];
+    ids = [];
+    value = [];
+    labels = [];
+    var prj = sessionStorage.getItem("prj")
+    //get data from API
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/metrics/student/historical",
+        data: {
+            "from": $('#datepickerFrom').val(),
+            "to": $('#datepickerTo').val()
+        },
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (response) {
+            var data = response;
+            console.log("MY Data");
+            console.log(data);
+            if (getParameterByName('id').length !== 0) {
+                data = response[0].metrics;
+            }
+            j = 0;
+            var line = [];
+            var decisionsAdd = [];
+            var decisionsIgnore = [];
+            if (data[j]) {
+                last = data[j].student_id;
+                texts.push(data[j].studentName);
+                ids.push(data[j].student_id);
+                labels.push([data[j].studentName]);
+            }
+            while (data[j]) {
+                //check if we are still on the same metric
+                if (data[j].id != last) {
+                    var val = [line];
+                    if (decisionsAdd.length > 0) {
+                        val.push(decisionsAdd);
+                    }
+                    if (decisionsIgnore.length > 0) {
+                        val.push(decisionsIgnore);
+                    }
+                    value.push(val);
+                    line = [];
+                    decisionsAdd = [];
+                    decisionsIgnore = [];
+                    last = data[j].id;
+                    texts.push(data[j].name);
+                    ids.push(data[j].id);
+                    var labelsForOneChart = [];
+                    labelsForOneChart.push(data[j].name);
+                    if (decisions.has(data[j].student_id)) {
+                        var metricDecisions = decisions.get(data[j].student_id);
+                        for (var i = 0; i < metricDecisions.length; i++) {
+                            if (metricDecisions[i].type === "ADD") {
+                                decisionsAdd.push({
+                                    x: metricDecisions[i].date,
+                                    y: 1.1,
+                                    requirement: metricDecisions[i].requirement,
+                                    comments: metricDecisions[i].comments
+                                });
+                            }
+                            else {
+                                decisionsIgnore.push({
+                                    x: metricDecisions[i].date,
+                                    y: 1.2,
+                                    requirement: metricDecisions[i].requirement,
+                                    comments: metricDecisions[i].comments
+                                });
+                            }
+                        }
+                        if (decisionsAdd.length > 0)
+                            labelsForOneChart.push("Added decisions");
+                        if (decisionsIgnore.length > 0)
+                            labelsForOneChart.push("Ignored decisions");
+                    }
+                    labels.push(labelsForOneChart);
+                }
+                //push date and value to line vector
+                if (!isNaN(data[j].metrics.value)) {
+                    line.push({
+                        x: data[j].metrics.date,
+                        y: data[j].metrics.value
+                    });
+                }
+                ++j;
+            }
+            //push line vector to values vector for the last metric
+            if (data[j - 1]) {
+                var val = [line];
+                if (decisionsAdd.length > 0)
+                    val.push(decisionsAdd);
+                if (decisionsIgnore.length > 0)
+                    val.push(decisionsIgnore);
+                value.push(val);
+            }
+            sortMetricsDB();
+            getMetricsCategories();
+        }
+    });
+}
+
 function sortMetricsDB () {
     ids.forEach( function (id) {
         orderedMetricsDB.push(
@@ -287,5 +408,7 @@ function getFactors() {
 }
 
 window.onload = function() {
-    getData();
+    getCurrentProjects();
+    if(!groupByStudent) getData();
+    else getDataStudents();
 };
