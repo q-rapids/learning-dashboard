@@ -23,6 +23,7 @@ var students = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
 
+let printMetrics = true;
 let global = false;
 
 var groupByFactor = sessionStorage.getItem("groupByFactor") === "true";

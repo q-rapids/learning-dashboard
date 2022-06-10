@@ -1,7 +1,6 @@
 var isdsi = false;
 var isqf = false;
 var isdqf = true;
-var groupByFactor = false;
 
 const DEFAULT_CATEGORY = "Default"
 
@@ -15,7 +14,7 @@ var labels = [];
 var value = [];
 let metricsDB = [];
 var categories = [];
-var groupByFactor = false;
+var printMetrics = false;
 var decisions = new Map();
 
 function getData() {

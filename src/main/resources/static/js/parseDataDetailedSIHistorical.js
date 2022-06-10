@@ -1,5 +1,4 @@
 var isdsi = true;
-var groupByFactor = false;
 
 console.log("sessionStorage: profile_id");
 console.log(sessionStorage.getItem("profile_id"));
@@ -15,7 +14,7 @@ var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
-var groupByFactor = false;
+var printMetrics = false;
 var categories = [];
 
 function getData() {
