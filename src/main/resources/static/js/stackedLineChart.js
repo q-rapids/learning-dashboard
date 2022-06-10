@@ -388,7 +388,7 @@ function drawChart() {
         ctx.height = 350;
         ctx.style.display = "inline";
 
-        if(groupByFactor && i === factorThreshold) {
+        if(i === factorThreshold) {
             let factorId;
             let factorName;
             let factorDescription;

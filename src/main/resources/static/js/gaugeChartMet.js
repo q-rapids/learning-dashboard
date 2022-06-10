@@ -36,8 +36,8 @@ var groupByTeam = false;
 
 function setUpGroupSelector(){
 
-    if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
-        //inizializing groupBy cookies
+    if(Boolean(sessionStorage.getItem("groupByFactor")) === false || (global && groupByStudent) || (!global && groupByTeam)) {
+        //if cookies are not initialized, or is trying to group by student from a global project, or is trying to group by team from a non-global project
         sessionStorage.setItem("groupByFactor", "true");
         sessionStorage.setItem("groupByStudent", "false");
         sessionStorage.setItem("groupByTeam", "false");

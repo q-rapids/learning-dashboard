@@ -23,14 +23,16 @@ var students = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
 
+let global = false;
+
 var groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
 var groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
 var groupByTeam = sessionStorage.getItem("groupByTeam") === "true";
 
 function setUpGroupSelector(global){
 
-    if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
-        //inizializing groupBy cookies
+    if(Boolean(sessionStorage.getItem("groupByFactor")) === false || (global && groupByStudent) || (!global && groupByTeam)) {
+        //if cookies are not initialized, or is trying to group by student from a global project, or is trying to group by team from a non-global project
         sessionStorage.setItem("groupByFactor", "true");
         sessionStorage.setItem("groupByStudent", "false");
         sessionStorage.setItem("groupByTeam", "false");
@@ -105,7 +107,8 @@ function getCurrentProjects() {
         success: function (data) {
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
-                    setUpGroupSelector(data[i].isGlobal)
+                    global = data[i].isGlobal;
+                    setUpGroupSelector(global)
                 }
             }
         }
@@ -116,6 +119,7 @@ function getData() {
     getDecisions();
     getMetricsDB();
     getFactors();
+
     texts = [];
     ids = [];
     value = [];
@@ -356,8 +360,13 @@ function sortDataByFactor(data) {
         }
     }
     writtenIds = Array.from(writtenIds);
-    let remainingMetrics = data.filter(x => !writtenIds.includes(x.id));
-    return resultData.concat(remainingMetrics);
+    if(global) {
+        return resultData;
+    } else {
+        //adding metrics without factor
+        let remainingMetrics = data.filter(x => !writtenIds.includes(x.id));
+        return resultData.concat(remainingMetrics);
+    }
 }
 
 function getMetricsCategories () {
@@ -398,10 +407,43 @@ function getFactors() {
         type: "GET",
         async: false,
         success: function (dataF) {
-            sortDataAlphabetically(dataF);
-            factors = dataF;
+            if (global){
+                factors = filterGlobalFactor(dataF);
+                console.log("factors");
+                console.log(factors);
+            } else {
+                sortFactorsAlphabetically(dataF);
+                factors = dataF;
+                console.log("factors");
+                console.log(factors);
+            }
         }
     });
+}
+
+function sortFactorsAlphabetically (factors) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    factors.sort(compare);
+}
+
+function filterGlobalFactor (factors) {
+    if(groupByTeam) {
+        factors = factors.filter( f => f.name.includes("Team"))
+        sortDataAlphabetically(factors)
+        /*
+        factors.sort( function (a, b) {
+            if (a.type === b.type) return a.name > b.name;
+            else return a.type === "Github";
+        })*/
+    } else {
+        factors = factors.filter( f => !f.name.includes("Team"))
+        sortDataAlphabetically(factors)
+    }
+    return factors;
 }
 
 window.onload = function() {
