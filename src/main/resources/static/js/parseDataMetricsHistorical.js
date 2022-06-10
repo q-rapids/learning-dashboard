@@ -23,9 +23,9 @@ var students = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
 
-var groupByFactor = true;
-var groupByStudent = false;
-var groupByTeam = false;
+var groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
+var groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
+var groupByTeam = sessionStorage.getItem("groupByTeam") === "true";
 
 function setUpGroupSelector(global){
 
@@ -116,7 +116,6 @@ function getData() {
     getDecisions();
     getMetricsDB();
     getFactors();
-
     texts = [];
     ids = [];
     value = [];
@@ -225,6 +224,7 @@ function getData() {
 
 function getDataStudents() {
 
+
     getDecisions();
     getMetricsDB();
 
@@ -248,9 +248,6 @@ function getDataStudents() {
             var data = response;
             console.log("MY Data");
             console.log(data);
-            if (getParameterByName('id').length !== 0) {
-                data = response[0].metrics;
-            }
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -263,7 +260,7 @@ function getDataStudents() {
             }
             while (data[j]) {
                 //check if we are still on the same metric
-                if (data[j].id != last) {
+                if (data[j].student_id != last) {
                     var val = [line];
                     if (decisionsAdd.length > 0) {
                         val.push(decisionsAdd);
@@ -275,11 +272,11 @@ function getDataStudents() {
                     line = [];
                     decisionsAdd = [];
                     decisionsIgnore = [];
-                    last = data[j].id;
-                    texts.push(data[j].name);
-                    ids.push(data[j].id);
+                    last = data[j].student_id;
+                    texts.push(data[j].studentName);
+                    ids.push(data[j].student_id);
                     var labelsForOneChart = [];
-                    labelsForOneChart.push(data[j].name);
+                    labelsForOneChart.push(data[j].studentName);
                     if (decisions.has(data[j].student_id)) {
                         var metricDecisions = decisions.get(data[j].student_id);
                         for (var i = 0; i < metricDecisions.length; i++) {
