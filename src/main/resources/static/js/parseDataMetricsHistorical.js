@@ -19,7 +19,7 @@ var labels = [];
 var categories = [];
 var metricsDB = [];
 let factors = [];
-var students = [];
+let students = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
 
@@ -143,10 +143,8 @@ function getData() {
             if (getParameterByName('id').length !== 0) {
                 data = response[0].metrics;
             }
-
             if(!groupByFactor) sortDataAlphabetically(data);
             else data = sortDataByFactor(data);
-
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -253,80 +251,87 @@ function getDataStudents() {
             var data = response;
             console.log("MY Data");
             console.log(data);
-            j = 0;
-            var line = [];
-            var decisionsAdd = [];
-            var decisionsIgnore = [];
-            if (data[j]) {
-                last = data[j].student_id;
-                texts.push(data[j].studentName);
-                ids.push(data[j].student_id);
-                labels.push([data[j].studentName]);
-            }
-            while (data[j]) {
-                //check if we are still on the same metric
-                if (data[j].student_id != last) {
-                    var val = [line];
-                    if (decisionsAdd.length > 0) {
-                        val.push(decisionsAdd);
-                    }
-                    if (decisionsIgnore.length > 0) {
-                        val.push(decisionsIgnore);
-                    }
-                    value.push(val);
-                    line = [];
-                    decisionsAdd = [];
-                    decisionsIgnore = [];
-                    last = data[j].student_id;
-                    texts.push(data[j].studentName);
-                    ids.push(data[j].student_id);
-                    var labelsForOneChart = [];
-                    labelsForOneChart.push(data[j].studentName);
-                    if (decisions.has(data[j].student_id)) {
-                        var metricDecisions = decisions.get(data[j].student_id);
-                        for (var i = 0; i < metricDecisions.length; i++) {
-                            if (metricDecisions[i].type === "ADD") {
-                                decisionsAdd.push({
-                                    x: metricDecisions[i].date,
-                                    y: 1.1,
-                                    requirement: metricDecisions[i].requirement,
-                                    comments: metricDecisions[i].comments
-                                });
-                            }
-                            else {
-                                decisionsIgnore.push({
-                                    x: metricDecisions[i].date,
-                                    y: 1.2,
-                                    requirement: metricDecisions[i].requirement,
-                                    comments: metricDecisions[i].comments
-                                });
-                            }
+            var i=0
+            while (i<response.length) {
+                students.push([response[i].studentName, response[i].numberMetrics])
+                data = response[i].metrics
+                j = 0;
+                var line = [];
+                var decisionsAdd = [];
+                var decisionsIgnore = [];
+                if (data[j]) {
+                    last = data[j].id;
+                    texts.push(data[j].name);
+                    ids.push(data[j].id);
+                    labels.push([data[j].name]);
+                }
+                while (data[j]) {
+                    //check if we are still on the same metric
+                    if (data[j].id != last) {
+                        var val = [line];
+                        if (decisionsAdd.length > 0) {
+                            val.push(decisionsAdd);
                         }
-                        if (decisionsAdd.length > 0)
-                            labelsForOneChart.push("Added decisions");
-                        if (decisionsIgnore.length > 0)
-                            labelsForOneChart.push("Ignored decisions");
+                        if (decisionsIgnore.length > 0) {
+                            val.push(decisionsIgnore);
+                        }
+                        value.push(val);
+                        line = [];
+                        decisionsAdd = [];
+                        decisionsIgnore = [];
+                        last = data[j].id;
+                        texts.push(data[j].id);
+                        ids.push(data[j].id);
+                        var labelsForOneChart = [];
+                        labelsForOneChart.push(data[j].id);
+                        if (decisions.has(data[j].id)) {
+                            var metricDecisions = decisions.get(data[j].id);
+                            for (var i = 0; i < metricDecisions.length; i++) {
+                                if (metricDecisions[i].type === "ADD") {
+                                    decisionsAdd.push({
+                                        x: metricDecisions[i].date,
+                                        y: 1.1,
+                                        requirement: metricDecisions[i].requirement,
+                                        comments: metricDecisions[i].comments
+                                    });
+                                } else {
+                                    decisionsIgnore.push({
+                                        x: metricDecisions[i].date,
+                                        y: 1.2,
+                                        requirement: metricDecisions[i].requirement,
+                                        comments: metricDecisions[i].comments
+                                    });
+                                }
+                            }
+                            if (decisionsAdd.length > 0)
+                                labelsForOneChart.push("Added decisions");
+                            if (decisionsIgnore.length > 0)
+                                labelsForOneChart.push("Ignored decisions");
+                        }
+                        labels.push(labelsForOneChart);
                     }
-                    labels.push(labelsForOneChart);
+                    //push date and value to line vector
+
+                    if (!isNaN(data[j].value)) {
+                        line.push({
+                            x: data[j].date,
+                            y: data[j].value
+                        });
+                    }
+                    ++j;
                 }
-                //push date and value to line vector
-                if (!isNaN(data[j].metrics.value)) {
-                    line.push({
-                        x: data[j].metrics.date,
-                        y: data[j].metrics.value
-                    });
+                if (data[j - 1]) {
+                    var val = [line];
+                    if (decisionsAdd.length > 0)
+                        val.push(decisionsAdd);
+                    if (decisionsIgnore.length > 0)
+                        val.push(decisionsIgnore);
+                    value.push(val);
                 }
-                ++j;
+                ++i;
             }
             //push line vector to values vector for the last metric
-            if (data[j - 1]) {
-                var val = [line];
-                if (decisionsAdd.length > 0)
-                    val.push(decisionsAdd);
-                if (decisionsIgnore.length > 0)
-                    val.push(decisionsIgnore);
-                value.push(val);
-            }
+
             sortMetricsDB();
             getMetricsCategories();
         }

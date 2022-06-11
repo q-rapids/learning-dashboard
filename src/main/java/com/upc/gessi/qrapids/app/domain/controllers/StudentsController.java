@@ -78,17 +78,18 @@ public class StudentsController {
         List<DTOStudentMetricsHistorical> dtoStudentMetricsHistorical = new ArrayList<>();
         for(Student s : students) {
             List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
-            List<List<DTOMetricEvaluation>> metricListTaiga = new ArrayList<>();
-            List<List<DTOMetricEvaluation>> metricListGithub = new ArrayList<>();
+            Integer number = metrics.size();
+            List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
+            List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
             for(Metric m : metrics) {
                 String typeOffactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
-                if(typeOffactor.equals("Taiga")) metricListTaiga.add(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
-                else if(typeOffactor.equals("Github")) metricListGithub.add(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                if(typeOffactor.equals("Taiga")) metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                else if(typeOffactor.equals("Github")) metricListGithub.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
             }
-            for(List<DTOMetricEvaluation> list : metricListTaiga) {
+            for(DTOMetricEvaluation list : metricListTaiga) {
                 metricListGithub.add(list);
             }
-            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub);
+            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub, number);
             dtoStudentMetricsHistorical.add(temp);
         }
         return dtoStudentMetricsHistorical;
