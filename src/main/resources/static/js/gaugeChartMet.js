@@ -161,7 +161,7 @@ function getFactors(data, width, height) {
                 console.log(factors);
                 getMetricsCategories(data, width, height);
             } else {
-                sortMyDataAlphabetically(dataF);
+                sortFactors(dataF);
                 factors = dataF;
                 console.log("factors");
                 console.log(factors);
@@ -174,12 +174,7 @@ function getFactors(data, width, height) {
 function filterGlobalFactor (factors) {
     if(groupByTeam) {
         factors = factors.filter( f => f.name.includes("Team"))
-        sortDataAlphabetically(factors)
-        /*
-        factors.sort( function (a, b) {
-            if (a.type === b.type) return a.name > b.name;
-            else return a.type === "Github";
-        })*/
+        sortFactors(factors)
     } else {
         factors = factors.filter( f => !f.name.includes("Team"))
         sortDataAlphabetically(factors)
@@ -192,6 +187,14 @@ function sortMyDataAlphabetically (factors) {
         if (a.name < b.name) return -1;
         else if (a.name > b.name) return 1;
         else return 0;
+    }
+    factors.sort(compare);
+}
+
+function sortFactors (factors) {
+    function compare(a, b){
+        if (a.type === b.type) return a.name > b.name;
+        else return a.type !== "Github";
     }
     factors.sort(compare);
 }

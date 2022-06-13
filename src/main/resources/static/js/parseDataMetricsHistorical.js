@@ -418,7 +418,7 @@ function getFactors() {
                 console.log("factors");
                 console.log(factors);
             } else {
-                sortFactorsAlphabetically(dataF);
+                sortFactors(dataF);
                 factors = dataF;
                 console.log("factors");
                 console.log(factors);
@@ -427,29 +427,23 @@ function getFactors() {
     });
 }
 
-function sortFactorsAlphabetically (factors) {
-    function compare (a, b) {
-        if (a.name < b.name) return -1;
-        else if (a.name > b.name) return 1;
-        else return 0;
-    }
-    factors.sort(compare);
-}
-
 function filterGlobalFactor (factors) {
     if(groupByTeam) {
         factors = factors.filter( f => f.name.includes("Team"))
-        sortDataAlphabetically(factors)
-        /*
-        factors.sort( function (a, b) {
-            if (a.type === b.type) return a.name > b.name;
-            else return a.type === "Github";
-        })*/
+        sortFactors(factors)
     } else {
         factors = factors.filter( f => !f.name.includes("Team"))
         sortDataAlphabetically(factors)
     }
     return factors;
+}
+
+function sortFactors (factors) {
+    function compare(a, b){
+        if (a.type === b.type) return a.name > b.name;
+        else return a.type !== "Github";
+    }
+    factors.sort(compare);
 }
 
 function getData () {
