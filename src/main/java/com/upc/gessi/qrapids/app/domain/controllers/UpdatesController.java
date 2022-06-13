@@ -69,11 +69,13 @@ public class UpdatesController {
     public List<DTOUpdate> getLastUpdate(String username) {
         AppUser user = userRepository.findByUsername(username);
         LocalDateTime date = user.getDate();
-        List<Update> updateList = updateRepository.findAllByDateAfterOrderByDateDesc(date.toLocalDate());
         List<DTOUpdate> dtoUpdateList = new ArrayList<>();
-        for(Update u : updateList) {
-            DTOUpdate dtoUpdate= new DTOUpdate(u.getId(), u.getName(), u.getDate(), u.getUpdate());
-            dtoUpdateList.add(dtoUpdate);
+        if(date!=null) {
+            List<Update> updateList = updateRepository.findAllByDateAfterOrderByDateDesc(date.toLocalDate());
+            for (Update u : updateList) {
+                DTOUpdate dtoUpdate = new DTOUpdate(u.getId(), u.getName(), u.getDate(), u.getUpdate());
+                dtoUpdateList.add(dtoUpdate);
+            }
         }
         LocalDateTime now = LocalDateTime.now();
         usersController.setLastConnection(user.getUsername(), now);

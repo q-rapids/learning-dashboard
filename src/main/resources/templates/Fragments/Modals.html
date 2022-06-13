@@ -92,21 +92,15 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="title" style="margin-left: 10px;color: #0177a6;" >
                 <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
-                Learning dashboard
+                Latest News
             </h4>
         </div>
-        <div class="modal-body" >
-            <p style="font-size:160%;text-align:center"> <strong> Latest News </strong> </p>
-        </div>
-        <div class="modal-body" style="overflow:auto;max-height:25vh;" >
+        <div class="modal-body" style="overflow:auto;max-height:50vh;" >
             <table style="width:100%">
                 <tr >
                     <td  id="updateText"  > </td>
                 </tr>
             </table>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </th:block>
 
@@ -429,7 +423,7 @@
 
     <th:block th:fragment="metricsModal">
         <div class="modal fade" id="metricsModal" role="dialog" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog">
+            <div class="modal-dialog" id="metricsModaldialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <p>Select metrics:</p>

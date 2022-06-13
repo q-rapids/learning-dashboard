@@ -89,7 +89,9 @@ public class Projects {
             String description = request.getParameter("description");
             String backlogId = request.getParameter("backlogId");
             String taigaURL= request.getParameter("taigaURL");
+            if(taigaURL.equals("null")) taigaURL=null;
             String githubURL= request.getParameter("githubURL");
+            if(githubURL.equals("null")) githubURL=null;
             Boolean isGlobal = Boolean.parseBoolean(request.getParameter("isGlobal"));
             byte[] logoBytes = null;
             if (logo != null) {

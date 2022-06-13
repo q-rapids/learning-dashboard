@@ -32,7 +32,7 @@ public class Updates {
 
     @GetMapping("/api/update/last")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOUpdate> getLastUpdate(@RequestParam(value = "username", required = false) String username) {
+    public List<DTOUpdate> getLastUpdate(@RequestParam(value = "username", required = true) String username) {
         //String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
         return updatesController.getLastUpdate(username);
     }
