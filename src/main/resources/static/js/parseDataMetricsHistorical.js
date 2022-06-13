@@ -143,8 +143,8 @@ function getDatabyFactor() {
             if (getParameterByName('id').length !== 0) {
                 data = response[0].metrics;
             }
-            if(!groupByFactor) sortDataAlphabetically(data);
-            else data = sortDataByFactor(data);
+            if(groupByFactor || groupByTeam) data = sortDataByFactor(data);
+            else sortDataAlphabetically(data);
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -417,6 +417,11 @@ function getFactors() {
                 factors = filterGlobalFactor(dataF);
                 console.log("factors");
                 console.log(factors);
+                if(factors.length === 0) {
+                    if(groupByFactor) warningUtils("Warning", "No factors found. Add a new quality factor to view this data.")
+                    else if(groupByTeam) warningUtils("Warning", "No teams found. Add a new quality factor starning with \"Team\" to view this data.")
+                    else warningUtils("Warning", "No factors found.")
+                }
             } else {
                 sortFactors(dataF);
                 factors = dataF;

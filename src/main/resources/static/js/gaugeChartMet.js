@@ -159,7 +159,12 @@ function getFactors(data, width, height) {
                 factors = filterGlobalFactor(dataF);
                 console.log("factors");
                 console.log(factors);
-                getMetricsCategories(data, width, height);
+                if(factors.length === 0) {
+                    if(groupByFactor) warningUtils("Warning", "No factors found. Add a new quality factor to view this data.")
+                    else if(groupByTeam) warningUtils("Warning", "No teams found. Add a new quality factor starning with \"Team\" to view this data.")
+                    else warningUtils("Warning", "No factors found.")
+                }
+                else getMetricsCategories(data, width, height);
             } else {
                 sortFactors(dataF);
                 factors = dataF;
