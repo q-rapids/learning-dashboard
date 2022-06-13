@@ -7,11 +7,8 @@ import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricCategory;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
@@ -85,6 +82,21 @@ public class Metrics {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
+
+    @GetMapping("/api/metrics/student")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value = "prj") String prj) throws IOException {
+
+        return studentsController.getStudentWithMetricsFromProject(prj);
+    }
+
+    @GetMapping("/api/metrics/student/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetricsHistorical> getStudentsAndMetricsHistorical(@RequestParam(value = "prj") String prj,  @RequestParam(value = "profile", required = false) String profileId, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
+
+        return studentsController.getStudentWithHistoricalMetricsFromProject(prj, LocalDate.parse(from), LocalDate.parse(to), profileId);
+    }
+
 
     @PutMapping("/api/metrics/student")
     @ResponseStatus(HttpStatus.OK)

@@ -239,7 +239,7 @@ public class QMAQualityFactors {
                 if ((filterDB != false) && currentData) factorExternalID = qualityFactor.getID();
                 String type =null;
                 try {
-                    type = factorsController.getQualityFactorByExternalId(qualityFactor.getID()).getType();
+                    type = factorsController.getQualityFactorByExternalIdAndProjectId(qualityFactor.getID(), project.getId()).getType();
                 } catch (QualityFactorNotFoundException e) {
                     logger.error(e.getMessage(), e);
                 }

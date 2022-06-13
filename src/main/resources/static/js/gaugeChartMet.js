@@ -11,6 +11,9 @@ var urlTaiga;
 var urlGithub;
 
 var factors;
+var students;
+var global = false;
+
 
 const DEFAULT_CATEGORY = "Default";
 
@@ -27,20 +30,62 @@ var metricsDB = [];
 
 var urlLink;
 
-var groupByFactor;
-if(Boolean(sessionStorage.getItem("groupByFactor")) === false) {
-    sessionStorage.setItem("groupByFactor", "true");
-    groupByFactor = true;
-} else {
+var groupByFactor = true;
+var groupByStudent = false;
+var groupByTeam = false;
+
+function setUpGroupSelector(){
+
+    if(Boolean(sessionStorage.getItem("groupByFactor")) === false || (global && groupByStudent) || (!global && groupByTeam)) {
+        //if cookies are not initialized, or is trying to group by student from a global project, or is trying to group by team from a non-global project
+        sessionStorage.setItem("groupByFactor", "true");
+        sessionStorage.setItem("groupByStudent", "false");
+        sessionStorage.setItem("groupByTeam", "false");
+    }
+
     groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
+    groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
+    groupByTeam = sessionStorage.getItem("groupByTeam") === "true";
+
+    $("#selectorDropdownItems").append('<li><a onclick="clickFactorSelector()" href="#"> Group by factor </a></li>');
+    if(global){
+        $("#selectorDropdownItems").append('<li><a onclick="clickTeamSelector()" href="#"> Group by team </a></li>');
+    }else{
+        $("#selectorDropdownItems").append('<li><a onclick="clickStudentSelector()" href="#"> Group by student </a></li>');
+    }
+
+    if(groupByTeam) $("#selectorDropdownText").text('Group by team');
+    else if(groupByStudent) $("#selectorDropdownText").text('Group by student');
+    else $("#selectorDropdownText").text('Group by factor');
 }
-let checkbox = document.getElementById("groupByFactorCheckbox");
-checkbox.checked = groupByFactor;
 
+function clickFactorSelector(){
+    sessionStorage.setItem("groupByFactor", "true");
+    sessionStorage.setItem("groupByStudent", "false");
+    sessionStorage.setItem("groupByTeam", "false");
 
-function clickCheckbox(){
-    var checkbox = document.getElementById("groupByFactorCheckbox");
-    sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    $("#selectorDropdownText").text('Group by factor');
+
+    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+}
+
+function clickStudentSelector() {
+    sessionStorage.setItem("groupByFactor", "false");
+    sessionStorage.setItem("groupByStudent", "true");
+    sessionStorage.setItem("groupByTeam", "false");
+
+    $("#selectorDropdownText").text('Group by student');
+
+    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+}
+
+function clickTeamSelector() {
+    sessionStorage.setItem("groupByFactor", "false");
+    sessionStorage.setItem("groupByStudent", "false");
+    sessionStorage.setItem("groupByTeam", "true");
+
+    $("#selectorDropdownText").text('Group by team');
+
     location.href = serverUrl + "/Metrics/CurrentChartGauge";
 }
 
@@ -62,7 +107,9 @@ function getData(width, height) {
                 async: false,
                 success: function (dataDB) {
                     metricsDB = dataDB;
-                    getFactors(data, width, height);
+                    if (groupByStudent.valueOf() == true) getStudents(data,width,height)
+                    else getFactors(data, width, height);
+
                     //getMetricsCategories(data, width, height);
                 }});
         },
@@ -72,6 +119,26 @@ function getData(width, height) {
             else if (jqXHR.status == 400) {
                 warningUtils("Error", "Datasource connection failed.");
             }
+        }
+    });
+}
+
+function getStudents(data, width, height) {
+    if (id)
+        url = parseURLComposed("../api/metrics/student");
+    else
+        url = "../api/metrics/student"
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (dataS) {
+            students = dataS;
+            console.log("students");
+            console.log(students);
+            getMetricsCategories(data, width, height);
         }
     });
 }
@@ -88,13 +155,36 @@ function getFactors(data, width, height) {
         type: "GET",
         async: false,
         success: function (dataF) {
-            sortMyDataAlphabetically(dataF);
-            factors = dataF;
-            console.log("factors");
-            console.log(factors);
-            getMetricsCategories(data, width, height);
+            if (global){
+                factors = filterGlobalFactor(dataF);
+                console.log("factors");
+                console.log(factors);
+                getMetricsCategories(data, width, height);
+            } else {
+                sortMyDataAlphabetically(dataF);
+                factors = dataF;
+                console.log("factors");
+                console.log(factors);
+                getMetricsCategories(data, width, height);
+            }
         }
     });
+}
+
+function filterGlobalFactor (factors) {
+    if(groupByTeam) {
+        factors = factors.filter( f => f.name.includes("Team"))
+        sortDataAlphabetically(factors)
+        /*
+        factors.sort( function (a, b) {
+            if (a.type === b.type) return a.name > b.name;
+            else return a.type === "Github";
+        })*/
+    } else {
+        factors = factors.filter( f => !f.name.includes("Team"))
+        sortDataAlphabetically(factors)
+    }
+    return factors;
 }
 
 function sortMyDataAlphabetically (factors) {
@@ -114,12 +204,16 @@ function getMetricsCategories (data, width, height) {
         success: function (categories) {
             console.log("groupByFactor " + groupByFactor);
             if (id) { // in case we show metrics for one detailed factor
-                if (groupByFactor.valueOf() == true)
+                if (groupByFactor.valueOf() == true || groupByTeam.valueOf() == true)
                     drawChartByFactor(data[0].metrics, "#gaugeChart", width, height, categories);
+                else if (groupByStudent.valueOf() == true)
+                    drawChartByStudent(data[0].metrics, "#gaugeChart", width, height, categories);
                 else drawChart(data[0].metrics, "#gaugeChart", width, height, categories);
             } else { // in case we show all metrics
-                if (groupByFactor.valueOf() == true)
+                if (groupByFactor.valueOf() == true || groupByTeam.valueOf() == true)
                     drawChartByFactor(data, "#gaugeChart", width, height, categories);
+                else if (groupByStudent.valueOf() == true)
+                    drawChartByStudent(data[0].metrics, "#gaugeChart", width, height, categories);
                 else drawChart(data, "#gaugeChart", width, height, categories);
             }
         }
@@ -144,12 +238,34 @@ function getCurrentProject() {
         success: function (data) {
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
+                    global = data[i].isGlobal
+                    setUpGroupSelector()
                     urlTaiga = data[i].taigaURL;
                     urlGithub = data[i].githubURL;
                 }
             }
         }
     });
+}
+
+function drawChartByStudent(metrics, container, width, height, categories, projecturls) {
+    var gaugeChart = $("#gaugeChart");
+    for (j = 0; j < students.length; j++) {
+        var divF = document.createElement('div');
+        divF.style.marginTop = "1em";
+        divF.style.marginBottom = "1em";
+
+        var labelF = document.createElement('label');
+        labelF.setAttribute("style", "font-size:20px")
+        //labelF.id = students[j].id;
+        labelF.textContent = students[j].studentName;
+        divF.appendChild(labelF);
+
+        gaugeChart.append(divF);
+        for (i = 0; i < students[j].metrics.length; ++i) {
+            drawMetricGauge(j, i, students[j].metrics[i], container, width, height, categories);
+        }
+    }
 }
 
 function drawChartByFactor(metrics, container, width, height, categories, projecturls) {
@@ -229,25 +345,28 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             drawMetricGauge(j, i, factors[j].metrics[i], container, width, height, categories);
         }
     }
-    // Add metrics without factor
-    var divNOF = document.createElement('div');
-    divNOF.id = "divwithoutfactor";
-    divNOF.style.marginTop = "1em";
-    divNOF.style.marginBottom = "1em";
 
-    var labelNOF = document.createElement('label');
-    labelNOF.id = "withoutfactor";
-    labelNOF.textContent = "Metrics not associated to any factor";
-    divNOF.appendChild(labelNOF);
+    if(!global) {
+        // Add metrics without factor
+        var divNOF = document.createElement('div');
+        divNOF.id = "divwithoutfactor";
+        divNOF.style.marginTop = "1em";
+        divNOF.style.marginBottom = "1em";
 
-    metrics.forEach(function (metric) {
-        var msvg = document.getElementById(metric.id);
-        if (!msvg) {
-            if (!document.getElementById("divwithoutfactor"))
-                gaugeChart.append(divNOF);
-            drawMetricGauge(j, i, metric, container, width, height, categories);
-        }
-    });
+        var labelNOF = document.createElement('label');
+        labelNOF.id = "withoutfactor";
+        labelNOF.textContent = "Metrics not associated to any factor";
+        divNOF.appendChild(labelNOF);
+
+        metrics.forEach(function (metric) {
+            var msvg = document.getElementById(metric.id);
+            if (!msvg) {
+                if (!document.getElementById("divwithoutfactor"))
+                    gaugeChart.append(divNOF);
+                drawMetricGauge(j, i, metric, container, width, height, categories);
+            }
+        });
+    }
 }
 
 function drawMetricGauge(j, i, metric, container, width, height, categories) {

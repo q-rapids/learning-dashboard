@@ -240,6 +240,7 @@ public class FactorsController {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
         qualityFactor = new Factor (id, name, description, project);
+        qualityFactor.setCategoryName("Default");
         qualityFactorRepository.save(qualityFactor);
         boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
         qualityFactor.setWeighted(weighted);
@@ -261,6 +262,15 @@ public class FactorsController {
     }
     public Factor getQualityFactorByExternalId (String qualityFactorExternalId) throws QualityFactorNotFoundException {
         Optional<Factor> qualityFactorOptional = qualityFactorRepository.findByExternalId(qualityFactorExternalId);
+        if (qualityFactorOptional.isPresent()) {
+            return qualityFactorOptional.get();
+        } else {
+            throw new QualityFactorNotFoundException();
+        }
+    }
+
+    public Factor getQualityFactorByExternalIdAndProjectId (String qualityFactorExternalId, Long projectId) throws QualityFactorNotFoundException {
+        Optional<Factor> qualityFactorOptional = qualityFactorRepository.findByExternalIdAndProject_Id(qualityFactorExternalId, projectId);
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {

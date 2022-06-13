@@ -1,7 +1,6 @@
 var isdsi = false;
 var isqf = true;
 var isdqf = false;
-var groupByFactor = false;
 
 const DEFAULT_CATEGORY = "Default"
 
@@ -20,7 +19,7 @@ var texts = [];
 var value = [];
 var labels = [];
 var ids = [];
-var groupByFactor = false;
+var printMetrics = false;
 var categories = [];
 
 let orderedFactorsDB = [];

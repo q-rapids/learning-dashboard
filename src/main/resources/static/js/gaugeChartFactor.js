@@ -5,9 +5,7 @@ var target;
 var tau = Math.PI / 2;
 var id = false;
 
-if (typeof DEFAULT_CATEGORY !== 'undefined') {
-    const DEFAULT_CATEGORY = "Default";
-}
+const DEFAULT_CATEGORY = "Default";
 
 var url;
 if (getParameterByName('id').length !== 0) {

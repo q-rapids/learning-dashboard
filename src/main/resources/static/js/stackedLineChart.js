@@ -331,6 +331,8 @@ function drawChart() {
     //threshold that marks when to change factor
     let factorIndex = 0;
     let factorThreshold = 0;
+    let studentIndex = 0;
+    let studentThreshold = 0;
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
@@ -388,7 +390,30 @@ function drawChart() {
         ctx.height = 350;
         ctx.style.display = "inline";
 
-        if(groupByFactor && i === factorThreshold) {
+        let studentName;
+
+        if(printMetrics && groupByStudent) {
+            if (i === studentThreshold) {
+
+                console.log(students)
+                if (studentIndex < students.length) {
+                    studentName = students[studentIndex][0];
+                    studentThreshold += students[studentIndex][1];
+                    studentIndex++;
+                }
+                var divF = document.createElement('div');
+                divF.style.marginTop = "3em";
+                divF.style.marginBottom = "1em";
+                var labelF = document.createElement('label');
+
+                //labelF.id = factorId;
+                labelF.textContent = studentName;
+                divF.appendChild(labelF);
+                document.getElementById("chartContainer").appendChild(divF)
+            }
+
+        }
+        else if(printMetrics && i === factorThreshold) {
             let factorId;
             let factorName;
             let factorDescription;
@@ -408,8 +433,8 @@ function drawChart() {
             divF.style.marginTop = "3em";
             divF.style.marginBottom = "1em";
 
-            if (factorType === "Taiga") {
-                if (urlTaiga !== undefined) {
+            if (groupByFactor && factorType === "Taiga") {
+                if (urlTaiga !== undefined && urlTaiga!==null) {
                     var b = document.createElement('a')
                     b.href=urlTaiga;
                     var icon = document.createElement("img");
@@ -421,8 +446,8 @@ function drawChart() {
                     divF.appendChild(b);
                 }
             }
-            if (factorType === "Github") {
-                if (urlGithub !== undefined) {
+            if (groupByFactor && factorType === "Github") {
+                if (urlGithub !== undefined && urlGithub !== null) {
                     var list = urlGithub.split(";");
                     var b = document.createElement('a')
                     b.href=list[0];
@@ -455,7 +480,6 @@ function drawChart() {
             var b=document.createElement('a')
             b.classList.add("check")
             b.setAttribute('data-tooltip', factorDescription)
-
             var tooltipdiv = document.createElement('div');
             tooltipdiv.classList.add("tooltip");
             var iconF = document.createElement('img');

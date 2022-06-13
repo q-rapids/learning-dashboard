@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.repositories.QualityFactor;
 
 import com.upc.gessi.qrapids.app.domain.models.Factor;
+import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.QualityFactorMetrics;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,6 +13,9 @@ public interface QualityFactorMetricsRepository extends CrudRepository<QualityFa
 
     @Query("from QualityFactorMetrics r  where r.quality_factor = :factor")
     List<QualityFactorMetrics> findByFactor(@Param("factor") Factor factor);
+
+    @Query("from QualityFactorMetrics r  where r.metric = :metric")
+    List<QualityFactorMetrics> findByMetric(@Param("metric") Metric metric);
 
 
 
