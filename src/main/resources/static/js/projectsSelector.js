@@ -42,11 +42,13 @@ function getUserName () {
             }
             else sessionStorage.setItem("oldUserName", sessionStorage.getItem("userName"));
             //$("#MyProfile").text(data.userName);
+            showUpdates()
         },
         error: function () {
             sessionStorage.setItem("userName", "undefined");
         }
     });
+
 }
 
 
@@ -60,6 +62,7 @@ if (prj) {
 function setProject(project, url) {
 
     sessionStorage.setItem("prj", project);
+    sessionStorage.setItem("update", "true");
     if (url && (url != window.location.href))
         window.open(url,"_self");
     else
@@ -82,6 +85,7 @@ XMLHttpRequest.prototype.open = (function(open) {
                 console.log("else from if in HTTP interceptor");
                 url = setQueryStringParameter(url, "prj", prj);
                 open.apply(this, arguments);
+                sessionStorage.setItem("update", "false");
             }
         }
         else {
@@ -188,7 +192,6 @@ function getActiveUserProjects() {
             type: "GET",
             async: false,
             success: function (data) {
-                console.log("DATA:" + data[0]);
                 sessionStorage.setItem("allowedProjects", data);
             },
             error: function() {
@@ -295,3 +298,42 @@ $("#projectModalButton").click(function () {
     setProfile(profileID+','+profileName);
     $("#projectsModal").modal();
 });
+
+function getUpdatesNotSeen() {
+    var username = sessionStorage.getItem("userName")
+    var url = "../api/update/last?username="+username;
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            var td=document.getElementById("updateText")
+            td.innerHTML="";
+            for (var i = 0; i < data.length; i++) {
+                var dateP = document.createElement("p")
+                dateP.innerHTML = "<strong>" +  data[i].name + "</strong>" + " " + data[i].date;
+                dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
+                var updateP = document.createElement("div")
+                updateP.innerHTML = data[i].update;
+                updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
+                td.appendChild(dateP)
+                td.appendChild(updateP)
+            }
+            if( data.length > 0) {
+                $("#updateModal").modal();
+                sessionStorage.setItem("update","false");
+            }
+        }
+    });
+};
+
+function showUpdates() {
+    var u = sessionStorage.getItem("update")
+    if(u==="true") {
+        getUpdatesNotSeen();
+        sessionStorage.setItem("update","false");
+    }
+}
+

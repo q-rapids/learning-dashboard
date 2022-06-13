@@ -74,11 +74,21 @@
                 <li >
                     <a href="Modals.html" data-toggle="modal" data-target="#aboutModal" >About</a>
                 </li>
+                <li >
+                    <a onclick="fillupdateModal()" data-toggle="modal" data-target="#updateModal" >Last updates</a>
+                </li>
             </ul>
             <div class="modal fade" id="aboutModal" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div th:replace="Fragments/Modals :: aboutModal"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="updateModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div th:replace="Fragments/Modals :: updateModal"></div>
                     </div>
                 </div>
             </div>
@@ -147,6 +157,7 @@
         <a id="QRPatternsConfig">Quality Requirements Patterns</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
+        <a id="UpdatesConfig">Updates Management</a>
     </div>
     <div class="subnav" id="submenuSimulation" th:fragment="navSubBarSimulationDashboard">
         <a id="FactorsSimulation">Factors</a>

@@ -9,10 +9,9 @@ import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 
 @Service
 public class UsersController {
@@ -50,6 +49,14 @@ public class UsersController {
 
     public AppUser findUserByName (String userName) {
         return userRepository.findByUsername(userName);
+    }
+
+    public void setLastConnection(String username, LocalDateTime date) {
+
+        AppUser user = findUserByName(username);
+        user.setDate(date);
+        userRepository.save(user);
+
     }
 
     public Boolean getIfAdmin(String token) {

@@ -1,6 +1,7 @@
 var currentURL = window.location.href;
-var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, userName;
 var lastresfresh = new Date();
+var configuration="StrategicIndicators"
 lastresfresh= lastresfresh.getTime();
 getIfUserIsAdmin();
 refreshcookie();
@@ -75,8 +76,6 @@ function getIfUserIsAdmin() {
             async: false,
             success: function (data) {
                 sessionStorage.setItem("isAdmin", data);
-                console.log("DATA:" + data);
-                console.log(typeof(data));
                 return data;
             },
             error: function() {
@@ -373,6 +372,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "users";
     else if (currentURL.match("/usergroups"))
         id = "usergroups";
+    else if (currentURL.match("/Updates"))
+        id = "Updates";
     else if (currentURL.match("/Iterations"))
         id = "Iterations";
     highlightAndSaveCurrentConfiguration(id);
@@ -530,7 +531,11 @@ if(configuration=="profile") $("#Configuration").attr("href", serverUrl + "/prof
 
 else if(configuration=="users") $("#Configuration").attr("href", serverUrl + "/users" );
 
-else $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
+else {
+    if(configuration==="") $("#Configuration").attr("href", serverUrl + "/StrategicIndicators/Configuration");
+
+    else $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
+}
 
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 
@@ -547,6 +552,8 @@ $("#IterationsConfig").attr("href", serverUrl + "/Iterations/Configuration");
 $("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 
 $("#QRPatternsConfig").attr("href", serverUrl + "/QRPatterns/Configuration");
+
+$("#UpdatesConfig").attr("href", serverUrl + "/Updates/Configuration");
 
 $("#profileConfig").attr("href", serverUrl + "/profile");
 
@@ -760,6 +767,30 @@ function profileQualityLevelFilter() {
         }
     });
 }
+function fillupdateModal() {
+    var url = "../api/update/year";
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            var td=document.getElementById("updateText")
+            td.innerHTML="";
+            for (var i = 0; i < data.length; i++) {
+                var dateP = document.createElement("p")
+                dateP.innerHTML = "<strong>" +  data[i].name + "</strong>" + " " + data[i].date;
+                dateP.setAttribute("style", "padding-top:5px;border-top: 1px solid #e5e5e5;")
+                var updateP = document.createElement("div")
+                updateP.innerHTML = data[i].update;
+                updateP.setAttribute("style", "margin-bottom:10px;white-space: pre-line;")
+                td.appendChild(dateP)
+                td.appendChild(updateP)
+            }
+        }
+    });
+};
 
 profileQualityLevelFilter();
 
@@ -772,7 +803,6 @@ window.onload = function() {
 }
 
 var isAdmin=sessionStorage.getItem("isAdmin");
-console.log(typeof(isAdmin));
 if(isAdmin=="false") {
     $("#Configuration").hide();
     $("#RawDataAssessment").hide();
