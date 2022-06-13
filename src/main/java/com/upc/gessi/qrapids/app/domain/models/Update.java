@@ -17,7 +17,7 @@ public class Update {
     @Column(name="date")
     private LocalDate date;
 
-    @Column(name="update")
+    @Column(name="update", columnDefinition = "TEXT")
     private String update;
 
     public Update(String name, LocalDate date, String update) {

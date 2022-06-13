@@ -136,9 +136,8 @@ function getStudents(data, width, height) {
         async: false,
         success: function (dataS) {
             students = dataS;
-            console.log("students");
-            console.log(students);
-            getMetricsCategories(data, width, height);
+            if(students.length>0) getMetricsCategories(data, width, height);
+            else warningUtils("Warning", "This project has no students. In order to set students go to products in configuration, choose this project and set the students and their metrics in the table below ")
         }
     });
 }
