@@ -437,6 +437,8 @@ function drawChart() {
                 if (urlTaiga !== undefined && urlTaiga!==null) {
                     var b = document.createElement('a')
                     b.href=urlTaiga;
+                    b.target = "_blank"
+                    b.rel="noopener noreferrer"
                     var icon = document.createElement("img");
                     icon.src = "../icons/taiga_icon.png"
                     icon.width = 38;
@@ -451,6 +453,8 @@ function drawChart() {
                     var list = urlGithub.split(";");
                     var b = document.createElement('a')
                     b.href=list[0];
+                    b.target = "_blank"
+                    b.rel="noopener noreferrer"
                     var icon1 = document.createElement("img");
                     icon1.src = "../icons/github_icon.png"
                     icon1.width = 38;
@@ -461,6 +465,8 @@ function drawChart() {
                     if (list.length == 2) {
                         var b = document.createElement('a')
                         b.href=list[1];
+                        b.target = "_blank"
+                        b.rel="noopener noreferrer"
                         var icon2 = document.createElement("img");
                         icon2.src = "../icons/github_icon.png"
                         icon2.width = 38;

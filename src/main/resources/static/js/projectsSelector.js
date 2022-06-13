@@ -330,10 +330,6 @@ function getUpdatesNotSeen() {
 };
 
 function showUpdates() {
-    var u = sessionStorage.getItem("update")
-    if(u==="true") {
-        getUpdatesNotSeen();
-        sessionStorage.setItem("update","false");
-    }
+    getUpdatesNotSeen();
 }
 

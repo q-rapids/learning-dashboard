@@ -531,6 +531,10 @@ function deleteStudent(studentId) {
 function openMetricsModal(studentId) {
 	selectedStudent=studentId
 	showMetrics(studentId);
+	var elem = document.getElementById("metricsModaldialog")
+	elem.setAttribute("style", "width:900px");
+	var elem2 = document.getElementById("metricRow")
+	elem2.setAttribute("style", "width:100%")
 	$("#metricsModal").modal();
 };
 
@@ -705,8 +709,16 @@ function saveProject() {
 	        formData.append("description", $('#projectDescription').val());
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
 	        formData.append("backlogId", $("#projectBacklogId").val());
-	        formData.append("taigaURL", $('#inputTaigaUrl').val());
-			formData.append("githubURL", $('#inputfirstGithubUrl').val());
+	        var taigaURL = $('#inputTaigaUrl').val()
+			if (taigaURL === "") {
+				taigaURL=null;
+			}
+	        formData.append("taigaURL", taigaURL);
+			var githubURL = $('#inputfirstGithubUrl').val()
+			if (githubURL === "") {
+				githubURL=null;
+			}
+			formData.append("githubURL", githubURL);
 	        formData.append("isGlobal", globalChecked);
 
 	        var url = "/api/projects/" + currentProject;

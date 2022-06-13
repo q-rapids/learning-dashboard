@@ -275,10 +275,14 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
         divF.style.marginTop = "1em";
         divF.style.marginBottom = "1em";
         if (factors[j].type === "Taiga") {
-            if (urlTaiga !== undefined) {
+            if (urlTaiga !== undefined && urlTaiga!==null) {
                 var a = document.createElement('a')
                 a.href=urlTaiga;
+                a.target = "_blank"
+                a.rel="noopener noreferrer"
                 var icon = document.createElement("img");
+                icon.target = "_blank"
+                icon.rel="noopener noreferrer"
                 icon.src = "../icons/taiga_icon.png"
                 icon.width = 38;
                 icon.height = 25;
@@ -288,10 +292,12 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             }
         }
         if (factors[j].type === "Github") {
-            if (urlGithub !== undefined) {
+            if (urlGithub !== undefined && urlGithub) {
                 var list = urlGithub.split(";");
                 var a = document.createElement('a')
                 a.href=list[0];
+                a.target = "_blank"
+                a.rel="noopener noreferrer"
                 var icon1 = document.createElement("img");
                 icon1.src = "../icons/github_icon.png"
                 icon1.width = 38;
@@ -302,6 +308,8 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
                 if (list.length >= 2) {
                     var a = document.createElement('a')
                     a.href=list[1];
+                    a.target = "_blank"
+                    a.rel="noopener noreferrer"
                     var icon2 = document.createElement("img");
                     icon2.src = "../icons/github_icon.png"
                     icon2.width = 38;
