@@ -11,9 +11,6 @@
         <tr>
             <td width="80%"><div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div></td>
             <td width="20%">
-                <form style="display: flex; justify-content: flex-end; margin-right: 5px; font-size: 12px">
-                    <input type="checkbox" id="groupByFactorCheckbox" onclick="clickCheckbox()">&nbsp;Group by factor</input>
-                </form>
             </td>
         </tr>
     </table>
@@ -21,7 +18,20 @@
     <br/>
     <h1 id="title" align="center"></h1>
     <p th:replace="Fragments/TemplateDashboard :: navLinkMetrics"></p>
+
+    <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 15px; margin-top: 5px;">
+        <div class="dropdown" style="display: inline-grid">
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                <span id="selectorDropdownText" class="text"> Selector </span>
+                <span class="caret"></span>
+            </button>
+            <ul id="selectorDropdownItems" class="dropdown-menu dropdown-menu-left">
+            </ul>
+        </div>
+    </div>
+
     <th:block th:replace="Fragments/TemplateDashboard :: HistoricChart"></th:block>
+
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsHistoric"></th:block>
 <script type="text/javascript" th:src="@{/js/parseDataMetricsHistorical.js}"></script>

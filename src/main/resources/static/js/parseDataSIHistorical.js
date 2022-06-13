@@ -3,7 +3,6 @@ var isdsi = false;
 var isqf = false;
 var isdqf = false;
 
-var groupByFactor = false;
 
 const DEFAULT_CATEGORY = "Default"
 var qualityModelSIMetrics = new Map();
@@ -13,7 +12,7 @@ var texts = [];
 var value = [];
 var labels = [];
 var ids = [];
-
+var printMetrics = false;
 var categories = [];
 
 function getData() {

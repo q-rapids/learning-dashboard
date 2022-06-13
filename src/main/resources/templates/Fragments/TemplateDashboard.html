@@ -153,6 +153,7 @@
         <a id="MetricsConfig">Metrics</a>
         <a id="CategoriesConfig">Categories</a>
         <a id="ProfilesConfig">Profiles</a>
+        <a id="IterationsConfig">Iterations</a>
         <a id="QRPatternsConfig">Quality Requirements Patterns</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
@@ -285,6 +286,16 @@
                 <img class="icons" th:src="@{/icons/slider_chart.png}"
                      src="../../static/icons/slider_chart.png" alt="slider chart representation"/>
             </button>
+        </div>
+        <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 5px; margin-top: 5px;">
+            <div class="dropdown" style="display: inline-grid">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span id="selectorDropdownText" class="text"> Selector </span>
+                    <span class="caret"></span>
+                </button>
+                <ul id="selectorDropdownItems" class="dropdown-menu dropdown-menu-left">
+                </ul>
+            </div>
         </div>
     </th:block>
     <th:block th:fragment="QualityModelView">

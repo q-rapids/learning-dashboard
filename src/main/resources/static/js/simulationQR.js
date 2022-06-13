@@ -10,19 +10,34 @@ var qualityFactors = [];
 var metrics = [];
 var detailedCharts = [];
 var factorsCharts = [];
-var categories = [];
+
+let metricCats = [];
+let factorCats = [];
+
 let metricsDB = [];
+let factorsDB = [];
 
 var alertId;
 var patternId;
 
 function getFactorsCategories (titles, ids, labels, values) {
-    var url = "../api/qualityFactors/categories";
+    var url = "../api/factors/categories";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
-            categories = response;
+            factorCats = response;
+            getFactorsList(titles, ids, labels, values)
+        }
+    });
+}
+
+function getFactorsList(titles, ids, labels, values) {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        success: function (dataF) {
+            factorsDB = dataF;
             showDetailedStrategicIndicators(titles, ids, labels, values)
         }
     });
@@ -34,7 +49,7 @@ function getMetricsCategories (titles, ids, labels, values) {
         url : url,
         type: "GET",
         success: function (response) {
-            categories = response;
+            metricCats = response;
             getMetricsWithCategory(titles, ids, labels, values);
         }
     });
@@ -137,7 +152,16 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
             data: values[i],
             fill: false
         });
-        var cat = categories;
+        let catName;
+        let cat;
+
+        if (factorCats.length !== 0) catName = getFactorCategory(strategicIndicators[i].factors, factorsDB);
+        else catName = DEFAULT_CATEGORY;
+
+        cat = factorCats.filter( function (c) {
+            return c.name === catName;
+        });
+
         cat.sort(function (a, b) {
             return b.upperThreshold - a.upperThreshold;
         });
@@ -311,8 +335,8 @@ function showFactors (titles, ids, labels, values) {
             fill: false
         });
 
-        catName = getFactorCategory(qualityFactors[i].metrics);
-        var cat = categories.filter(function (elem) {
+        catName = getFactorCategory(qualityFactors[i].metrics, metricsDB);
+        var cat = metricCats.filter(function (elem) {
             return elem.name === catName;
         });
         cat.sort(function (a, b) {
@@ -388,16 +412,16 @@ function showFactors (titles, ids, labels, values) {
 
 // if the factors have the same category, this category is returned
 // else the default category is returned
-function getFactorCategory(factors) {
-    let f1 = metricsDB.find( function (elem) {
-        return elem.externalId === factors[0].id
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0].name
     });
 
-    if (factors.length === 1) return f1.categoryName;
+    if (factorNames.length === 1) return f1.categoryName;
 
-    for(let i = 1; i < factors.length; ++i){
-        let f2 = metricsDB.find( function (elem) {
-            return elem.externalId === factors[i].id
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i].name
         });
         if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
         f1 = f2;
@@ -471,7 +495,7 @@ function getMetricsCategoriesAndShow (patternId) {
         url : url,
         type: "GET",
         success: function (response) {
-            categories = response;
+            metricCats = response;
             getAndShowMetricsForPattern(patternId);
         }
     });
@@ -505,17 +529,17 @@ function showMetricSlider (metric) {
     // Metrics categories
     var rangeHighlights = [];
     var start = 0;
-    categories.sort(function (a, b) {
+    metricCats.sort(function (a, b) {
         return a.upperThreshold - b.upperThreshold;
     });
-    for (var i = 0; i < categories.length; i++) {
-        var end = categories[i].upperThreshold;
+    for (var i = 0; i < metricCats.length; i++) {
+        var end = metricCats[i].upperThreshold;
         var offset = 0;
         if (end < 1) offset = 0.02;
         var range = {
             start: start,
             end: end + offset,
-            class: categories[i].name
+            class: metricCats[i].name
         };
         rangeHighlights.push(range);
         start = end;
@@ -569,8 +593,8 @@ function showMetricSlider (metric) {
     metricsDiv.append(div);
     $("#"+slider.id).slider(sliderConfig);
     $(".slider-rangeHighlight").css("background", currentColor);
-    for (var j = 0; j < categories.length; j++) {
-        $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
+    for (var j = 0; j < metricCats.length; j++) {
+        $(".slider-rangeHighlight." + metricCats[j].name).css("background", metricCats[j].color)
     }
     //Change QR value
     updateQRValueText(metric.value.toFixed(2));

@@ -31,6 +31,7 @@ public class DTOFactorEvaluation {
     private String forecastingError;
     private int mismatchDays;
     private List<String> missingMetrics;
+    private String type;
 
     /**
      * Constructor of the DTO of Factors
@@ -209,4 +210,8 @@ public class DTOFactorEvaluation {
     public void setMissingMetrics(List<String> missingMetrics) {
         this.missingMetrics = missingMetrics;
     }
+
+    public void setType(String type) {this.type=type;}
+
+    public String getType() {return type;}
 }

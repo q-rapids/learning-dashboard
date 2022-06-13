@@ -1,7 +1,8 @@
 var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
-
+var urlTaiga;
+var urlGithub;
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
 var decisionIgnoreColor = 'rgb(189,0,0)';
 var decisionAddColor = 'rgb(62,208,62)';
@@ -29,7 +30,28 @@ Chart.plugins.register({
     }
 });
 
+function getCurrentProject() {
+
+    var urlp = "/api/projects";
+    jQuery.ajax({
+        dataType: "json",
+        url: urlp,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            for(var i=0; i<data.length; i++) {
+                if(data[i].name===sessionStorage.getItem("prj")) {
+                    urlTaiga = data[i].taigaURL;
+                    urlGithub = data[i].githubURL;
+                }
+            }
+        }
+    });
+}
+
 function drawChart() {
+    getCurrentProject()
     config = [];
     for (var i = 0; i < texts.length; ++i) {    //create config for each chart
         var c = {
@@ -96,7 +118,7 @@ function drawChart() {
                             labelString: 'value'
                         },
                         ticks: {
-                            max: 1.2,
+                            max: 1.0,
                             min: 0
                         }
                     }]
@@ -250,29 +272,25 @@ function drawChart() {
         //Add category lines
         if (typeof categories !== 'undefined') {
             var annotations = [];
-
             let metricCategory;
 
-            if (typeof orderedMetricsDB !== 'undefined') {
-                if (orderedMetricsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        if (typeof orderedMetricsDB[i] !== 'undefined') return cat.name === orderedMetricsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
-            } else if (typeof orderedFactorsDB !== 'undefined') {
-                if (orderedFactorsDB.length !== 0) {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === orderedFactorsDB[i].categoryName;
-                    });
-                } else {
-                    metricCategory = categories.filter(function (cat) {
-                        return cat.name === DEFAULT_CATEGORY;
-                    });
-                }
+            if (typeof orderedMetricsDB !== 'undefined' && orderedMetricsDB.length !== 0) {
+                //for Historic Metrics (parseDataMetricsHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedMetricsDB[i].categoryName;
+                });
+            } else if (typeof orderedFactorsDB !== 'undefined' && orderedFactorsDB.length !== 0) {
+                //for Historic Factors (parseDataQFHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedFactorsDB[i].categoryName;
+                });
+            } else if (typeof metricsDB !== 'undefined' && metricsDB.length !== 0) {
+                //for Historic Detailed Factors (parseDataDetailedQFHistorical.js)
+                let catName = getFactorCategory(labels[i], metricsDB);
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === catName;
+                });
+
             } else {
                 metricCategory = categories.filter(function (cat) {
                     return cat.name === DEFAULT_CATEGORY;
@@ -313,6 +331,8 @@ function drawChart() {
     //threshold that marks when to change factor
     let factorIndex = 0;
     let factorThreshold = 0;
+    let studentIndex = 0;
+    let studentThreshold = 0;
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
@@ -370,15 +390,40 @@ function drawChart() {
         ctx.height = 350;
         ctx.style.display = "inline";
 
-        if(groupByFactor && i === factorThreshold) {
+        let studentName;
+
+        if(printMetrics && groupByStudent) {
+            if (i === studentThreshold) {
+
+                console.log(students)
+                if (studentIndex < students.length) {
+                    studentName = students[studentIndex][0];
+                    studentThreshold += students[studentIndex][1];
+                    studentIndex++;
+                }
+                var divF = document.createElement('div');
+                divF.style.marginTop = "3em";
+                divF.style.marginBottom = "1em";
+                var labelF = document.createElement('label');
+
+                //labelF.id = factorId;
+                labelF.textContent = studentName;
+                divF.appendChild(labelF);
+                document.getElementById("chartContainer").appendChild(divF)
+            }
+
+        }
+        else if(printMetrics && i === factorThreshold) {
             let factorId;
             let factorName;
             let factorDescription;
+            let factorType;
             if(factorIndex < factors.length) {
                 factorId = factors[factorIndex].id;
                 factorName = factors[factorIndex].name;
                 factorDescription=factors[factorIndex].description
                 factorThreshold += factors[factorIndex].metrics.length
+                factorType=factors[factorIndex].type
                 factorIndex++;
             }else{
                 factorId = "withoutfactor"
@@ -388,14 +433,53 @@ function drawChart() {
             divF.style.marginTop = "3em";
             divF.style.marginBottom = "1em";
 
+            if (groupByFactor && factorType === "Taiga") {
+                if (urlTaiga !== undefined && urlTaiga!==null) {
+                    var b = document.createElement('a')
+                    b.href=urlTaiga;
+                    var icon = document.createElement("img");
+                    icon.src = "../icons/taiga_icon.png"
+                    icon.width = 38;
+                    icon.height = 25;
+                    icon.style = "padding-right:15px;";
+                    b.appendChild(icon)
+                    divF.appendChild(b);
+                }
+            }
+            if (groupByFactor && factorType === "Github") {
+                if (urlGithub !== undefined && urlGithub !== null) {
+                    var list = urlGithub.split(";");
+                    var b = document.createElement('a')
+                    b.href=list[0];
+                    var icon1 = document.createElement("img");
+                    icon1.src = "../icons/github_icon.png"
+                    icon1.width = 38;
+                    icon1.height = 25;
+                    icon1.style = "padding-right:15px;";
+                    b.appendChild(icon1)
+                    divF.appendChild(b);
+                    if (list.length == 2) {
+                        var b = document.createElement('a')
+                        b.href=list[1];
+                        var icon2 = document.createElement("img");
+                        icon2.src = "../icons/github_icon.png"
+                        icon2.width = 38;
+                        icon2.height = 25;
+                        icon2.style = "padding-right:15px;";
+                        b.appendChild(icon2)
+                        divF.appendChild(b);
+                    }
+                }
+            }
+
             var labelF = document.createElement('label');
             labelF.id = factorId;
             labelF.textContent = factorName;
             divF.appendChild(labelF);
+
             var b=document.createElement('a')
             b.classList.add("check")
             b.setAttribute('data-tooltip', factorDescription)
-
             var tooltipdiv = document.createElement('div');
             tooltipdiv.classList.add("tooltip");
             var iconF = document.createElement('img');
@@ -407,11 +491,18 @@ function drawChart() {
 
             var spantootlip = document.createElement('span');
             spantootlip.classList.add("tooltiptext");
-            spantootlip.innerHTML=factors[j].description;
             tooltipdiv.appendChild(iconF)
             tooltipdiv.appendChild(spantootlip)
+
             b.appendChild(iconF)
-            divF.appendChild(b);
+            if (factorIndex < factors.length) {
+                spantootlip.innerHTML = factors[factorIndex].description;
+            }
+            if (factorId != "withoutfactor"){
+                console.log(factorId);
+                divF.appendChild(b);
+            }
+
             document.getElementById("chartContainer").appendChild(divF)
         }
 
@@ -509,9 +600,28 @@ function fitToContent() {
     });
 }
 
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0]
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
+}
+
 function normalRange() {
     charts.forEach(function (chart) {
-        chart.config.options.scales.yAxes[0].ticks.max = 1.2;
+        chart.config.options.scales.yAxes[0].ticks.max = 1.0;
         chart.config.options.scales.yAxes[0].ticks.min = 0;
 
         chart.config.options.legend.onClick = function(e, legendItem) {

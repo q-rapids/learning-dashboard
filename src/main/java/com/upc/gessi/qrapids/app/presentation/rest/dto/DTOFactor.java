@@ -13,8 +13,11 @@ public class DTOFactor { // get factor information from DB
     private List<String> metrics;
     private boolean weighted;
     private List<String> metricsWeights;
+    private String type;
+    private String categoryName; 
 
-    public DTOFactor(Long id, String externalId, String name, String description, List<String> metrics, boolean weighted, List<String> metricsWeights) {
+    public DTOFactor(Long id, String externalId, String name, String description, List<String> metrics, boolean weighted, List<String> metricsWeights, String type, String categoryName) {
+
         this.id = id;
         this.externalId = externalId;
         this.name = name;
@@ -22,6 +25,9 @@ public class DTOFactor { // get factor information from DB
         this.metrics = metrics;
         this.weighted = weighted;
         this.metricsWeights = metricsWeights;
+        this.type=type;
+        this.categoryName = categoryName;
+
     }
 
     public Long getId() {
@@ -78,5 +84,16 @@ public class DTOFactor { // get factor information from DB
 
     public List<String> getMetricsWeights() { return metricsWeights; }
 
+    public String getType() { return type; }
 
+    public void setType(String type) { this.type=type; }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }

@@ -54,8 +54,6 @@ public class AuthController {
     private AuthTools authTools;
     private long FirstUserRequired = 0;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private Logger logger = Logger.getLogger("authentication");
-
 
     public AuthController(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -121,23 +119,20 @@ public class AuthController {
 	@GetMapping("/logout_user")
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 
-        String header = request.getHeader(HEADER_STRING);
         String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
-        AppUser user = null;
-        user = this.userRepository.findByUsername( this.authTools.getUserToken( cookie_token ) );
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
+        if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ){
+            String user = null;
+            user = this.authTools.getUser(cookie_token);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            ActionLogger al = new ActionLogger();
+            al.traceExitApp(user);
+        }
 
 		Cookie cookie = new Cookie(COOKIE_STRING, null); // Not necessary, but saves bandwidth.
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
 		response.addCookie(cookie);
-
-        ActionLogger al = new ActionLogger();
-        al.traceExitApp(user.getUsername());
-
-        logger.info("Log out: " + user.getUsername() + " " + now);
 
 		return "redirect:/login";
 	}

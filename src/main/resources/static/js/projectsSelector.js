@@ -121,6 +121,7 @@ function getProjects(profileID) {
                 setProject(" ");
             } else {
                 showProjectSelector(prj_externalId);
+
             }
         }
     });
@@ -277,9 +278,11 @@ function showProjectSelector (projects) {
             });
         }
         setProject($this.text(), url);
+
     });
 
     $("#projectsModal").modal();
+
 }
 
 function setQueryStringParameter(uri, key, value) {

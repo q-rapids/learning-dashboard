@@ -7,6 +7,27 @@ var postUrl;
 var deleteUrl;
 var httpMethod = "POST";
 
+let categories = [];
+
+function getFactorCategories() {
+    var url = "../api/factors/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            let res = new Set;
+            response.forEach(function (elem){
+                res.add(elem.name);
+            });
+            categories = Array.from(res);
+            categories.forEach( function (cat) {
+                $("#QFCategory").append('<option value="'+ cat +'">'+cat+'</option>')
+            });
+        }
+    });
+}
+
+
 function buildQFList() {
     var profileId = sessionStorage.getItem("profile_id");
     var url = "/api/qualityFactors?profile=" + profileId;
@@ -65,6 +86,8 @@ function clickOnTree(e){
             $("#QFDescription").val(qf.description);
             $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
             $("#QFThreshold").val(qf.threshold);
+            $("#QFType").val(qf.type);
+            $("#QFCategory").val(qf.categoryName)
             $("#QFCompositionTitle").text("Quality Factor Composition");
             $("#QFCompositionWarning").text("Warning: Changing the composition of Quality Factor will affect its historical data interpretation."); // add warning
             $("#deleteQF").show();
@@ -105,6 +128,8 @@ function newQF() {
     $("#QFDescription").val("");
     $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
     $("#QFThreshold").val("");
+    $("#QFType").val("");
+    $("#QFCategory").val("Default")
     $("#QFCompositionTitle").text("Step 2 - Select the corresponding metrics");
     $("#QFCompositionWarning").text(""); // clean warning
     $("#deleteQF").hide();
@@ -356,12 +381,15 @@ $("#saveQF").click(function () {
         console.log(qualityMetrics);
         console.log(httpMethod);
         console.log(postUrl);
+        console.log($('#QFType').val());
 
         var formData = new FormData();
         formData.append("name", $('#QFName').val());
         formData.append("description", $('#QFDescription').val());
         formData.append("threshold", $('#QFThreshold').val());
         formData.append("metrics", qualityMetrics);
+        formData.append("type", $('#QFType').val());
+        formData.append("category", $('#QFCategory').val())
         $.ajax({
             url: postUrl,
             data: formData,
@@ -419,6 +447,7 @@ $("#deleteQF").click(function () {
 });
 
 window.onload = function() {
+    getFactorCategories();
     loadMetrics(false);
     buildQFList();
 };

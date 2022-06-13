@@ -76,7 +76,7 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -109,6 +109,10 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].projects[0].active", is(active)))
                 .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$[0].projects[0].taigaURL", is("testURL1")))
+                .andExpect(jsonPath("$[0].projects[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
                 .andDo(document("products/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -136,7 +140,16 @@ public class ProductsTest {
                                 fieldWithPath("[].projects[].active")
                                         .description("Is an active project?"),
                                 fieldWithPath("[].projects[].backlogId")
-                                        .description("Project identifier in the backlog"))
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("[].projects[].taigaURL")
+                                        .description("Taiga repository URL"),
+                                fieldWithPath("[].projects[].githubURL")
+                                        .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("[].projects[].isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].projects[].students")
+                                        .description("Students of the project"))
+
                 ));
 
         // Verify mock interactions
@@ -152,7 +165,7 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -182,6 +195,10 @@ public class ProductsTest {
                 .andExpect(jsonPath("$.projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$.projects[0].active", is(active)))
                 .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$.projects[0].taigaURL", is("testURL1")))
+                .andExpect(jsonPath("$.projects[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$.projects[0].students", is(nullValue())))
                 .andDo(document("products/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -213,7 +230,15 @@ public class ProductsTest {
                                 fieldWithPath("projects[].active")
                                         .description("Is an active project?"),
                                 fieldWithPath("projects[].backlogId")
-                                        .description("Project identifier in the backlog"))
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("projects[].taigaURL")
+                                        .description("Taiga repository URL"),
+                                fieldWithPath("projects[].githubURL")
+                                        .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("projects[].isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("projects[].students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions
@@ -229,7 +254,7 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -294,7 +319,7 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 

@@ -427,6 +427,43 @@
         </div>
     </th:block>
 
+    <th:block th:fragment="metricsModal">
+        <div class="modal fade" id="metricsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p>Select metrics:</p>
+                    </div>
+                    <div class="modal-body">
+                    <div id="metricRow" class="profileInfoRow">
+                        <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Available Metrics: </p>
+                    <select id="avMetricsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                </div>
+
+                <div class="selectionColumn" style="padding-top:30px;">
+                    <button onclick="moveMetricItemsLeft()" class="btn btn-default top-and-bottom-margin" id="oneLeft">&lt;</button>
+                    <button onclick="moveMetricItemsRight()" class="btn btn-default top-and-bottom-margin" id="right" style="margin-top:3px;">&gt;</button>
+                    <button onclick="moveAllMetricItemsRight()" class="btn btn-default top-and-bottom-margin" id="allRight" style="margin-top:3px;">&gt;&gt;</button>
+                    <button onclick="moveAllMetricsItemsLeft()" class="btn btn-default top-and-bottom-margin" id="allLeft" style="margin-top:3px;">&lt;&lt;</button>
+                </div>
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Selected Metrics: </p>
+                    <select id="selMetricsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                </div>
+                    </div>
+                    </div>
+                <div class="modal-footer">
+                    <button id="acceptMetricsButton" type="button" class="btn btn-primary pull-right">Save Student</button>
+                    <button id="dismissMetricsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                </div>
+        </div>
+            </div>
+        </div>
+    </th:block>
+
     <th:block th:fragment="profileSelectProjectsModal">
         <div class="modal fade" id="profileSelectProjectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">

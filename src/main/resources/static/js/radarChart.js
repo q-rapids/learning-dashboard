@@ -52,17 +52,21 @@ function drawChart() {
 
         if (typeof categoryNames !== 'undefined'){
             //categories for detailed factors
-            if (categoryNames.length !== 0) catName = getFactorCategory(categoryNames[i]);
+            if (categoryNames.length !== 0) catName = getFactorCategory(categoryNames[i], metricsDB);
             else catName = DEFAULT_CATEGORY;
 
-            cat = categories.filter( function (c) {
-                return c.name === catName;
-            });
+        } else if (typeof factorCategoryNames !== 'undefined'){
+            //categories for detailed strategic indicators
+            if (factorCategoryNames.length !== 0) catName = getFactorCategory(factorCategoryNames[i], factorDB);
+            else catName = DEFAULT_CATEGORY;
 
         } else {
-            //categories for detailed strategic indicators
-            cat = categories;
+            catName = DEFAULT_CATEGORY
         }
+
+        cat = categories.filter( function (c) {
+            return c.name === catName;
+        });
 
         for (var k = cat.length-1; k >= 0; --k) {
             var fill = cat.length-1-k;
@@ -148,16 +152,16 @@ function drawChart() {
 
 // if the factors have the same category, this category is returned
 // else the default category is returned
-function getFactorCategory(factors) {
-    let f1 = metricsDB.find( function (elem) {
-        return elem.name === factors[0]
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0]
     });
 
-    if (factors.length === 1) return f1.categoryName;
+    if (factorNames.length === 1) return f1.categoryName;
 
-    for(let i = 1; i < factors.length; ++i){
-        let f2 = metricsDB.find( function (elem) {
-            return elem.name === factors[i]
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i]
         });
         if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
         f1 = f2;

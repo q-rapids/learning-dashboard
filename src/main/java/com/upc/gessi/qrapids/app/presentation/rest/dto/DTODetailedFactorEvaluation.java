@@ -24,6 +24,7 @@ public class DTODetailedFactorEvaluation {
     private int mismatchDays;
     private List<String> missingMetrics;
     private List<DTOMetricEvaluation> metrics;
+    private String type;
 
     /**
      * Constructor of the DTO of Quality Factors
@@ -32,11 +33,12 @@ public class DTODetailedFactorEvaluation {
      * @param name The parameter defines the name of the Factor
      * @param metrics The parameter define the set of metrics that compose the Quality Factors
      */
-    public DTODetailedFactorEvaluation(String id, String description, String name, List<DTOMetricEvaluation> metrics) {
+    public DTODetailedFactorEvaluation(String id, String description, String name, List<DTOMetricEvaluation> metrics,String type) {
         this.id = id;
         this.name = name;
         this.metrics = metrics;
         this.description=description;
+        this.type=type;
     }
 
     /**
@@ -104,4 +106,8 @@ public class DTODetailedFactorEvaluation {
     public void setDescription(String description) { this.description=description;}
 
     public String getDescription() {return this.description;}
+
+    public void setType(String type) {this.type=type;}
+
+    public String getType() {return type;}
 }

@@ -38,7 +38,7 @@ public class ProductsController {
 		for (Product p : productsBD) {
 			List<DTOProject> relatedProjects = new Vector<DTOProject>();
 			for (Project proj : p.getProjects()) {
-				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
+				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId(), proj.getTaigaURL(), proj.getGithubURL(), proj.getIsGlobal());
 				relatedProjects.add(project);
 			}
 			Collections.sort(relatedProjects, new Comparator<DTOProject>() {
@@ -65,7 +65,7 @@ public class ProductsController {
 			Product product = productOptional.get();
 			List<DTOProject> relatedProjects = new Vector<DTOProject>();
 			for (Project proj : product.getProjects()) {
-				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
+				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId(), proj.getTaigaURL(), proj.getGithubURL(), proj.getIsGlobal());
 				relatedProjects.add(project);
 			}
 			Collections.sort(relatedProjects, new Comparator<DTOProject>() {

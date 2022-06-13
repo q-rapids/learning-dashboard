@@ -148,7 +148,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -168,6 +168,10 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
+                .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -185,7 +189,15 @@ public class ProjectsTest {
                                 fieldWithPath("[].active")
                                         .description("Is an active project?"),
                                 fieldWithPath("[].backlogId")
-                                        .description("Project identifier in the backlog"))
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("[].taigaURL")
+                                        .description("Taiga repository URL"),
+                                fieldWithPath("[].githubURL")
+                                        .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("[].isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions
@@ -201,7 +213,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
         Long profileID = 1L;
@@ -223,6 +235,10 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
+                .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("profile/projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -240,7 +256,15 @@ public class ProjectsTest {
                                 fieldWithPath("[].active")
                                         .description("Is an active project?"),
                                 fieldWithPath("[].backlogId")
-                                        .description("Project identifier in the backlog"))
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("[].taigaURL")
+                                        .description("Taiga repository URL"),
+                                fieldWithPath("[].githubURL")
+                                        .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("[].isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions
@@ -260,7 +284,7 @@ public class ProjectsTest {
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, "testURL1", "testURL2",false);
 
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
 
@@ -366,7 +390,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
 
         when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
 
@@ -383,6 +407,10 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$.logo", is(nullValue())))
                 .andExpect(jsonPath("$.active", is(active)))
                 .andExpect(jsonPath("$.backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$.taigaURL", is("testURL1")))
+                .andExpect(jsonPath("$.githubURL", is("testURL2")))
+                .andExpect(jsonPath("$.isGlobal",is(false)))
+                .andExpect(jsonPath("$.students", is(nullValue())))
                 .andDo(document("projects/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -404,7 +432,15 @@ public class ProjectsTest {
                                 fieldWithPath("active")
                                         .description("Is an active project?"),
                                 fieldWithPath("backlogId")
-                                        .description("Project identifier in the backlog"))
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("taigaURL")
+                                        .description("Taiga repository URL"),
+                                fieldWithPath("githubURL")
+                                        .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("students")
+                                        .description("Students of the project"))
                 ));
 
         // Verify mock interactions

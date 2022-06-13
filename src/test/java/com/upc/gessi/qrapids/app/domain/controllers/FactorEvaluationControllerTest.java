@@ -57,7 +57,7 @@ public class FactorEvaluationControllerTest {
         when(factorCategoryRepository.findAll()).thenReturn(factorCategoryList);
 
         // When
-        List<QFCategory> factorCategoryListFound = factorsController.getFactorCategories();
+        List<QFCategory> factorCategoryListFound = factorsController.getFactorCategories(null);
 
         // Then
         assertEquals(factorCategoryList.size(), factorCategoryListFound.size());
@@ -72,21 +72,22 @@ public class FactorEvaluationControllerTest {
         List<Map<String, String>> categories = domainObjectsBuilder.buildRawFactorCategoryList();
 
         // When
-        factorsController.newFactorCategories(categories);
+        factorsController.newFactorCategories(categories, "TEST");
 
         // Then
-        verify(factorCategoryRepository, times(1)).deleteAll();
+        //verify(factorCategoryRepository, times(1)).deleteAll("TEST");
+        verify(factorCategoryRepository, times(1)).existsByName("TEST");
 
         ArgumentCaptor<QFCategory> factorCategoryArgumentCaptor = ArgumentCaptor.forClass(QFCategory.class);
         verify(factorCategoryRepository, times(3)).save(factorCategoryArgumentCaptor.capture());
         List<QFCategory> factorCategoryListSaved = factorCategoryArgumentCaptor.getAllValues();
-        assertEquals(categories.get(0).get("name"), factorCategoryListSaved.get(0).getName());
+        assertEquals(categories.get(0).get("type"), factorCategoryListSaved.get(0).getType());
         assertEquals(categories.get(0).get("color"), factorCategoryListSaved.get(0).getColor());
         assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, factorCategoryListSaved.get(0).getUpperThreshold(), 0f);
-        assertEquals(categories.get(1).get("name"), factorCategoryListSaved.get(1).getName());
+        assertEquals(categories.get(1).get("type"), factorCategoryListSaved.get(1).getType());
         assertEquals(categories.get(1).get("color"), factorCategoryListSaved.get(1).getColor());
         assertEquals(Float.parseFloat(categories.get(1).get("upperThreshold")) / 100f, factorCategoryListSaved.get(1).getUpperThreshold(), 0f);
-        assertEquals(categories.get(2).get("name"), factorCategoryListSaved.get(2).getName());
+        assertEquals(categories.get(2).get("type"), factorCategoryListSaved.get(2).getType());
         assertEquals(categories.get(2).get("color"), factorCategoryListSaved.get(2).getColor());
         assertEquals(Float.parseFloat(categories.get(2).get("upperThreshold")) / 100f, factorCategoryListSaved.get(2).getUpperThreshold(), 0f);
     }
@@ -99,7 +100,7 @@ public class FactorEvaluationControllerTest {
         categories.remove(1);
 
         // Throw
-        factorsController.newFactorCategories(categories);
+        factorsController.newFactorCategories(categories, "Default");
     }
 
     @Test

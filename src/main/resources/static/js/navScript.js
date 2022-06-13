@@ -12,16 +12,17 @@ window.addEventListener('click', (event) => {
 
 function refreshcookie() {
     const d = new Date();
-    if (d.getTime()-lastresfresh>300000 && d.getTime()-lastresfresh<900000) {
+    if(d.getTime()-lastresfresh>=900000) {
+        window.location.reload();
+    }
+    else if (d.getTime()-lastresfresh>300000 && d.getTime()-lastresfresh<900000) {
         lastresfresh= d.getTime();
         token = getCookie("xFOEto4jYAjdMeR3Pas6_");
         d.setTime(d.getTime() + (900 * 1000));
         let expires = "expires=" + d.toUTCString();
         document.cookie = "xFOEto4jYAjdMeR3Pas6_" + "=" + token + ";" + expires + ";path=/";
     }
-    if(d.getTime()-lastresfresh>=900000) {
-        window.location.reload();
-    }
+
 }
 
 
@@ -373,6 +374,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "usergroups";
     else if (currentURL.match("/Updates"))
         id = "Updates";
+    else if (currentURL.match("/Iterations"))
+        id = "Iterations";
     highlightAndSaveCurrentConfiguration(id);
 }
 
@@ -543,6 +546,8 @@ $("#MetricsConfig").attr("href", serverUrl + "/Metrics/Configuration");
 $("#ProductsConfig").attr("href", serverUrl + "/Products/Configuration");
 
 $("#ProfilesConfig").attr("href", serverUrl + "/Profiles/Configuration");
+
+$("#IterationsConfig").attr("href", serverUrl + "/Iterations/Configuration");
 
 $("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 
