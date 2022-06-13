@@ -434,7 +434,7 @@ function drawChart() {
             divF.style.marginBottom = "1em";
 
             if (groupByFactor && factorType === "Taiga") {
-                if (urlTaiga !== undefined) {
+                if (urlTaiga !== undefined && urlTaiga!==null) {
                     var b = document.createElement('a')
                     b.href=urlTaiga;
                     var icon = document.createElement("img");
@@ -447,7 +447,7 @@ function drawChart() {
                 }
             }
             if (groupByFactor && factorType === "Github") {
-                if (urlGithub !== undefined) {
+                if (urlGithub !== undefined && urlGithub !== null) {
                     var list = urlGithub.split(";");
                     var b = document.createElement('a')
                     b.href=list[0];

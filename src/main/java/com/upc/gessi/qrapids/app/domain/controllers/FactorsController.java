@@ -240,6 +240,7 @@ public class FactorsController {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
         qualityFactor = new Factor (id, name, description, project);
+        qualityFactor.setCategoryName("Default");
         qualityFactorRepository.save(qualityFactor);
         boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
         qualityFactor.setWeighted(weighted);
