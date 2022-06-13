@@ -30,9 +30,9 @@ var metricsDB = [];
 
 var urlLink;
 
-var groupByFactor = true;
-var groupByStudent = false;
-var groupByTeam = false;
+var groupByFactor = sessionStorage.getItem("groupByFactor") === "true";
+var groupByStudent = sessionStorage.getItem("groupByStudent") === "true";
+var groupByTeam = sessionStorage.getItem("groupByTeam") === "true";
 
 function setUpGroupSelector(){
 

@@ -116,7 +116,7 @@ function getCurrentProjects() {
     });
 }
 
-function getData() {
+function getDatabyFactor() {
     getDecisions();
     getMetricsDB();
     getFactors();
@@ -452,8 +452,12 @@ function filterGlobalFactor (factors) {
     return factors;
 }
 
+function getData () {
+    if(!groupByStudent) getDatabyFactor();
+    else getDataStudents();
+}
+
 window.onload = function() {
     getCurrentProjects();
-    if(!groupByStudent) getData();
-    else getDataStudents();
+    getData();
 };

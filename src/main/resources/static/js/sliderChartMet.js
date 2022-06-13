@@ -286,5 +286,6 @@ function sortDataAlphabetically (metrics) {
 }
 
 window.onload = function() {
+    $('#groupBySelector').hide();
     getAllMetrics();
 }
