@@ -56,14 +56,18 @@ public class StudentsController {
             List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
             List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
             List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
+            List<DTOMetricEvaluation> metricListNoSource = new ArrayList<>();
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
                 if("Taiga".equals(typeOfFactor)) metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
                 else if("Github".equals(typeOfFactor)) metricListGithub.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
-                else metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                else metricListNoSource.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
             }
             for(DTOMetricEvaluation dto : metricListTaiga) {
                 metricListGithub.add(dto);
+            }
+            for(DTOMetricEvaluation list : metricListNoSource) {
+                metricListGithub.add(list);
             }
             DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub);
             dtoStudentMetrics.add(temp);
@@ -82,13 +86,17 @@ public class StudentsController {
             Integer number = metrics.size();
             List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
             List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
+            List<DTOMetricEvaluation> metricListNoSource = new ArrayList<>();
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
                 if("Taiga".equals(typeOfFactor)) metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
                 else if("Github".equals(typeOfFactor)) metricListGithub.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
-                else metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                else metricListNoSource.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
             }
             for(DTOMetricEvaluation list : metricListTaiga) {
+                metricListGithub.add(list);
+            }
+            for(DTOMetricEvaluation list : metricListNoSource) {
                 metricListGithub.add(list);
             }
             DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub, number);
