@@ -57,9 +57,10 @@ public class StudentsController {
             List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
             List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
             for(Metric m : metrics) {
-                String typeOffactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
-                if(typeOffactor.equals("Taiga")) metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
-                else if(typeOffactor.equals("Github")) metricListGithub.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
+                if("Taiga".equals(typeOfFactor)) metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                else if("Github".equals(typeOfFactor)) metricListGithub.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                else metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
             }
             for(DTOMetricEvaluation dto : metricListTaiga) {
                 metricListGithub.add(dto);
@@ -82,9 +83,10 @@ public class StudentsController {
             List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
             List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
             for(Metric m : metrics) {
-                String typeOffactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
-                if(typeOffactor.equals("Taiga")) metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
-                else if(typeOffactor.equals("Github")) metricListGithub.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
+                if("Taiga".equals(typeOfFactor)) metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                else if("Github".equals(typeOfFactor)) metricListGithub.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                else metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
             }
             for(DTOMetricEvaluation list : metricListTaiga) {
                 metricListGithub.add(list);

@@ -15,12 +15,12 @@ function refreshcookie() {
     if(d.getTime()-lastresfresh>=900000) {
         window.location.reload();
     }
-    else if (d.getTime()-lastresfresh>300000 && d.getTime()-lastresfresh<900000) {
+    else {
         lastresfresh= d.getTime();
-        token = getCookie("xFOEto4jYAjdMeR3Pas6_");
+        /*token = getCookie("xFOEto4jYAjdMeR3Pas6_");
         d.setTime(d.getTime() + (900 * 1000));
         let expires = "expires=" + d.toUTCString();
-        document.cookie = "xFOEto4jYAjdMeR3Pas6_" + "=" + token + ";" + expires + ";path=/";
+        document.cookie = "xFOEto4jYAjdMeR3Pas6_" + "=" + token + ";" + expires + ";path=/";*/
     }
 
 }
@@ -795,11 +795,13 @@ function fillupdateModal() {
 profileQualityLevelFilter();
 
 window.onload = function() {
+    refreshcookie()
     if(!window.location.hash) {
         window.location = window.location + '#loaded';
         if (!window.location.href.match("/QualityAlerts"))  // correct alerts new status bug
             window.location.reload();
     }
+
 }
 
 var isAdmin=sessionStorage.getItem("isAdmin");

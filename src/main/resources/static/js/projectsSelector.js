@@ -114,6 +114,7 @@ function getProjects(profileID) {
             var prj_externalId = [];
             var ap = sessionStorage.getItem("allowedProjects");
             for (i = 0; i < data.length; i++) {
+                console.log(ap)
                 if(ap.includes(data[i].externalId)) prj_externalId.push(data[i].externalId);
             }
             sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
@@ -183,11 +184,11 @@ function getCookie(cname) {
 
 function getActiveUserProjects() {
 
-    token = getCookie("xFOEto4jYAjdMeR3Pas6_");
-    if(token!="") {
+    //token = getCookie("xFOEto4jYAjdMeR3Pas6_");
+    //if(token!="") {
         jQuery.ajax({
             dataType: "json",
-            url: "../api/allowedprojects?token="+token,
+            url: "../api/allowedprojects",
             cache: false,
             type: "GET",
             async: false,
@@ -198,7 +199,7 @@ function getActiveUserProjects() {
                 console.log("ERROR");
             }
         });
-    }
+    //}
 
 }
 

@@ -11,7 +11,7 @@ function warningUtils(type, text) {
         $("#warningModalBody").append('<img class="icons" src="../icons/error.jpg" style="padding-left:15px;" >');
     }
 
-    $("#warningModalBody").append('<span style="padding-left:15px;font-size:15px">' + "&nbsp;" + text + '</span>');
+    $("#warningModalBody").append('<span style="padding-left:10px;font-size:15px">' + "&nbsp;" + text + '</span>');
     $("#warningModal").modal();
 }
 

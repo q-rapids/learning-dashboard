@@ -658,9 +658,10 @@ function moveAllMetricItemsRight() {
 };
 
 function showMetrics(studentId) {
+	var externalId =document.getElementById(currentSelectionId).innerHTML;
 	jQuery.ajax({
 		dataType: "json",
-		url: "../api/metrics?prj="+sessionStorage.getItem("prj"),
+		url: "../api/metrics?prj="+externalId,
 		cache: false,
 		type: "GET",
 		async: false,

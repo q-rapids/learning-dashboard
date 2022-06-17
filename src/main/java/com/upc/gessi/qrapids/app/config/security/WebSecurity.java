@@ -54,6 +54,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		String public_and_secure = ( this.securityEnable )? "/resources/**" : "/**";
         String public_api = ( this.apiEnable )?  "/api/**" : "/fonts/**";
 
+
 		http.cors().and().csrf().disable().authorizeRequests()
 
 				// View Filter's exception

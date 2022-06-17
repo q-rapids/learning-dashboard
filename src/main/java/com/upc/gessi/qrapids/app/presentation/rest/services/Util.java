@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
+import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,11 +21,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
+
 @RestController
 public class Util {
 
     @Autowired
     private UsersController usersController;
+
+    private AuthTools authTools;
 
     @Value("${rawdata.dashboard}")
     private String rawdataDashboard;
@@ -144,9 +150,12 @@ public class Util {
 
     @GetMapping("/api/allowedprojects")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getUserFromToken(@RequestParam(value = "token", required = false) String token, @RequestParam(value = "id", required = false) Long id) {
+    public List<String> getUserFromToken(@RequestParam(value = "id", required = false) Long id, HttpServletRequest request) {
         try {
-            List<Project> l = new ArrayList<>(usersController.getAllowedProjects(token,id));
+            AuthTools authTools = new AuthTools();
+            String token = authTools.getCookieToken(request, COOKIE_STRING);
+            //String token = "";
+            List<Project> l = new ArrayList<>(usersController.getAllowedProjects(token, id));
             List list = new ArrayList<String>();
             for(int i=0; i<l.size(); ++i) {
                 list.add(l.get(i).getExternalId());
