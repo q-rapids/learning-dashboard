@@ -544,7 +544,7 @@ $("#dismissMetricsButton").click(function () {
 
 $("#acceptMetricsButton").click(function () {
 
-	var nameText = document.getElementById("studentName"+selectedStudent).textContent
+	var nameText = document.getElementById("studentName"+selectedStudent).innerText
 	console.log("=======================================================================")
 	console.log(nameText)
 	if(nameText==="") {
