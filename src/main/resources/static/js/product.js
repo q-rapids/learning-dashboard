@@ -559,8 +559,8 @@ $("#acceptMetricsButton").click(function () {
 		if(userSelectedMetrics=="") {
 			userSelectedMetrics=","
 		}
-		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).textContent
-		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).textContent
+		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).innerText
+		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerText
 		if(taigaNameText === "") taigaName="empty"
 		if(githubNameText === "") githubName="empty"
 		var formData = new FormData();
