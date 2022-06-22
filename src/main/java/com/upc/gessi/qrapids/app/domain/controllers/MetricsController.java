@@ -91,6 +91,7 @@ public class MetricsController {
             Metric metricsSaved = metricRepository.findByExternalIdAndProjectId(metric.getId(),project.getId());
             if (metricsSaved == null) {
                 Metric newMetric = new Metric(metric.getId(), metric.getName(),metric.getDescription(), project, "Default");
+                newMetric.setStudent(null);
                 metricRepository.save(newMetric);
             }
         }
