@@ -36,7 +36,7 @@ function getProjectId () {
 function getHistoricSprintDates () {
 
     let currentProjectId = getProjectId();
-    let url = "/api/project/" + currentProjectId + "/historicdates";
+    let url = "/api/project/" + currentProjectId + "/iterations";
     let ret;
     jQuery.ajax({
         url: url,

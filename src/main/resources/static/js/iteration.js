@@ -29,7 +29,7 @@ function getProjects() {
 }
 
 function buildIterationList() {
-    var url = "/api/project/historicdates";
+    var url = "/api/iterations";
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -114,7 +114,7 @@ $('#iterationSaveBtn').click( function () {
         'iteration': iteration
     }
 
-    let url = '../api/project/historicdates';
+    let url = '../api/iterations';
     if(httpMethod === 'PUT') url = url + '/' + currentIterationId
 
     $.ajax({
@@ -139,7 +139,7 @@ $('#iterationSaveBtn').click( function () {
 
 $('#iterationDeleteBtn').click( function () {
     if (confirm("Are you sure you want to delete this iteration?")) {
-        var url = "/api/project/historicdates/" + currentIterationId;
+        var url = "/api/iterations/" + currentIterationId;
         if (serverUrl) {
             url = serverUrl + url;
         }
@@ -172,10 +172,10 @@ function clickOnTree(e){
     $('#iterationDeleteBtn').show();
     $('#iterationName').val(iterationData.name);
     $('#iterationLabel').val(iterationData.label);
-    $('#iterationFromDate').val(iterationData.from_date);
-    $('#iterationToDate').val(iterationData.to_date);
     $('#iterationFromDate').datepicker(config);
     $('#iterationToDate').datepicker(config);
+    $('#iterationFromDate').val(iterationData.from_date);
+    $('#iterationToDate').val(iterationData.to_date);
 
     if (projects.length > 0) {
         showProjects();
