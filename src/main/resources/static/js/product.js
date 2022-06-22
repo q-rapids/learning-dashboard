@@ -544,7 +544,9 @@ $("#dismissMetricsButton").click(function () {
 
 $("#acceptMetricsButton").click(function () {
 
-	var nameText = document.getElementById("studentName"+selectedStudent).innerHTML
+	var nameText = document.getElementById("studentName"+selectedStudent).textContent
+	console.log("=======================================================================")
+	console.log(nameText)
 	if(nameText==="") {
 		$("#metricsModal").modal("hide");
 		warningUtils("Warning", "The name is empty");
@@ -557,8 +559,8 @@ $("#acceptMetricsButton").click(function () {
 		if(userSelectedMetrics=="") {
 			userSelectedMetrics=","
 		}
-		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).innerHTML
-		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerHTML
+		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).textContent
+		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).textContent
 		if(taigaNameText === "") taigaName="empty"
 		if(githubNameText === "") githubName="empty"
 		var formData = new FormData();
