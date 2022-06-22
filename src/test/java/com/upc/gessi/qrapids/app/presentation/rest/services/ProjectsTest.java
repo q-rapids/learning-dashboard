@@ -279,6 +279,9 @@ public class ProjectsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
+        String taigaURl = "taigaURl";
+        String githubURL = "githubURL";
+        Boolean isGlobal = false;
         // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
@@ -296,6 +299,9 @@ public class ProjectsTest {
                 .param("name", projectName)
                 .param("description", projectDescription)
                 .param("backlogId", projectBacklogId)
+                .param("taigaURL", taigaURl)
+                .param("githubURL", githubURL)
+                .param("isGlobal", String.valueOf(isGlobal))
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -317,7 +323,13 @@ public class ProjectsTest {
                                 parameterWithName("description")
                                         .description("Project description"),
                                 parameterWithName("backlogId")
-                                        .description("Project identifier in the backlog")),
+                                        .description("Project identifier in the backlog"),
+                                parameterWithName("taigaURL")
+                                        .description("Taiga repository URL"),
+                                parameterWithName("githubURL")
+                                        .description("Github repositories URLs separated by a ';'"),
+                                parameterWithName("isGlobal")
+                                        .description("Is a global project?")),
                         requestParts(
                                 partWithName("logo")
                                         .description("Project logo file")
@@ -346,6 +358,9 @@ public class ProjectsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
+        String taigaURl = "taigaURl";
+        String githubURL = "githubURL";
+        Boolean isGlobal = false;
 // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
@@ -361,6 +376,9 @@ public class ProjectsTest {
                 .param("name", projectName)
                 .param("description", projectDescription)
                 .param("backlogId", projectBacklogId)
+                .param("taigaURL", taigaURl)
+                .param("githubURL", githubURL)
+                .param("isGlobal", String.valueOf(isGlobal))
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
