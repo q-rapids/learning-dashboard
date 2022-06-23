@@ -363,7 +363,8 @@ function sortDataByFactor(data) {
         for(let j = 0; j < factors[i].metrics.length; ++j){
             let elems = data.filter( e => e.id === factors[i].metrics[j].id);
             resultData = resultData.concat(elems);
-            writtenIds.add(elems[0].id);
+            if (elems[0])
+                writtenIds.add(elems[0].id);
         }
     }
     writtenIds = Array.from(writtenIds);
