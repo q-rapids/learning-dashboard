@@ -545,8 +545,6 @@ $("#dismissMetricsButton").click(function () {
 $("#acceptMetricsButton").click(function () {
 
 	var nameText = document.getElementById("studentName"+selectedStudent).innerText
-	console.log("=======================================================================")
-	console.log(nameText)
 	if(nameText==="") {
 		$("#metricsModal").modal("hide");
 		warningUtils("Warning", "The name is empty");
@@ -563,10 +561,11 @@ $("#acceptMetricsButton").click(function () {
 		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerText
 		if(taigaNameText === "") taigaName="empty"
 		if(githubNameText === "") githubName="empty"
+		var externalId =document.getElementById(currentSelectionId).innerHTML;
 		var formData = new FormData();
 		formData.append("studentId", selectedStudent)
 		formData.append("userTemp", userSelectedMetrics)
-		formData.append("projectId", sessionStorage.getItem("prj"))
+		formData.append("projectId", externalId)
 		formData.append("studentsList", nameText+","+taigaNameText+","+githubNameText)
 		jQuery.ajax({
 			data: formData,
