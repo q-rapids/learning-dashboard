@@ -447,8 +447,8 @@ function filterGlobalFactor (factors) {
 
 function sortFactors (factors) {
     function compare(a, b){
-        if (a.type === b.type) return a.name > b.name;
-        else return a.type !== "Github";
+        if (a.type === b.type) return a.name > b.name ? 1 : -1;
+        else return a.type !== "Github" ? 1 : -1;
     }
     factors.sort(compare);
 }
