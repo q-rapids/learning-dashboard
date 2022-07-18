@@ -159,6 +159,7 @@ function drawChart() {
                         if (tooltipModel.body) {
                             var titleLines = tooltipModel.title || [];
                             var bodyLines = tooltipModel.body.map(getBody);
+                            let afterBodyLines = tooltipModel.afterBody || [];
 
                             var innerHtml = '<thead>';
 
@@ -178,6 +179,11 @@ function drawChart() {
                                 else
                                     innerHtml += '<tr><td>' + span + body + '</td></tr>';
                             });
+
+                            afterBodyLines.forEach(function (afterBodyLine) {
+                                innerHtml += '<tr><th>' + afterBodyLine + '</th></tr>';
+                            })
+
                             innerHtml += '</tbody>';
 
                             var tableRoot = tooltipEl.querySelector('table');
@@ -197,6 +203,31 @@ function drawChart() {
                         tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
                         tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
                         tooltipEl.style.pointerEvents = 'none';
+                    },
+                    callbacks: {
+                        afterBody: function (tooltipItem, data) {
+                            if(typeof rationales !== 'undefined') {
+                                //the standard deviation rationale is not shown
+                                if(!data.datasets[0].label.toLowerCase().includes('standard deviation')) {
+                                    const newLines = [];
+                                    let rationale = data.datasets[0].rationale[tooltipItem[0].index];
+
+                                    let values = rationale.substring(
+                                        rationale.indexOf('executionResults: '),
+                                        rationale.indexOf('\nformula: ')
+                                    )
+                                    newLines.push(values);
+
+                                    let formula = rationale.substring(
+                                        rationale.indexOf('formula: '),
+                                        rationale.indexOf('\nvalue: ')
+                                    )
+                                    newLines.push(formula);
+
+                                    return newLines;
+                                }
+                            }
+                        }
                     }
                 },
                 annotation: {
@@ -245,8 +276,10 @@ function drawChart() {
                 showLine: showLine,
                 pointStyle: pointStyle,
                 radius: pointRadius,
-                borderWidth: borderWidth
+                borderWidth: borderWidth,
             });
+
+            if(typeof rationales !== 'undefined') c.data.datasets[0]['rationale'] = rationales[i][j]
 
             if (!showLine) {
                 c.options.tooltips.callbacks = {

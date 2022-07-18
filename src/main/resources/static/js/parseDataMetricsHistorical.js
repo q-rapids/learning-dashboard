@@ -22,6 +22,7 @@ let factors = [];
 let students = [];
 var orderedMetricsDB = [];
 var decisions = new Map();
+let rationales = [];
 
 let printMetrics = true;
 let global = false;
@@ -125,6 +126,7 @@ function getDatabyFactor() {
     ids = [];
     value = [];
     labels = [];
+    rationales = [];
     //get data from API
     jQuery.ajax({
         dataType: "json",
@@ -147,6 +149,7 @@ function getDatabyFactor() {
             else sortDataAlphabetically(data);
             j = 0;
             var line = [];
+            let rationaleLine = [];
             var decisionsAdd = [];
             var decisionsIgnore = [];
             if (data[j]) {
@@ -167,6 +170,11 @@ function getDatabyFactor() {
                     }
                     value.push(val);
                     line = [];
+
+                    let rat = [rationaleLine]
+                    rationales.push(rat)
+                    rationaleLine = [];
+
                     decisionsAdd = [];
                     decisionsIgnore = [];
                     last = data[j].id;
@@ -207,6 +215,7 @@ function getDatabyFactor() {
                         x: data[j].date,
                         y: data[j].value
                     });
+                    rationaleLine.push(data[j].rationale)
                 }
                 ++j;
             }
@@ -218,6 +227,9 @@ function getDatabyFactor() {
                 if (decisionsIgnore.length > 0)
                     val.push(decisionsIgnore);
                 value.push(val);
+
+                let rat = [rationaleLine];
+                rationales.push(rat);
             }
             sortMetricsDB();
             getMetricsCategories();
@@ -235,6 +247,7 @@ function getDataStudents() {
     ids = [];
     value = [];
     labels = [];
+    rationales = [];
     var prj = sessionStorage.getItem("prj")
     //get data from API
     jQuery.ajax({
@@ -258,6 +271,7 @@ function getDataStudents() {
                 data = response[i].metrics
                 j = 0;
                 var line = [];
+                let rationaleLine = [];
                 var decisionsAdd = [];
                 var decisionsIgnore = [];
                 if (data[j]) {
@@ -278,6 +292,11 @@ function getDataStudents() {
                         }
                         value.push(val);
                         line = [];
+
+                        let rat = [rationaleLine]
+                        rationales.push(rat)
+                        rationaleLine = [];
+
                         decisionsAdd = [];
                         decisionsIgnore = [];
                         last = data[j].id;
@@ -318,6 +337,7 @@ function getDataStudents() {
                             x: data[j].date,
                             y: data[j].value
                         });
+                        rationaleLine.push(data[j].rationale)
                     }
                     ++j;
                 }
@@ -328,6 +348,9 @@ function getDataStudents() {
                     if (decisionsIgnore.length > 0)
                         val.push(decisionsIgnore);
                     value.push(val);
+
+                    let rat = [rationaleLine];
+                    rationales.push(rat);
                 }
                 ++i;
             }
