@@ -142,6 +142,21 @@ function getDatabyFactor() {
             var data = response;
             console.log("MY Data");
             console.log(data);
+
+            var factorsAux =[]
+            var found=false;
+            for(let k =0; k<factors.length;++k) {
+                found=false;
+                for(let h=0; h<data.length && !found; ++h) {
+                    for(let g=0; g<data[h].qualityFactors.length && !found; ++g) {
+                        if(factors[k].id===data[h].qualityFactors[g]) {
+                            factorsAux.push(factors[k])
+                            found=true;
+                        }
+                    }
+                }
+            }
+            factors=factorsAux
             if (getParameterByName('id').length !== 0) {
                 data = response[0].metrics;
             }
