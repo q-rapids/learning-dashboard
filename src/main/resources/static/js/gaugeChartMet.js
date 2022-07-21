@@ -453,14 +453,74 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
             return cat.name === DEFAULT_CATEGORY;
         });
 
-    metricCategories.forEach(function (category) {
-        console.log(category);
-        var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
-        svg.append("path")
-            .datum({endAngle: threshold})
-            .style("fill", category.color)
-            .attr("d", arc);
-    });
+    if (metricCategories[0].name === "GradientTest") {
+
+        arc = d3.arc()      //create arc starting at -90 degreees
+            .innerRadius(70*width/250)
+            .outerRadius(110*width/250)
+
+        var number = 0
+        //get threshold
+        var threshold = metricCategories[0].upperThreshold * 180
+        var colors = []
+        //separate hex into rgb components
+        var hex = metricCategories[0].color
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        var color_red = parseInt(result[1], 16)
+        var color_green = parseInt(result[2], 16)
+        var color_blue = parseInt(result[3], 16)
+        // 180 degrees
+        d3.range(180).forEach(function(i) {
+            // convert to radians
+            var j = i - 90
+            var start = j * (Math.PI / 180),
+                end = (j + 1) * (Math.PI / 180);
+            //values that go from the color to black, olny used when we reach the threshold
+            var c_r = color_red - ((i - threshold) * color_red / (180 - threshold))
+            var c_g = color_green - ((i - threshold) * color_green / (180 - threshold))
+            var c_b = color_blue - ((i - threshold) * color_blue / (180 - threshold))
+            //we add the start angle, the end angle and the color of each arc
+            if (i < threshhold) {
+                colors.push({
+                    startAngle: start,
+                    endAngle: end,
+                    fill: d3.rgb(i / threshold * color_red, i / threshold * color_green, i / threshold * color_blue).toString()
+                });
+            } else {
+                colors.push({
+                    startAngle: start,
+                    endAngle: end,
+                    fill: d3.rgb(c_r, c_g, c_b).toString()
+                });
+            }
+        });
+        // add arcs
+        console.log(colors)
+        svg.selectAll('.arc')
+            .data(colors)
+            .enter()
+            .append('path')
+            .attr('class', 'arc')
+            .attr('d', arc)
+            .style('fill', function(d) {
+                return d.fill;
+            })
+            .style('stroke', function(d) {
+                return d.fill;
+            });
+
+    }
+
+   else {
+        metricCategories.forEach(function (category) {
+            console.log(category);
+            var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
+            svg.append("path")
+                .datum({endAngle: threshold})
+                .style("fill", category.color)
+                .attr("d", arc);
+        });
+    }
 
     //create needle
     var arc2 = d3.arc()
