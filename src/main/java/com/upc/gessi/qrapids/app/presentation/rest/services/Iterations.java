@@ -23,7 +23,7 @@ public class Iterations {
 
     @GetMapping("api/iterations")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOHistoricDate> getHistoricChartDates () {
+    public List<DTOHistoricDate> getIterations () {
         try {
             return iterationsController.getAllIterations();
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class Iterations {
 
     @PostMapping("api/iterations")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newHistoricChartDates (@RequestBody HistoricDateAPIBody body) {
+    public void newIterations(@RequestBody HistoricDateAPIBody body) {
         try {
             if(body.getIteration() == null || body.getProject_ids() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             iterationsController.createIteration(body.getIteration(), body.getProject_ids());
@@ -46,7 +46,7 @@ public class Iterations {
 
     @PutMapping("api/iterations/{iteration_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateHistoricChartDates (@RequestBody HistoricDateAPIBody body, @PathVariable Long iteration_id) {
+    public void updateIterations(@RequestBody HistoricDateAPIBody body, @PathVariable Long iteration_id) {
         try {
             if(body.getIteration() == null || body.getProject_ids() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             iterationsController.updateIteration(body.getIteration(), body.getProject_ids(), iteration_id);
@@ -58,7 +58,7 @@ public class Iterations {
 
     @DeleteMapping("api/iterations/{iteration_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteHistoricChartDates (@PathVariable Long iteration_id) {
+    public void deleteIterations(@PathVariable Long iteration_id) {
         try {
             iterationsController.deleteIteration(iteration_id);
         } catch (Exception e) {

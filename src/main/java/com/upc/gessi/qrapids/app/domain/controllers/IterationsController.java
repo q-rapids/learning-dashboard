@@ -1,8 +1,8 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.exceptions.HistoricChartDatesNotFoundExeption;
-import com.upc.gessi.qrapids.app.domain.models.HistoricDates;
-import com.upc.gessi.qrapids.app.domain.models.ProjectHistoricDates;
+import com.upc.gessi.qrapids.app.domain.models.Iteration;
+import com.upc.gessi.qrapids.app.domain.models.ProjectIterations;
 import com.upc.gessi.qrapids.app.domain.repositories.Dates.HistoricDatesRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Dates.ProjectHistoricDatesRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
@@ -24,12 +24,12 @@ public class IterationsController {
 
     public DTOHistoricDate getIterationsByIterationId(Long date_id) throws HistoricChartDatesNotFoundExeption {
         List<Long> project_ids = new ArrayList<>();
-        Optional<HistoricDates> historicDate = historicDatesRepository.findById(date_id);
+        Optional<Iteration> historicDate = historicDatesRepository.findById(date_id);
         if(!historicDate.isPresent()){
             throw new HistoricChartDatesNotFoundExeption();
         }
-        List<ProjectHistoricDates> projectHistoricDates = projectHistoricDatesRepository.findByDate_id(date_id);
-        for(ProjectHistoricDates projectHistoricDate : projectHistoricDates){
+        List<ProjectIterations> projectHistoricDates = projectHistoricDatesRepository.findByDate_id(date_id);
+        for(ProjectIterations projectHistoricDate : projectHistoricDates){
             project_ids.add(projectHistoricDate.getProject_id());
         }
         return new DTOHistoricDate(historicDate.get().getId(), historicDate.get().getName(),
@@ -39,9 +39,9 @@ public class IterationsController {
 
     public List<DTOHistoricDate> getIterationsByProjectId(Long project_id) throws HistoricChartDatesNotFoundExeption {
         List<DTOHistoricDate> historicDatesDTO = new ArrayList<>();
-        List<ProjectHistoricDates> projectHistoricDates = projectHistoricDatesRepository.findByProject_id(project_id);
+        List<ProjectIterations> projectHistoricDates = projectHistoricDatesRepository.findByProject_id(project_id);
 
-        for(ProjectHistoricDates projectHistoricDate : projectHistoricDates) {
+        for(ProjectIterations projectHistoricDate : projectHistoricDates) {
             historicDatesDTO.add(getIterationsByIterationId(projectHistoricDate.getDate_id()));
         }
         return historicDatesDTO;
@@ -52,7 +52,7 @@ public class IterationsController {
         Date from_tmp = sdf.parse(dates.get("fromDate"));
         Date to_tmp = sdf.parse(dates.get("toDate"));
 
-        HistoricDates newHistoricDate = new HistoricDates();
+        Iteration newHistoricDate = new Iteration();
         newHistoricDate.setFrom_date(new java.sql.Date(from_tmp.getTime()));
         newHistoricDate.setTo_date(new java.sql.Date(to_tmp.getTime()));
         newHistoricDate.setName(dates.get("name"));
@@ -62,10 +62,10 @@ public class IterationsController {
         historicDatesRepository.flush();
 
         for(Long project_id : project_ids) {
-            ProjectHistoricDates newProjectHistoricDates = new ProjectHistoricDates();
-            newProjectHistoricDates.setDate_id(newHistoricDate.getId());
-            newProjectHistoricDates.setProject_id(project_id);
-            projectHistoricDatesRepository.save(newProjectHistoricDates);
+            ProjectIterations newProjectIterations = new ProjectIterations();
+            newProjectIterations.setDate_id(newHistoricDate.getId());
+            newProjectIterations.setProject_id(project_id);
+            projectHistoricDatesRepository.save(newProjectIterations);
         }
     }
 

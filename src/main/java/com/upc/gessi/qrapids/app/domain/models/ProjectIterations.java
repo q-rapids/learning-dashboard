@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "project_historic_dates")
-public class ProjectHistoricDates implements Serializable {
+public class ProjectIterations implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
