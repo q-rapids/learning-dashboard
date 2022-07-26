@@ -9,7 +9,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOIteration;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -116,7 +116,7 @@ public class Projects {
 
     @GetMapping("api/project/{project_id}/iterations")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOHistoricDate> getHistoricChartDates (@PathVariable Long project_id) {
+    public List<DTOIteration> getHistoricChartDates (@PathVariable Long project_id) {
         try {
             return iterationsController.getIterationsByProjectId(project_id);
         } catch (Exception e) {

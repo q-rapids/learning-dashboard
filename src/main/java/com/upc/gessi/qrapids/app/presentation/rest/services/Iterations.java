@@ -1,8 +1,8 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.IterationsController;
-import com.upc.gessi.qrapids.app.domain.models.HistoricDateAPIBody;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOHistoricDate;
+import com.upc.gessi.qrapids.app.domain.models.IterationAPIBody;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOIteration;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class Iterations {
 
     @GetMapping("api/iterations")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOHistoricDate> getIterations () {
+    public List<DTOIteration> getIterations () {
         try {
             return iterationsController.getAllIterations();
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class Iterations {
 
     @PostMapping("api/iterations")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newIterations(@RequestBody HistoricDateAPIBody body) {
+    public void newIterations(@RequestBody IterationAPIBody body) {
         try {
             if(body.getIteration() == null || body.getProject_ids() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             iterationsController.createIteration(body.getIteration(), body.getProject_ids());
@@ -46,7 +46,7 @@ public class Iterations {
 
     @PutMapping("api/iterations/{iteration_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateIterations(@RequestBody HistoricDateAPIBody body, @PathVariable Long iteration_id) {
+    public void updateIterations(@RequestBody IterationAPIBody body, @PathVariable Long iteration_id) {
         try {
             if(body.getIteration() == null || body.getProject_ids() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             iterationsController.updateIteration(body.getIteration(), body.getProject_ids(), iteration_id);
