@@ -26,12 +26,12 @@ apply plugin: 'jacoco'
 apply plugin: 'org.asciidoctor.convert'
 
 group = 'com.upc.gessi.qrapids'
-version = '2.2'
+version = '1.0'
 sourceCompatibility = 1.8
 
 war {
 	from 'README.md'
-	baseName = 'qr-dashboard'
+	baseName = 'learning-dashboard'
 	version =  version
 }
 
