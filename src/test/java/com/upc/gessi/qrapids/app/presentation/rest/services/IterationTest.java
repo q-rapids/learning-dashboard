@@ -91,7 +91,7 @@ public class IterationTest {
                 .andExpect(jsonPath("$[0].from_date", is(expectedIteration.getFrom_date().getTime())))
                 .andExpect(jsonPath("$[0].to_date", is(expectedIteration.getTo_date().getTime())))
                 .andExpect(jsonPath("$[0].project_ids.size()", is(expectedIteration.getProject_ids().size())))
-                .andDo(document(url,
+                .andDo(document("iterations/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         responseFields(

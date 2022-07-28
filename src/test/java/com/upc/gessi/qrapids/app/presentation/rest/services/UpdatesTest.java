@@ -137,6 +137,10 @@ public class UpdatesTest {
                 .andDo(document("updates/last",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("username")
+                                        .description("Connected user name")
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Update identifier"),
@@ -214,7 +218,7 @@ public class UpdatesTest {
         // Given
         when(updatesDomainController.getUpdateById(1L)).thenReturn(dtoUpdate);
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
                 .get("/api/update/{id}", 1L);
 
         this.mockMvc.perform(requestBuilder)
@@ -228,6 +232,10 @@ public class UpdatesTest {
                 .andDo(document("updates/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Update identifier")
+                        ),
                         responseFields(
                                 fieldWithPath("id")
                                         .description("Update identifier"),
@@ -305,8 +313,8 @@ public class UpdatesTest {
         DTOUpdate dtoUpdate = new DTOUpdate(1L, name, localDate, update);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/update/{id}", 1L)
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .put("/api/update/{id}", 1L)
                 .param("name", name)
                 .param("date", date)
                 .param("update", update)
@@ -323,6 +331,10 @@ public class UpdatesTest {
                 .andDo(document("updates/update",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Update identifier")
+                        ),
                         requestParameters(
                                 parameterWithName("name")
                                         .description("Update identifier"),
