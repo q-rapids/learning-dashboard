@@ -43,22 +43,43 @@ function drawChart() {
         });
         // TODO categories come diferent in Stacked Data parse
         console.log(categoriesForPolar);
-        for (var k = categoriesForPolar.length-1; k >= 0; --k) {
-            var fill = categoriesForPolar.length-1-k;
-            if (k == categoriesForPolar.length-1) fill = true;
+
+        let cat;
+        let catName;
+        if (typeof metricIds !== 'undefined'){
+            //categories for detailed factors
+            if (metricIds.length !== 0) catName = getFactorCategory(metricIds[i], metricsDB);
+            else catName = DEFAULT_CATEGORY;
+
+        } else if (typeof factorCategoryNames !== 'undefined'){
+            //categories for detailed strategic indicators
+            if (factorCategoryNames.length !== 0) catName = getFactorCategory(factorCategoryNames[i], factorDB);
+            else catName = DEFAULT_CATEGORY;
+
+        } else {
+            catName = DEFAULT_CATEGORY
+        }
+
+        cat = categoriesForPolar.filter( function (c) {
+            return c.name === catName;
+        });
+
+        for (var k = cat.length-1; k >= 0; --k) {
+            var fill = cat.length-1-k;
+            if (k == cat.length-1) fill = true;
             // TODO  categories dataset backgroundColor a param = 0.0 -> no fill
             dataset.push({
-                label: categoriesForPolar[k].name,
+                label: cat[k].name,
                 borderWidth: 2,
-                backgroundColor: hexToRgbA(categoriesForPolar[k].color, 0.0),
-                borderColor: hexToRgbA(categoriesForPolar[k].color, 1),
+                backgroundColor: hexToRgbA(cat[k].color, 0.0),
+                borderColor: hexToRgbA(cat[k].color, 1),
                 pointHitRadius: 0,
                 pointHoverRadius: 0,
                 pointRadius: 0,
                 pointBorderWidth: 0,
                 pointBackgroundColor: 'rgba(0, 0, 0, 0)',
                 pointBorderColor: 'rgba(0, 0, 0, 0)',
-                data: [].fill.call({ length: labels[i].length }, categoriesForPolar[k].upperThreshold),
+                data: [].fill.call({ length: labels[i].length }, cat[k].upperThreshold),
                 fill: fill
             })
         }
@@ -145,6 +166,33 @@ function drawChart() {
             }
         }
     }
+}
+
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        if (typeof metricsDB !== 'undefined') {
+            return elem.externalId === factorNames[0]
+        } else if (typeof factorDB !== 'undefined') {
+            return elem.name === factorNames[0]
+        }
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            if (typeof metricsDB !== 'undefined') {
+                return elem.externalId === factorNames[i]
+            } else if (typeof factorDB !== 'undefined') {
+                return elem.name === factorNames[i]
+            }
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
 }
 
 function addWarning(div, message) {

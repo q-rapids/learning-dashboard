@@ -1,7 +1,8 @@
 var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
-
+var urlTaiga;
+var urlGithub;
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
 var decisionIgnoreColor = 'rgb(189,0,0)';
 var decisionAddColor = 'rgb(62,208,62)';
@@ -29,7 +30,28 @@ Chart.plugins.register({
     }
 });
 
+function getCurrentProject() {
+
+    var urlp = "/api/projects";
+    jQuery.ajax({
+        dataType: "json",
+        url: urlp,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            for(var i=0; i<data.length; i++) {
+                if(data[i].name===sessionStorage.getItem("prj")) {
+                    urlTaiga = data[i].taigaURL;
+                    urlGithub = data[i].githubURL;
+                }
+            }
+        }
+    });
+}
+
 function drawChart() {
+    getCurrentProject()
     config = [];
     for (var i = 0; i < texts.length; ++i) {    //create config for each chart
         var c = {
@@ -96,7 +118,7 @@ function drawChart() {
                             labelString: 'value'
                         },
                         ticks: {
-                            max: 1.2,
+                            max: 1.0,
                             min: 0
                         }
                     }]
@@ -137,6 +159,7 @@ function drawChart() {
                         if (tooltipModel.body) {
                             var titleLines = tooltipModel.title || [];
                             var bodyLines = tooltipModel.body.map(getBody);
+                            let afterBodyLines = tooltipModel.afterBody || [];
 
                             var innerHtml = '<thead>';
 
@@ -156,6 +179,11 @@ function drawChart() {
                                 else
                                     innerHtml += '<tr><td>' + span + body + '</td></tr>';
                             });
+
+                            afterBodyLines.forEach(function (afterBodyLine) {
+                                innerHtml += '<tr><th>' + afterBodyLine + '</th></tr>';
+                            })
+
                             innerHtml += '</tbody>';
 
                             var tableRoot = tooltipEl.querySelector('table');
@@ -175,6 +203,31 @@ function drawChart() {
                         tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
                         tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
                         tooltipEl.style.pointerEvents = 'none';
+                    },
+                    callbacks: {
+                        afterBody: function (tooltipItem, data) {
+                            if(typeof rationales !== 'undefined') {
+                                //the standard deviation rationale is not shown
+                                if(!data.datasets[0].label.toLowerCase().includes('standard deviation')) {
+                                    const newLines = [];
+                                    let rationale = data.datasets[0].rationale[tooltipItem[0].index];
+
+                                    let values = rationale.substring(
+                                        rationale.indexOf('executionResults: '),
+                                        rationale.indexOf('\nformula: ')
+                                    )
+                                    newLines.push(values);
+
+                                    let formula = rationale.substring(
+                                        rationale.indexOf('formula: '),
+                                        rationale.indexOf('\nvalue: ')
+                                    )
+                                    newLines.push(formula);
+
+                                    return newLines;
+                                }
+                            }
+                        }
                     }
                 },
                 annotation: {
@@ -223,8 +276,10 @@ function drawChart() {
                 showLine: showLine,
                 pointStyle: pointStyle,
                 radius: pointRadius,
-                borderWidth: borderWidth
+                borderWidth: borderWidth,
             });
+
+            if(typeof rationales !== 'undefined') c.data.datasets[0]['rationale'] = rationales[i][j]
 
             if (!showLine) {
                 c.options.tooltips.callbacks = {
@@ -250,41 +305,67 @@ function drawChart() {
         //Add category lines
         if (typeof categories !== 'undefined') {
             var annotations = [];
-            var lineHighCategory = {
-                type: 'line',
-                drawTime: 'beforeDatasetsDraw',
-                mode: 'horizontal',
-                scaleID: 'y-axis-0',
-                value: categories[1].upperThreshold,
-                borderColor: categories[0].color,
-                borderWidth: 1,
-                label: {
-                    enabled: false,
-                    content: categories[0].name
-                }
-            };
-            annotations.push(lineHighCategory);
+            let metricCategory;
 
-            var lineLowCategory = {
-                type: 'line',
-                drawTime: 'beforeDatasetsDraw',
-                mode: 'horizontal',
-                scaleID: 'y-axis-0',
-                value: categories[categories.length - 1].upperThreshold,
-                borderColor: categories[categories.length - 1].color,
-                borderWidth: 1,
-                label: {
-                    enabled: false,
-                    content: categories[categories.length - 1].name
-                }
-            };
-            annotations.push(lineLowCategory);
+            if (typeof orderedMetricsDB !== 'undefined' && orderedMetricsDB.length !== 0) {
+                //for Historic Metrics (parseDataMetricsHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedMetricsDB[i].categoryName;
+                });
+            } else if (typeof orderedFactorsDB !== 'undefined' && orderedFactorsDB.length !== 0) {
+                //for Historic Factors (parseDataQFHistorical.js)
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === orderedFactorsDB[i].categoryName;
+                });
+            } else if (typeof metricsDB !== 'undefined' && metricsDB.length !== 0) {
+                //for Historic Detailed Factors (parseDataDetailedQFHistorical.js)
+                let catName = getFactorCategory(labels[i], metricsDB);
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === catName;
+                });
+
+            } else {
+                metricCategory = categories.filter(function (cat) {
+                    return cat.name === DEFAULT_CATEGORY;
+                });
+            }
+
+
+            metricCategory.sort( function (cat1, cat2) {
+                return cat1.upperThreshold - cat2.upperThreshold;
+            });
+
+            let start = 0;
+            metricCategory.forEach( function (category) {
+                let end = category.upperThreshold;
+                let lineHighCategory = {
+                    type: 'line',
+                    drawTime: 'beforeDatasetsDraw',
+                    mode: 'horizontal',
+                    scaleID: 'y-axis-0',
+                    value: (start + end) / 2,
+                    borderColor: category.color,
+                    borderWidth: 1,
+                    label: {
+                        enabled: false,
+                        content: category.name
+                    }
+                };
+                start = end;
+                annotations.push(lineHighCategory);
+            });
 
             c.options.annotation.annotations = annotations;
         }
 
         config.push(c);
     }
+
+    //threshold that marks when to change factor
+    let factorIndex = 0;
+    let factorThreshold = 0;
+    let studentIndex = 0;
+    let studentThreshold = 0;
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
@@ -341,6 +422,129 @@ function drawChart() {
         ctx.width = 350;
         ctx.height = 350;
         ctx.style.display = "inline";
+
+        let studentName;
+
+        if(printMetrics && groupByStudent) {
+            if (i === studentThreshold) {
+
+                console.log(students)
+                if (studentIndex < students.length) {
+                    studentName = students[studentIndex][0];
+                    studentThreshold += students[studentIndex][1];
+                    studentIndex++;
+                }
+                var divF = document.createElement('div');
+                divF.style.marginTop = "3em";
+                divF.style.marginBottom = "1em";
+                var labelF = document.createElement('label');
+
+                //labelF.id = factorId;
+                labelF.textContent = studentName;
+                divF.appendChild(labelF);
+                document.getElementById("chartContainer").appendChild(divF)
+            }
+
+        }
+        else if(printMetrics && i === factorThreshold) {
+            let factorId;
+            let factorName;
+            let factorDescription;
+            let factorType;
+            if(factorIndex < factors.length) {
+                factorId = factors[factorIndex].id;
+                factorName = factors[factorIndex].name;
+                factorDescription=factors[factorIndex].description
+                factorThreshold += factors[factorIndex].metrics.length
+                factorType=factors[factorIndex].type
+                factorIndex++;
+            }else{
+                factorId = "withoutfactor"
+                factorName = "Metrics not associated to any factor"
+            }
+            var divF = document.createElement('div');
+            divF.style.marginTop = "3em";
+            divF.style.marginBottom = "1em";
+
+            if (groupByFactor && factorType === "Taiga") {
+                if (urlTaiga !== undefined && urlTaiga!==null) {
+                    var b = document.createElement('a')
+                    b.href=urlTaiga;
+                    b.target = "_blank"
+                    b.rel="noopener noreferrer"
+                    var icon = document.createElement("img");
+                    icon.src = "../icons/taiga_icon.png"
+                    icon.width = 38;
+                    icon.height = 25;
+                    icon.style = "padding-right:15px;";
+                    b.appendChild(icon)
+                    divF.appendChild(b);
+                }
+            }
+            if (groupByFactor && factorType === "Github") {
+                if (urlGithub !== undefined && urlGithub !== null) {
+                    var list = urlGithub.split(";");
+                    var b = document.createElement('a')
+                    b.href=list[0];
+                    b.target = "_blank"
+                    b.rel="noopener noreferrer"
+                    var icon1 = document.createElement("img");
+                    icon1.src = "../icons/github_icon.png"
+                    icon1.width = 38;
+                    icon1.height = 25;
+                    icon1.style = "padding-right:15px;";
+                    b.appendChild(icon1)
+                    divF.appendChild(b);
+                    if (list.length == 2) {
+                        var b = document.createElement('a')
+                        b.href=list[1];
+                        b.target = "_blank"
+                        b.rel="noopener noreferrer"
+                        var icon2 = document.createElement("img");
+                        icon2.src = "../icons/github_icon.png"
+                        icon2.width = 38;
+                        icon2.height = 25;
+                        icon2.style = "padding-right:15px;";
+                        b.appendChild(icon2)
+                        divF.appendChild(b);
+                    }
+                }
+            }
+
+            var labelF = document.createElement('label');
+            labelF.id = factorId;
+            labelF.textContent = factorName;
+            divF.appendChild(labelF);
+
+            var b=document.createElement('a')
+            b.classList.add("check")
+            b.setAttribute('data-tooltip', factorDescription)
+            var tooltipdiv = document.createElement('div');
+            tooltipdiv.classList.add("tooltip");
+            var iconF = document.createElement('img');
+            iconF.class="icons";
+            iconF.src="../icons/information.png";
+            iconF.width = 38;
+            iconF.height = 25;
+            iconF.style = "padding-left:15px;";
+
+            var spantootlip = document.createElement('span');
+            spantootlip.classList.add("tooltiptext");
+            tooltipdiv.appendChild(iconF)
+            tooltipdiv.appendChild(spantootlip)
+
+            b.appendChild(iconF)
+            if (factorIndex < factors.length) {
+                spantootlip.innerHTML = factors[factorIndex].description;
+            }
+            if (factorId != "withoutfactor"){
+                console.log(factorId);
+                divF.appendChild(b);
+            }
+
+            document.getElementById("chartContainer").appendChild(divF)
+        }
+
         document.getElementById("chartContainer").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");
@@ -435,9 +639,28 @@ function fitToContent() {
     });
 }
 
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0]
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i]
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
+}
+
 function normalRange() {
     charts.forEach(function (chart) {
-        chart.config.options.scales.yAxes[0].ticks.max = 1.2;
+        chart.config.options.scales.yAxes[0].ticks.max = 1.0;
         chart.config.options.scales.yAxes[0].ticks.min = 0;
 
         chart.config.options.legend.onClick = function(e, legendItem) {

@@ -667,6 +667,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].factors[0].type",is(nullValue())))
                 .andDo(document("si/detailed-current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -726,7 +727,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].factors[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].factors[].formattedDate")
-                                        .description("Readable quality factor evaluation date"))
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].factors[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -792,6 +795,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].factors[0].type",is(nullValue())))
                 .andDo(document("si/detailed-single-current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -854,7 +858,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].factors[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].factors[].formattedDate")
-                                        .description("Readable quality factor evaluation date"))
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].factors[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -926,6 +932,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].factors[0].type",is(nullValue())))
                 .andDo(document("si/detailed-historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -989,7 +996,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].factors[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].factors[].formattedDate")
-                                        .description("Readable quality factor evaluation date"))
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].factors[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1067,6 +1076,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].factors[0].type",is(nullValue())))
                 .andDo(document("si/detailed-single-historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1133,7 +1143,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].factors[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].factors[].formattedDate")
-                                        .description("Readable quality factor evaluation date"))
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].factors[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1213,6 +1225,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].factors[0].type", is(nullValue())))
                 .andDo(document("si/detailed-prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1276,7 +1289,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].factors[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].factors[].formattedDate")
-                                        .description("Readable quality factor evaluation date"))
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].factors[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1334,6 +1349,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andExpect(jsonPath("$[0].factors[0].type",is(nullValue())))
                 .andDo(document("si/detailed-single-prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1400,7 +1416,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].factors[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].factors[].formattedDate")
-                                        .description("Readable quality factor evaluation date"))
+                                        .description("Readable quality factor evaluation date"),
+                                fieldWithPath("[].factors[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1581,6 +1599,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -1600,6 +1619,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
+                .andExpect(jsonPath("$[0].type",is("testType")))
                 .andDo(document("qf/current-si",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1614,6 +1634,8 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -1649,8 +1671,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1683,6 +1706,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -1702,6 +1726,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andDo(document("qf/historical-si",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1720,6 +1745,8 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -1755,8 +1782,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1790,6 +1818,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoDetailedFactorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
                 .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
@@ -1811,6 +1840,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(HelperFunctions.getFloatAsDouble(dtoDetailedFactorEvaluation.getMetrics().get(0).getConfidence95().getSecond()))))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
+                .andExpect(jsonPath("$[0].type", is("testType")))
                 .andDo(document("qf/prediction-si",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1829,6 +1859,8 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
                                 fieldWithPath("[].date")
                                         .description("Quality factor evaluation date"),
                                 fieldWithPath("[].value")
@@ -1872,8 +1904,9 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
                                 fieldWithPath("[].metrics[].qualityFactors")
-                                        .description("List of the quality factors that use this metric")
-                        )
+                                        .description("List of the quality factors that use this metric"),
+                                fieldWithPath("[].type")
+                                        .description("Datasource from where the data is taken"))
                 ));
 
         // Verify mock interactions
@@ -1889,7 +1922,7 @@ public class StrategicIndicatorsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
@@ -1906,9 +1939,9 @@ public class StrategicIndicatorsTest {
 
         // define factor1 with its metric composition
         List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
-        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project, "Duplication category");
         metric1.setId(1L);
-        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project, "testType", "Default");
         factor1.setId(1L);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
         qfm1.setId(1L);
@@ -1923,9 +1956,9 @@ public class StrategicIndicatorsTest {
 
         // define factor2 with its metric composition
         List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
-        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project, "Bugdensity category");
         metric2.setId(2L);
-        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project, "testType", "Default");
         factor2.setId(2L);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
         qfm2.setId(2L);
@@ -1940,9 +1973,9 @@ public class StrategicIndicatorsTest {
 
         // define factor3 with its metric composition
         List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
-        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project, "Fast Test category");
         metric3.setId(3L);
-        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project, "testType", "Default");
         factor3.setId(3L);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
         qfm3.setId(3L);
@@ -2617,7 +2650,7 @@ public class StrategicIndicatorsTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
 
         when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
         when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(false);

@@ -69,21 +69,22 @@ public class MetricsControllerTest {
         List<Map<String, String>> categories = domainObjectsBuilder.buildRawMetricCategoryList();
 
         // When
-        metricsController.newMetricCategories(categories);
+        metricsController.newMetricCategories(categories, "TEST");
 
         // Then
-        verify(metricCategoryRepository, times(1)).deleteAll();
+        //verify(metricCategoryRepository, times(1)).deleteAll();
+        verify(metricCategoryRepository, times(1)).existsByName("TEST");
 
         ArgumentCaptor<MetricCategory> metricCategoryArgumentCaptor = ArgumentCaptor.forClass(MetricCategory.class);
         verify(metricCategoryRepository, times(3)).save(metricCategoryArgumentCaptor.capture());
         List<MetricCategory> metricCategoryListSaved = metricCategoryArgumentCaptor.getAllValues();
-        assertEquals(categories.get(0).get("name"), metricCategoryListSaved.get(0).getName());
+        assertEquals(categories.get(0).get("type"), metricCategoryListSaved.get(0).getType());
         assertEquals(categories.get(0).get("color"), metricCategoryListSaved.get(0).getColor());
         assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, metricCategoryListSaved.get(0).getUpperThreshold(), 0f);
-        assertEquals(categories.get(1).get("name"), metricCategoryListSaved.get(1).getName());
+        assertEquals(categories.get(1).get("type"), metricCategoryListSaved.get(1).getType());
         assertEquals(categories.get(1).get("color"), metricCategoryListSaved.get(1).getColor());
         assertEquals(Float.parseFloat(categories.get(1).get("upperThreshold")) / 100f, metricCategoryListSaved.get(1).getUpperThreshold(), 0f);
-        assertEquals(categories.get(2).get("name"), metricCategoryListSaved.get(2).getName());
+        assertEquals(categories.get(2).get("type"), metricCategoryListSaved.get(2).getType());
         assertEquals(categories.get(2).get("color"), metricCategoryListSaved.get(2).getColor());
         assertEquals(Float.parseFloat(categories.get(2).get("upperThreshold")) / 100f, metricCategoryListSaved.get(2).getUpperThreshold(), 0f);
     }
@@ -96,7 +97,7 @@ public class MetricsControllerTest {
         categories.remove(1);
 
         // Throw
-        metricsController.newMetricCategories(categories);
+        metricsController.newMetricCategories(categories, "Default");
     }
 
     @Test

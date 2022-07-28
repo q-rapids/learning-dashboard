@@ -57,7 +57,7 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="title" style="margin-left: 10px;color: #0177a6;" >
                 <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
-                Q-Rapids: Quality-aware rapid software development
+                Learning dashboard
             </h4>
         </div>
         <div class="modal-body">
@@ -84,6 +84,23 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="updateModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="title" style="margin-left: 10px;color: #0177a6;font-size: 40px;" >
+                <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
+                Latest News
+            </h4>
+        </div>
+        <div class="modal-body" style="overflow:auto;max-height:50vh;" >
+            <table style="width:100%">
+                <tr >
+                    <td  id="updateText"  > </td>
+                </tr>
+            </table>
         </div>
     </th:block>
 
@@ -400,6 +417,43 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="metricsModal">
+        <div class="modal fade" id="metricsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" id="metricsModaldialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p>Select metrics:</p>
+                    </div>
+                    <div class="modal-body">
+                    <div id="metricRow" class="profileInfoRow">
+                        <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Available Metrics: </p>
+                    <select id="avMetricsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                </div>
+
+                <div class="selectionColumn" style="padding-top:30px;">
+                    <button onclick="moveMetricItemsLeft()" class="btn btn-default top-and-bottom-margin" id="oneLeft">&lt;</button>
+                    <button onclick="moveMetricItemsRight()" class="btn btn-default top-and-bottom-margin" id="right" style="margin-top:3px;">&gt;</button>
+                    <button onclick="moveAllMetricItemsRight()" class="btn btn-default top-and-bottom-margin" id="allRight" style="margin-top:3px;">&gt;&gt;</button>
+                    <button onclick="moveAllMetricsItemsLeft()" class="btn btn-default top-and-bottom-margin" id="allLeft" style="margin-top:3px;">&lt;&lt;</button>
+                </div>
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Selected Metrics: </p>
+                    <select id="selMetricsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                </div>
+                    </div>
+                    </div>
+                <div class="modal-footer">
+                    <button id="acceptMetricsButton" type="button" class="btn btn-primary pull-right">Save Student</button>
+                    <button id="dismissMetricsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                </div>
+        </div>
             </div>
         </div>
     </th:block>

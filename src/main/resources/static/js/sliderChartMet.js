@@ -4,10 +4,13 @@ var metricsDB = [];
 var factors = [];
 var categories = [];
 
+
 var profileId = sessionStorage.getItem("profile_id");
 
 var id = false;
 var urlLink;
+
+const DEFAULT_CATEGORY = "Default";
 
 var url;
 if (getParameterByName('id').length !== 0) {
@@ -79,30 +82,52 @@ function getMetricsCategoriesAndShow () {
         type: "GET",
         success: function (response) {
             categories = response;
+            removeSpaces();
             getFactors();
         }
     });
 }
 
+function removeSpaces(){
+    categories.forEach( function (cat) {
+        cat.name = cat.name.replace(/ /g, '-')
+        cat.type = cat.type.replace(/ /g, '-')
+    })
+}
+
 function showMetricsSliders () {
     // Metrics categories
-    var rangeHighlights = [];
-    var start = 0;
-    categories.sort(function (a, b) {
-        return a.upperThreshold - b.upperThreshold;
+    let rangeHighlights = new Map;
+
+    //obtaining each category name
+    let categoryNames = [];
+    for (let i = 0; i < categories.length; ++i) categoryNames.push(categories[i].name);
+    categoryNames = new Set(categoryNames);
+
+    categoryNames.forEach( function (cat) {
+        let start = 0;
+        let aux = [];
+        let catList = categories.filter( function (elem) {
+            return elem.name === cat;
+        });
+        catList.sort(function (a, b) {
+            return a.upperThreshold - b.upperThreshold;
+        });
+
+        for (let i = 0; i < catList.length; i++) {
+            let end = catList[i].upperThreshold;
+            let offset = 0;
+            if (end < 1) offset = 0.02;
+            let range = {
+                start: start,
+                end: end + offset,
+                class: catList[i].name + catList[i].type
+            };
+            aux.push(range);
+            start = end;
+        }
+        rangeHighlights.set(cat, aux);
     });
-    for (var i = 0; i < categories.length; i++) {
-        var end = categories[i].upperThreshold;
-        var offset = 0;
-        if (end < 1) offset = 0.02;
-        var range = {
-            start: start,
-            end: end + offset,
-            class: categories[i].name
-        };
-        rangeHighlights.push(range);
-        start = end;
-    }
 
     var metricsDiv = $("#metricsSliders");
 
@@ -147,7 +172,8 @@ function showMetricsSliders () {
             }
 
             var slider = document.createElement("input");
-            slider.id = i + "sliderValue" + metric.id;
+            //some ids may have parenthesis in their names, so we remove them
+            slider.id = i + "sliderValue" + metric.id.replace(/[()]/g, '');
             slider.style.width = "60%";
             slider.style.height = "100%";
             var value = 0;
@@ -164,7 +190,11 @@ function showMetricsSliders () {
                 handle: 'triangle'
             };
             sliderConfig.rangeHighlights = [];
-            Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
+
+            let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
+            if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName.replace(/ /g, '-'));
+
+            Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
             div.appendChild(slider);
             div.appendChild(label);
             divF.append(div);
@@ -229,7 +259,11 @@ function showMetricsSliders () {
                 handle: 'triangle'
             };
             sliderConfig.rangeHighlights = [];
-            Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
+
+            let metricHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
+            if (findMet) metricHighlights = rangeHighlights.get(findMet.categoryName.replace(/ /g, '-'));
+
+            Array.prototype.push.apply(sliderConfig.rangeHighlights, metricHighlights);
             div.appendChild(slider);
             div.appendChild(label);
             divNOF.append(div);
@@ -238,7 +272,7 @@ function showMetricsSliders () {
         }
     });
     for (var j = 0; j < categories.length; j++) {
-        $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
+        $(".slider-rangeHighlight." + categories[j].name + categories[j].type).css("background", categories[j].color)
     }
 }
 
@@ -252,5 +286,6 @@ function sortDataAlphabetically (metrics) {
 }
 
 window.onload = function() {
+    $('#groupBySelector').hide();
     getAllMetrics();
 }

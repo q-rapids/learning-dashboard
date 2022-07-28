@@ -25,13 +25,13 @@ public class QFCategoryRepositoryTest {
     @Test
     public void findAllByOrderByUpperThresholdAsc() {
         // Given
-        QFCategory qfCategoryBad = new QFCategory("Bad", "#ff0000", 0.33f);
+        QFCategory qfCategoryBad = new QFCategory("Bad", "#ff0000", 0.33f, "Default");
         entityManager.persist(qfCategoryBad);
 
-        QFCategory qfCategoryGood = new QFCategory("Good", "#00ff00", 1f);
+        QFCategory qfCategoryGood = new QFCategory("Good", "#00ff00", 1f,"Default");
         entityManager.persist(qfCategoryGood);
 
-        QFCategory qfCategoryNeutral = new QFCategory("Neutral", "#ff8000", 0.67f);
+        QFCategory qfCategoryNeutral = new QFCategory("Neutral", "#ff8000", 0.67f,"Default");
         entityManager.persistAndFlush(qfCategoryNeutral);
 
         // When

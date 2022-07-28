@@ -1,4 +1,5 @@
 var isdsi = true;
+
 console.log("sessionStorage: profile_id");
 console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
@@ -6,12 +7,14 @@ var url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical?p
 
 var qualityModelSIMetrics = new Map();
 
+const DEFAULT_CATEGORY = "Default";
+
 //initialize data vectors
 var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
-
+var printMetrics = false;
 var categories = [];
 
 function getData() {
@@ -150,7 +153,7 @@ function sortDataAlphabetically (data) {
 
 function getFactorsCategories () {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (response) {

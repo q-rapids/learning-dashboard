@@ -1,5 +1,9 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 import javax.persistence.*;
 
 @Entity
@@ -19,17 +23,24 @@ public class Metric {
     private Float threshold;
     @Column(name = "web_url")
     private String webUrl;
+    @Column(name = "category_name", columnDefinition = "varchar default 'Default'")
+    private String categoryName;
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
     private Project project;
 
+    @ManyToOne
+    @JoinColumn(name="studentId", referencedColumnName = "id")
+    private Student student;
+
     public Metric(){}
 
-    public Metric(String externalId, String name, String description, Project project) {
+    public Metric(String externalId, String name, String description, Project project, String categoryName) {
         this.externalId = externalId;
         this.name = name;
         this.description = description;
+        this.categoryName = categoryName;
         setProject(project);
     }
 
@@ -88,4 +99,16 @@ public class Metric {
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
     }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public Student getStudent() {return this.student;}
+
+    public void setStudent(Student student) {this.student=student;}
 }

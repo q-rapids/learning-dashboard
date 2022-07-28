@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
@@ -37,6 +38,8 @@ public class Factors {
 
     private Logger logger = LoggerFactory.getLogger(Factors.class);
 
+    /*
+    //Old get
     @GetMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategoryThreshold> getFactorCategories () {
@@ -47,7 +50,7 @@ public class Factors {
         }
         return dtoCategoryList;
     }
-
+    //Old creator
     @PostMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
@@ -57,7 +60,7 @@ public class Factors {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
         }
-    }
+    }*/
 
     @GetMapping("/api/qualityFactors/import")
     @ResponseStatus(HttpStatus.OK)
@@ -70,6 +73,59 @@ public class Factors {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+        }
+    }
+
+    @GetMapping("api/factors/list")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getList() {
+
+        return factorsController.getAllNames();
+
+    }
+
+    @GetMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOFactorCategory> getFactorCategories ( @RequestParam(value = "name", required = false) String name) {
+        Iterable<QFCategory> factorCategoryList = factorsController.getFactorCategories(name);
+        List<DTOFactorCategory> dtoFactorCategoryList = new ArrayList<>();
+        for (QFCategory factorCategory : factorCategoryList) {
+            dtoFactorCategoryList.add(new DTOFactorCategory(factorCategory.getId(), factorCategory.getName(), factorCategory.getColor(), factorCategory.getUpperThreshold(), factorCategory.getType()));
+        }
+        return dtoFactorCategoryList;
+    }
+
+    @PostMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newFactorCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
+        try {
+            if(categories.size()<3) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+            else factorsController.newFactorCategories(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
+    @PutMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateFactorsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name", required = true) String name) {
+        try {
+            factorsController.updateFactorCategory(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
+    @DeleteMapping("/api/factors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteFactorsCategories (@RequestParam(value = "name", required = true) String name) {
+        try {
+            factorsController.deleteFactorCategory(name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
@@ -86,7 +142,10 @@ public class Factors {
                         factor.getDescription(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
-                        factor.getWeights());
+                        factor.getWeights(),
+                        factor.getType(),
+                        factor.getCategoryName());
+
                 dtoFactor.setThreshold(factor.getThreshold());
                 dtoFactorsList.add(dtoFactor);
             }
@@ -108,7 +167,10 @@ public class Factors {
                         factor.getDescription(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
-                        factor.getWeights());
+                        factor.getWeights(),
+                        factor.getType(),
+                        factor.getCategoryName());
+
             dtoFactor.setThreshold(factor.getThreshold());
             return dtoFactor;
         } catch (QualityFactorNotFoundException e) {
@@ -125,10 +187,13 @@ public class Factors {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String threshold = request.getParameter("threshold");
+            String type = request.getParameter("type");
             List<String> metrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
+            String category = request.getParameter("category");
             if (!name.equals("") && !metrics.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
-                factorsController.saveQualityFactor(name, description, threshold, metrics, project);
+                factorsController.saveQualityFactorWithCategory(name, description, threshold, metrics, type, category, project);
+
                 if (!factorsController.assessQualityFactor(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -163,18 +228,22 @@ public class Factors {
             String name;
             String description;
             String threshold;
+            String type;
             List<String> qualityMetrics;
+            String category;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
                 threshold = request.getParameter("threshold");
+                type=request.getParameter("type");
                 qualityMetrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
+                category = request.getParameter("category");
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
             if (!name.equals("") && !qualityMetrics.isEmpty()) {
                 Factor oldFactor = factorsController.getQualityFactorById(id);
-                factorsController.editQualityFactor(oldFactor.getId(), name, description, threshold, qualityMetrics);
+                factorsController.editQualityFactorWithCategory(oldFactor.getId(), name, description, threshold, qualityMetrics, type,category);
                 if (!factorsController.assessQualityFactor(name, oldFactor.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
@@ -321,7 +390,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id,f.getName(),metrics);
+            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id, f.getDescription(),f.getName(),metrics, f.getType());
             df.setValue(f.getValue());
             df.setDate(f.getDate());
             result.add(df);
@@ -342,7 +411,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            result.add(new DTODetailedFactorEvaluation(id,f.getName(),metrics));
+            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(),f.getName(),metrics, f.getType()));
             return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
@@ -361,7 +430,7 @@ public class Factors {
             List<DTOMetricEvaluation> metrics = metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
             DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
-            result.add(new DTODetailedFactorEvaluation(id,f.getName(),metrics));
+            result.add(new DTODetailedFactorEvaluation(id,f.getDescription(), f.getName(),metrics,f.getType()));
             return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);

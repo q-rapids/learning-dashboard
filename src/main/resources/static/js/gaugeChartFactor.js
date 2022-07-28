@@ -5,6 +5,8 @@ var target;
 var tau = Math.PI / 2;
 var id = false;
 
+const DEFAULT_CATEGORY = "Default";
+
 var url;
 if (getParameterByName('id').length !== 0) {
     id = true;
@@ -15,6 +17,7 @@ if (getParameterByName('id').length !== 0) {
 }
 
 var urlLink;
+let factorDB = [];
 
 function getDataFactors(width, height, chartHyperlinked, color) {
     jQuery.ajax({
@@ -24,7 +27,8 @@ function getDataFactors(width, height, chartHyperlinked, color) {
         type: "GET",
         async: true,
         success: function (data) {
-            getFactorsCat(data, width, height, chartHyperlinked, color);
+            getFactorList(data, width, height, chartHyperlinked, color);
+            //getFactorsCat(data, width, height, chartHyperlinked, color);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
@@ -35,9 +39,21 @@ function getDataFactors(width, height, chartHyperlinked, color) {
     });
 }
 
+function getFactorList(data, width, height, chartHyperlinked, color) {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: true,
+        success: function (dataF) {
+            factorDB = dataF;
+            getFactorsCat (data, width, height, chartHyperlinked, color)
+        }
+    });
+}
+
 function getFactorsCat (data, width, height, chartHyperlinked, color) {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (categories) {
@@ -128,8 +144,28 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             textColor = "#000"
         }
 
+        let findFact = factorDB.find(function (element) {
+            return element.externalId === factors[i].id;
+        });
+
+        //filtering the appropriate categories
+        let factorCategories = categories.filter(function (cat) {
+            return cat.name === findFact.categoryName;
+        });
+
+        //ordering the result in descendent order
+        factorCategories = factorCategories.sort(function (a, b) {
+            return b.upperThreshold - a.upperThreshold;
+        });
+
+        //if findMet.categoryName is blank or contains a deleted category, the default category is painted
+        if (factorCategories.length === 0)
+            factorCategories = categories.filter(function (cat) {
+                return cat.name === DEFAULT_CATEGORY;
+            });
+
         // in case of factors we have categories
-        categories.forEach(function (category) {
+        factorCategories.forEach(function (category) {
             var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
             svg.append("path")
                 .datum({endAngle: threshold})
@@ -163,15 +199,17 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
             .attr("d", arc3);
 
         //add text under the gauge with the name of the element (strategic indicator)
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", 50*width/250)
-            .attr("text-anchor", "middle")
-            .attr("font-family", "sans-serif")
-            .attr("fill", textColor)
-            .style("font-size", "16px")
-            .text(factors[i].name);
+        let name = subdivideMetricName(factors[i].name, 23);
 
+        for(let cont = 0; cont < name.length; ++cont){
+            svg.append("text")
+                .attr("x", 0)
+                .attr("y", 50*width/250 + 15*cont)
+                .attr("text-anchor", "middle")
+                .attr("fill", textColor)
+                .style("font-size", 11+8*width/250+"px")
+                .text(name[cont]);
+        }
 
         //add label under the name with the value description
         var valueDescriptionColor;
@@ -181,7 +219,7 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
         svg.append("text")
             .attr("class", "text"+i)
             .attr("x", 0)
-            .attr("y", 50*width/250 + 25)
+            .attr("y", 50*width/250 + 30 + (name.length - 1) * 10)
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
             .attr("fill", valueDescriptionColor)

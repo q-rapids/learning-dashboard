@@ -6,6 +6,10 @@ var strategicIndicators = [];
 var categories = [];
 var detailedCharts = [];
 
+let factorDB = [];
+
+const DEFAULT_CATEGORY = "Default"
+
 function getAllQualityFactors () {
     var url = "../api/qualityFactors/current";
     $.ajax({
@@ -19,48 +23,75 @@ function getAllQualityFactors () {
 }
 
 function getQualityFactorsCategories () {
-    var url = "../api/qualityFactors/categories";
+    var url = "../api/factors/categories";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
             categories = response;
+            removeSpaces();
             showQualityFactorSliders();
         }
     });
 }
 
 function getFactorsCategories (titles, ids, labels, values) {
-    var url = "../api/qualityFactors/categories";
+    var url = "../api/factors/categories";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
             categories = response;
+            removeSpaces();
             showDetailedStrategicIndicators(titles, ids, labels, values)
+        }
+    });
+}
+
+function getFactorsList() {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: false,
+        success: function (dataF) {
+            factorDB = dataF;
         }
     });
 }
 
 function showQualityFactorSliders () {
     // Factor categories
-    var rangeHighlights = [];
-    var start = 0;
-    categories.sort(function (a, b) {
-        return a.upperThreshold - b.upperThreshold;
+    let rangeHighlights = new Map;
+
+    //obtaining each category name
+    let categoryNames = [];
+    for (let i = 0; i < categories.length; ++i) categoryNames.push(categories[i].name);
+    categoryNames = new Set(categoryNames);
+
+    categoryNames.forEach( function (cat) {
+        let start = 0;
+        let aux = [];
+        let catList = categories.filter( function (elem) {
+            return elem.name === cat;
+        });
+        catList.sort(function (a, b) {
+            return a.upperThreshold - b.upperThreshold;
+        });
+
+        for (let i = 0; i < catList.length; i++) {
+            let end = catList[i].upperThreshold;
+            let offset = 0;
+            if (end < 1) offset = 0.02;
+            let range = {
+                start: start,
+                end: end + offset,
+                class: catList[i].name + catList[i].type
+            };
+            aux.push(range);
+            start = end;
+        }
+        rangeHighlights.set(cat, aux);
     });
-    for (var i = 0; i < categories.length; i++) {
-        var end = categories[i].upperThreshold;
-        var offset = 0;
-        if (end < 1) offset = 0.02;
-        var range = {
-            start: start,
-            end: end + offset,
-            class: categories[i].name
-        };
-        rangeHighlights.push(range);
-        start = end;
-    }
 
     var qualityFactorsDiv = $("#qualityFactors");
     qualityFactors.forEach(function (qualityFactor) {
@@ -78,7 +109,8 @@ function showQualityFactorSliders () {
         div.appendChild(document.createElement('br'));
 
         var slider = document.createElement("input");
-        slider.id = "sliderValue" + qualityFactor.id;
+        //some ids may have parenthesis in their names, so we remove them
+        slider.id = "sliderValue" + qualityFactor.id.replace(/[()]/g, '');
         slider.style.width = "70%";
         var sliderConfig = {
             id: "slider" + qualityFactor.id,
@@ -87,8 +119,16 @@ function showQualityFactorSliders () {
             step: 0.01,
             value: qualityFactor.value.first
         };
+
+        let findFact = factorDB.find(function (element) {
+            return element.externalId === qualityFactor.id;
+        });
+
+        let factorHighlights = rangeHighlights.get(DEFAULT_CATEGORY);
+        if (findFact) factorHighlights = rangeHighlights.get(findFact.categoryName.replace(/\s/g, '-'));
+
         sliderConfig.rangeHighlights = [];
-        Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
+        Array.prototype.push.apply(sliderConfig.rangeHighlights, factorHighlights);
         // Add original value
         var start, end;
         if (qualityFactor.value.first === 0) {
@@ -113,7 +153,7 @@ function showQualityFactorSliders () {
     });
     $(".slider-rangeHighlight").css("background", currentColor);
     for (var i = 0; i < categories.length; i++) {
-        $(".slider-rangeHighlight." + categories[i].name).css("background", categories[i].color)
+        $(".slider-rangeHighlight." + categories[i].name + categories[i].type).css("background", categories[i].color)
     }
     if (strategicIndicators.length > 0)
         checkFactorsSliders();
@@ -235,7 +275,17 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
             data: values[i],
             fill: false
         });
-        var cat = categories;
+
+        let catName;
+        let cat;
+
+        if (categories.length !== 0) catName = getFactorCategory(strategicIndicators[i].factors, factorDB);
+        else catName = DEFAULT_CATEGORY;
+
+        cat = categories.filter( function (c) {
+            return c.name === catName.replace(/\s/g, '-');
+        });
+
         cat.sort(function (a, b) {
             return b.upperThreshold - a.upperThreshold;
         });
@@ -339,13 +389,14 @@ $('#apply').click(function () {
             });
             dataset.data.push(newFactor.value);
         }
-        if (detailedCharts[i].data.datasets.length > 4) {
+        let cat = categories.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label)
+        if (detailedCharts[i].data.datasets.length > cat.length+1) {
             detailedCharts[i].data.datasets[0].data = dataset.data;
         } else {
             detailedCharts[i].data.datasets.unshift(dataset);
             // change categories fill property (we add simulated data)
-            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill +1;
-            detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill +1;
+            for(let j = 3; j < detailedCharts[i].data.datasets.length; ++j)
+                detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill +1;
         }
         detailedCharts[i].update();
     }
@@ -383,12 +434,13 @@ $('#restore').click(function () {
 
 function removeSimulation() {
     d3.selectAll('.simulation').remove();
-    if (detailedCharts[0].data.datasets.length > 4) {
-        for (var i = 0; i < detailedCharts.length; i++) {
+    for (var i = 0; i < detailedCharts.length; i++) {
+        let cat = categories.filter( c => c.name === detailedCharts[i].data.datasets[(detailedCharts[i].data.datasets.length)-1].label)
+        if (detailedCharts[i].data.datasets.length > cat.length+1) {
             detailedCharts[i].data.datasets.shift();
             // change categories fill property (we remove simulated data)
-            detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill -1;
-            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill -1;
+            for(let j = 2; j < detailedCharts[i].data.datasets.length; ++j)
+                detailedCharts[i].data.datasets[j].fill = detailedCharts[i].data.datasets[j].fill -1;
             detailedCharts[i].update();
         }
     }
@@ -407,11 +459,38 @@ function hexToRgbA(hex,a=1){ // (hex color, opacity)
     throw new Error('Bad Hex');
 }
 
+// if the factors have the same category, this category is returned
+// else the default category is returned
+function getFactorCategory(factorNames, factorList) {
+    let f1 = factorList.find( function (elem) {
+        return elem.name === factorNames[0].name
+    });
+
+    if (factorNames.length === 1) return f1.categoryName;
+
+    for(let i = 1; i < factorNames.length; ++i){
+        let f2 = factorList.find( function (elem) {
+            return elem.name === factorNames[i].name
+        });
+        if(f1.categoryName !== f2.categoryName) return DEFAULT_CATEGORY;
+        f1 = f2;
+    }
+    return f1.categoryName;
+}
+
+function removeSpaces(){
+    categories.forEach( function (cat) {
+        cat.name = cat.name.replace(/\s/g, '-')
+        cat.type = cat.type.replace(/\s/g, '-')
+    })
+}
+
 window.onload = function() {
     $("#simulationColor").css("background-color", simulationColor);
     $("#simulationColorDetailed").css("background-color", simulationColor);
     $("#currentColor").css("background-color", currentColor);
     $("#currentColorDetailed").css("background-color", currentColor);
+    getFactorsList();
     getDetailedStrategicIndicators();
     getData(200, 237, false, false, currentColor);
     getAllQualityFactors();

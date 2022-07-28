@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.*;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
@@ -14,7 +15,10 @@ import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrat
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.Factors;
 import evaluation.Factor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 import evaluation.StrategicIndicator;
 import org.elasticsearch.rest.RestStatus;
@@ -27,6 +31,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators.*;
 
@@ -59,6 +64,8 @@ public class QMAQualityFactors {
 
     @Autowired
     QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
+
+    private Logger logger = LoggerFactory.getLogger(Factors.class);
 
     public boolean prepareQFIndex(String projectExternalId) throws IOException {
         qmacon.initConnexion();
@@ -212,8 +219,11 @@ public class QMAQualityFactors {
 
         // get project info
         Iterator<FactorMetricEvaluationDTO> iter = evals.iterator();
-        FactorMetricEvaluationDTO firstQualityFactor = iter.next();
-        Project project = projectsController.findProjectByExternalId(firstQualityFactor.getProject());
+        Project project = null;
+        if (iter.hasNext()){ // check when evals is null --> no qf exist
+            FactorMetricEvaluationDTO firstQualityFactor = iter.next();
+            project = projectsController.findProjectByExternalId(firstQualityFactor.getProject());
+        }
 
         // The evaluations (eval param) has the following structure:
         // - list of factors (first iterator/for)
@@ -227,7 +237,13 @@ public class QMAQualityFactors {
                 // check metric composition this factor, if we don't fetch it
                 String factorExternalID = null;
                 if ((filterDB != false) && currentData) factorExternalID = qualityFactor.getID();
-                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
+                String type =null;
+                try {
+                    type = factorsController.getQualityFactorByExternalIdAndProjectId(qualityFactor.getID(), project.getId()).getType();
+                } catch (QualityFactorNotFoundException e) {
+                    logger.error(e.getMessage(), e);
+                }
+                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId),type);
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 df.setDate(evaluation.getEvaluationDate());
                 df.setValue(Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())));

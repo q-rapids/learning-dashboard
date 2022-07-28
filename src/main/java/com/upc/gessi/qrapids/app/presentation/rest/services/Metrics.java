@@ -2,12 +2,12 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -30,6 +30,9 @@ public class Metrics {
 
     @Autowired
     private MetricsController metricsController;
+
+    @Autowired
+    private StudentsController studentsController;
 
     private Logger logger = LoggerFactory.getLogger(Metrics.class);
 
@@ -58,35 +61,111 @@ public class Metrics {
         }
     }
 
+    @GetMapping("api/metrics/list")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getList() {
+
+        return metricsController.getAllNames();
+
+    }
+
     @PutMapping("/api/metrics/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editMetric(@PathVariable Long id, HttpServletRequest request) {
         try {
             String threshold = request.getParameter("threshold");
             String webUrl = request.getParameter("url");
-            metricsController.editMetric(id,threshold,webUrl); // at the moment is only possible change threshold
+            String categoryName = request.getParameter("categoryName");
+            metricsController.editMetric(id,threshold,webUrl,categoryName); // at the moment is only possible change threshold
         } catch (MetricNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
+    @GetMapping("/api/metrics/student")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value = "prj") String prj) throws IOException {
+
+        return studentsController.getStudentWithMetricsFromProject(prj);
+    }
+
+    @GetMapping("/api/metrics/student/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetricsHistorical> getStudentsAndMetricsHistorical(@RequestParam(value = "prj") String prj,  @RequestParam(value = "profile", required = false) String profileId, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
+
+        return studentsController.getStudentWithHistoricalMetricsFromProject(prj, LocalDate.parse(from), LocalDate.parse(to), profileId);
+    }
+
+
+    @PutMapping("/api/metrics/student")
+    @ResponseStatus(HttpStatus.OK)
+    public Long updateMetricStudent(HttpServletRequest request) {
+
+        String userMetricstemp = request.getParameter("userTemp");
+        String[] userMetrics = new String[0];
+        if(userMetricstemp!="empty") userMetrics=userMetricstemp.split(",");
+        String studentId = request.getParameter("studentId");
+        String prjId = request.getParameter("projectId");
+        String[] students = request.getParameter("studentsList").split(",");
+        if (students[1].equals("empty")) students[1] = null;
+        if (students[2].equals("empty")) students[2] = null;
+        DTOStudent dtostudents = new DTOStudent(students[0], students[1], students[2]);
+
+        Long id = studentsController.updateStudents(studentId,dtostudents,userMetrics, prjId);
+
+        return id;
+
+    }
+
+    @DeleteMapping("/api/metrics/student/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long id) {
+
+       studentsController.deleteStudents(id);
+
+
+    }
+
     @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategoryThreshold> getMetricCategories () {
-        Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories();
-        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+    public List<DTOMetricCategory> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
+        Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories(name);
+        List<DTOMetricCategory> dtoMetricCategoryList = new ArrayList<>();
         for (MetricCategory metricCategory : metricCategoryList) {
-            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
+            dtoMetricCategoryList.add(new DTOMetricCategory(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold(), metricCategory.getType()));
         }
-        return dtoCategoryList;
+        return dtoMetricCategoryList;
     }
 
     @PostMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {
+    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
         try {
-            metricsController.newMetricCategories(categories);
+            if(categories.size()<3) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
+            else metricsController.newMetricCategories(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
+    @PutMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name", required = true) String name) {
+        try {
+             metricsController.updateMetricCategory(categories, name);
+        } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
+        }
+    }
+
+    @DeleteMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMetricsCategories (@RequestParam(value = "name", required = true) String name) {
+        try {
+             metricsController.deleteMetricCategory(name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);

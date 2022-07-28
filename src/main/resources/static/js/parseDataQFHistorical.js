@@ -2,6 +2,8 @@ var isdsi = false;
 var isqf = true;
 var isdqf = false;
 
+const DEFAULT_CATEGORY = "Default"
+
 var qualityModelSIMetrics = new Map();
 
 var url;
@@ -17,8 +19,10 @@ var texts = [];
 var value = [];
 var labels = [];
 var ids = [];
-
+var printMetrics = false;
 var categories = [];
+
+let orderedFactorsDB = [];
 
 function getData() {
     getQualityModel();
@@ -170,14 +174,34 @@ function sortDataAlphabetically (data) {
 
 function getFactorsCategories () {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (response) {
             categories = response;
+            getFactorList();
+        }
+    });
+}
+
+function getFactorList() {
+    jQuery.ajax({
+        url: "../api/qualityFactors",
+        type: "GET",
+        async: true,
+        success: function (dataF) {
+            sortFactorDB(dataF);
             drawChart();
         }
     });
+}
+
+function sortFactorDB (data) {
+    ids.forEach( function (id) {
+        orderedFactorsDB.push(
+            data.find(elem => elem.externalId === id)
+        )
+    })
 }
 
 window.onload = function() {

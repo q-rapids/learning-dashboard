@@ -75,14 +75,24 @@ public class FactorsController {
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
-    public List<QFCategory> getFactorCategories () {
+    //Old getFactorCategories
+    /*public List<QFCategory> getFactorCategories () {
         List<QFCategory> factorCategoriesList = new ArrayList<>();
         Iterable<QFCategory> factorCategoriesIterable = factorCategoryRepository.findAll();
         factorCategoriesIterable.forEach(factorCategoriesList::add);
         return factorCategoriesList;
-    }
+    }*/
 
-    public void newFactorCategories(List<Map<String, String>> categories) throws CategoriesException {
+    public List<QFCategory> getFactorCategories (String name) {
+        List<QFCategory> factorCategoryList = new ArrayList<>();
+        Iterable<QFCategory> factorCategoryIterable;
+        if (name != null) factorCategoryIterable = factorCategoryRepository.findAllByName(name);
+        else factorCategoryIterable = factorCategoryRepository.findAll();
+        factorCategoryIterable.forEach(factorCategoryList::add);
+        return factorCategoryList;
+    }
+    //Old getFactorCategories
+   /*public void getFactorCategories(List<Map<String, String>> categories) throws CategoriesException {
         if (categories.size() > 1) {
             factorCategoryRepository.deleteAll();
             for (Map<String, String> c : categories) {
@@ -96,7 +106,7 @@ public class FactorsController {
         } else {
             throw new CategoriesException();
         }
-    }
+    }*/
 
     // new functions
     public static String buildDescriptiveLabelAndValue(Pair<Float, String> value) {
@@ -115,6 +125,71 @@ public class FactorsController {
         return labelAndValue;
     }
 
+    public List<String> getAllNames() {
+        //If name doesnt exists returns true
+        Iterable<QFCategory> categories = factorCategoryRepository.findAll();
+        List<String> names = new ArrayList<String>();
+        for(QFCategory qf : categories)  {
+            if(!names.contains(qf.getName())) names.add(qf.getName());
+        }
+        return names;
+
+    }
+
+    public void deleteFactorCategory(String name) throws CategoriesException {
+
+        Iterable<QFCategory> factorCategoryIterable = factorCategoryRepository.findAllByName(name);
+        for(QFCategory m : factorCategoryIterable)  {
+            factorCategoryRepository.deleteById(m.getId());
+        }
+
+    }
+
+    public void updateFactorCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
+
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        deleteFactorCategory(name);
+        newFactorCategories(categories, name);
+    }
+
+    public boolean CheckIfNameExists(String name) {
+        //If name doesnt exists returns true
+        return factorCategoryRepository.existsByName(name);
+    }
+
+    public boolean checkIfCategoriesHasRepeats(List<Map<String, String>> categories) {
+        List<String> repeated = new ArrayList<>();
+        for (Map<String, String> c : categories) {
+            if (repeated.contains(c.get("type"))) {
+                return true;
+            }
+            repeated.add(c.get("type"));
+        }
+        return false;
+    }
+
+    public void newFactorCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
+
+        boolean exists=CheckIfNameExists(name);
+        if(exists) throw new CategoriesException();
+
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+
+        if (categories.size() > 2) {
+            //metricCategoryRepository.deleteAll();
+            for (Map<String, String> c : categories) {
+                QFCategory qfCategory = new QFCategory();
+                qfCategory.setName(name);
+                qfCategory.setType(c.get("type"));
+                qfCategory.setColor(c.get("color"));
+                float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
+                qfCategory.setUpperThreshold(upperThreshold/100f);
+                factorCategoryRepository.save(qfCategory);
+            }
+        } else {
+            throw new CategoriesException();
+        }
+    }
 
     public Factor findFactorByExternalIdAndProjectId(String externalId, Long prjId) throws QualityFactorNotFoundException {
         Factor factor = qualityFactorRepository.findByExternalIdAndProjectId(externalId,prjId);
@@ -165,6 +240,7 @@ public class FactorsController {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
         qualityFactor = new Factor (id, name, description, project);
+        qualityFactor.setCategoryName("Default");
         qualityFactorRepository.save(qualityFactor);
         boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
         qualityFactor.setWeighted(weighted);
@@ -184,15 +260,33 @@ public class FactorsController {
             throw new QualityFactorNotFoundException();
         }
     }
+    public Factor getQualityFactorByExternalId (String qualityFactorExternalId) throws QualityFactorNotFoundException {
+        Optional<Factor> qualityFactorOptional = qualityFactorRepository.findByExternalId(qualityFactorExternalId);
+        if (qualityFactorOptional.isPresent()) {
+            return qualityFactorOptional.get();
+        } else {
+            throw new QualityFactorNotFoundException();
+        }
+    }
 
-    public Factor saveQualityFactor(String name, String description, String threshold, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
+    public Factor getQualityFactorByExternalIdAndProjectId (String qualityFactorExternalId, Long projectId) throws QualityFactorNotFoundException {
+        Optional<Factor> qualityFactorOptional = qualityFactorRepository.findByExternalIdAndProject_Id(qualityFactorExternalId, projectId);
+        if (qualityFactorOptional.isPresent()) {
+            return qualityFactorOptional.get();
+        } else {
+            throw new QualityFactorNotFoundException();
+        }
+    }
+
+    public Factor saveQualityFactorWithCategory(String name, String description, String threshold, List<String> qualityMetrics, String type, String category, Project project) throws MetricNotFoundException {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
-        qualityFactor = new Factor (name, description, project);
+        qualityFactor = new Factor (name, description, project, type, category);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             qualityFactor.setThreshold(Float.parseFloat(threshold));
         else
             qualityFactor.setThreshold(null);
+        qualityFactor.setCategoryName(category);
         qualityFactorRepository.save(qualityFactor);
         boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
         qualityFactor.setWeighted(weighted);
@@ -227,10 +321,28 @@ public class FactorsController {
         return weighted;
     }
 
-    public Factor editQualityFactor(Long factorId, String name, String description, String threshold, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+    public Factor editQualityFactor(Long factorId, String name, String description, String threshold, List<String> qualityMetrics, String type) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
         Factor factor = getQualityFactorById(factorId);
         factor.setName(name);
         factor.setDescription(description);
+        factor.setType(type);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            factor.setThreshold(Float.parseFloat(threshold));
+        else
+            factor.setThreshold(null);
+        // Actualize Quality Metrics
+        boolean weighted = reassignQualityMetricsToQualityFactor (qualityMetrics, factor);
+        factor.setWeighted(weighted);
+        qualityFactorRepository.save(factor);
+        return  factor;
+    }
+
+    public Factor editQualityFactorWithCategory(Long factorId, String name, String description, String threshold, List<String> qualityMetrics, String type, String category) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+        Factor factor = getQualityFactorById(factorId);
+        factor.setName(name);
+        factor.setDescription(description);
+        factor.setCategoryName(category);
+        factor.setType(type);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             factor.setThreshold(Float.parseFloat(threshold));
         else
@@ -608,7 +720,7 @@ public class FactorsController {
         if (f != null) {
             for (QFCategory qfCategory : qfCategoryList) {
                 if (f <= qfCategory.getUpperThreshold())
-                    return qfCategory.getName();
+                    return qfCategory.getType();
             }
         }
         return "No Category";

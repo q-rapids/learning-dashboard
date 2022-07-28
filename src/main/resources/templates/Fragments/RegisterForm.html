@@ -6,19 +6,35 @@
 
 <form id="form" onsubmit="return formValidation()" class="full-width" th:object="${appuser}" th:action="@{/signup}" method="POST" th:fragment="form">
 
-    <div class="form-group" th:if="${!username_mod}">
+    <div class="form-group" th:if="${!username_mod && !create_user_administration}">
         <label for="username">Username</label>
         <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" disabled="disabled"/>
     </div>
 
-    <div class="form-group" th:if="${username_mod}">
+    <div class="form-group" th:if="${username_mod  && !create_user_administration}">
         <label for="username">Username *</label>
         <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" />
     </div>
 
-    <div class="form-group">
+    <div class="form-group" th:if="${create_user_administration}">
+        <label for="username">Username *</label>
+        <input type="text" class="form-control" th:name="username" th:id="username"  />
+    </div>
+
+    <div class="form-group" th:if="${!create_user_administration}">
         <label for="email">Email address *</label>
         <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" required="required"/>
+    </div>
+
+    <div class="form-group" th:if="${create_user_administration}">
+        <label for="email">Email address *</label>
+        <input type="email" class="form-control" th:name="email" th:id="email" required="required"/>
+    </div>
+
+    <div class="form-group" th:if="${create_user_administration}">
+        <label for="admin">Admin</label>
+        <input type="checkbox" class="form-control" style="box-shadow: none; -webkit-box-shadow: none; width: auto" th:checked="${appuser.getAdmin()}" th:value="${appuser.getAdmin()}" th:name="admin" th:id="admin"  />
+
     </div>
 
     <div class="form-group" th:if="${ all }">
@@ -32,7 +48,12 @@
         </select>
     </div>
 
-    <div class="form-group" th:if="${ all }">
+    <div class="form-group" th:if="${ create_user_administration }">
+        <label for="answer">Answer *</label>
+        <input type="text" class="form-control" th:name="question" th:id="question" required="required"/>
+    </div>
+
+    <div class="form-group" th:if="${ all && !create_user_administration }">
         <label for="answer">Answer *</label>
         <input type="text" class="form-control" th:name="question" th:id="question" th:field="*{question}" required="required"/>
     </div>
