@@ -1,11 +1,11 @@
-= Q-Rapids Dashboard API REST Documentation
-v2.0.1, {docdate}
+= Learning Dashboard API REST Documentation
+v1.0, {docdate}
 :toc: left
 
 :sectnums:
 
 == Introduction
-Q-Rapids dashboard RESTful services
+Learning dashboard RESTful services
 
 
 == Strategic Indicators
@@ -544,6 +544,11 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
 
+=== Get current evaluation for students
+
+operation::students/current[snippets='curl-request,response-fields,http-response']
+
+:numbered:
 
 === Get single current evaluation
 
@@ -604,6 +609,11 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
 
+=== Get historical evaluation for students
+
+operation::students/historical[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered:
 
 === Get prediction
 
@@ -640,7 +650,7 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 operation::metrics/categories[snippets='curl-request,response-fields,http-response']
 
 
-=== Set strategic indicator categories
+=== Set metric categories
 
 operation::metrics/categories-new[snippets='request-fields,curl-request,http-response']
 
@@ -979,7 +989,7 @@ include::{snippets}/profiles/add-error/http-response.adoc[]
 
 include::{snippets}/products/single/path-parameters.adoc[]
 
-operation::profiles/update[snippets='request-parameters,request-parts,curl-request,http-response']
+operation::profiles/update[snippets='request-parameters,curl-request,http-response']
 
 ==== HTTP response name already exists
 include::{snippets}/profiles/update-error/http-response.adoc[]
@@ -991,6 +1001,81 @@ include::{snippets}/profiles/update-error/http-response.adoc[]
 
 operation::profiles/delete[snippets='path-parameters,curl-request,http-response']
 
+
+== Iterations
+
+=== Get all iterations
+
+operation::iterations/all[snippets='curl-request,response-fields,http-response']
+
+=== Update iteration
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/iterations/update/path-parameters.adoc[]
+
+operation::iterations/update[snippets='request-fields,curl-request,http-response']
+
+
+:numbered:
+
+=== Delete iteration
+
+operation::iterations/delete[snippets='path-parameters,curl-request,http-response']
+
+== Students
+
+=== Update student's metrics
+
+operation::students/update[snippets='request-parameters,curl-request,http-response']
+
+:numbered:
+
+=== Delete student's metrics
+
+operation::students/delete[snippets='path-parameters,curl-request,http-response']
+
+== News (updates)
+
+=== Get all news (updates)
+
+operation::updates/all[snippets='curl-request,response-fields,http-response']
+
+=== Get last year news (updates)
+
+operation::updates/year[snippets='curl-request,response-fields,http-response']
+
+=== Get single novetly (update)
+
+operation::updates/single[snippets='path-parameters,curl-request,response-fields,http-response']
+
+=== Get last novetly (update)
+
+operation::updates/last[snippets='path-parameters,curl-request,response-fields,http-response']
+
+=== New novelty (update)
+
+operation::updates/new[snippets='request-parameters,curl-request,http-response']
+
+:numbered:
+
+=== Update novelty (update)
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/updates/update/path-parameters.adoc[]
+
+operation::updates/update[snippets='request-parameters,curl-request,http-response']
+
+:numbered:
+
+=== Delete novelty (update)
+
+operation::updates/delete[snippets='path-parameters,curl-request,http-response']
 
 == Others
 

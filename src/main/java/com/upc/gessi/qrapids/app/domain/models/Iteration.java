@@ -9,7 +9,7 @@ import java.sql.Date;
         uniqueConstraints= {
                 @UniqueConstraint(columnNames = {"name", "label"})
     })
-public class HistoricDates implements Serializable {
+public class Iteration implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

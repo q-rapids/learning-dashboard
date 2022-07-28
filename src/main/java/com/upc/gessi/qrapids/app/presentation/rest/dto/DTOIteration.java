@@ -3,7 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.dto;
 import java.sql.Date;
 import java.util.List;
 
-public class DTOHistoricDate {
+public class DTOIteration {
     private Long id;
     private String name;
     private String label;
@@ -11,7 +11,7 @@ public class DTOHistoricDate {
     private Date to_date;
     private List<Long> project_ids;
 
-    public DTOHistoricDate(Long id, String name, String label, Date from_date, Date to_date, List<Long> project_ids) {
+    public DTOIteration(Long id, String name, String label, Date from_date, Date to_date, List<Long> project_ids) {
         this.id = id;
         this.name = name;
         this.label = label;

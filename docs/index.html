@@ -5,8 +5,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v2.0.1, 2021-05-25">
-<title>Q-Rapids Dashboard API REST Documentation</title>
+<meta name="author" content="v1.0, 2022-07-28">
+<title>Learning Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -433,9 +433,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Q-Rapids Dashboard API REST Documentation</h1>
+<h1>Learning Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v2.0.1, 2021-05-25</span><br>
+<span id="author" class="author">v1.0, 2022-07-28</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -498,14 +498,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_import_metrics">4.1. Import metrics</a></li>
 <li><a href="#_get_current_evaluation_3">4.2. Get current evaluation</a></li>
-<li><a href="#_get_single_current_evaluation">4.3. Get single current evaluation</a></li>
-<li><a href="#_get_historical_evaluation_3">4.4. Get historical evaluation</a></li>
-<li><a href="#_get_single_historical_evaluation">4.5. Get single historical evaluation</a></li>
-<li><a href="#_get_historical_evaluation_for_quality_factor">4.6. Get historical evaluation for quality factor</a></li>
-<li><a href="#_get_prediction">4.7. Get prediction</a></li>
-<li><a href="#_get_prediction_for_quality_factor">4.8. Get prediction for quality factor</a></li>
-<li><a href="#_get_metric_categories">4.9. Get metric categories</a></li>
-<li><a href="#_set_strategic_indicator_categories_2">4.10. Set strategic indicator categories</a></li>
+<li><a href="#_get_current_evaluation_for_students">4.3. Get current evaluation for students</a></li>
+<li><a href="#_get_single_current_evaluation">4.4. Get single current evaluation</a></li>
+<li><a href="#_get_historical_evaluation_3">4.5. Get historical evaluation</a></li>
+<li><a href="#_get_single_historical_evaluation">4.6. Get single historical evaluation</a></li>
+<li><a href="#_get_historical_evaluation_for_quality_factor">4.7. Get historical evaluation for quality factor</a></li>
+<li><a href="#_get_historical_evaluation_for_students">4.8. Get historical evaluation for students</a></li>
+<li><a href="#_get_prediction">4.9. Get prediction</a></li>
+<li><a href="#_get_prediction_for_quality_factor">4.10. Get prediction for quality factor</a></li>
+<li><a href="#_get_metric_categories">4.11. Get metric categories</a></li>
+<li><a href="#_set_metric_categories">4.12. Set metric categories</a></li>
 </ul>
 </li>
 <li><a href="#_alerts">5. Alerts</a>
@@ -570,11 +572,35 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_delete_profile">11.5. Delete profile</a></li>
 </ul>
 </li>
-<li><a href="#_others">12. Others</a>
+<li><a href="#_iterations">12. Iterations</a>
 <ul class="sectlevel2">
-<li><a href="#_get_forecasting_techniques">12.1. Get forecasting techniques</a></li>
-<li><a href="#_get_project_milestones">12.2. Get project milestones</a></li>
-<li><a href="#_get_project_phases">12.3. Get project phases</a></li>
+<li><a href="#_get_all_iterations">12.1. Get all iterations</a></li>
+<li><a href="#_update_iteration">12.2. Update iteration</a></li>
+<li><a href="#_delete_iteration">12.3. Delete iteration</a></li>
+</ul>
+</li>
+<li><a href="#_students">13. Students</a>
+<ul class="sectlevel2">
+<li><a href="#_update_students_metrics">13.1. Update student&#8217;s metrics</a></li>
+<li><a href="#_delete_students_metrics">13.2. Delete student&#8217;s metrics</a></li>
+</ul>
+</li>
+<li><a href="#_news_updates">14. News (updates)</a>
+<ul class="sectlevel2">
+<li><a href="#_get_all_news_updates">14.1. Get all news (updates)</a></li>
+<li><a href="#_get_last_year_news_updates">14.2. Get last year news (updates)</a></li>
+<li><a href="#_get_single_novetly_update">14.3. Get single novetly (update)</a></li>
+<li><a href="#_get_last_novetly_update">14.4. Get last novetly (update)</a></li>
+<li><a href="#_new_novelty_update">14.5. New novelty (update)</a></li>
+<li><a href="#_update_novelty_update">14.6. Update novelty (update)</a></li>
+<li><a href="#_delete_novelty_update">14.7. Delete novelty (update)</a></li>
+</ul>
+</li>
+<li><a href="#_others">15. Others</a>
+<ul class="sectlevel2">
+<li><a href="#_get_forecasting_techniques">15.1. Get forecasting techniques</a></li>
+<li><a href="#_get_project_milestones">15.2. Get project milestones</a></li>
+<li><a href="#_get_project_phases">15.3. Get project phases</a></li>
 </ul>
 </li>
 </ul>
@@ -585,7 +611,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_introduction">1. Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Q-Rapids dashboard RESTful services</p>
+<p>Learning dashboard RESTful services</p>
 </div>
 </div>
 </div>
@@ -2070,6 +2096,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2078,8 +2109,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 863
 Content-Type: application/json;charset=UTF-8
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2101,7 +2132,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2021, 5, 25 ],
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2109,7 +2140,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2021-05-25",
+    "type" : null,
+    "formattedDate" : "2022-07-28",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2331,6 +2363,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2339,8 +2376,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 863
 Content-Type: application/json;charset=UTF-8
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2362,7 +2399,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2021, 5, 25 ],
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2370,7 +2407,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2021-05-25",
+    "type" : null,
+    "formattedDate" : "2022-07-28",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2578,6 +2616,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2586,8 +2629,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 863
 Content-Type: application/json;charset=UTF-8
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2609,7 +2652,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2021, 5, 25 ],
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2617,7 +2660,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2021-05-25",
+    "type" : null,
+    "formattedDate" : "2022-07-28",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2847,6 +2891,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2855,8 +2904,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 863
 Content-Type: application/json;charset=UTF-8
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2878,7 +2927,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2021, 5, 25 ],
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2886,7 +2935,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2021-05-25",
+    "type" : null,
+    "formattedDate" : "2022-07-28",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -3094,6 +3144,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3102,8 +3157,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 846
 Content-Type: application/json;charset=UTF-8
+Content-Length: 866
 
 [ {
   "id" : "processperformance",
@@ -3125,7 +3180,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2021, 5, 25 ],
+    "date" : [ 2022, 7, 28 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3133,7 +3188,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2021-05-25",
+    "type" : null,
+    "formattedDate" : "2022-07-28",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -3355,6 +3411,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3363,8 +3424,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 846
 Content-Type: application/json;charset=UTF-8
+Content-Length: 866
 
 [ {
   "id" : "processperformance",
@@ -3386,7 +3447,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2021, 5, 25 ],
+    "date" : [ 2022, 7, 28 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3394,7 +3455,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2021-05-25",
+    "type" : null,
+    "formattedDate" : "2022-07-28",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -4754,6 +4816,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4763,7 +4830,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 551
+Content-Length: 569
 
 [ {
   "id" : "testingperformance",
@@ -4774,7 +4841,7 @@ Content-Length: 551
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2021, 5, 25 ],
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4782,7 +4849,8 @@ Content-Length: 551
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2021-05-25",
+  "type" : null,
+  "formattedDate" : "2022-07-28",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -4954,6 +5022,11 @@ Content-Length: 551
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4962,8 +5035,8 @@ Content-Length: 551
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 547
 Content-Type: application/json;charset=UTF-8
+Content-Length: 565
 
 {
   "id" : "testingperformance",
@@ -4974,7 +5047,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2021, 5, 25 ],
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4982,7 +5055,8 @@ Content-Type: application/json;charset=UTF-8
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2021-05-25",
+  "type" : null,
+  "formattedDate" : "2022-07-28",
   "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
@@ -5140,6 +5214,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -5149,7 +5228,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 551
+Content-Length: 569
 
 [ {
   "id" : "testingperformance",
@@ -5160,7 +5239,7 @@ Content-Length: 551
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2021, 5, 25 ],
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5168,7 +5247,8 @@ Content-Length: 551
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2021-05-25",
+  "type" : null,
+  "formattedDate" : "2022-07-28",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5346,6 +5426,11 @@ Content-Length: 551
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -5354,8 +5439,8 @@ Content-Length: 551
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 644
 Content-Type: application/json;charset=UTF-8
+Content-Length: 662
 
 [ {
   "id" : "testingperformance",
@@ -5366,7 +5451,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2021, 5, 25 ],
+  "date" : [ 2022, 7, 28 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5380,7 +5465,8 @@ Content-Type: application/json;charset=UTF-8
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2021-05-25",
+  "type" : null,
+  "formattedDate" : "2022-07-28",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5459,6 +5545,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -5550,6 +5641,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -5558,14 +5654,15 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
-Content-Length: 657
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -5574,15 +5671,16 @@ Content-Length: 657
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : "testType"
 } ]</code></pre>
 </div>
 </div>
@@ -5684,6 +5782,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
@@ -5778,6 +5881,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -5786,17 +5894,18 @@ Content-Length: 657
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 722
+Content-Length: 787
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-  "date" : [ 2021, 5, 25 ],
+  "date" : [ 2022, 7, 28 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
+  "description" : "Performance of the tests",
   "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -5805,15 +5914,16 @@ Content-Type: application/json;charset=UTF-8
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : null
 } ]</code></pre>
 </div>
 </div>
@@ -5892,7 +6002,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_current_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2021-05-18&amp;to=2021-05-25' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2022-07-21&amp;to=2022-07-28' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -5921,6 +6031,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -6012,6 +6127,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -6020,14 +6140,15 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
-Content-Length: 657
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -6036,15 +6157,16 @@ Content-Length: 657
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : "testType"
 } ]</code></pre>
 </div>
 </div>
@@ -6101,7 +6223,7 @@ Content-Length: 657
 <h4 id="_get_detailed_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2021-05-18&amp;to=2021-05-25' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2022-07-21&amp;to=2022-07-28' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6130,6 +6252,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -6221,6 +6348,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -6229,14 +6361,15 @@ Content-Length: 657
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
-Content-Length: 657
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -6245,15 +6378,16 @@ Content-Length: 657
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : "testType"
 } ]</code></pre>
 </div>
 </div>
@@ -6363,6 +6497,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
@@ -6452,6 +6591,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -6460,14 +6604,15 @@ Content-Length: 657
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 722
 Content-Type: application/json;charset=UTF-8
-Content-Length: 657
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -6476,15 +6621,16 @@ Content-Length: 657
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : null
 } ]</code></pre>
 </div>
 </div>
@@ -6586,6 +6732,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
@@ -6675,6 +6826,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -6683,14 +6839,15 @@ Content-Length: 657
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
-Content-Length: 657
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -6699,15 +6856,16 @@ Content-Length: 657
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : "testType"
 } ]</code></pre>
 </div>
 </div>
@@ -6793,6 +6951,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -6904,6 +7067,11 @@ Content-Length: 657
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -6912,14 +7080,15 @@ Content-Length: 657
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 833
 Content-Type: application/json;charset=UTF-8
-Content-Length: 762
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -6928,8 +7097,8 @@ Content-Length: 762
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -6942,7 +7111,8 @@ Content-Length: 762
     },
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : "testType"
 } ]</code></pre>
 </div>
 </div>
@@ -7052,6 +7222,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
@@ -7161,6 +7336,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -7169,14 +7349,15 @@ Content-Length: 762
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 827
 Content-Type: application/json;charset=UTF-8
-Content-Length: 762
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -7185,8 +7366,8 @@ Content-Length: 762
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7199,7 +7380,8 @@ Content-Length: 762
     },
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : null
 } ]</code></pre>
 </div>
 </div>
@@ -7309,6 +7491,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
@@ -7418,6 +7605,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -7426,14 +7618,15 @@ Content-Length: 762
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 833
 Content-Type: application/json;charset=UTF-8
-Content-Length: 762
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -7442,8 +7635,8 @@ Content-Length: 762
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7456,7 +7649,8 @@ Content-Length: 762
     },
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : "testType"
 } ]</code></pre>
 </div>
 </div>
@@ -7546,6 +7740,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].categoryName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].threshold</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor minimum acceptable value</p></td>
@@ -7570,6 +7769,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the metrics composing the quality factor with their corresponding weights</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -7578,8 +7782,8 @@ Content-Length: 762
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 347
 Content-Type: application/json;charset=UTF-8
-Content-Length: 279
 
 [ {
   "id" : 1,
@@ -7589,7 +7793,9 @@ Content-Length: 279
   "threshold" : null,
   "metrics" : [ "1", "2", "3" ],
   "weighted" : false,
-  "metricsWeights" : [ "1", "-1.0", "2", "-1.0", "3", "-1.0" ]
+  "metricsWeights" : [ "1", "-1.0", "2", "-1.0", "3", "-1.0" ],
+  "type" : "testType",
+  "categoryName" : "Codequality category"
 } ]</code></pre>
 </div>
 </div>
@@ -7664,6 +7870,11 @@ Content-Length: 279
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>categoryName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>threshold</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor minimum acceptable value</p></td>
@@ -7688,6 +7899,11 @@ Content-Length: 279
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the metrics composing the quality factor with their corresponding weights</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -7696,8 +7912,8 @@ Content-Length: 279
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 274
 Content-Type: application/json;charset=UTF-8
+Content-Length: 342
 
 {
   "id" : 1,
@@ -7707,7 +7923,9 @@ Content-Type: application/json;charset=UTF-8
   "threshold" : 0.3,
   "metrics" : [ "1", "2", "3" ],
   "weighted" : false,
-  "metricsWeights" : [ "1", "-1.0", "2", "-1.0", "3", "-1.0" ]
+  "metricsWeights" : [ "1", "-1.0", "2", "-1.0", "3", "-1.0" ],
+  "type" : "testType",
+  "categoryName" : "Codequality category"
 }</code></pre>
 </div>
 </div>
@@ -7742,12 +7960,20 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>threshold</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor minimum acceptable value</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Comma separated values of the metrics identifiers which belong to the quality factor</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
 </tr>
 </tbody>
 </table>
@@ -7764,7 +7990,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors' -i -X POST \
     -H 'Content-Type: multipart/form-data' \
-    -d 'prj=test&amp;name=codequality&amp;description=Quality+of+the+implemented+code&amp;threshold=0.3&amp;metrics=duplication%2Cbugdensity%2Cfasttests'</code></pre>
+    -d 'prj=test&amp;name=codequality&amp;description=Quality+of+the+implemented+code&amp;category=Codequality+category&amp;threshold=0.3&amp;metrics=duplication%2Cbugdensity%2Cfasttests&amp;type=testType'</code></pre>
 </div>
 </div>
 </div>
@@ -7810,8 +8036,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>threshold</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor minimum acceptable value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>metrics</code></p></td>
@@ -7832,7 +8066,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/1' -i -X PUT \
     -H 'Content-Type: multipart/form-data' \
-    -d 'name=codequality&amp;description=Quality+of+the+implemented+code&amp;threshold=0.3&amp;metrics=1%2C-1.0%2C2%2C-1.0%2C3%2C-1.0'</code></pre>
+    -d 'name=codequality&amp;description=Quality+of+the+implemented+code&amp;category=Codequality+category&amp;threshold=0.3&amp;metrics=1%2C-1.0%2C2%2C-1.0%2C3%2C-1.0&amp;type=testType'</code></pre>
 </div>
 </div>
 </div>
@@ -8075,6 +8309,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor evaluation date</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -8084,7 +8323,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 551
+Content-Length: 569
 
 [ {
   "id" : "testingperformance",
@@ -8095,7 +8334,7 @@ Content-Length: 551
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2021, 5, 25 ],
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8103,7 +8342,8 @@ Content-Length: 551
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2021-05-25",
+  "type" : null,
+  "formattedDate" : "2022-07-28",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -8132,7 +8372,7 @@ Content-Length: 551
 <h4 id="_get_quality_factor_categories_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/categories' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/factors/categories?name=Default' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -8163,6 +8403,11 @@ Content-Length: 551
 <td class="tableblock halign-left valign-top"><p class="tableblock">Category name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors category type</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Category hexadecimal color</p></td>
@@ -8181,23 +8426,26 @@ Content-Length: 551
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 276
+Content-Length: 345
 
 [ {
   "id" : 10,
-  "name" : "Good",
+  "name" : "Default",
   "color" : "#00ff00",
-  "upperThreshold" : 1.0
+  "upperThreshold" : 1.0,
+  "type" : "Good"
 }, {
   "id" : 11,
-  "name" : "Neutral",
+  "name" : "Default",
   "color" : "#ff8000",
-  "upperThreshold" : 0.67
+  "upperThreshold" : 0.67,
+  "type" : "Neutral"
 }, {
   "id" : 12,
-  "name" : "Bad",
+  "name" : "Default",
   "color" : "#ff0000",
-  "upperThreshold" : 0.33
+  "upperThreshold" : 0.33,
+  "type" : "Bad"
 } ]</code></pre>
 </div>
 </div>
@@ -8222,9 +8470,9 @@ Content-Length: 276
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors category name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors category type</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
@@ -8243,20 +8491,20 @@ Content-Length: 276
 <h4 id="_set_quality_factor_categories_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/categories' -i -X POST \
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/factors/categories?name=test' -i -X POST \
     -H 'Content-Type: application/json' \
     -d '[ {
   "upperThreshold" : "1.0",
   "color" : "#00ff00",
-  "name" : "Good"
+  "type" : "Good"
 }, {
   "upperThreshold" : "0.67",
   "color" : "#ff8000",
-  "name" : "Neutral"
+  "type" : "Neutral"
 }, {
   "upperThreshold" : "0.33",
   "color" : "#ff0000",
-  "name" : "Bad"
+  "type" : "Bad"
 } ]'</code></pre>
 </div>
 </div>
@@ -8425,8 +8673,8 @@ Content-Length: 421
   "name" : "Fast Tests",
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2021, 5, 25 ],
+  "value_description" : "0.80",
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8455,7 +8703,154 @@ Content-Length: 421
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_single_current_evaluation">4.3. Get single current evaluation</h3>
+<h3 id="_get_current_evaluation_for_students">4.3. Get current evaluation for students</h3>
+<div class="sect3">
+<h4 id="_get_current_evaluation_for_students_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/student?prj=prjExternalId' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_current_evaluation_for_students_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].student_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Student identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].project</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project if the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].studentName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].taigaUsername</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga username of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].githubUsername</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github username of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_current_evaluation_for_students_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 646
+
+[ {
+  "student_id" : null,
+  "project" : null,
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
+    "datasource" : null,
+    "rationale" : "parameters: {...}, formula: ...",
+    "confidence80" : null,
+    "confidence95" : null,
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ],
+  "studentName" : "student_test_name",
+  "taigaUsername" : "taiga_test_username",
+  "githubUsername" : "github_test_username"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_single_current_evaluation">4.4. Get single current evaluation</h3>
 <div class="sect3">
 <h4 id="_get_single_current_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -8599,8 +8994,8 @@ Content-Type: application/json;charset=UTF-8
   "name" : "Fast Tests",
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2021, 5, 25 ],
+  "value_description" : "0.80",
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8629,7 +9024,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_historical_evaluation_3">4.4. Get historical evaluation</h3>
+<h3 id="_get_historical_evaluation_3">4.5. Get historical evaluation</h3>
 <div class="sect3">
 <h4 id="_get_historical_evaluation_3_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -8759,8 +9154,8 @@ Content-Length: 421
   "name" : "Fast Tests",
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2021, 5, 25 ],
+  "value_description" : "0.80",
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8789,7 +9184,7 @@ Content-Length: 421
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_single_historical_evaluation">4.5. Get single historical evaluation</h3>
+<h3 id="_get_single_historical_evaluation">4.6. Get single historical evaluation</h3>
 <div class="sect3">
 <h4 id="_get_single_historical_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -8941,8 +9336,8 @@ Content-Length: 421
   "name" : "Fast Tests",
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2021, 5, 25 ],
+  "value_description" : "0.80",
+  "date" : [ 2022, 7, 28 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8971,7 +9366,7 @@ Content-Length: 421
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_historical_evaluation_for_quality_factor">4.6. Get historical evaluation for quality factor</h3>
+<h3 id="_get_historical_evaluation_for_quality_factor">4.7. Get historical evaluation for quality factor</h3>
 <div class="sect3">
 <h4 id="_get_historical_evaluation_for_quality_factor_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -9056,6 +9451,11 @@ Content-Length: 421
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -9147,6 +9547,11 @@ Content-Length: 421
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -9155,14 +9560,15 @@ Content-Length: 421
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 722
 Content-Type: application/json;charset=UTF-8
-Content-Length: 657
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -9171,15 +9577,16 @@ Content-Length: 657
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : null
 } ]</code></pre>
 </div>
 </div>
@@ -9202,7 +9609,199 @@ Content-Length: 657
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_prediction">4.7. Get prediction</h3>
+<h3 id="_get_historical_evaluation_for_students">4.8. Get historical evaluation for students</h3>
+<div class="sect3">
+<h4 id="_get_historical_evaluation_for_students_path_parameters">Path parameters</h4>
+<div class="paragraph">
+<p>Snippet path-parameters not found for operation::students/historical</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_historical_evaluation_for_students_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initial date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Final Date</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_historical_evaluation_for_students_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/student/historical?prj=prjExternalId&amp;from=2000-01-01&amp;to=2000-05-01&amp;profile=profileId' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_historical_evaluation_for_students_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].student_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Student identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].project</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project if the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].studentName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].taigaUsername</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga username of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].githubUsername</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github username of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].numberMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_historical_evaluation_for_students_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 670
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "student_id" : null,
+  "project" : null,
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
+    "datasource" : null,
+    "rationale" : "parameters: {...}, formula: ...",
+    "confidence80" : null,
+    "confidence95" : null,
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ],
+  "numberMetrics" : 1,
+  "studentName" : "student_test_name",
+  "taigaUsername" : "taiga_test_username",
+  "githubUsername" : "github_test_username"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_prediction">4.9. Get prediction</h3>
 <div class="sect3">
 <h4 id="_get_prediction_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -9352,8 +9951,8 @@ Content-Type: application/json;charset=UTF-8
   "name" : "Fast Tests",
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2021, 5, 25 ],
+  "value_description" : "0.80",
+  "date" : [ 2022, 7, 28 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -9388,7 +9987,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_prediction_for_quality_factor">4.8. Get prediction for quality factor</h3>
+<h3 id="_get_prediction_for_quality_factor">4.10. Get prediction for quality factor</h3>
 <div class="sect3">
 <h4 id="_get_prediction_for_quality_factor_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -9473,6 +10072,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -9584,6 +10188,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Datasource from where the data is taken</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -9592,14 +10201,15 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 827
 Content-Type: application/json;charset=UTF-8
-Content-Length: 762
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "date" : null,
   "value" : null,
+  "description" : "Performance of the tests",
   "value_description" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
@@ -9608,8 +10218,8 @@ Content-Length: 762
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2021, 5, 25 ],
+    "value_description" : "0.80",
+    "date" : [ 2022, 7, 28 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -9622,7 +10232,8 @@ Content-Length: 762
     },
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-  } ]
+  } ],
+  "type" : null
 } ]</code></pre>
 </div>
 </div>
@@ -9645,7 +10256,7 @@ Content-Length: 762
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_metric_categories">4.9. Get metric categories</h3>
+<h3 id="_get_metric_categories">4.11. Get metric categories</h3>
 <div class="sect3">
 <h4 id="_get_metric_categories_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -9676,6 +10287,11 @@ Content-Length: 762
 <td class="tableblock halign-left valign-top"><p class="tableblock">Category identifier</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category type</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Category name</p></td>
@@ -9699,32 +10315,35 @@ Content-Length: 762
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 276
+Content-Length: 345
 
 [ {
   "id" : 10,
-  "name" : "Good",
+  "name" : "Default",
   "color" : "#00ff00",
-  "upperThreshold" : 1.0
+  "upperThreshold" : 1.0,
+  "type" : "Good"
 }, {
   "id" : 11,
-  "name" : "Neutral",
+  "name" : "Default",
   "color" : "#ff8000",
-  "upperThreshold" : 0.67
+  "upperThreshold" : 0.67,
+  "type" : "Neutral"
 }, {
   "id" : 12,
-  "name" : "Bad",
+  "name" : "Default",
   "color" : "#ff0000",
-  "upperThreshold" : 0.33
+  "upperThreshold" : 0.33,
+  "type" : "Bad"
 } ]</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_set_strategic_indicator_categories_2">4.10. Set strategic indicator categories</h3>
+<h3 id="_set_metric_categories">4.12. Set metric categories</h3>
 <div class="sect3">
-<h4 id="_set_strategic_indicator_categories_2_request_fields">Request fields</h4>
+<h4 id="_set_metric_categories_request_fields">Request fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -9740,9 +10359,9 @@ Content-Length: 276
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics category name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics category type</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
@@ -9758,29 +10377,29 @@ Content-Length: 276
 </table>
 </div>
 <div class="sect3">
-<h4 id="_set_strategic_indicator_categories_2_curl_request">Curl request</h4>
+<h4 id="_set_metric_categories_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/categories' -i -X POST \
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/categories?name=Default' -i -X POST \
     -H 'Content-Type: application/json' \
     -d '[ {
   "upperThreshold" : "1.0",
   "color" : "#00ff00",
-  "name" : "Good"
+  "type" : "Good"
 }, {
   "upperThreshold" : "0.67",
   "color" : "#ff8000",
-  "name" : "Neutral"
+  "type" : "Neutral"
 }, {
   "upperThreshold" : "0.33",
   "color" : "#ff0000",
-  "name" : "Bad"
+  "type" : "Bad"
 } ]'</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_set_strategic_indicator_categories_2_http_response">HTTP response</h4>
+<h4 id="_set_metric_categories_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
@@ -9932,7 +10551,7 @@ Content-Length: 298
   "valueDescription" : "Normal (0.40)",
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1621942219811,
+  "date" : 1659009688690,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -10345,6 +10964,36 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement text</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].correctnessCondition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter correctness condition</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric name</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].costFunction</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement cost function</p></td>
@@ -10357,7 +11006,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 516
+Content-Length: 800
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -10371,7 +11020,15 @@ Content-Type: application/json;charset=UTF-8
     "description" : "The ratio of files without duplications should be at least the given value",
     "comments" : "No comments",
     "fixedPart" : {
-      "formText" : "The ratio of files without duplications should be at least %value%"
+      "formText" : "The ratio of files without duplications should be at least %value%",
+      "parameters" : [ {
+        "id" : 120,
+        "name" : "value",
+        "description" : "value in percentage",
+        "correctnessCondition" : "Stay between 0 and 100",
+        "metricId" : 172,
+        "metricName" : "Integer that represents a percentage"
+      } ]
     }
   } ],
   "costFunction" : "No cost function"
@@ -10732,7 +11389,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1621942219275,
+  "date" : 1659009688349,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -10926,7 +11583,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1621942223761,
+  "date" : 1659009691517,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -10942,7 +11599,7 @@ Content-Type: application/json;charset=UTF-8
     "valueDescription" : null,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1621942223761,
+    "date" : 1659009691517,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -11086,7 +11743,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1621942223858,
+  "date" : 1659009691621,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -11236,6 +11893,36 @@ Content-Length: 410
 <td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement text</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].correctnessCondition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter correctness condition</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric name</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].costFunction</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement cost function</p></td>
@@ -11248,7 +11935,7 @@ Content-Length: 410
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 516
+Content-Length: 800
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -11262,7 +11949,15 @@ Content-Type: application/json;charset=UTF-8
     "description" : "The ratio of files without duplications should be at least the given value",
     "comments" : "No comments",
     "fixedPart" : {
-      "formText" : "The ratio of files without duplications should be at least %value%"
+      "formText" : "The ratio of files without duplications should be at least %value%",
+      "parameters" : [ {
+        "id" : 120,
+        "name" : "value",
+        "description" : "value in percentage",
+        "correctnessCondition" : "Stay between 0 and 100",
+        "metricId" : 172,
+        "metricName" : "Integer that represents a percentage"
+      } ]
     }
   } ],
   "costFunction" : "No cost function"
@@ -11365,6 +12060,36 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement text</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].correctnessCondition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter correctness condition</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].metricId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].metricName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric name</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>costFunction</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement cost function</p></td>
@@ -11377,8 +12102,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 512
 Content-Type: application/json;charset=UTF-8
+Content-Length: 796
 
 {
   "id" : 100,
@@ -11391,7 +12116,15 @@ Content-Type: application/json;charset=UTF-8
     "description" : "The ratio of files without duplications should be at least the given value",
     "comments" : "No comments",
     "fixedPart" : {
-      "formText" : "The ratio of files without duplications should be at least %value%"
+      "formText" : "The ratio of files without duplications should be at least %value%",
+      "parameters" : [ {
+        "id" : 120,
+        "name" : "value",
+        "description" : "value in percentage",
+        "correctnessCondition" : "Stay between 0 and 100",
+        "metricId" : 172,
+        "metricName" : "Integer that represents a percentage"
+      } ]
     }
   } ],
   "costFunction" : "No cost function"
@@ -11609,7 +12342,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1621942220610,
+  "date" : 1659009689262,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -11822,7 +12555,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2021-05-25",
+  "date" : "2022-07-28",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -12097,6 +12830,26 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].students</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Students of the project</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -12105,8 +12858,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 163
 Content-Type: application/json;charset=UTF-8
+Content-Length: 265
 
 [ {
   "id" : 1,
@@ -12115,7 +12868,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Test project",
   "logo" : null,
   "active" : true,
-  "backlogId" : "999"
+  "backlogId" : "999",
+  "taigaURL" : "testURL1",
+  "githubURL" : "testURL2",
+  "isGlobal" : false,
+  "students" : null
 } ]</code></pre>
 </div>
 </div>
@@ -12204,6 +12961,26 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>students</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Students of the project</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -12212,7 +12989,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 159
+Content-Length: 261
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -12222,7 +12999,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Test project",
   "logo" : null,
   "active" : true,
-  "backlogId" : "999"
+  "backlogId" : "999",
+  "taigaURL" : "testURL1",
+  "githubURL" : "testURL2",
+  "isGlobal" : false,
+  "students" : null
 }</code></pre>
 </div>
 </div>
@@ -12281,6 +13062,18 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -12315,7 +13108,10 @@ Content-Type: application/json;charset=UTF-8
     -F 'externalId=test' \
     -F 'name=Test' \
     -F 'description=Test project' \
-    -F 'backlogId=999'</code></pre>
+    -F 'backlogId=999' \
+    -F 'taigaURL=taigaURl' \
+    -F 'githubURL=githubURL' \
+    -F 'isGlobal=false'</code></pre>
 </div>
 </div>
 </div>
@@ -12428,6 +13224,26 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].students</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Students of the project</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -12436,8 +13252,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 290
 Content-Type: application/json;charset=UTF-8
+Content-Length: 400
 
 [ {
   "id" : 1,
@@ -12451,7 +13267,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Test project",
     "logo" : null,
     "active" : true,
-    "backlogId" : "999"
+    "backlogId" : "999",
+    "taigaURL" : "testURL1",
+    "githubURL" : "testURL2",
+    "isGlobal" : false,
+    "students" : null
   } ]
 } ]</code></pre>
 </div>
@@ -12566,6 +13386,26 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].students</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Students of the project</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -12574,7 +13414,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 286
+Content-Length: 396
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -12589,7 +13429,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Test project",
     "logo" : null,
     "active" : true,
-    "backlogId" : "999"
+    "backlogId" : "999",
+    "taigaURL" : "testURL1",
+    "githubURL" : "testURL2",
+    "isGlobal" : false,
+    "students" : null
   } ]
 }</code></pre>
 </div>
@@ -13396,6 +14240,26 @@ Content-Length: 1129
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].students</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Students of the project</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].allSIs</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of pairs which specify for each project of profile, if it show all strategic indicators or not</p></td>
@@ -13418,7 +14282,7 @@ Content-Length: 1129
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 457
+Content-Length: 567
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -13437,7 +14301,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Test project",
     "logo" : null,
     "active" : true,
-    "backlogId" : "999"
+    "backlogId" : "999",
+    "taigaURL" : "testURL1",
+    "githubURL" : "testURL2",
+    "isGlobal" : false,
+    "students" : null
   } ],
   "allSIs" : [ {
     "first" : 1,
@@ -13577,6 +14445,26 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].taigaURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Taiga repository URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].githubURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Github repositories URLs separated by a ';'</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].isGlobal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is a global project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].students</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Students of the project</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>allSIs</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of pairs which specify for each project of profile, if it show all strategic indicators or not</p></td>
@@ -13600,7 +14488,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 453
+Content-Length: 563
 
 {
   "id" : 1,
@@ -13618,7 +14506,11 @@ Content-Length: 453
     "description" : "Test project",
     "logo" : null,
     "active" : true,
-    "backlogId" : "999"
+    "backlogId" : "999",
+    "taigaURL" : "testURL1",
+    "githubURL" : "testURL2",
+    "isGlobal" : false,
+    "students" : null
   } ],
   "allSIs" : [ {
     "first" : 1,
@@ -13786,12 +14678,6 @@ Content-Length: 453
 </table>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_3_request_parts">Request parts</h5>
-<div class="paragraph">
-<p>Snippet request-parts not found for operation::profiles/update</p>
-</div>
-</div>
-<div class="sect4">
 <h5 id="_path_parameters_3_curl_request">Curl request</h5>
 <div class="listingblock">
 <div class="content">
@@ -13863,10 +14749,795 @@ Content-Length: 453
 </div>
 </div>
 <div class="sect1">
-<h2 id="_others">12. Others</h2>
+<h2 id="_iterations">12. Iterations</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_forecasting_techniques">12.1. Get forecasting techniques</h3>
+<h3 id="_get_all_iterations">12.1. Get all iterations</h3>
+<div class="sect3">
+<h4 id="_get_all_iterations_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/iterations' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_all_iterations_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iteration identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iteration name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Iteration label</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].from_date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iteration start date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].to_date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iteration end date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].project_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project associated with the iteration</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_all_iterations_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 171
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : 1,
+  "name" : "test iteration",
+  "label" : "test label",
+  "from_date" : 1656108000000,
+  "to_date" : 1658440800000,
+  "project_ids" : [ 2, 4, 5 ]
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_iteration">12.2. Update iteration</h3>
+<div class="sect3">
+<h4 id="_path_parameters_4">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. /api/iterations/{iteration_id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>iteration_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iteration identifier to be modified</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="_path_parameters_4_request_fields">Request fields</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>iteration.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New iteration name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>iteration.label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) New iteration label</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>iteration.fromDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New iteration start date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>iteration.toDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New iteration end date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New projects associated with the iteration</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_4_curl_request">Curl request</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/iterations/1' -i -X PUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "project_ids" : [ 2, 4 ],
+  "iteration" : {
+    "fromDate" : "2022-02-25",
+    "toDate" : "2022-05-15",
+    "name" : "test iteration",
+    "label" : "test label"
+  }
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_4_http_response">HTTP response</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_iteration">12.3. Delete iteration</h3>
+<div class="sect3">
+<h4 id="_delete_iteration_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/iterations/{iteration_id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>iteration_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Iteration identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_delete_iteration_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/iterations/1' -i -X DELETE</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delete_iteration_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_students">13. Students</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_update_students_metrics">13.1. Update student&#8217;s metrics</h3>
+<div class="sect3">
+<h4 id="_update_students_metrics_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userTemp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of metrics ids that belong to the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studentId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Id of the student</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studentsList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String with the name and username of the students, separated by a comma</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projectId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Id of the student&#8217;s project</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_update_students_metrics_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/student' -i -X PUT \
+    -H 'Content-Type: multipart/form-data' \
+    -d 'userTemp=s1&amp;userTemp=s2&amp;userTemp=s3&amp;studentId=1&amp;projectId=1&amp;studentsList=student_test_name%2Ctaiga_test_name%2Cgithub_test_name'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_update_students_metrics_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1
+
+0</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_students_metrics">13.2. Delete student&#8217;s metrics</h3>
+<div class="sect3">
+<h4 id="_delete_students_metrics_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/metrics/student/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Student identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_delete_students_metrics_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/student/1' -i -X DELETE</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delete_students_metrics_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_news_updates">14. News (updates)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_get_all_news_updates">14.1. Get all news (updates)</h3>
+<div class="sect3">
+<h4 id="_get_all_news_updates_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_all_news_updates_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description/List of updates and news</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_all_news_updates_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 78
+
+[ {
+  "id" : 1,
+  "name" : "Test",
+  "date" : null,
+  "update" : null
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_last_year_news_updates">14.2. Get last year news (updates)</h3>
+<div class="sect3">
+<h4 id="_get_last_year_news_updates_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update/year' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_last_year_news_updates_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description/List of updates and news</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_last_year_news_updates_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 97
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : 1,
+  "name" : "Test",
+  "date" : [ 2000, 1, 1 ],
+  "update" : "Test update"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_single_novetly_update">14.3. Get single novetly (update)</h3>
+<div class="sect3">
+<h4 id="_get_single_novetly_update_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/update/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_novetly_update_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update/1' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_single_novetly_update_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description/List of updates and news</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_novetly_update_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 93
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id" : 1,
+  "name" : "Test",
+  "date" : [ 2000, 1, 1 ],
+  "update" : "Test update"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_last_novetly_update">14.4. Get last novetly (update)</h3>
+<div class="sect3">
+<h4 id="_get_last_novetly_update_path_parameters">Path parameters</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_get_last_novetly_update_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update/last?username=test+username' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_last_novetly_update_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description/List of updates and news</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_last_novetly_update_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 97
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : 1,
+  "name" : "Test",
+  "date" : [ 2000, 1, 1 ],
+  "update" : "Test update"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_novelty_update">14.5. New novelty (update)</h3>
+<div class="sect3">
+<h4 id="_new_novelty_update_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description/List of updates and news</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_new_novelty_update_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update' -i -X POST \
+    -H 'Content-Type: multipart/form-data' \
+    -d 'name=Test&amp;date=2000-01-01&amp;update=Test+update'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_new_novelty_update_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_novelty_update">14.6. Update novelty (update)</h3>
+<div class="sect3">
+<h4 id="_path_parameters_5">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. /api/update/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="_path_parameters_5_request_parameters">Request parameters</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description/List of updates and news</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_5_curl_request">Curl request</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update/1' -i -X PUT \
+    -d 'name=Test&amp;date=2000-01-01&amp;update=Test+update'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_5_http_response">HTTP response</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_novelty_update">14.7. Delete novelty (update)</h3>
+<div class="sect3">
+<h4 id="_delete_novelty_update_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/update/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_delete_novelty_update_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update/1' -i -X DELETE</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delete_novelty_update_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_others">15. Others</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_get_forecasting_techniques">15.1. Get forecasting techniques</h3>
 <div class="sect3">
 <h4 id="_get_forecasting_techniques_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -13913,7 +15584,7 @@ Content-Length: 26
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_project_milestones">12.2. Get project milestones</h3>
+<h3 id="_get_project_milestones">15.2. Get project milestones</h3>
 <div class="sect3">
 <h4 id="_get_project_milestones_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13943,7 +15614,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2021-05-25' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2022-07-28' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -13995,7 +15666,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2021-05-28",
+  "date" : "2022-07-31",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -14005,7 +15676,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_project_phases">12.3. Get project phases</h3>
+<h3 id="_get_project_phases">15.3. Get project phases</h3>
 <div class="sect3">
 <h4 id="_get_project_phases_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -14087,10 +15758,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2021-05-10",
+  "dateFrom" : "2022-07-13",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2021-06-09"
+  "dateTo" : "2022-08-12"
 } ]</code></pre>
 </div>
 </div>
@@ -14101,7 +15772,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-05-25 13:32:58 +0200
+Last updated 2022-07-28 12:35:00 +0200
 </div>
 </div>
 </body>

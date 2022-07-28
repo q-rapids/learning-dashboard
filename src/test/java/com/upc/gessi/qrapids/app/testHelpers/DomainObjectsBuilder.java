@@ -923,4 +923,17 @@ public class DomainObjectsBuilder {
         DTOSICurrentHistoricEvaluation.DTOHistoricalData dtoHistoricalData = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(strategicIndicatorValuePair,strategicIndicatorRationale,date);
         return dtoHistoricalData;
     }
+
+    public DTOIteration buildIteration(){
+        Long id = 1L;
+        String name = "test iteration";
+        String label = "test label";
+        java.sql.Date from_date = new java.sql.Date(2022 - 1900, Calendar.JUNE, 25);
+        java.sql.Date to_date = new java.sql.Date(2022 - 1900, Calendar.JULY, 22);
+        List<Long> project_ids = new ArrayList<>();
+        project_ids.add(2L);
+        project_ids.add(4L);
+        project_ids.add(5L);
+        return new DTOIteration(id, name, label, from_date, to_date, project_ids);
+    }
 }
