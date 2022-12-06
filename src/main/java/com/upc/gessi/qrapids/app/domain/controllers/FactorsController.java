@@ -611,9 +611,9 @@ public class FactorsController {
                 info += metricInfo;
             }
             if (weighted) {
-                info += " }, formula: weighted average, value: " + value + ", category: " + getFactorLabelFromValue(value);
+                info += " }, formula: weighted average, value: " + value + ", category: " + qualityFactor.getCategoryName();
             } else {
-                info += " }, formula: average, value: " + value + ", category: " + getFactorLabelFromValue(value);
+                info += " }, formula: average, value: " + value + ", category: " + qualityFactor.getCategoryName();
             }
             // saving the QF's assessment
             // in case of new factor -> indicators list is empty
@@ -724,6 +724,23 @@ public class FactorsController {
             }
         }
         return "No Category";
+    }
+
+    public String getFactorLabelFromNameAndValue (String nameCategory, Float val_metric) {
+        List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
+        //List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByName(nameCategory); TODO: no funciona por lo que he cambiado la implementacion
+        Float distance = 1.0f;  //distancia màxima
+        String type = "No Category";
+        for (QFCategory qfCategory : qfCategoryList) {
+            if (val_metric < qfCategory.getUpperThreshold() &&     //si la metrica puede ser de ese thresh
+                    distance>(qfCategory.getUpperThreshold()-val_metric) // y la distancia hasta ahora es MAYOR a la nueva
+                    && qfCategory.getName() == (nameCategory)){      //y la categoria es la correcta
+                distance = qfCategory.getUpperThreshold()-val_metric;
+                type = qfCategory.getType();
+            }
+
+        }
+        return type;
     }
 
     public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException {
