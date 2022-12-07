@@ -13,6 +13,8 @@ public interface QFCategoryRepository extends CrudRepository<QFCategory, Long> {
 
     List<QFCategory> findAllByName(String name);
 
+    List<QFCategory> findAllByType(String type);
+
     QFCategory findByName(String name);
 
 }

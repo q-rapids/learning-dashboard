@@ -4,8 +4,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -17,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -41,6 +45,12 @@ public class FactorEvaluationControllerTest {
 
     @Mock
     private QFCategoryRepository factorCategoryRepository;
+
+    @Autowired
+    private QFCategoryRepository factorCategoryRepositoryold;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @InjectMocks
     private FactorsController factorsController;
@@ -104,7 +114,7 @@ public class FactorEvaluationControllerTest {
     }
 
     @Test
-    public void getSingleFactorEvaluation() throws IOException {
+    public void getSingleFactorEvaluation() throws IOException, QualityFactorNotFoundException {
         // Given
         DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
         String projectExternalId = "test";
@@ -264,6 +274,7 @@ public class FactorEvaluationControllerTest {
         assertEquals(dtoFactorEvaluationList.size(), factorsSimulationList.size());
         assertEquals(dtoFactorEvaluation, factorsSimulationList.get(0));
     }
+    /*
 
     @Test
     public void getFactorLabelFromValueGood() {
@@ -312,4 +323,24 @@ public class FactorEvaluationControllerTest {
         String expectedLabel = "Bad";
         assertEquals(expectedLabel, label);
     }
+*/
+    @Test
+    public void getFactorLabelFromValueAndName() {
+        // Given
+        Float value = 0.7f;
+        List<QFCategory> qfCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        Collections.reverse(qfCategoryList);
+        when(factorCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(qfCategoryList);
+
+        // When
+        String label_up_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.7f);
+        String label_good_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.37f);
+        String label_high_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.8f);
+
+        // Then
+        assertEquals("Up", label_up_6mem);
+        assertEquals("Good enough", label_good_6mem);
+        assertEquals("High", label_high_6mem);
+    }
+
 }

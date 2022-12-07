@@ -669,17 +669,35 @@ public class DomainObjectsBuilder {
         factorNeutralCategory.setId(factorNeutralCategoryId);
 
         Long factorBadCategoryId = 12L;
-        String factorBadCategoryType = "Bad";
         String factorBadCategoryName = "Default";
+        String factorBadCategoryType = "Bad";
         String factorBadCategoryColor = "#ff0000";
         float factorBadCategoryUpperThreshold = 0.33f;
         QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold,factorBadCategoryType);
         factorBadCategory.setId(factorBadCategoryId);
 
+
+        QFCategory factorHighCategory6mc = new QFCategory("6 members contribution", "#ff0000", 1.0f,"High");
+        factorHighCategory6mc.setId(13L);
+        QFCategory factorUpCategory6mc = new QFCategory("6 members contribution", "#ff0000", 0.8f,"Up");
+        factorUpCategory6mc.setId(14L);
+        QFCategory factorGoodEnoughCategory6mc = new QFCategory("6 members contribution", "#ff0000", 0.5f,"Good enough");
+        factorGoodEnoughCategory6mc.setId(15L);
+        QFCategory factorDownCategory6mc = new QFCategory("6 members contribution", "#ff0000", 0.3f,"Down");
+        factorDownCategory6mc.setId(16L);
+        QFCategory factorLowCategory6mc = new QFCategory("6 members contribution", "#ff0000", 0.15f,"Low");
+        factorLowCategory6mc.setId(17L);
+
         List<QFCategory> factorCategoryList = new ArrayList<>();
         factorCategoryList.add(factorGoodCategory);
         factorCategoryList.add(factorNeutralCategory);
         factorCategoryList.add(factorBadCategory);
+
+        factorCategoryList.add(factorHighCategory6mc);
+        factorCategoryList.add(factorUpCategory6mc);
+        factorCategoryList.add(factorGoodEnoughCategory6mc);
+        factorCategoryList.add(factorDownCategory6mc);
+        factorCategoryList.add(factorLowCategory6mc);
 
         return factorCategoryList;
     }

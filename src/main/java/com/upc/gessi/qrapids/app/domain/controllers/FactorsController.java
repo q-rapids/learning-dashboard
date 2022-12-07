@@ -743,6 +743,13 @@ public class FactorsController {
         return type;
     }
 
+    public String getCategoryFromRationale (String rationale){
+        String[] strArray = rationale.split(" ");
+        String category = strArray[strArray.length-1];
+        category = category.substring(0, category.length()-1);
+        return category;
+    }
+
     public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException {
         return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
     }

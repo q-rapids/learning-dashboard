@@ -207,11 +207,12 @@ public class QMADetailedStrategicIndicators {
     }
 
      public DTOFactorEvaluation FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
+        String cat_name = factorsController.getCategoryFromRationale(evaluation.getRationale());
         DTOFactorEvaluation factorEval = new DTOFactorEvaluation(
                 factor.getID(),
                 factor.getName(),
                 factor.getDescription(),
-                Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())), evaluation.getEvaluationDate(),
+                Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromNameAndValue(cat_name, evaluation.getValue())), evaluation.getEvaluationDate(),
                 evaluation.getDatasource(),evaluation.getRationale(),
                 factor.getStrategicIndicators());
         factorEval.setMismatchDays(evaluation.getMismatchDays());
