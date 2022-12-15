@@ -729,14 +729,16 @@ public class FactorsController {
     public String getFactorLabelFromNameAndValue (String nameCategory, Float val_metric) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         //List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByName(nameCategory); TODO: no funciona por lo que he cambiado la implementacion
-        Float distance = 1.0f;  //distancia màxima
+        Float distance = 1.1f;  //distancia demasiado grande para que se recalcule
         String type = "No Category";
         for (QFCategory qfCategory : qfCategoryList) {
+            System.out.println(qfCategory.getType() + " " + qfCategory.getName() + " " + qfCategory.getUpperThreshold());
             if (val_metric < qfCategory.getUpperThreshold() &&     //si la metrica puede ser de ese thresh
                     distance>(qfCategory.getUpperThreshold()-val_metric) // y la distancia hasta ahora es MAYOR a la nueva
-                    && qfCategory.getName() == (nameCategory)){      //y la categoria es la correcta
+                    && qfCategory.getName().equals(nameCategory)){      //y la categoria es la correcta
                 distance = qfCategory.getUpperThreshold()-val_metric;
                 type = qfCategory.getType();
+                System.out.println("cumple " + qfCategory.getName() + " " + qfCategory.getType() + " "+distance+type);
             }
 
         }
@@ -745,8 +747,7 @@ public class FactorsController {
     }
 
     public String getCategoryFromRationale (String rationale){
-        String[] strArray = rationale.split(" ");
-        String category = strArray[strArray.length-1];
+        String category = rationale.substring(rationale.indexOf("category") +  10, rationale.length());  //+9 porque te da el indice de c: hay que sumarle toda la palabra y el espacio
         return category;
     }
 

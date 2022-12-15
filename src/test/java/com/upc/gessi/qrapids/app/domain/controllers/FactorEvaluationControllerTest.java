@@ -346,9 +346,15 @@ public class FactorEvaluationControllerTest {
     @Test
     public void getCategoryFromRationale (){
         String rationale_example = "metrics: { commits_anonymous (value: 0.13736264, no weighted); }, formula: average, value: 0.13736264, category: Default";
-        String cat = factorsController.getCategoryFromRationale(rationale_example);
+        String cat_def = factorsController.getCategoryFromRationale(rationale_example);
+        rationale_example = "metrics: { commits_anonymous (value: 0.6264, no weighted); }, formula: average, value: 0.6264, category: 6 members contribution";
+        String cat_6m = factorsController.getCategoryFromRationale(rationale_example);
+        rationale_example = "metrics: { commits_anonymous (value: 0.482, no weighted); }, formula: average, value: 0.482, category: Reversed default";
+        String cat_rev = factorsController.getCategoryFromRationale(rationale_example);
 
-        assertEquals("Default", cat);
+        assertEquals("Default", cat_def);
+        assertEquals("6 members contribution", cat_6m);
+        assertEquals("Reversed default", cat_rev);
     }
 
 
