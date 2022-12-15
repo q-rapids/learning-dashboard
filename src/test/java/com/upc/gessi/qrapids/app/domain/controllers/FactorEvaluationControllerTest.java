@@ -327,20 +327,28 @@ public class FactorEvaluationControllerTest {
     @Test
     public void getFactorLabelFromValueAndName() {
         // Given
-        Float value = 0.7f;
         List<QFCategory> qfCategoryList = domainObjectsBuilder.buildFactorCategoryList();
         Collections.reverse(qfCategoryList);
         when(factorCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(qfCategoryList);
 
         // When
         String label_up_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.7f);
+        String label_low_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.10f);
+        String label_low2_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.15f);
+        String label_low3_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0f);
         String label_good_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.37f);
-        String label_high_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.8f);
+        String label_up2_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.8f);
+        String label_high2_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 1f);
 
         // Then
         assertEquals("Up", label_up_6mem);
         assertEquals("Good enough", label_good_6mem);
-        assertEquals("High", label_high_6mem);
+        assertEquals("Up", label_up2_6mem);
+        assertEquals("High", label_high2_6mem);
+        assertEquals("Low", label_low_6mem);
+        assertEquals("Low", label_low2_6mem);
+        assertEquals("Low", label_low3_6mem);
+
     }
 
     @Test

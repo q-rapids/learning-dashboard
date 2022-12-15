@@ -729,16 +729,16 @@ public class FactorsController {
     public String getFactorLabelFromNameAndValue (String nameCategory, Float val_metric) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         //List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByName(nameCategory); TODO: no funciona por lo que he cambiado la implementacion
-        Float distance = 1.1f;  //distancia demasiado grande para que se recalcule
+        Float distance = 1.1f;  //distancia demasiado grande, para que se recalcule
         String type = "No Category";
         for (QFCategory qfCategory : qfCategoryList) {
-            System.out.println(qfCategory.getType() + " " + qfCategory.getName() + " " + qfCategory.getUpperThreshold());
-            if (val_metric < qfCategory.getUpperThreshold() &&     //si la metrica puede ser de ese thresh
+            System.out.println(qfCategory.getType() + " " + qfCategory.getName() + " " + qfCategory.getUpperThreshold() + " "+ distance);
+            System.out.println(qfCategory.getUpperThreshold()-val_metric);
+            if (val_metric <= qfCategory.getUpperThreshold() &&     //si la metrica puede ser de ese thresh
                     distance>(qfCategory.getUpperThreshold()-val_metric) // y la distancia hasta ahora es MAYOR a la nueva
                     && qfCategory.getName().equals(nameCategory)){      //y la categoria es la correcta
                 distance = qfCategory.getUpperThreshold()-val_metric;
                 type = qfCategory.getType();
-                System.out.println("cumple " + qfCategory.getName() + " " + qfCategory.getType() + " "+distance+type);
             }
 
         }
