@@ -740,13 +740,13 @@ public class FactorsController {
             }
 
         }
+        if (type == "No Category") type = nameCategory;
         return type;
     }
 
     public String getCategoryFromRationale (String rationale){
         String[] strArray = rationale.split(" ");
         String category = strArray[strArray.length-1];
-        category = category.substring(0, category.length()-1);
         return category;
     }
 

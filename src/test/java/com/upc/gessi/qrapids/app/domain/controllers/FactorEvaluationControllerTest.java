@@ -343,4 +343,13 @@ public class FactorEvaluationControllerTest {
         assertEquals("High", label_high_6mem);
     }
 
+    @Test
+    public void getCategoryFromRationale (){
+        String rationale_example = "metrics: { commits_anonymous (value: 0.13736264, no weighted); }, formula: average, value: 0.13736264, category: Default";
+        String cat = factorsController.getCategoryFromRationale(rationale_example);
+
+        assertEquals("Default", cat);
+    }
+
+
 }
