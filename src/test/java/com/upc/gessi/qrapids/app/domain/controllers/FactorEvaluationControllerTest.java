@@ -4,8 +4,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -17,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -41,6 +45,12 @@ public class FactorEvaluationControllerTest {
 
     @Mock
     private QFCategoryRepository factorCategoryRepository;
+
+    @Autowired
+    private QFCategoryRepository factorCategoryRepositoryold;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @InjectMocks
     private FactorsController factorsController;
@@ -104,7 +114,7 @@ public class FactorEvaluationControllerTest {
     }
 
     @Test
-    public void getSingleFactorEvaluation() throws IOException {
+    public void getSingleFactorEvaluation() throws IOException, QualityFactorNotFoundException {
         // Given
         DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
         String projectExternalId = "test";
@@ -264,6 +274,7 @@ public class FactorEvaluationControllerTest {
         assertEquals(dtoFactorEvaluationList.size(), factorsSimulationList.size());
         assertEquals(dtoFactorEvaluation, factorsSimulationList.get(0));
     }
+    /*
 
     @Test
     public void getFactorLabelFromValueGood() {
@@ -312,4 +323,47 @@ public class FactorEvaluationControllerTest {
         String expectedLabel = "Bad";
         assertEquals(expectedLabel, label);
     }
+*/
+    @Test
+    public void getFactorLabelFromValueAndName() {
+        // Given
+        List<QFCategory> qfCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        Collections.reverse(qfCategoryList);
+        when(factorCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(qfCategoryList);
+
+        // When
+        String label_up_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.7f);
+        String label_low_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.10f);
+        String label_low2_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.15f);
+        String label_low3_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0f);
+        String label_good_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.37f);
+        String label_up2_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 0.8f);
+        String label_high2_6mem = factorsController.getFactorLabelFromNameAndValue("6 members contribution", 1f);
+
+        // Then
+        assertEquals("Up", label_up_6mem);
+        assertEquals("Good enough", label_good_6mem);
+        assertEquals("Up", label_up2_6mem);
+        assertEquals("High", label_high2_6mem);
+        assertEquals("Low", label_low_6mem);
+        assertEquals("Low", label_low2_6mem);
+        assertEquals("Low", label_low3_6mem);
+
+    }
+
+    @Test
+    public void getCategoryFromRationale (){
+        String rationale_example = "metrics: { commits_anonymous (value: 0.13736264, no weighted); }, formula: average, value: 0.13736264, category: Default";
+        String cat_def = factorsController.getCategoryFromRationale(rationale_example);
+        rationale_example = "metrics: { commits_anonymous (value: 0.6264, no weighted); }, formula: average, value: 0.6264, category: 6 members contribution";
+        String cat_6m = factorsController.getCategoryFromRationale(rationale_example);
+        rationale_example = "metrics: { commits_anonymous (value: 0.482, no weighted); }, formula: average, value: 0.482, category: Reversed default";
+        String cat_rev = factorsController.getCategoryFromRationale(rationale_example);
+
+        assertEquals("Default", cat_def);
+        assertEquals("6 members contribution", cat_6m);
+        assertEquals("Reversed default", cat_rev);
+    }
+
+
 }

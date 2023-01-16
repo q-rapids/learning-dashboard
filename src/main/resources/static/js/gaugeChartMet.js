@@ -20,7 +20,7 @@ const DEFAULT_CATEGORY = "Default";
 var url;
 if (getParameterByName('id').length !== 0) {
     id = true;
-    url = parseURLComposed("../api/qualityFactors/metrics/currentcurrent");
+    url = parseURLComposed("../api/qualityFactors/metrics/current");
 } else {
     var profileId = sessionStorage.getItem("profile_id");
     url = parseURLComposed("../api/metrics/current?profile="+profileId);

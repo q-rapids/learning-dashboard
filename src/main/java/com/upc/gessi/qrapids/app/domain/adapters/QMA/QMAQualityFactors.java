@@ -243,10 +243,12 @@ public class QMAQualityFactors {
                 } catch (QualityFactorNotFoundException e) {
                     logger.error(e.getMessage(), e);
                 }
+
                 DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId),type);
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
+                String cat_name = factorsController.getCategoryFromRationale(evaluation.getRationale());
                 df.setDate(evaluation.getEvaluationDate());
-                df.setValue(Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())));
+                df.setValue(Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromNameAndValue(cat_name, evaluation.getValue())));
                 df.setMismatchDays(evaluation.getMismatchDays());
                 if (evaluation.getMissingElements() == null)
                     df.setMissingMetrics(new ArrayList<>());

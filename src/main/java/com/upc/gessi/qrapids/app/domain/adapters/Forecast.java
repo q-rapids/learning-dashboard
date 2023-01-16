@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicat
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -360,12 +361,13 @@ public class Forecast {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
                     float aux = mean.get(j).getAsFloat();
-                    result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
-                            f.getDescription(),
-                            f.getDatasource(),
-                            f.getRationale(),
-                            current.plusDays((long) j + 1), Pair.of(aux,factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
-                }
+                        String cat_name = factorsController.getCategoryFromRationale(f.getRationale());
+                        result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
+                                f.getDescription(),
+                                f.getDatasource(),
+                                f.getRationale(),
+                                current.plusDays((long) j + 1), Pair.of(aux,factorsController.getFactorLabelFromNameAndValue(cat_name,aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                    }
             } else {
                 result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
                         f.getDescription(),

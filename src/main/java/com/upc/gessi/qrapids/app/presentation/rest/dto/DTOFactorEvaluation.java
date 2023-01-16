@@ -32,6 +32,7 @@ public class DTOFactorEvaluation {
     private int mismatchDays;
     private List<String> missingMetrics;
     private String type;
+    //todo: add maybe a categoryname att to calculate the label
 
     /**
      * Constructor of the DTO of Factors
