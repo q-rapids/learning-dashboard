@@ -277,87 +277,97 @@ function drawChartByStudent(metrics, container, width, height, categories, proje
 
 function drawChartByFactor(metrics, container, width, height, categories, projecturls) {
     var gaugeChart = $("#gaugeChart");
+    count = 0;
     for (j = 0; j < factors.length; j++) {
-        var divF = document.createElement('div');
-        divF.style.marginTop = "1em";
-        divF.style.marginBottom = "1em";
-        if (factors[j].type === "Taiga") {
-            if (urlTaiga !== undefined && urlTaiga!==null) {
-                var a = document.createElement('a')
-                a.href=urlTaiga;
-                a.target = "_blank"
-                a.rel="noopener noreferrer"
-                var icon = document.createElement("img");
-                icon.target = "_blank"
-                icon.rel="noopener noreferrer"
-                icon.src = "../icons/taiga_icon.png"
-                icon.width = 38;
-                icon.height = 25;
-                icon.style = "padding-right:15px;";
-                a.appendChild(icon)
-                divF.appendChild(a);
-            }
-        }
-        if (factors[j].type === "Github") {
-            if (urlGithub !== undefined && urlGithub) {
-                var list = urlGithub.split(";");
-                var a = document.createElement('a')
-                a.href=list[0];
-                a.target = "_blank"
-                a.rel="noopener noreferrer"
-                var icon1 = document.createElement("img");
-                icon1.src = "../icons/github_icon.png"
-                icon1.width = 38;
-                icon1.height = 25;
-                icon1.style = "padding-right:15px;";
-                a.appendChild(icon1)
-                divF.appendChild(a);
-                if (list.length >= 2) {
+        if (count < 1){
+            var divF = document.createElement('div');
+            divF.style.marginTop = "1em";
+            divF.style.marginBottom = "1em";
+            if (factors[j].type === "Taiga") {
+                if (urlTaiga !== undefined && urlTaiga!==null) {
                     var a = document.createElement('a')
-                    a.href=list[1];
+                    a.href=urlTaiga;
                     a.target = "_blank"
                     a.rel="noopener noreferrer"
-                    var icon2 = document.createElement("img");
-                    icon2.src = "../icons/github_icon.png"
-                    icon2.width = 38;
-                    icon2.height = 25;
-                    icon2.style = "padding-right:15px;";
-                    a.appendChild(icon2)
+                    var icon = document.createElement("img");
+                    icon.target = "_blank"
+                    icon.rel="noopener noreferrer"
+                    icon.src = "../icons/taiga_icon.png"
+                    icon.width = 38;
+                    icon.height = 25;
+                    icon.style = "padding-right:15px;";
+                    a.appendChild(icon)
                     divF.appendChild(a);
                 }
             }
-        }
+            if (factors[j].type === "Github") {
+                if (urlGithub !== undefined && urlGithub) {
+                    var list = urlGithub.split(";");
+                    var a = document.createElement('a')
+                    a.href=list[0];
+                    a.target = "_blank"
+                    a.rel="noopener noreferrer"
+                    var icon1 = document.createElement("img");
+                    icon1.src = "../icons/github_icon.png"
+                    icon1.width = 38;
+                    icon1.height = 25;
+                    icon1.style = "padding-right:15px;";
+                    a.appendChild(icon1)
+                    divF.appendChild(a);
+                    if (list.length >= 2) {
+                        var a = document.createElement('a')
+                        a.href=list[1];
+                        a.target = "_blank"
+                        a.rel="noopener noreferrer"
+                        var icon2 = document.createElement("img");
+                        icon2.src = "../icons/github_icon.png"
+                        icon2.width = 38;
+                        icon2.height = 25;
+                        icon2.style = "padding-right:15px;";
+                        a.appendChild(icon2)
+                        divF.appendChild(a);
+                    }
+                }
+            }
 
 
-        var labelF = document.createElement('label');
-        labelF.id = factors[j].id;
-        labelF.textContent = factors[j].name;
-        divF.appendChild(labelF);
+            var labelF = document.createElement('label');
+            labelF.id = factors[j].id;
+            labelF.textContent = factors[j].name;
+            divF.appendChild(labelF);
 
-        var a = document.createElement('a')
-        a.classList.add("check")
-        a.setAttribute('data-tooltip', factors[j].description)
+            var a = document.createElement('a')
+            a.classList.add("check")
+            a.setAttribute('data-tooltip', factors[j].description)
 
-        var tooltipdiv = document.createElement('div');
-        tooltipdiv.classList.add("tooltip");
-        var iconF = document.createElement('img');
-        iconF.class = "icons";
-        iconF.src = "../icons/information.png";
-        iconF.width = 38;
-        iconF.height = 25;
-        iconF.style = "padding-left:15px;";
+            var tooltipdiv = document.createElement('div');
+            tooltipdiv.classList.add("tooltip");
+            var iconF = document.createElement('img');
+            iconF.class = "icons";
+            iconF.src = "../icons/information.png";
+            iconF.width = 38;
+            iconF.height = 25;
+            iconF.style = "padding-left:15px;";
 
-        var spantootlip = document.createElement('span');
-        spantootlip.classList.add("tooltiptext");
-        spantootlip.innerHTML = factors[j].description;
-        tooltipdiv.appendChild(iconF)
-        tooltipdiv.appendChild(spantootlip)
-        a.appendChild(iconF)
-        divF.appendChild(a);
+            var spantootlip = document.createElement('span');
+            spantootlip.classList.add("tooltiptext");
+            spantootlip.innerHTML = factors[j].description;
+            tooltipdiv.appendChild(iconF)
+            tooltipdiv.appendChild(spantootlip)
+            a.appendChild(iconF)
+            divF.appendChild(a);
 
-        gaugeChart.append(divF);
-        for (i = 0; i < factors[j].metrics.length; ++i) {
-            drawMetricGauge(j, i, factors[j].metrics[i], container, width, height, categories);
+            gaugeChart.append(divF);
+
+            /*este sirve para pintar solo una métrica cuando están agrupadas en factores*/
+            count2 = 0;
+            for (i = 0; i < factors[j].metrics.length; ++i) {
+                if (count2 < 1){
+                    drawMetricGauge(j, i, factors[j].metrics[i], container, width, height, categories);
+                }
+                ++count2;
+            }
+            ++count;
         }
     }
 
@@ -372,13 +382,18 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
         labelNOF.id = "withoutfactor";
         labelNOF.textContent = "Metrics not associated to any factor";
         divNOF.appendChild(labelNOF);
-
+s
+        /*Este sirve para dibujar solo una métrica cuando no están agrupadas en factores*/
+        var count = 0;
         metrics.forEach(function (metric) {
-            var msvg = document.getElementById(metric.id);
-            if (!msvg) {
-                if (!document.getElementById("divwithoutfactor"))
-                    gaugeChart.append(divNOF);
-                drawMetricGauge(j, i, metric, container, width, height, categories);
+            if (count < 1){
+                var msvg = document.getElementById(metric.id);
+                if (!msvg) {
+                    if (!document.getElementById("divwithoutfactor"))
+                        gaugeChart.append(divNOF);
+                    drawMetricGauge(j, i, metric, container, width, height, categories);
+                }
+                ++count;
             }
         });
     }
@@ -425,17 +440,24 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
             .attr("id", metric.id)
             .attr("width", width)
             .attr("height", height)
-            .attr("class", "chart")
-            .append("g")
+            .attr("class", "chart");
+        svg.append("clipPath")
+            .attr("id", "clip")
+            .attr("width", "200")
+            .attr("height", "100")
+            .append("path")
+            .attr("d", "M 12 100 A 88 88 0 0 1 188 100 L 156 100 A 56 56 0 1 0 44 100 Z");
+        var g = svg.append("g")
             .attr("transform",
                 "translate(" + width / 2 + "," + height / 2 + ")");
     }
 
     //draw blue background for charts
-    svg.append("path")
-        .datum({endAngle: Math.PI / 2})
-        .style("fill", "#0579A8")
-        .attr("d", arc);
+    /*svg.append("path")
+            .datum({endAngle: Math.PI / 2})
+            .style("fill", "#0579A8")
+            .attr("d", arc);
+    */
 
     //filtering the appropriate categories
     let metricCategories = categories.filter(function (cat) {
@@ -453,7 +475,20 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
             return cat.name === DEFAULT_CATEGORY;
         });
 
-    if (metricCategories[0].name === "GradientTest") {
+    if (metricCategories[0].name === "Gradient") {
+
+         var fo = g.append("foreignObject")
+                    .attr("x", "-100")
+                    .attr("y", "-100")
+                    .attr("width", "200")
+                    .attr("height", "100")
+                    .attr("clip-path", "url(#clip)")
+                    .append("div")
+                    .attr("id", "division")
+                    .attr("xmlns", "http://www.w3.org/1999/xhtml")
+                    .attr("class", "gradient");
+
+        /*
 
         arc = d3.arc()      //create arc starting at -90 degreees
             .innerRadius(70*width/250)
@@ -509,6 +544,8 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
                 return d.fill;
             });
 
+        */
+
     }
 
    else {
@@ -530,7 +567,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .endAngle(0.05);
 
     //draw needle in correct position depending on it's angle
-    svg.append("path")
+    g.append("path")
         .style("fill", "#000")
         .attr("d", arc2)
         .attr("transform", "translate(" + -100*width/250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100*width/250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
@@ -543,7 +580,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
         .endAngle(Math.PI * 2);
 
     //draw needle base
-    svg.append("path")
+    g.append("path")
         .style("fill", "#000")
         .attr("d", arc3);
 
@@ -551,7 +588,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
     let name = subdivideMetricName(metric.name, 23);
 
     for(let cont = 0; cont < name.length; ++cont){
-        svg.append("text")
+        g.append("text")
             .attr("id", "name" + i + j + cont)
             .attr("x", 0)
             .attr("y", 50*width/250 + 15*cont)
@@ -569,7 +606,7 @@ function drawMetricGauge(j, i, metric, container, width, height, categories) {
     if (isNaN(metric.value))
         text = metric.value;
     else text = metric.value.toFixed(2);
-    svg.append("text")
+    g.append("text")
         .attr("x", 0)
         .attr("y", 50*width/250 + 30 + (name.length - 1) * 10)
         .attr("text-anchor", "middle")

@@ -121,8 +121,18 @@ svg.chart {
     margin-right: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
-
+    /*clip-path: inset(0 0 50% 50%);*/
 }
+
+div.gradient {
+  background-image: conic-gradient(from 270deg, #FF4500 60deg, yellow 120deg, green 180deg);
+  padding-top: 100px;
+  padding-bottom: 100px;
+  padding-left: 50px;
+  padding-right:50px;
+  clear: both;
+}
+
  .axis { font: 14px sans-serif; }
 
 .line {
