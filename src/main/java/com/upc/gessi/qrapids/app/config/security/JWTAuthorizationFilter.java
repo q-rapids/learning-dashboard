@@ -15,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.FilterChain;
@@ -34,14 +33,11 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final Logger newLogger = LoggerFactory.getLogger("ActionLogger");
-
 	private AuthTools authTools;
 
 	private RouteFilter routeFilter;
 
     private SessionTimer sessionTimer;
-    private final Logger newlogger = LoggerFactory.getLogger("ActionLogger");
 
     private UserRepository userRepository;
 

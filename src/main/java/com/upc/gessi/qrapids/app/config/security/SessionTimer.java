@@ -1,8 +1,5 @@
 package com.upc.gessi.qrapids.app.config.security;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,13 +9,11 @@ import java.util.concurrent.Executors;
 
 import com.upc.gessi.qrapids.app.config.ActionLogger;
 
-@Component
-@Scope("singleton")
 public class SessionTimer {
 
     private static SessionTimer instance;
-    private ScheduledExecutorService executorService;
-    private Map<String, ScheduledFuture<?>> activeTimers;
+    private final ScheduledExecutorService executorService;
+    private final Map<String, ScheduledFuture<?>> activeTimers;
 
     public SessionTimer() {
         executorService = Executors.newSingleThreadScheduledExecutor();
@@ -46,7 +41,7 @@ public class SessionTimer {
     }
 
     private class SessionTimeoutTask implements Runnable {
-        private String sessionId;
+        private final String sessionId;
 
         public SessionTimeoutTask(String sessionId) {
             this.sessionId = sessionId;

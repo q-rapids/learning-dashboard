@@ -22,50 +22,14 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 
 public class LogDispatcherServlet extends org.springframework.web.servlet.DispatcherServlet {
 
-    private String logURL;
-    private AuthTools authTools;
-
     @Override
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        /*
-        if (!(response instanceof ContentCachingResponseWrapper))
-            response = new ContentCachingResponseWrapper(response);
-        */
         super.doDispatch(request, response);
-        //String URL = request.getRequestURI();
-
-        /*
-        if (URL.contains("api/me") && ! URL.contains(("api/metrics"))) {
-            ContentCachingResponseWrapper wrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
-            if (wrapper != null) {
-                byte[] buf = wrapper.getContentAsByteArray();
-                int length = Math.min(buf.length, 1024);
-                String responseBody = new String(buf, 0, length, wrapper.getCharacterEncoding());
-                JsonElement parsedData = new JsonParser().parse(responseBody);
-                if (!parsedData.isJsonNull()) {
-                    JsonObject data = parsedData.getAsJsonObject();
-                    String username = data.get("userName").getAsString();
-                    logRequest(logURL, username);
-                }
-            }
-        }
-        else if (LogsFilter(getRequestUri(request))) {
-            logURL = createLogRequest(request);
-        }
-         */
-
-        logURL = createLogRequest(request);
-        this.authTools = new AuthTools();
-        String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
+        String logURL = createLogRequest(request);
+        AuthTools authTools = new AuthTools();
+        String cookie_token = authTools.getCookieToken( request, COOKIE_STRING );
         String username = AuthTools.getUser(cookie_token);
         logRequest(logURL, username);
-
-        /*
-        ContentCachingResponseWrapper responseWrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
-        if (responseWrapper != null) {
-            responseWrapper.copyBodyToResponse();
-        }
-         */
     }
 
     private String createLogRequest(HttpServletRequest request) {
@@ -80,13 +44,8 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
                     .collect(Collectors.joining(", "));
         }
 
-        //String queryString = request.getQueryString();
-        //String queryClause = (StringUtils.hasLength(queryString) ? "?" + queryString : "");
         String dispatchType = (!DispatcherType.REQUEST.equals(request.getDispatcherType()) ?
                 "\"" + request.getDispatcherType() + "\" dispatch for " : "");
-        //String message = (dispatchType + request.getMethod() + " \"" + getRequestUri(request) +
-                //queryClause + "\", parameters={" + params + "} ");
-
         String message = (dispatchType + request.getMethod() + " \"" + getRequestUri(request) +
             "\", parameters={" + params + "} ");
 
@@ -101,24 +60,6 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
         }
         else return message;
     }
-
-    /*
-    private String getParamsFromRequest(HttpServletRequest request) {
-        Enumeration<String> paramsNamesEnum = request.getParameterNames();
-        StringBuilder paramsInfo = new StringBuilder();
-        boolean first = true;
-        while (paramsNamesEnum.hasMoreElements()) {
-            String name = paramsNamesEnum.nextElement();
-            String[] values = request.getParameterValues(name);
-            for (String value : values) {
-                if (!first) paramsInfo.append(", Name: ").append(name).append(" Value: ").append(value);
-                else paramsInfo.append("Name: ").append(name).append(" Value: ").append(value);
-            }
-        }
-        logger.debug(paramsInfo.toString());
-        return paramsInfo.toString();
-    }
-     */
 
     private void logRequest(String message, String username) {
         if (username != null) {
@@ -138,14 +79,5 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
         }
         return uri;
     }
-
-    /*
-    private boolean LogsFilter(String URL) {
-        return  !URL.contains("api") && !URL.contains("js") && !URL.contains("css") &&
-                !URL.contains("icons") && !URL.contains(".ico") && !URL.contains("fonts") &&
-                !URL.contains("ws") && !URL.contains("elasticsearch") && !URL.contains("http-outgoing-") &&
-                !URL.contains("Ant") && !URL.contains("FORWARD") && !URL.contains("doesn't match");
-    }
-     */
 
 }
