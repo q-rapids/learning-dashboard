@@ -12,7 +12,8 @@ public class ActionLogger {
     public static final String FINISH_LOAD = "finish load";
     public static final String REDIRECT_TO = "redirect to ";
     public static final String EXIT = "exits app";
-     public static final String ENTER = "enters app";
+    public static final String TIMEOUT = "'s session has timed out";
+    public static final String ENTER = "enters app";
 
 
          private final Logger logger = LoggerFactory.getLogger("ActionLogger");
@@ -45,6 +46,10 @@ public class ActionLogger {
         public void traceExitApp(String userId) {
             traceSessionAction(userId, EXIT);
         }
+
+        public void traceSessionTimeout(String userId) {
+         traceSessionAction(userId, TIMEOUT);
+     }
 
         public void traceSessionAction(String userId, String action) {
              logger.info("{} {}", userId, action);

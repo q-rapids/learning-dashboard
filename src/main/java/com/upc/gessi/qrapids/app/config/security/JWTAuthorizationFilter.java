@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.FilterChain;
@@ -33,8 +34,14 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
+    private final Logger newLogger = LoggerFactory.getLogger("ActionLogger");
+
 	private AuthTools authTools;
+
 	private RouteFilter routeFilter;
+
+    private SessionTimer sessionTimer;
+    private final Logger newlogger = LoggerFactory.getLogger("ActionLogger");
 
     private UserRepository userRepository;
 
@@ -85,12 +92,17 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String header = req.getHeader(HEADER_STRING);
         String cookie_token = this.authTools.getCookieToken( req, COOKIE_STRING );
         String token = "";
+        String username = "";
+        this.sessionTimer = SessionTimer.getInstance();
 
         if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ) {
             // WeaApp Client internal application
 
             authentication = this.authTools.tokenValidation( cookie_token );
             token = cookie_token;
+
+            username = AuthTools.getUser(cookie_token);
+            sessionTimer.cancelTimer(username);
 
             logMessage(" Origin - WebApp ");
 
@@ -169,30 +181,23 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             // Request origin
             boolean origin = this.authTools.originRequest( req );
 
-           //if( !req.getRequestURI().contains("js") && !req.getRequestURI().contains("css") && !req.getRequestURI().contains("app")) {
-                /*String token_new = Jwts.builder()
-                        .setSubject("aleix")
-                        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_JWT_TOKEN_TIME))
-                        .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
-                        .compact();*/
-                Cookie cookie = new Cookie(COOKIE_STRING, null); // Not necessary, but saves bandwidth.
-		        cookie.setHttpOnly(true);
-		        cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
-		        res.addCookie(cookie);
+            Cookie cookie = new Cookie(COOKIE_STRING, null); // Not necessary, but saves bandwidth.
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
+            res.addCookie(cookie);
 
-                // Web Application
-                // Set token auth in HTTP Only cookie client.
-                Cookie qrapids_token_client = new Cookie(COOKIE_STRING, token);
+            // Web Application
+            // Set token auth in HTTP Only cookie client.
+            Cookie qrapids_token_client = new Cookie(COOKIE_STRING, token);
 
-                // Configuration
-                // Changed HttpOnly to false to read it from the application
-                qrapids_token_client.setHttpOnly(true);
-                qrapids_token_client.setMaxAge((int) EXPIRATION_COOKIE_TIME / 1000);
-                qrapids_token_client.setPath("/");
+            // Configuration
+            // Changed HttpOnly to false to read it from the application
+            qrapids_token_client.setHttpOnly(true);
+            qrapids_token_client.setMaxAge((int) EXPIRATION_COOKIE_TIME / 1000);
+            qrapids_token_client.setPath("/");
 
-                res.addCookie(qrapids_token_client);
-            //}
-
+            sessionTimer.startTimer(username, (int) EXPIRATION_COOKIE_TIME / 1000);
+            res.addCookie(qrapids_token_client);
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();

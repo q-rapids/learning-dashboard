@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -38,6 +40,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private AuthenticationManager authenticationManager;
 
 	private UsersController usersController;
+
+	private SessionTimer sessionTimer;
+
 	// √Tools Auth
 	AuthTools authTools;
 
@@ -121,13 +126,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			// Web Application
             // Set token auth in HTTP Only cookie client.
 			Cookie qrapids_token_client = new Cookie( COOKIE_STRING, token);
-
-			// Configuration
-			// Changed HttpOnly to false to read it from the application
-			qrapids_token_client.setHttpOnly( true );
-			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
-
-            res.addCookie( qrapids_token_client );
+			this.sessionTimer = SessionTimer.getInstance();
 
 			ActionLogger al = new ActionLogger();
 			String username = ((User) auth.getPrincipal()).getUsername();
@@ -135,9 +134,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
 			//userController.setLastConnection(username, dtf.format(now));
 
+			// Configuration
+			// Changed HttpOnly to false to read it from the application
+			qrapids_token_client.setHttpOnly( true );
+			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
+
+			res.addCookie( qrapids_token_client );
+			sessionTimer.startTimer(username, (int) EXPIRATION_COOKIE_TIME / 1000);
+
 			res.sendRedirect("StrategicIndicators/CurrentChart");
-
-
 
 		} else {
 			// API send header with token auth
