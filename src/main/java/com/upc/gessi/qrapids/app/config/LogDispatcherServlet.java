@@ -47,7 +47,7 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
         String dispatchType = (!DispatcherType.REQUEST.equals(request.getDispatcherType()) ?
                 "\"" + request.getDispatcherType() + "\" dispatch for " : "");
         String message = (dispatchType + request.getMethod() + " \"" + getRequestUri(request) +
-            "\", parameters={" + params + "} ");
+            "\", parameters={" + params + "}");
 
         if (logger.isTraceEnabled()) {
             List<String> values = Collections.list(request.getHeaderNames());
@@ -64,11 +64,11 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
     private void logRequest(String message, String username) {
         if (username != null) {
             LogFormatUtils.traceDebug(logger, traceOn ->
-                    message + "- Action performed by " + username);
+                    message + ", Action performed by " + username);
         }
         else {
             LogFormatUtils.traceDebug(logger, traceOn ->
-                    message + "- No user is logged in yet");
+                    message + ", No user is logged in yet");
         }
     }
 

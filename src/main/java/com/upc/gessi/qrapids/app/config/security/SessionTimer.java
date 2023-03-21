@@ -29,6 +29,7 @@ public class SessionTimer {
 
     public synchronized void startTimer(String sessionId, long delaySeconds) {
         cancelTimer(sessionId);
+        delaySeconds += 5;
         ScheduledFuture<?> future = executorService.schedule(new SessionTimeoutTask(sessionId), delaySeconds, TimeUnit.SECONDS);
         activeTimers.put(sessionId, future);
     }

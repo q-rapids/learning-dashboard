@@ -15,7 +15,7 @@
          </rollingPolicy>
         <encoder>
             <!-- <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> -->
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} - %msg%n</pattern>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS}, %msg%n</pattern>
         </encoder>
          <filter class="com.upc.gessi.qrapids.app.config.SampleFilter"/>
      </appender>
