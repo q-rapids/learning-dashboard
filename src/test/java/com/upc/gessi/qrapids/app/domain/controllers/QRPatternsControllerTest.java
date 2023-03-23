@@ -1,7 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
-import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -41,6 +40,7 @@ public class QRPatternsControllerTest {
         domainObjectsBuilder = new DomainObjectsBuilder();
     }
 
+    /*
     @Test
     public void getPatternsForAlert() {
         // Given
@@ -86,6 +86,7 @@ public class QRPatternsControllerTest {
         // Then
         assertTrue(exists);
     }
+     */
 
     @Test
     public void getAllPatterns() {

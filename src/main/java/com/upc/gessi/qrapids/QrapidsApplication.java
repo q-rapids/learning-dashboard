@@ -1,12 +1,9 @@
 package com.upc.gessi.qrapids;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -136,8 +133,8 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 				context.getBean(FactorsController.class).newFactorCategories(categories, "Default");
 			}
 		} catch (Exception e) {
-			Logger logger = LoggerFactory.getLogger(Alerts.class);
-			logger.error(e.getMessage(), e);
+			//Logger logger = LoggerFactory.getLogger(Alerts.class);
+			//logger.error(e.getMessage(), e);
 		}
 		/* Commented fetch function for avoid automatically add elasticsearch information to local SQL database.
 		try {

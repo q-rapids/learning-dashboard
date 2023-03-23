@@ -6,16 +6,13 @@ import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import com.upc.gessi.qrapids.app.domain.exceptions.MissingParametersException;
-import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternsMetricInUseException;
-import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsClassifier;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Mappers;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRPattern;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -124,7 +121,7 @@ public class QualityRequirements {
                         qualityRequirement.getGoal(),
                         qualityRequirement.getBacklogId(),
                         qualityRequirement.getBacklogUrl());
-
+                /*
                 Alert alert = qualityRequirement.getAlert();
                 if (alert != null) {
                     DTOAlert dtoAlert = new DTOAlert(
@@ -140,7 +137,7 @@ public class QualityRequirements {
                             alert.isReqAssociat(),
                             null);
                     dtoQualityRequirement.setAlert(dtoAlert);
-                }
+                }*/
 
                 dtoQualityRequirement.setBacklogProjectId(project.getBacklogId());
 
