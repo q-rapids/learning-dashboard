@@ -15,7 +15,11 @@ public class AlertController {
 
     private void createAlert(float value, float threshold, AlertType type, String projectId, String affectedId){
         Alert newAlert = new Alert( value,  threshold,  type,  projectId,  affectedId);
-        //save and send alert
+        saveAlert(newAlert);
+    }
+
+    private void saveAlert(Alert alert){
+        alertRepository.save(alert);
     }
     public void shouldCreateMetricAlert (Metric metric, float thresholdValue){
         if (thresholdValue < metric.getThreshold()){
