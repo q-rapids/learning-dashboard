@@ -16,21 +16,18 @@ public class Alert {
     private String externalId;
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
-
     private LocalDate date;
+    @Column(name = "status")
+    private AlertStatus status;
     @Column(name = "value")
-
     private float value;
     @Column(name = "threshold")
-
     private float threshold;
     @Column(name = "type")
     private AlertType type;
     @Column(name = "projectid")
-
     private String projectId;
     @Column(name = "affectedid")
-
     private String affectedId;
 
     public Alert (float value, float threshold, AlertType type, String projectId, String affectedId) {
@@ -41,6 +38,7 @@ public class Alert {
         this.affectedId = affectedId;
         date = LocalDate.now();
         externalId  = UUID.randomUUID().toString();
+        status = AlertStatus.NEW;
     };
 
     public Alert() {
@@ -59,6 +57,7 @@ public class Alert {
     public void setExternalId (String externalId) {
         this.externalId = externalId;
     }
+
     public LocalDate getDate(){
         return date;
     }
@@ -66,10 +65,14 @@ public class Alert {
         date = alertDate;
     }
 
+    public AlertStatus getStatus() {return status;}
+    public void setStatus(AlertStatus status) {
+        this.status = status;
+    }
+
     public float getValue() {
         return value;
     }
-
     public void setValue(float alertValue) {
         value = alertValue;
     }
@@ -77,7 +80,6 @@ public class Alert {
     public float getThreshold() {
         return threshold;
     }
-
     public void setThreshold(float alertThreshold) {
         threshold = alertThreshold;
     }
@@ -85,7 +87,6 @@ public class Alert {
     public AlertType getType() {
         return type;
     }
-
     public void setType(AlertType alertType) {
         type = alertType;
     }
@@ -93,7 +94,6 @@ public class Alert {
     public String getProjectId() {
         return projectId;
     }
-
     public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
@@ -101,7 +101,6 @@ public class Alert {
     public String getAffectedId() {
         return affectedId;
     }
-
     public void setAffectedId(String affectedId) {
         this.affectedId = affectedId;
     }

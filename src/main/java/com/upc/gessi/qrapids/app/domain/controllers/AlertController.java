@@ -1,15 +1,17 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
-import com.upc.gessi.qrapids.app.domain.models.Alert;
-import com.upc.gessi.qrapids.app.domain.models.AlertType;
-import com.upc.gessi.qrapids.app.domain.models.Metric;
-import com.upc.gessi.qrapids.app.domain.models.Factor;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AlertController {
 
+    @Autowired
+    private AlertRepository alertRepository;
 
     private void createAlert(float value, float threshold, AlertType type, String projectId, String affectedId){
         Alert newAlert = new Alert( value,  threshold,  type,  projectId,  affectedId);
@@ -34,6 +36,19 @@ public class AlertController {
         }
     };
 
+    public void changeAlertStatusToViewed(String alertId){
+        Alert alert = getAlertById(alertId);
+        alertRepository.setViewedStatus(alert);
+    }
+    public List<Alert>  getAllAlerts(){
+        return alertRepository.findAll();
+    }
 
-    
+    public List<Alert> getAllProjectAlerts(String projectId){
+        return alertRepository.findAllByProjectId(projectId);
+    }
+
+    public Alert getAlertById(String alertId){
+        return alertRepository.findAlertById(alertId);
+    }
 }
