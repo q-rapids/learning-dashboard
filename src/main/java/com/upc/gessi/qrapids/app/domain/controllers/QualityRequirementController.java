@@ -35,10 +35,14 @@ public class QualityRequirementController {
         return qrRepository.findByDecisionId(decision.getId());
     }
 
+    /*
     public void ignoreQualityRequirement (Project project, String rationale, int patternId) {
         ignoreQualityRequirementForAlert(project, null, rationale, patternId);
     }
+    */
 
+
+    /*
     public void ignoreQualityRequirementForAlert (Project project, Alert alert, String rationale, int patternId) {
         Decision decisionAux = new Decision(DecisionType.IGNORE, new Date(), null, rationale, patternId, project);
         Decision decision = decisionRepository.save(decisionAux);
@@ -47,8 +51,9 @@ public class QualityRequirementController {
             alert.setStatus(AlertStatus.RESOLVED);
             alertRepository.save(alert);
         }
-    }
+    }*/
 
+    /*
     public QualityRequirement addQualityRequirement(String requirement, String description, String goal, String rationale, int patternId, AppUser user, Project project) throws HttpClientErrorException {
         return addQualityRequirementForAlert(requirement, description, goal, rationale, patternId, null, user, project);
     }
@@ -72,4 +77,5 @@ public class QualityRequirementController {
 
         return newQualityRequirement;
     }
+     */
 }
