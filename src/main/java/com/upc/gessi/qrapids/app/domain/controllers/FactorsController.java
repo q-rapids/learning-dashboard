@@ -454,7 +454,7 @@ public class FactorsController {
 
         // CHECK METRICS ALERTS
         for (DTOMetricEvaluation m : metricList) {
-            alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
+          //  alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
         }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -639,7 +639,7 @@ public class FactorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK FACTORS ALERTS
-            alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
+           // alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
         }
         return assessmentValueOrLabel;
     }
