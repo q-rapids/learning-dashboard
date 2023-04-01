@@ -1,7 +1,10 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import org.hibernate.annotations.CollectionId;
+
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -11,12 +14,9 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "externalId")
-
-    private String externalId;
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate date;
+    private Date date;
     @Column(name = "status")
     private AlertStatus status;
     @Column(name = "value")
@@ -25,20 +25,24 @@ public class Alert {
     private float threshold;
     @Column(name = "type")
     private AlertType type;
-    @Column(name = "projectid")
-    private String projectId;
+    @ManyToOne
+    @JoinColumn(name="projectid", referencedColumnName = "id")
+    private Project project;
     @Column(name = "affectedid")
     private String affectedId;
+    @Column(name = "affectedtype")
+    private String affectedType;
 
-    public Alert (float value, float threshold, AlertType type, String projectId, String affectedId) {
+    public Alert (float value, float threshold, AlertType type, Project project, String affectedId, String affectedType) {
         this.value = value;
         this.threshold = threshold;
         this.type = type;
-        this.projectId = projectId;
+        this.project = project;
         this.affectedId = affectedId;
-        date = LocalDate.now();
-        externalId  = UUID.randomUUID().toString();
+        this.affectedType = affectedType;
+        date =  new Date();
         status = AlertStatus.NEW;
+
     };
 
     public Alert() {
@@ -51,17 +55,10 @@ public class Alert {
         id = alertId;
     }
 
-    public String getExternalId(){
-        return externalId;
-    }
-    public void setExternalId (String externalId) {
-        this.externalId = externalId;
-    }
-
-    public LocalDate getDate(){
+    public Date getDate(){
         return date;
     }
-    public void setDate( LocalDate alertDate){
+    public void setDate( Date alertDate){
         date = alertDate;
     }
 
@@ -91,11 +88,9 @@ public class Alert {
         type = alertType;
     }
 
-    public String getProjectId() {
-        return projectId;
-    }
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
+    public Project getProject() {return project;}
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public String getAffectedId() {
@@ -104,4 +99,7 @@ public class Alert {
     public void setAffectedId(String affectedId) {
         this.affectedId = affectedId;
     }
+
+    public String getAffectedType() {return affectedType;}
+    public void setAffectedType(String affectedType){this.affectedType=affectedType;}
 }
