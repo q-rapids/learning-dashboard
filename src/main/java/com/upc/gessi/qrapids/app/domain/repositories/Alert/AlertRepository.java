@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AlertRepository extends JpaRepository<Alert, Long> {
 
     List<Alert> findAll();
-    Alert findAlertById(String id);
-    List<Alert> findAllByProjectId(String projectId);
-    List<Alert> findByProject_IdOrderByDateDesc(Long projectId);
+    Alert findAlertById(Long id);
+    List<Alert> findAllByProjectId(Long projectId);
+    List<Alert> findAllByProjectIdAndAffectedIdOrderByIdAsc(Long projectId, String affectedid);
 
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Alert a set a.status = 1 where a.status = 0 and a.id in ?1")
-    int setViewedStatus(Alert alert );
+    void setViewedStatus(Alert alert);
 }
 
