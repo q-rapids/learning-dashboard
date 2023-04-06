@@ -27,10 +27,10 @@ public class SessionTimer {
         return instance;
     }
 
-    public synchronized void startTimer(String sessionId, long delaySeconds) {
+    public synchronized void startTimer(String username, String sessionId, long delaySeconds) {
         cancelTimer(sessionId);
         delaySeconds += 5;
-        ScheduledFuture<?> future = executorService.schedule(new SessionTimeoutTask(sessionId), delaySeconds, TimeUnit.SECONDS);
+        ScheduledFuture<?> future = executorService.schedule(new SessionTimeoutTask(username, sessionId), delaySeconds, TimeUnit.SECONDS);
         activeTimers.put(sessionId, future);
     }
 
@@ -44,8 +44,11 @@ public class SessionTimer {
     private class SessionTimeoutTask implements Runnable {
         private final String sessionId;
 
-        public SessionTimeoutTask(String sessionId) {
+        private final String username;
+
+        public SessionTimeoutTask(String username, String sessionId) {
             this.sessionId = sessionId;
+            this.username = username;
         }
 
         @Override
@@ -53,7 +56,7 @@ public class SessionTimer {
             // Perform the action you want to take when the session timeout occurs
             activeTimers.remove(sessionId);
             ActionLogger al = new ActionLogger();
-            al.traceSessionTimeout(sessionId);
+            al.traceSessionTimeout(username, sessionId);
         }
     }
 }

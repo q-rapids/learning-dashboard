@@ -128,7 +128,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 			ActionLogger al = new ActionLogger();
 			String username = ((User) auth.getPrincipal()).getUsername();
-			al.traceEnterApp(username);
+			al.traceEnterApp(username, token);
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
 			//userController.setLastConnection(username, dtf.format(now));
 
@@ -138,7 +138,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
 
 			res.addCookie( qrapids_token_client );
-			sessionTimer.startTimer(username, (int) EXPIRATION_COOKIE_TIME / 1000);
+			sessionTimer.startTimer(username, token, (int) EXPIRATION_COOKIE_TIME / 1000);
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
 

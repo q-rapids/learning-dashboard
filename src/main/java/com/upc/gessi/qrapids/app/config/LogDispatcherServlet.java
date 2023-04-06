@@ -29,7 +29,7 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
         AuthTools authTools = new AuthTools();
         String cookie_token = authTools.getCookieToken( request, COOKIE_STRING );
         String username = AuthTools.getUser(cookie_token);
-        logRequest(logURL, username);
+        logRequest(logURL, username, cookie_token);
     }
 
     private String createLogRequest(HttpServletRequest request) {
@@ -61,10 +61,11 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
         else return message;
     }
 
-    private void logRequest(String message, String username) {
+    private void logRequest(String message, String username, String cookie_token) {
         if (username != null) {
             LogFormatUtils.traceDebug(logger, traceOn ->
-                    message + ", Action performed by " + username);
+                    message + ", Action performed by "
+                    + username + " (" + cookie_token + ")");
         }
         else {
             LogFormatUtils.traceDebug(logger, traceOn ->

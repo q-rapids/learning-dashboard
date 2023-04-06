@@ -40,19 +40,18 @@ public class ActionLogger {
 //         public void traceAction(String language, String userId, String sessionId, String currentLocation, String action) {
 //             logger.info("{},{},{},{},{}", language, userId, sessionId, currentLocation, action);
 //         }
-        public void traceEnterApp(String userId) {
-             traceSessionAction(userId, ENTER);
+        public void traceEnterApp(String userId, String cookie_token) {
+             traceSessionAction(userId, ENTER, cookie_token);
         }
-        public void traceExitApp(String userId) {
-            traceSessionAction(userId, EXIT);
+        public void traceExitApp(String userId, String cookie_token) {
+            traceSessionAction(userId, EXIT, cookie_token);
+        }
+        public void traceSessionTimeout(String userId, String cookie_token) {
+         traceSessionAction(userId, TIMEOUT, cookie_token);
         }
 
-        public void traceSessionTimeout(String userId) {
-         traceSessionAction(userId, TIMEOUT);
-     }
-
-        public void traceSessionAction(String userId, String action) {
-             logger.info("{} {}", userId, action);
+        public void traceSessionAction(String userId, String action, String sessionId) {
+             logger.info("{} {} ({})", userId, action, sessionId);
         }
 
 }

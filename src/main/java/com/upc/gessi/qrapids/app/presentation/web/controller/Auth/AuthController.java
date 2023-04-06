@@ -128,8 +128,8 @@ public class AuthController {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
             ActionLogger al = new ActionLogger();
-            al.traceExitApp(user);
-            sessionTimer.cancelTimer(user);
+            al.traceExitApp(user, cookie_token);
+            sessionTimer.cancelTimer(cookie_token);
         }
 
 		Cookie cookie = new Cookie(COOKIE_STRING, null); // Not necessary, but saves bandwidth.

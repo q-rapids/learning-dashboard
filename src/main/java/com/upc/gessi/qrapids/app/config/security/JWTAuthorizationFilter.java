@@ -98,7 +98,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             token = cookie_token;
 
             username = AuthTools.getUser(cookie_token);
-            sessionTimer.cancelTimer(username);
+            sessionTimer.cancelTimer(cookie_token);
 
             logMessage(" Origin - WebApp ");
 
@@ -192,7 +192,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             qrapids_token_client.setMaxAge((int) EXPIRATION_COOKIE_TIME / 1000);
             qrapids_token_client.setPath("/");
 
-            sessionTimer.startTimer(username, (int) EXPIRATION_COOKIE_TIME / 1000);
+            sessionTimer.startTimer(username, token, (int) EXPIRATION_COOKIE_TIME / 1000);
             res.addCookie(qrapids_token_client);
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
