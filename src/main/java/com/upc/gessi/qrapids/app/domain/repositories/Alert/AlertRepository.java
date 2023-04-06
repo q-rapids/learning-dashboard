@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.repositories.Alert;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
+import com.upc.gessi.qrapids.app.domain.models.AlertType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,7 +12,7 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     List<Alert> findAll();
     Alert findAlertById(Long id);
     List<Alert> findAllByProjectId(Long projectId);
-    List<Alert> findAllByProjectIdAndAffectedIdOrderByIdAsc(Long projectId, String affectedid);
+    List<Alert> findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(Long projectId, String affectedid, AlertType type);
 
     @Transactional
     @Modifying(clearAutomatically = true)
