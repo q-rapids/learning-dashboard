@@ -13,7 +13,6 @@ public class Alert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;

@@ -542,7 +542,7 @@ public class StrategicIndicatorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK STRATEGIC INDICATOR ALERT
-           // alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), value,project);
+            alertsController.shouldCreateIndicatorAlert(strategicIndicator, value);
         }
         return assessmentValueOrLabel;
     }
@@ -572,7 +572,7 @@ public class StrategicIndicatorsController {
                     factorsMismatch))
                 throw new AssessmentErrorException();
             // CHECK STRATEGIC INDICATOR ALERT
-         //   alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), valueAndLabel.getFirst(),project);
+            alertsController.shouldCreateIndicatorAlert(strategicIndicator, valueAndLabel.getFirst());
         }
         else {
             throw new AssessmentErrorException();

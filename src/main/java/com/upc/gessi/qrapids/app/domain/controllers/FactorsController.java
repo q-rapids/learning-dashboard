@@ -452,9 +452,11 @@ public class FactorsController {
         }
         metricEvaluationQma.setMetrics(metricList);
 
+        Project proj = projectsController.findProjectByExternalId(project);
+
         // CHECK METRICS ALERTS
         for (DTOMetricEvaluation m : metricList) {
-          //  alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
+            alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
         }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -507,7 +509,7 @@ public class FactorsController {
         String assessmentValueOrLabel = "";
         try {
             assessmentValueOrLabel = assessQualityFactors(evaluationDate, project, qualityFactor, listMetricsAssessmentValues, qfMetrics, missingMetrics, metricsMismatch, assessmentValueOrLabel);
-        } catch (AssessmentErrorException | CategoriesException e) {
+        } catch (AssessmentErrorException | CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             correct = false;
         }
@@ -588,7 +590,7 @@ public class FactorsController {
         return qmaRelations.setQualityFactorMetricRelation(prj, metricsIds, qf, evaluationDate, weights, metricValues, metricsLabels, qfValueOrLabel);
     }
 
-    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException {
+    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException, ProjectNotFoundException {
         if (!listMetricsAssessmentValues.isEmpty()) {
             float value;
             List<Float> weights = new ArrayList<>();
@@ -639,7 +641,8 @@ public class FactorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK FACTORS ALERTS
-           // alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
+            Project proj = projectsController.findProjectByExternalId(project);
+            alertsController.shouldCreateFactorAlert(qualityFactor,value);
         }
         return assessmentValueOrLabel;
     }

@@ -6,8 +6,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +31,15 @@ public class AlertsController {
     @Autowired
     private AlertRepository alertRepository;
     @Autowired
+    private MetricRepository metricRepository;
+    @Autowired
+    private QualityFactorRepository factorRepository;
+    @Autowired
     private MetricCategoryRepository metricCategoryRepository;
     @Autowired
     private QFCategoryRepository qfCategoryRepository;
-
     @Autowired
     private SICategoryRepository siCategoryRepository;
-
     @Autowired
     private QMAMetrics qmaMetrics;
     @Autowired
@@ -45,14 +49,16 @@ public class AlertsController {
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
 
 
-    private void createAlert(float value, float threshold, AlertType type, Project project, String affectedId, String affectedType){
+    public void createAlert(float value, float threshold, AlertType type, Project project, String affectedId, String affectedType){
         Alert newAlert = new Alert( value,  threshold,  type,  project,  affectedId, affectedType);
         saveAlert(newAlert);
     }
 
 
     //METRIC ALERT CHECK
-    public void shouldCreateMetricAlert (Metric metric, float value){
+    public void shouldCreateMetricAlert (DTOMetricEvaluation m, float value, Long projectId){
+        Metric metric = metricRepository.findByExternalIdAndProjectId(m.getId(), projectId);
+
         List<MetricCategory> metricCategoryLevels = metricCategoryRepository.findAllByName(metric.getCategoryName());
         List<Float> categoryThresholds = new ArrayList<>();
         for (MetricCategory categoryValue:metricCategoryLevels) {
@@ -339,11 +345,12 @@ public class AlertsController {
     }
 
     //ACCESS TO DB METHODS
-    public void changeAlertStatusToViewed(Long alertId){
-        Alert alert = getAlertById(alertId);
+    public void changeAlertStatusToViewed(Alert alert){
         alertRepository.setViewedStatus(alert);
     }
-    
+
+    public int countNewAlerts(Long projectId){return alertRepository.countByProjectIdAndStatus(projectId, AlertStatus.NEW);}
+
     public List<Alert>  getAllAlerts(){
         return alertRepository.findAll();
     }
