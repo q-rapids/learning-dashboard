@@ -140,44 +140,27 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
-            getQualityModel();
             $scope.data = response.data;
             console.log("getAlerts function DATA: ");
             console.log(response.data);
+            getSIsAndFactorsNames();
+            getMetricsNames();
             $scope.data.forEach(function (alert) {
                 if (alert.affectedType.equals("metric")){
-                    //get metric name and add to alert.impacted the text Metric : metric_name
-                    //alert.impacted =
+                    alert.impacted = "Metric: "+ metricsMap.get(aler.affectedId);
                 }
                 else if (alert.affectedType.equals("factor")){
+                    alert.impacted = "Factor: " + factorsMap.get(alert.affectedId);
                 }
                 else if (alert.affectedType.equals("indicator")){
-
-                }
-                if (alert.type != "STRATEGIC_INDICATOR") { // on SIs alerts can't define impacted fields
-                    var relations = qualityModelRelations.get(alert.id_element);
-                    if (relations) { //avoid error if there are problems with relations (quality model) for this element
-                        var strategicIndicators = relations.strategicIndicators;
-                        var strategicIndicatorsText = [];
-                        strategicIndicators.forEach(function (strategicIndicator) {
-                            strategicIndicatorsText.push(strategicIndicator.name);
-                        });
-                        alert.strategicIndicators = strategicIndicatorsText.join(", ");
-
-                        var factors = relations.factors;
-                        var factorsText = [];
-                        factors.forEach(function (factor) {
-                            factorsText.push(factor.name);
-                        });
-                        alert.factors = factorsText.join(", ");
-                    }
+                    alert.impacted = "Strategic indicator: " + strategicIndicatorsMap.get(alert.affectedId);
                 }
             });
             clearAlertsPendingBanner();
         })
     };
 
-    var MetricsMap = new Map();
+    var metricsMap = new Map();
 
     var qualityModelRelations = new Map();
     var strategicIndicatorsMap = new Map();
@@ -251,6 +234,20 @@ app.controller('TablesCtrl', function($scope, $http) {
                     strategicIndicator.factors.forEach(function (factor) {
                         factorsMap.set(factor.id, factor.name);
                     })
+                })
+            }
+        });
+    }
+
+    function getMetricsNames(){
+        jQuery.ajax({
+            dataType: "json",
+            type: "GET",
+            url: "api/metrics/current?prj=" + sessionStorage.getItem("prj"),
+            async: false,
+            success: function (metrics) {
+                metrics.forEach(function (metric) {
+                    metricsMap.set(metric.id, metric.name)
                 })
             }
         });
