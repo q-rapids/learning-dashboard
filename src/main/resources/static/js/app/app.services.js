@@ -97,7 +97,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    $scope.getAllQRs = function () {
+    /*$scope.getAllQRs = function () {
         var url =  "api/qr?prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
@@ -116,7 +116,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         $("#alertName").val(alert.name);
         $("#alertThreshold").val(alert.threshold);
         $("#alertValue").val(alert.value);
-    };
+    };*/
 
     $scope.substractOneWeek = function (dateCurrent) {
         var date = new Date(dateCurrent);
@@ -124,7 +124,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         return date.toISOString().slice(0,10);
     };
 
-    $scope.getAllDecisions = function () {
+    /*$scope.getAllDecisions = function () {
         var url = "api/decisions?qrs=true&prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
@@ -132,10 +132,10 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function mySuccess(response) {
             $scope.data = response.data;
         })
-    };
+    };*/
 
     $scope.getAlerts = function(){
-        var url =  "api/alerts?prj=" + sessionStorage.getItem("prj") + "&profile=" + sessionStorage.getItem("profile_id");
+        var url =  "api/alerts?prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
             url : url
@@ -145,6 +145,15 @@ app.controller('TablesCtrl', function($scope, $http) {
             console.log("getAlerts function DATA: ");
             console.log(response.data);
             $scope.data.forEach(function (alert) {
+                if (alert.affectedType.equals("metric")){
+                    //get metric name and add to alert.impacted the text Metric : metric_name
+                    //alert.impacted =
+                }
+                else if (alert.affectedType.equals("factor")){
+                }
+                else if (alert.affectedType.equals("indicator")){
+
+                }
                 if (alert.type != "STRATEGIC_INDICATOR") { // on SIs alerts can't define impacted fields
                     var relations = qualityModelRelations.get(alert.id_element);
                     if (relations) { //avoid error if there are problems with relations (quality model) for this element
@@ -167,6 +176,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             clearAlertsPendingBanner();
         })
     };
+
+    var MetricsMap = new Map();
 
     var qualityModelRelations = new Map();
     var strategicIndicatorsMap = new Map();
@@ -245,7 +256,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         });
     }
 
-    $scope.getQR = function(alertId){
+    /*$scope.getQR = function(alertId){
         var url =  "api/alerts/" + alertId + "/qrPatterns";
         $http({
             method : "GET",
@@ -284,9 +295,9 @@ app.controller('TablesCtrl', function($scope, $http) {
                 });
             }
         })
-    };
+    };*/
 
-    $scope.showQRCandidate = function(QRCandidate, alertId) {
+    /*$scope.showQRCandidate = function(QRCandidate, alertId) {
         $("#QRModal").modal();
         var QRRequirement = $("#QRRequirement");
         var QRDescription = $("#QRDescription");
@@ -397,9 +408,9 @@ app.controller('TablesCtrl', function($scope, $http) {
 
         $("#cancelSaveFooter").show();
         $("#closeFooter").hide();
-    };
+    };*/
 
-    $scope.getDecision = function (alertId) {
+    /*$scope.getDecision = function (alertId) {
         var url =  "api/alerts/" + alertId + "/decision";
         $http({
             method : "GET",
@@ -407,7 +418,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function (response) {
             showDecision(response.data);
         });
-    };
+    };*/
 
     showDecision = function (decision) {
         console.log(decision);
@@ -449,7 +460,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         $("#closeFooter").show();
     };
 
-    $scope.newAlert = function () {
+    /*$scope.newAlert = function () {
         var url = "api/alerts";
         $http({
             method: "POST",
@@ -489,7 +500,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function () {
             //location.href = "QualityAlerts";
         });
-    };
+    };*/
 
     $scope.getKPIFactor = function (){
         console.log("sessionStorage: profile_id");
