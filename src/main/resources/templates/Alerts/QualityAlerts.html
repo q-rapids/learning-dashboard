@@ -9,10 +9,6 @@
     <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
     <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
     <br/>
-    <div class="col-xs-4 pull-right" style="text-align: right; padding-right: 2em;">
-        <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlert()">New Metric Alert</button>
-        <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlertFactor()">New Factor Alert</button>
-    </div>
     <div class="contanier" style="padding-right: 15em; padding-left: 15em; margin-right: auto; margin-left: auto;" id="tableCurrent" ng-init="getAlerts()">
         <br/>
         <br/>
@@ -46,9 +42,9 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <th ng-click="sortBy('imacted')">Impacted
-                    <span ng-show="sortType == 'impacted' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'impacted' &amp;&amp; !sortReverse" class="dropup">
+                <th ng-click="sortBy('thrownby')">Thrown By
+                    <span ng-show="sortType == 'thrownby' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'thrownby' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
                     </span>
                 </th>
@@ -66,7 +62,7 @@
                 <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
                 <td id="value" ng-class="{'color-red': (d.status == 'NEW')}">{{d.value}}</td>
                 <td id="threshold" ng-class="{'color-red': (d.status == 'NEW')}">{{d.threshold}}</td>
-                <td id="impacted" ng-class="{'color-red': (d.status == 'NEW')}">{{d.strategicIndicators}}</td>
+                <td id="thrownby" ng-class="{'color-red': (d.status == 'NEW')}">{{d.thrownby}}</td>
                 <td id="status" ng-class="{'color-red': (d.status == 'NEW')}">{{d.status}}</td>
             </tr>
             </tbody>

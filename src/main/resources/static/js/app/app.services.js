@@ -145,18 +145,19 @@ app.controller('TablesCtrl', function($scope, $http) {
             console.log(response.data);
             getSIsAndFactorsNames();
             getMetricsNames();
-            $scope.data.forEach(function (alert) {
-                if (alert.affectedType.equals("metric")){
-                    alert.impacted = "Metric: "+ metricsMap.get(aler.affectedId);
+
+            response.data.forEach(function (alert) {
+                if (alert.affectedType==="metric"){
+                    alert.thrownby = "Metric: "+ metricsMap.get(alert.affectedId);
                 }
-                else if (alert.affectedType.equals("factor")){
-                    alert.impacted = "Factor: " + factorsMap.get(alert.affectedId);
+                else if (alert.affectedType==="factor"){
+                    alert.thrownby = "Factor: " + factorsMap.get(alert.affectedId);
                 }
-                else if (alert.affectedType.equals("indicator")){
-                    alert.impacted = "Strategic indicator: " + strategicIndicatorsMap.get(alert.affectedId);
+                else if (alert.affectedType==="indicator"){
+                    alert.thrownby = "Strategic indicator: " + strategicIndicatorsMap.get(alert.affectedId);
                 }
+                else alert.thrownby = "-";
             });
-            clearAlertsPendingBanner();
         })
     };
 
@@ -247,7 +248,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             async: false,
             success: function (metrics) {
                 metrics.forEach(function (metric) {
-                    metricsMap.set(metric.id, metric.name)
+                    metricsMap.set(metric.id, metric.name);
                 })
             }
         });

@@ -346,7 +346,7 @@ public class AlertsController {
 
     //ACCESS TO DB METHODS
     public void changeAlertStatusToViewed(Alert alert){
-        alertRepository.setViewedStatus(alert);
+        alertRepository.setViewedStatus(alert.getId());
     }
 
     public int countNewAlerts(Long projectId){return alertRepository.countByProjectIdAndStatus(projectId, AlertStatus.NEW);}

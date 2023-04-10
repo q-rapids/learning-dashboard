@@ -20,6 +20,6 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Alert a set a.status = 1 where a.status = 0 and a.id in ?1")
-    void setViewedStatus(Alert alert);
+    void setViewedStatus(Long alertId);
 }
 
