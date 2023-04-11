@@ -33,20 +33,17 @@ public class DomainObjectsBuilder {
         return project;
     }
 
-/*    public Alert buildAlert(Project project) {
+    public Alert buildAlert(Project project) {
         long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
+        String affectedId = "duplication";
+        String affectedType = "metric";
+        AlertType alertType = AlertType.TRESPASSED_THRESHOLD;
         float value = 0.4f;
         float threshold = 0.5f;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        Alert alert = new Alert(idElement, name, alertType, value, threshold, category, date, alertStatus, true, project);
+        Alert alert = new Alert(value,threshold,alertType, project, affectedId,affectedType);
         alert.setId(alertId);
         return alert;
-    }*/
+    }
 
     public Metric buildMetric(Project project){
         long metricId = 1L;
