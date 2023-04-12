@@ -1,6 +1,9 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
+import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -29,6 +32,15 @@ public class Alerts {
     @Autowired
     private ProjectsController projectsController;
 
+    @Autowired
+    private MetricsController metricsController;
+
+    @Autowired
+    private FactorsController factorsController;
+
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
+
     private final Logger logger = LoggerFactory.getLogger(Alerts.class);
 
     @GetMapping("/api/alerts")
@@ -41,7 +53,7 @@ public class Alerts {
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
             for (Alert a : alerts) {
-                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), a.getAffectedType());
+                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus());
                 dtoAlerts.add(dtoAlert);
             }
             return dtoAlerts;
@@ -56,8 +68,7 @@ public class Alerts {
     public int countNewAlerts(@RequestParam(value = "prj") String prj) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            int newAlerts = alertsController.countNewAlerts(project.getId());
-            return newAlerts;
+            return alertsController.countNewAlerts(project.getId());
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -77,18 +88,22 @@ public class Alerts {
         String valueString = element.get("value");
         String thresholdString = element.get("threshold");
         String prj = element.get("project_id");
-        String affectedid = element.get("affected_id");
-        String affectedType = element.get("affected_type");
+        String affectedId = element.get("affectedId");
+        String affectedType = element.get("affectedType");
+
+        if (affectedType!=null && !affectedType.equals("metric") && !affectedType.equals("factor") && !affectedType.equals("indicator")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.AFFECTED_TYPE_NOT_VALID);
+        }
 
         if (typeString != null && valueString != null && thresholdString != null && prj != null &&
-                affectedid != null && affectedType != null) {
+                affectedId != null && affectedType != null) {
             try {
                 AlertType type = AlertType.valueOf(typeString);
                 float value = Float.parseFloat(valueString);
                 float threshold = Float.parseFloat(thresholdString);
                 Project project = projectsController.findProjectByExternalId(prj);
 
-                alertsController.createAlert(value, threshold, type, project, affectedid, affectedType);
+                alertsController.createAlert(value, threshold, type, project, affectedId, affectedType);
 
                 smt.convertAndSend(
                         "/queue/notify",
@@ -100,6 +115,15 @@ public class Alerts {
             } catch (IllegalArgumentException e) {
                 logger.error(e.getMessage(), e);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
+            } catch (MetricNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.METRIC_NOT_FOUND);
+            } catch (QualityFactorNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.FACTOR_NOT_FOUND);
+            } catch (StrategicIndicatorNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
             }
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);

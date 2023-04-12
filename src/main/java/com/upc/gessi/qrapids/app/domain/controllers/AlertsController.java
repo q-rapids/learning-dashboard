@@ -3,8 +3,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
-import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
@@ -12,6 +11,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCatego
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +36,8 @@ public class AlertsController {
     @Autowired
     private QualityFactorRepository factorRepository;
     @Autowired
+    private StrategicIndicatorRepository siRepository;
+    @Autowired
     private MetricCategoryRepository metricCategoryRepository;
     @Autowired
     private QFCategoryRepository qfCategoryRepository;
@@ -50,14 +52,21 @@ public class AlertsController {
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
 
 
-    public void createAlert(float value, float threshold, AlertType type, Project project, String affectedId, String affectedType){
-        Alert newAlert = new Alert( value,  threshold,  type,  project,  affectedId, affectedType);
-        saveAlert(newAlert);
+    public void createAlert(float value, float threshold, AlertType type, Project project, String affectedId, String affectedType) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        if (!checkAffectedIdExists(affectedId,project.getId())) {
+            if (affectedType.equals("metric")) throw new MetricNotFoundException();
+            else if (affectedType.equals("factor")) throw new QualityFactorNotFoundException();
+            else throw new StrategicIndicatorNotFoundException();
+        }
+        else {
+            Alert newAlert = new Alert( value,  threshold,  type,  project,  affectedId, affectedType);
+            saveAlert(newAlert);
+        }
     }
 
 
     //METRIC ALERT CHECK
-    public void shouldCreateMetricAlert (DTOMetricEvaluation m, float value, Long projectId) throws IOException {
+    public void shouldCreateMetricAlert (DTOMetricEvaluation m, float value, Long projectId) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         Metric metric = metricRepository.findByExternalIdAndProjectId(m.getId(), projectId);
 
         List<MetricCategory> metricCategoryLevels = metricCategoryRepository.findAllByName(metric.getCategoryName());
@@ -75,7 +84,7 @@ public class AlertsController {
 
     }
 
-    void checkMetricThresholdTrespassedAlert(Metric metric, float value) throws IOException {
+    void checkMetricThresholdTrespassedAlert(Metric metric, float value) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (metric.getThreshold()!= null && value < metric.getThreshold()){
             List<Alert> previousAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
                     metric.getExternalId(), AlertType.TRESPASSED_THRESHOLD);
@@ -106,7 +115,7 @@ public class AlertsController {
         }
     }
 
-    void checkMetricColorChangedAlert(Metric metric, float value, List<Float> metricCategoryThresholds) throws IOException {
+    void checkMetricColorChangedAlert(Metric metric, float value, List<Float> metricCategoryThresholds) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
     LocalDate toDate = LocalDate.now();
     LocalDate fromDate = toDate.minusDays(30);
 
@@ -144,7 +153,7 @@ public class AlertsController {
     }
 
     //QUALITY FACTOR ALERT CHECK
-    public void shouldCreateFactorAlert (Factor factor, float value) throws ProjectNotFoundException, IOException {
+    public void shouldCreateFactorAlert (Factor factor, float value) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<QFCategory> qfCategories = qfCategoryRepository.findAllByName(factor.getCategoryName());
         List<Float> categoryThresholds = new ArrayList<>();
         for (QFCategory categoryValue:qfCategories) {
@@ -160,7 +169,7 @@ public class AlertsController {
 
     }
 
-    private void checkFactorColorChangedAlert(Factor factor, float value, List<Float> categoryThresholds) throws ProjectNotFoundException, IOException {
+    private void checkFactorColorChangedAlert(Factor factor, float value, List<Float> categoryThresholds) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
     LocalDate fromDate = LocalDate.now().minusDays(30);
     LocalDate toDate = LocalDate.now();
         List<DTODetailedFactorEvaluation> factorEvaluations = qmaFactors.HistoricalData(factor.getExternalId(),
@@ -194,7 +203,7 @@ public class AlertsController {
         }
     }
 
-    private void checkFactorThresholdTrespassedAlert(Factor factor, float value) throws ProjectNotFoundException, IOException {
+    private void checkFactorThresholdTrespassedAlert(Factor factor, float value) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (value < factor.getThreshold()){
             List<Alert> previousAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(factor.getProject().getId(),
                     factor.getExternalId(), AlertType.TRESPASSED_THRESHOLD);
@@ -225,7 +234,7 @@ public class AlertsController {
 
 
     //STRATEGIC INDICATOR ALERT CHECK
-    public void shouldCreateIndicatorAlert (Strategic_Indicator strategicIndicator, float value) throws ProjectNotFoundException, IOException {
+    public void shouldCreateIndicatorAlert (Strategic_Indicator strategicIndicator, float value) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<SICategory> SICategories = new ArrayList<>();
         Iterable<SICategory>  siCategoryIterable = siCategoryRepository.findAll();
         siCategoryIterable.forEach(SICategories::add);
@@ -239,7 +248,7 @@ public class AlertsController {
         else if (strategicIndicator.getThreshold()!= null) checkSIThresholdTrespassedAlert(strategicIndicator, value);
     }
 
-    private void checkSIColorChangedAlert(Strategic_Indicator strategicIndicator, float value, List<Float>categoryThresholds) throws ProjectNotFoundException, IOException {
+    private void checkSIColorChangedAlert(Strategic_Indicator strategicIndicator, float value, List<Float>categoryThresholds) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         LocalDate fromDate = LocalDate.now().minusDays(30);
         LocalDate toDate = LocalDate.now();
         List<DTODetailedStrategicIndicatorEvaluation> siEvaluations = qmaDetailedStrategicIndicators.HistoricalData
@@ -281,7 +290,7 @@ public class AlertsController {
 
     }
 
-    private void checkSIThresholdTrespassedAlert(Strategic_Indicator strategicIndicator, float value) throws ProjectNotFoundException, IOException {
+    private void checkSIThresholdTrespassedAlert(Strategic_Indicator strategicIndicator, float value) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (value < strategicIndicator.getThreshold()){
             List<Alert> previousAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(strategicIndicator.getProject().getId(),
                     strategicIndicator.getExternalId(), AlertType.TRESPASSED_THRESHOLD);
@@ -367,4 +376,10 @@ public class AlertsController {
         alertRepository.save(alert);
     }
 
+    public Boolean checkAffectedIdExists(String affectedId, Long projectId){
+        if (metricRepository.findByExternalIdAndProjectId(affectedId, projectId)!=null) return true;
+        if (factorRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null) return true;
+        if (siRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null) return true;
+        return false;
+    }
 }

@@ -3,8 +3,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
-import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
@@ -60,7 +59,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void createAlert() {
+    public void createAlert() throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         String affectedId = "duplication";
         String affectedType = "metric";
@@ -86,7 +85,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateMetricAlertWithCategoryDowngrade() throws IOException {
+    public void shouldCreateMetricAlertWithCategoryDowngrade() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Long projectId = project.getId();
@@ -124,7 +123,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateMetricAlertWithCategoryUpgrade() throws IOException {
+    public void shouldCreateMetricAlertWithCategoryUpgrade() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Long projectId = project.getId();
@@ -171,7 +170,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateMetricAlertWithThresholdTrespassed() throws IOException {
+    public void shouldCreateMetricAlertWithThresholdTrespassed() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Long projectId = project.getId();
@@ -203,7 +202,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateFactorAlertWithCategoryDowngrade() throws IOException, ProjectNotFoundException {
+    public void shouldCreateFactorAlertWithCategoryDowngrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Long projectId = project.getId();
@@ -238,7 +237,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateFactorAlertWithCategoryUpgrade() throws IOException, ProjectNotFoundException {
+    public void shouldCreateFactorAlertWithCategoryUpgrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Long projectId = project.getId();
@@ -289,7 +288,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateFactorAlertWithThresholdTrespassed() throws IOException, ProjectNotFoundException {
+    public void shouldCreateFactorAlertWithThresholdTrespassed() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Long projectId = project.getId();
@@ -317,7 +316,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateStrategicIndicatorAlertWithCategoryDowngrade() throws IOException, ProjectNotFoundException {
+    public void shouldCreateStrategicIndicatorAlertWithCategoryDowngrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
 
@@ -356,7 +355,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateStrategicIndicatorAlertWithCategoryUpgrade() throws IOException, ProjectNotFoundException {
+    public void shouldCreateStrategicIndicatorAlertWithCategoryUpgrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
 
@@ -395,7 +394,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void shouldCreateStrategicIndicatorAlertWithThresholdTrespassed() throws IOException, ProjectNotFoundException {
+    public void shouldCreateStrategicIndicatorAlertWithThresholdTrespassed() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
 
