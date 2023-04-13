@@ -53,7 +53,7 @@ public class AlertsController {
 
 
     public void createAlert(float value, float threshold, AlertType type, Project project, String affectedId, String affectedType) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
-        if (!checkAffectedIdExists(affectedId,project.getId())) {
+        if (!checkAffectedIdExists(affectedId, affectedType, project.getId())) {
             if (affectedType.equals("metric")) throw new MetricNotFoundException();
             else if (affectedType.equals("factor")) throw new QualityFactorNotFoundException();
             else throw new StrategicIndicatorNotFoundException();
@@ -376,10 +376,10 @@ public class AlertsController {
         alertRepository.save(alert);
     }
 
-    public Boolean checkAffectedIdExists(String affectedId, Long projectId){
-        if (metricRepository.findByExternalIdAndProjectId(affectedId, projectId)!=null) return true;
-        if (factorRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null) return true;
-        if (siRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null) return true;
+    public Boolean checkAffectedIdExists(String affectedId, String affectedType, Long projectId){
+        if (affectedType.equals("metric")) return metricRepository.findByExternalIdAndProjectId(affectedId, projectId)!=null;
+        else if (affectedType.equals("factor")) return factorRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null;
+        else if (affectedType.equals("indicator")) return siRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null;
         return false;
     }
 }

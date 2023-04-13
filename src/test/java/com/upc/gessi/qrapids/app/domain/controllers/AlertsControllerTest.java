@@ -9,7 +9,9 @@ import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -46,9 +48,13 @@ public class AlertsControllerTest
     @Mock
     private QFCategoryRepository QFCategoryRepository;
     @Mock
+    private QualityFactorRepository factorRepository;
+    @Mock
     private QMAQualityFactors qmaFactors;
     @Mock
     private SICategoryRepository siCategoryRepository;
+    @Mock
+    private StrategicIndicatorRepository siRepository;
     @Mock
     private QMADetailedStrategicIndicators qmaStrategicIndicators;
     private DomainObjectsBuilder domainObjectsBuilder;
@@ -67,6 +73,8 @@ public class AlertsControllerTest
         float value = 0.3f;
         float threshold = 0.67f;
         Project project = domainObjectsBuilder.buildProject();
+
+        when(metricRepository.findByExternalIdAndProjectId(affectedId, project.getId())).thenReturn(new Metric());
 
         // When
         alertsController.createAlert(value, threshold, type, project, affectedId, affectedType);
@@ -94,6 +102,7 @@ public class AlertsControllerTest
         float value = 0.33f;
         Metric metric = domainObjectsBuilder.buildMetric(project);
         metric.setThreshold(null); //we want it to not have a threshold for this test
+        metric.setExternalId(metricEval.getId());
         when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
 
         List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
@@ -108,7 +117,7 @@ public class AlertsControllerTest
         alertsController.shouldCreateMetricAlert(metricEval, value, projectId);
 
         // Then
-        verify(metricRepository, times(1)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
         verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -131,6 +140,7 @@ public class AlertsControllerTest
         DTOMetricEvaluation metricEval = domainObjectsBuilder.buildDTOMetric();
         Metric metric = domainObjectsBuilder.buildMetric(project);
         metric.setThreshold(null); //we want it to not have a threshold for this test
+        metric.setExternalId(metricEval.getId());
         when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
 
         List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
@@ -155,7 +165,7 @@ public class AlertsControllerTest
         alertsController.shouldCreateMetricAlert(metricEval, metricEval.getValue(), projectId);
 
         // Then
-        verify(metricRepository, times(1)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
         verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -180,13 +190,14 @@ public class AlertsControllerTest
 
         Metric metric = domainObjectsBuilder.buildMetric(project);
         metric.setCategoryName("Default"); //we don't want it to have a category for this test
+        metric.setExternalId(metricEval.getId());
         when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
 
         // When
         alertsController.shouldCreateMetricAlert(metricEval, value, projectId);
 
         // Then
-        verify(metricRepository, times(1)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
         verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -209,6 +220,7 @@ public class AlertsControllerTest
 
         Factor factor = domainObjectsBuilder.buildFactor(project);
         factor.setThreshold(null); //we want it to not have a threshold for this test
+        when(factorRepository.findByExternalIdAndProjectId(factor.getExternalId(),projectId)).thenReturn(factor);
 
         List<QFCategory> factorCategories = domainObjectsBuilder.buildFactorCategoryList();
         when(QFCategoryRepository.findAllByName(factor.getCategoryName())).thenReturn(factorCategories);
@@ -223,6 +235,7 @@ public class AlertsControllerTest
         alertsController.shouldCreateFactorAlert(factor, 0.33f);
 
         // Then
+        verify(factorRepository,times(1)).findByExternalIdAndProjectId(factor.getExternalId(),projectId);
         verify(QFCategoryRepository, times(1)).findAllByName(factor.getCategoryName());
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -244,7 +257,7 @@ public class AlertsControllerTest
 
         Factor factor = domainObjectsBuilder.buildFactor(project);
         factor.setThreshold(null); //we want it to not have a threshold for this test
-
+        when(factorRepository.findByExternalIdAndProjectId(factor.getExternalId(),projectId)).thenReturn(factor);
         List<QFCategory> factorCategories = domainObjectsBuilder.buildFactorCategoryList();
         when(QFCategoryRepository.findAllByName(factor.getCategoryName())).thenReturn(factorCategories);
 
@@ -274,6 +287,7 @@ public class AlertsControllerTest
         alertsController.shouldCreateFactorAlert(factor, 0.8f);
 
         // Then
+        verify(factorRepository,times(1)).findByExternalIdAndProjectId(factor.getExternalId(),projectId);
         verify(QFCategoryRepository, times(1)).findAllByName(factor.getCategoryName());
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -296,11 +310,13 @@ public class AlertsControllerTest
         Factor factor = domainObjectsBuilder.buildFactor(project);
         float value = 0.2f; //threshold is 0.3f so the alert should be created at least for the threshold trespassed
         factor.setCategoryName("Default"); //we don't want it to have a category for this test
+        when(factorRepository.findByExternalIdAndProjectId(factor.getExternalId(),projectId)).thenReturn(factor);
 
         // When
         alertsController.shouldCreateFactorAlert(factor, value);
 
         // Then
+        verify(factorRepository,times(1)).findByExternalIdAndProjectId(factor.getExternalId(),projectId);
         verify(QFCategoryRepository, times(1)).findAllByName(factor.getCategoryName());
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -322,6 +338,7 @@ public class AlertsControllerTest
 
         Strategic_Indicator strategic_indicator = domainObjectsBuilder.buildStrategicIndicator(project);
         strategic_indicator.setThreshold(null); //we want it to not have a threshold for this test
+        when(siRepository.findByExternalIdAndProjectId(strategic_indicator.getExternalId(),project.getId())).thenReturn(strategic_indicator);
 
         List<SICategory> siCategories = domainObjectsBuilder.buildSICategoryList();
         when(siCategoryRepository.findAll()).thenReturn(siCategories);
@@ -341,6 +358,7 @@ public class AlertsControllerTest
         alertsController.shouldCreateIndicatorAlert(strategic_indicator, 0.33f);
 
         // Then
+        verify(siRepository, times(1)).findByExternalIdAndProjectId(strategic_indicator.getExternalId(), project.getId());
         verify(siCategoryRepository, times(1)).findAll();
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -361,7 +379,7 @@ public class AlertsControllerTest
 
         Strategic_Indicator strategic_indicator = domainObjectsBuilder.buildStrategicIndicator(project);
         strategic_indicator.setThreshold(null); //we want it to not have a threshold for this test
-
+        when(siRepository.findByExternalIdAndProjectId(strategic_indicator.getExternalId(), project.getId())).thenReturn(strategic_indicator);
         List<SICategory> siCategories = domainObjectsBuilder.buildSICategoryList();
         when(siCategoryRepository.findAll()).thenReturn(siCategories);
 
@@ -380,6 +398,7 @@ public class AlertsControllerTest
         alertsController.shouldCreateIndicatorAlert(strategic_indicator, 0.8f);
 
         // Then
+        verify(siRepository, times(1)).findByExternalIdAndProjectId(strategic_indicator.getExternalId(), project.getId());
         verify(siCategoryRepository, times(1)).findAll();
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
@@ -400,11 +419,13 @@ public class AlertsControllerTest
 
         Strategic_Indicator strategic_indicator = domainObjectsBuilder.buildStrategicIndicator(project);
         float value = 0.3f; //threshold is 0.5f so the alert should be created at least for the threshold trespassed
+        when(siRepository.findByExternalIdAndProjectId(strategic_indicator.getExternalId(),project.getId())).thenReturn(strategic_indicator);
 
         // When
         alertsController.shouldCreateIndicatorAlert(strategic_indicator, value);
 
         // Then
+        verify(siRepository, times(1)).findByExternalIdAndProjectId(strategic_indicator.getExternalId(), project.getId());
         verify(siCategoryRepository, times(1)).findAll();
         ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
         verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
