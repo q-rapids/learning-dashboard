@@ -26,10 +26,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.util.Pair;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -439,6 +440,278 @@ public class AlertsControllerTest
         assertEquals(AlertStatus.NEW, alertSaved.getStatus());
         assertEquals(project, alertSaved.getProject());
     }
+
+    @Test
+    public void shouldCreateThresholdNonTreatedAlert() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+
+        DTOMetricEvaluation currentMetricEval = domainObjectsBuilder.buildDTOMetric();
+        float value = 0.3f; //threshold is 0.5f so value < threshold
+
+        Metric currentMetric = domainObjectsBuilder.buildMetric(project);
+        currentMetric.setCategoryName("Default"); //we don't want it to have a category for this test
+        currentMetric.setExternalId(currentMetricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(currentMetricEval.getId(), projectId)).thenReturn(currentMetric);
+
+        //create a previous alert for a trespassed threshold
+        Alert previousAlert = domainObjectsBuilder.buildAlert(project);
+        Date today = new Date();
+        Date alertDate = new Date(today.getTime()-86400000*8);
+        previousAlert.setDate(alertDate);
+        List<Alert> previousAlerts = new ArrayList<>();
+        previousAlerts.add(previousAlert);
+        when(alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,currentMetric.getExternalId(),AlertType.TRESPASSED_THRESHOLD)).thenReturn(previousAlerts);
+
+        //create previous evaluations
+        DTOMetricEvaluation previousEval = domainObjectsBuilder.buildDTOMetric();
+        previousEval.setValue(0.2f);
+        DTOMetricEvaluation previousEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        previousEvalTwo.setValue(0.1f);
+        DTOMetricEvaluation previousEvalThree = domainObjectsBuilder.buildDTOMetric();
+        previousEvalThree.setValue(0.35f);
+        List<DTOMetricEvaluation> previousEvals = Arrays.asList(previousEval, previousEvalTwo, previousEvalThree);
+        when(qmaMetrics.SingleHistoricalData(eq(currentMetric.getExternalId()), any(), any(), eq(project.getExternalId()), any())).thenReturn(previousEvals);
+
+        // When
+        alertsController.shouldCreateMetricAlert(currentMetricEval, value, projectId);
+
+        // Then
+        verify(alertRepository, times (1)).findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,currentMetric.getExternalId(),AlertType.TRESPASSED_THRESHOLD);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(currentMetricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(currentMetric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a threshold trespassed alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(currentMetric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.ALERT_NOT_TREATED, alertSaved.getType());
+        assertEquals(value, alertSaved.getValue(), 0f);
+        assertEquals(currentMetric.getThreshold(), alertSaved.getThreshold(), 0f);
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void shouldNotCreateThresholdNonTreatedAlertBecauseOfDates() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+
+        DTOMetricEvaluation currentMetricEval = domainObjectsBuilder.buildDTOMetric();
+        float value = 0.3f; //threshold is 0.5f so value < threshold
+
+        Metric currentMetric = domainObjectsBuilder.buildMetric(project);
+        currentMetric.setCategoryName("Default"); //we don't want it to have a category for this test
+        currentMetric.setExternalId(currentMetricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(currentMetricEval.getId(), projectId)).thenReturn(currentMetric);
+
+        //create a previous alert for a trespassed threshold
+        Alert previousAlert = domainObjectsBuilder.buildAlert(project);
+        Date today = new Date();
+        Date alertDate = new Date(today.getTime()-86400000);
+        previousAlert.setDate(alertDate);
+        List<Alert> previousAlerts = new ArrayList<>();
+        previousAlerts.add(previousAlert);
+        when(alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,currentMetric.getExternalId(),AlertType.TRESPASSED_THRESHOLD)).thenReturn(previousAlerts);
+
+        //create previous evaluations
+        DTOMetricEvaluation previousEval = domainObjectsBuilder.buildDTOMetric();
+        previousEval.setValue(0.2f);
+        DTOMetricEvaluation previousEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        previousEvalTwo.setValue(0.1f);
+        DTOMetricEvaluation previousEvalThree = domainObjectsBuilder.buildDTOMetric();
+        previousEvalThree.setValue(0.35f);
+        List<DTOMetricEvaluation> previousEvals = Arrays.asList(previousEval, previousEvalTwo, previousEvalThree);
+        when(qmaMetrics.SingleHistoricalData(eq(currentMetric.getExternalId()), any(), any(), eq(project.getExternalId()), any())).thenReturn(previousEvals);
+
+        // When
+        alertsController.shouldCreateMetricAlert(currentMetricEval, value, projectId);
+
+        // Then
+        verify(alertRepository, times (1)).findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,currentMetric.getExternalId(),AlertType.TRESPASSED_THRESHOLD);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(currentMetricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(currentMetric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a threshold trespassed alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(currentMetric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.TRESPASSED_THRESHOLD, alertSaved.getType());
+        assertEquals(value, alertSaved.getValue(), 0f);
+        assertEquals(currentMetric.getThreshold(), alertSaved.getThreshold(), 0f);
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void shouldNotCreateThresholdNonTreatedAlertBecauseOfImprovement() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+
+        DTOMetricEvaluation currentMetricEval = domainObjectsBuilder.buildDTOMetric();
+        float value = 0.3f; //threshold is 0.5f so value < threshold
+
+        Metric currentMetric = domainObjectsBuilder.buildMetric(project);
+        currentMetric.setCategoryName("Default"); //we don't want it to have a category for this test
+        currentMetric.setExternalId(currentMetricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(currentMetricEval.getId(), projectId)).thenReturn(currentMetric);
+
+        //create a previous alert for a trespassed threshold
+        Alert previousAlert = domainObjectsBuilder.buildAlert(project);
+        Date today = new Date();
+        Date alertDate = new Date(today.getTime()-86400000);
+        previousAlert.setDate(alertDate);
+        List<Alert> previousAlerts = new ArrayList<>();
+        previousAlerts.add(previousAlert);
+        when(alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,currentMetric.getExternalId(),AlertType.TRESPASSED_THRESHOLD)).thenReturn(previousAlerts);
+
+        //create previous evaluations
+        DTOMetricEvaluation previousEval = domainObjectsBuilder.buildDTOMetric();
+        previousEval.setValue(0.2f);
+        DTOMetricEvaluation previousEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        previousEvalTwo.setValue(0.1f);
+        DTOMetricEvaluation previousEvalThree = domainObjectsBuilder.buildDTOMetric();
+        previousEvalThree.setValue(0.55f);
+        List<DTOMetricEvaluation> previousEvals = Arrays.asList(previousEval, previousEvalTwo, previousEvalThree);
+        when(qmaMetrics.SingleHistoricalData(eq(currentMetric.getExternalId()), any(), any(), eq(project.getExternalId()), any())).thenReturn(previousEvals);
+
+        // When
+        alertsController.shouldCreateMetricAlert(currentMetricEval, value, projectId);
+
+        // Then
+        verify(alertRepository, times (1)).findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,currentMetric.getExternalId(),AlertType.TRESPASSED_THRESHOLD);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(currentMetricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(currentMetric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a threshold trespassed alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(currentMetric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.TRESPASSED_THRESHOLD, alertSaved.getType());
+        assertEquals(value, alertSaved.getValue(), 0f);
+        assertEquals(currentMetric.getThreshold(), alertSaved.getThreshold(), 0f);
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void IsNotATrespassedThresholdNotTreated(){
+        //Given
+        Date lastThresholdAlertDate = new Date(23,04,13);
+        float elementThreshold = 0.3f;
+        List<Float> evalsAfterAlert = Arrays.asList(0.2f,0.29f,0.4f,0.3f,0.01f,0.5f);
+
+        //When
+        boolean isNonTreated= alertsController.isATrespassedThresholdNotTreated(lastThresholdAlertDate,elementThreshold,evalsAfterAlert);
+
+        //Then
+        assertFalse(isNonTreated);
+
+    }
+
+    @Test
+    public void shouldCreateCategoryAlertNotTreated() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+
+        DTOMetricEvaluation metricEval = domainObjectsBuilder.buildDTOMetric();
+        Metric metric = domainObjectsBuilder.buildMetric(project);
+        metric.setThreshold(null); //we want it to not have a threshold for this test
+        metric.setExternalId(metricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
+
+        List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
+        when(metricCategoryRepository.findAllByName(metric.getCategoryName())).thenReturn(metricCategories);
+
+        //creating a previous evaluation that will have the same value, so it will be in the same level and raise a check on non treated alerts
+        DTOMetricEvaluation previousEval= domainObjectsBuilder.buildDTOMetric();
+        List <DTOMetricEvaluation> previousEvals = Arrays.asList(previousEval);
+
+        when(qmaMetrics.SingleHistoricalData(eq(metric.getExternalId()), any(), any(), eq(project.getExternalId()), any())).thenReturn(previousEvals);
+
+        //creating previous alerts being the last upgrade alert older than the last downgrade alert (so its a non treated alert as it hasn't improved)
+        List<Alert> previousDowngradeAlerts= new ArrayList<>();
+        Alert downgradeAlert = domainObjectsBuilder.buildAlert(project);
+        downgradeAlert.setType(AlertType.CATEGORY_DOWNGRADE);
+
+
+        List<Alert> previousUpgradeAlerts= new ArrayList<>();
+        Alert upgradeAlert = domainObjectsBuilder.buildAlert(project);
+        upgradeAlert.setType(AlertType.CATEGORY_UPGRADE);
+
+        Date today = new Date();
+        Date downgradeAlertDate = new Date(today.getTime()-86400000*8);
+        Date upgradeAlertDate = new Date(downgradeAlertDate.getTime()-86400000);
+        upgradeAlert.setDate(upgradeAlertDate);
+        downgradeAlert.setDate(downgradeAlertDate);
+
+        previousDowngradeAlerts.add(downgradeAlert);
+        previousUpgradeAlerts.add(upgradeAlert);
+
+        when(alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
+                metric.getExternalId(), AlertType.CATEGORY_UPGRADE)).thenReturn(previousUpgradeAlerts);
+        when(alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
+                metric.getExternalId(), AlertType.CATEGORY_DOWNGRADE)).thenReturn(previousDowngradeAlerts);
+
+
+        // When
+        alertsController.shouldCreateMetricAlert(metricEval, metricEval.getValue(), projectId);
+
+        // Then
+        verify(alertRepository, times (1)).findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,metric.getExternalId(),AlertType.CATEGORY_DOWNGRADE);
+        verify(alertRepository, times (1)).findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId,metric.getExternalId(),AlertType.CATEGORY_UPGRADE);
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a non-treated alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(metric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.ALERT_NOT_TREATED, alertSaved.getType());
+        assertEquals(metricEval.getValue(), alertSaved.getValue(), 0f);
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void IsNotATrespassedThresholdNotTreatedBecauseOfTheDate(){
+        //Given
+        Date today = new Date();
+        Date lastThresholdAlertDate = new Date(today.getTime()-86400000); //1 day before today
+        float elementThreshold = 0.3f;
+        List<Float> evalsAfterAlert = Arrays.asList(0.2f,0.29f,0.01f,0.1f);
+
+        //When
+        boolean isNonTreated= alertsController.isATrespassedThresholdNotTreated(lastThresholdAlertDate,elementThreshold,evalsAfterAlert);
+
+        //Then
+        assertFalse(isNonTreated);
+    }
+
+    @Test
+    public void IsATrespassedThresholdNotTreated(){
+        //Given
+        Date today = new Date();
+        Date lastThresholdAlertDate = new Date(today.getTime()-86400000*8); //8 day before today
+        float elementThreshold = 0.3f;
+        List<Float> evalsAfterAlert = Arrays.asList(0.2f,0.29f,0.01f,0.1f);
+
+        //When
+        boolean isNonTreated= alertsController.isATrespassedThresholdNotTreated(lastThresholdAlertDate,elementThreshold,evalsAfterAlert);
+
+        //Then
+        assertTrue(isNonTreated);
+    }
+
+
     @Test
     public void findCategoryLevel(){
         //Given

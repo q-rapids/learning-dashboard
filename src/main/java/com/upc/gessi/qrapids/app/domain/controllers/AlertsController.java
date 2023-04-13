@@ -138,16 +138,16 @@ public class AlertsController {
             else{
                 List<Alert> previousDowngradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
                     metric.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
-            List<Alert> previousUpgradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
-                    metric.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
-            Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
-            Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
+                List<Alert> previousUpgradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
+                        metric.getExternalId(), AlertType.CATEGORY_UPGRADE);
+                Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
+                Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
 
-            Date todayDate = new Date();
-            long diff = todayDate.getTime() - lastDowngradeAlertDate.getTime();
+                Date todayDate = new Date();
+                long diff = todayDate.getTime() - lastDowngradeAlertDate.getTime();
 
-            if (lastUpgradeAlertDate.before(lastDowngradeAlertDate) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value, metric.getThreshold() != null ? metric.getThreshold() : Float.NaN, AlertType.ALERT_NOT_TREATED, metric.getProject(),
-                    metric.getExternalId(), "metric");
+                if (lastUpgradeAlertDate.before(lastDowngradeAlertDate) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value, metric.getThreshold() != null ? metric.getThreshold() : Float.NaN, AlertType.ALERT_NOT_TREATED, metric.getProject(),
+                        metric.getExternalId(), "metric");
             }
         }
     }
@@ -190,7 +190,7 @@ public class AlertsController {
                 List<Alert> previousDowngradeAlerts = alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(factor.getProject().getId(),
                         factor.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
                 List<Alert> previousUpgradeAlerts = alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(factor.getProject().getId(),
-                        factor.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
+                        factor.getExternalId(), AlertType.CATEGORY_UPGRADE);
                 Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
                 Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
                 Date todayDate = new Date();
@@ -274,7 +274,7 @@ public class AlertsController {
                 List<Alert> previousDowngradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(strategicIndicator.getProject().getId(),
                         strategicIndicator.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
                 List<Alert> previousUpgradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(strategicIndicator.getProject().getId(),
-                        strategicIndicator.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
+                        strategicIndicator.getExternalId(), AlertType.CATEGORY_UPGRADE);
                 Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
                 Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
                 Date todayDate = new Date();
@@ -326,7 +326,7 @@ public class AlertsController {
     }
 
 
-    private boolean isATrespassedThresholdNotTreated(Date lastAlertDate, float threshold, List<Float> previousEvaluationsValues){
+     boolean isATrespassedThresholdNotTreated(Date lastAlertDate, float threshold, List<Float> previousEvaluationsValues){
         boolean improvedSinceLastAlert = false;
         Date today = new Date();
         long diff = today.getTime() - lastAlertDate.getTime();

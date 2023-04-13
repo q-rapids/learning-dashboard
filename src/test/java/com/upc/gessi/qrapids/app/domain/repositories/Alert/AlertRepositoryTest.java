@@ -32,7 +32,7 @@ public class AlertRepositoryTest {
         Alert alertFound = alertRepository.findAlertById(alert.getId());
 
         // Then
-        assertTrue(alertFound!=null);
+        assertNotNull(alertFound);
         assertEquals(alert.getId(), alertFound.getId());
     }
 
