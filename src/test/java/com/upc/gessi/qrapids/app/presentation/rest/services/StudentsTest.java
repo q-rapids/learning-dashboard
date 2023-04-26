@@ -71,9 +71,10 @@ public class StudentsTest {
         String student_name = "student_test_name";
         String taiga_username = "taiga_test_username";
         String github_username = "github_test_username";
+        String prt_username = "prt_test_username";
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(student_name, taiga_username, github_username, dtoMetricEvaluationList);
+        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(student_name, taiga_username, github_username, prt_username, dtoMetricEvaluationList);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
@@ -93,6 +94,7 @@ public class StudentsTest {
                 .andExpect(jsonPath("$[0].studentName", is(student_name)))
                 .andExpect(jsonPath("$[0].taigaUsername", is(taiga_username)))
                 .andExpect(jsonPath("$[0].githubUsername", is(github_username)))
+                .andExpect(jsonPath("$[0].prtUsername", is(prt_username)))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluationList.get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoMetricEvaluationList.get(0).getDescription())))
@@ -124,6 +126,8 @@ public class StudentsTest {
                                         .description("Taiga username of the student"),
                                 fieldWithPath("[].githubUsername")
                                         .description("Github username of the student"),
+                                fieldWithPath("[].prtUsername")
+                                        .description("PRT username of the student"),
                                 fieldWithPath("[].metrics[].id")
                                         .description("Metric identifier"),
                                 fieldWithPath("[].metrics[].name")
@@ -165,13 +169,14 @@ public class StudentsTest {
         String student_name = "student_test_name";
         String taiga_username = "taiga_test_username";
         String github_username = "github_test_username";
+        String prt_username = "prt_test_username";
         String from = "2000-01-01";
         LocalDate localDateFrom = LocalDate.parse(from);
         String to = "2000-05-01";
         LocalDate localDateTo = LocalDate.parse(to);
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetricsHistorical dtoStudentMetrics = new DTOStudentMetricsHistorical(student_name, taiga_username, github_username, dtoMetricEvaluationList, 1);
+        DTOStudentMetricsHistorical dtoStudentMetrics = new DTOStudentMetricsHistorical(student_name, taiga_username, github_username, prt_username, dtoMetricEvaluationList, 1);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
@@ -194,6 +199,7 @@ public class StudentsTest {
                 .andExpect(jsonPath("$[0].studentName", is(student_name)))
                 .andExpect(jsonPath("$[0].taigaUsername", is(taiga_username)))
                 .andExpect(jsonPath("$[0].githubUsername", is(github_username)))
+                .andExpect(jsonPath("$[0].prtUsername", is(prt_username)))
                 .andExpect(jsonPath("$[0].numberMetrics", is(1)))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluationList.get(0).getName())))
@@ -232,6 +238,8 @@ public class StudentsTest {
                                         .description("Taiga username of the student"),
                                 fieldWithPath("[].githubUsername")
                                         .description("Github username of the student"),
+                                fieldWithPath("[].prtUsername")
+                                        .description("PRT username of the student"),
                                 fieldWithPath("[].numberMetrics")
                                         .description("Number of metrics"),
                                 fieldWithPath("[].metrics[].id")
@@ -270,9 +278,9 @@ public class StudentsTest {
     @Test
     public void updateMetricStudent() throws Exception {
 
-        DTOStudent dtoStudent = new DTOStudent("student_test_name", "taiga_test_name", "github_test_name", null);
+        DTOStudent dtoStudent = new DTOStudent("student_test_name", "taiga_test_name", "github_test_name", "prt_test_name", null);
         String[] userMetricstemp = { "s1", "s2", "s3" };
-        String studentsList = "student_test_name,taiga_test_name,github_test_name";
+        String studentsList = "student_test_name,taiga_test_name,github_test_name,prt_test_name";
         String studentId="1";
         String projectId="1";
         // Perform request
@@ -317,6 +325,7 @@ public class StudentsTest {
         assertEquals(dtoStudent.getStudentName(), argument1.getValue().getStudentName());
         assertEquals(dtoStudent.getTaigaUsername(), argument1.getValue().getTaigaUsername());
         assertEquals(dtoStudent.getGithubUsername(), argument1.getValue().getGithubUsername());
+        assertEquals(dtoStudent.getPrtUsername(), argument1.getValue().getPrtUsername());
         assertEquals(studentId, argument2.getValue());
         assertEquals(userMetricstemp[0], argument3.getValue()[0]);
         assertEquals(projectId, argument4.getValue());

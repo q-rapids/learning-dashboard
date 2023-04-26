@@ -45,7 +45,7 @@ public class ProjectsController {
 
     public DTOProject getProjectByExternalId(String externalId) throws ProjectNotFoundException {
         Project p = projectRepository.findByExternalId(externalId);
-        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(),p.getIsGlobal());
+        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(), p.getPrtURL(), p.getIsGlobal());
     }
 
     public List<DTOProject> getProjects(Long id) throws ProjectNotFoundException {
@@ -61,7 +61,7 @@ public class ProjectsController {
         List<Project> projectsBD = new ArrayList<>();
         projectIterable.forEach(projectsBD::add);
         for (Project p : projectsBD) {
-            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(),p.getIsGlobal());
+            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(), p.getPrtURL(), p.getIsGlobal());
             projects.add(project);
         }
         Collections.sort(projects, new Comparator<DTOProject>() {
@@ -79,7 +79,7 @@ public class ProjectsController {
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
             List<DTOStudent> s = studentsController.getStudentsFromProject(Long.parseLong(id));
-            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getTaigaURL(), project.getGithubURL(), project.getIsGlobal());
+            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getTaigaURL(), project.getGithubURL(), project.getPrtURL(), project.getIsGlobal());
             dtoProject.setStudents(s);
         }
         return dtoProject;
@@ -91,9 +91,11 @@ public class ProjectsController {
     }
 
     public void updateProject(DTOProject p) {
-        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getTaigaURL(), p.getGithubURL(),p.getIsGlobal());
+        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getTaigaURL(), p.getGithubURL(), p.getPrtURL(), p.getIsGlobal());
         project.setId(p.getId());
-        project.setBacklogId(p.getBacklogId());
+        String backlogId = p.getBacklogId();
+        if (backlogId.equals("null")) project.setBacklogId(null);
+        else project.setBacklogId(p.getBacklogId());
         projectRepository.save(project);
     }
 
@@ -111,7 +113,7 @@ public class ProjectsController {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {
-                Project newProject = new Project(project, project, "No description specified", null, true,null,null,false);
+                Project newProject = new Project(project, project, "No description specified", null, true, null, null, null, false);
                 projectRepository.save(newProject);
             }
         }

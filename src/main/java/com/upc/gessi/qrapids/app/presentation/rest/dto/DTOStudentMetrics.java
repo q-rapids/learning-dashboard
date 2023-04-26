@@ -6,8 +6,8 @@ public class DTOStudentMetrics extends DTOStudent{
 
     private List<DTOMetricEvaluation> metrics;
 
-    public DTOStudentMetrics(String student_name, String taiga_username, String github_username, List<DTOMetricEvaluation> metrics) {
-        super(student_name,taiga_username,github_username);
+    public DTOStudentMetrics(String student_name, String taiga_username, String github_username, String prt_username, List<DTOMetricEvaluation> metrics) {
+        super(student_name,taiga_username,github_username,prt_username);
         this.metrics=metrics;
     }
 

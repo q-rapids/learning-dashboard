@@ -110,10 +110,10 @@ public class Metrics {
         String[] students = request.getParameter("studentsList").split(",");
         if (students[1].equals("empty")) students[1] = null;
         if (students[2].equals("empty")) students[2] = null;
-        DTOStudent dtostudents = new DTOStudent(students[0], students[1], students[2]);
+        if (students[3].equals("empty")) students[3] = null;
+        DTOStudent dtostudents = new DTOStudent(students[0], students[1], students[2], students[3]);
 
         Long id = studentsController.updateStudents(studentId,dtostudents,userMetrics, prjId);
-
         return id;
 
     }
