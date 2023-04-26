@@ -31,7 +31,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2",false);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2", "testURL3", false);
         entityManager.persist(project);
 
         String strategicIndicator1Name = "Product Quality";

@@ -434,7 +434,7 @@ function buildFactorTable(name) {
     deleteButton.classList.add("btn-danger");
     deleteButton.setAttribute('id', 'deleteButton');
     deleteButton.setAttribute('style', 'font-size: 18px; max-width: 35%;');
-    deleteButton.appendChild(document.createTextNode("Delete Metric Category"));
+    deleteButton.appendChild(document.createTextNode("Delete Factor Category"));
     deleteButton.addEventListener("click", function() { deleteFactorCategories(name);});
     buttonsRow.appendChild(deleteButton);
     var saveButton = document.createElement('button');
@@ -442,7 +442,7 @@ function buildFactorTable(name) {
     saveButton.classList.add("btn-primary");
     saveButton.setAttribute('id', 'saveButton');
     saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
-    saveButton.appendChild(document.createTextNode("Save Metric Category"));
+    saveButton.appendChild(document.createTextNode("Save Factor Category"));
     saveButton.addEventListener("click", function()  {updateFactorCategories(name);});
     buttonsRow.appendChild(saveButton);
     patternForm.appendChild(buttonsRow);

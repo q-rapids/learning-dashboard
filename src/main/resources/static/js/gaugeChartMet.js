@@ -9,6 +9,7 @@ var tau = Math.PI / 2;
 var id = false;
 var urlTaiga;
 var urlGithub;
+var urlPrt;
 
 var factors;
 var students;
@@ -249,6 +250,7 @@ function getCurrentProject() {
                     setUpGroupSelector()
                     urlTaiga = data[i].taigaURL;
                     urlGithub = data[i].githubURL;
+                    urlPrt = data[i].prtURL;
                 }
             }
         }
@@ -291,7 +293,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
                 icon.target = "_blank"
                 icon.rel="noopener noreferrer"
                 icon.src = "../icons/taiga_icon.png"
-                icon.width = 38;
+                icon.width = 40;
                 icon.height = 25;
                 icon.style = "padding-right:15px;";
                 a.appendChild(icon)
@@ -307,7 +309,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
                 a.rel="noopener noreferrer"
                 var icon1 = document.createElement("img");
                 icon1.src = "../icons/github_icon.png"
-                icon1.width = 38;
+                icon1.width = 40;
                 icon1.height = 25;
                 icon1.style = "padding-right:15px;";
                 a.appendChild(icon1)
@@ -319,7 +321,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
                     a.rel="noopener noreferrer"
                     var icon2 = document.createElement("img");
                     icon2.src = "../icons/github_icon.png"
-                    icon2.width = 38;
+                    icon2.width = 40;
                     icon2.height = 25;
                     icon2.style = "padding-right:15px;";
                     a.appendChild(icon2)
@@ -327,7 +329,23 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
                 }
             }
         }
-
+        if (factors[j].type === "PRT") {
+            if (urlPrt !== undefined && urlPrt !== null) {
+                var a = document.createElement('a')
+                a.href=urlPrt;
+                a.target = "_blank"
+                a.rel="noopener noreferrer"
+                var icon = document.createElement("img");
+                icon.target = "_blank"
+                icon.rel="noopener noreferrer"
+                icon.src = "../icons/sheets_icon.png"
+                icon.width = 40;
+                icon.height = 25;
+                icon.style = "padding-right:15px;";
+                a.appendChild(icon)
+                divF.appendChild(a);
+            }
+        }
 
         var labelF = document.createElement('label');
         labelF.id = factors[j].id;

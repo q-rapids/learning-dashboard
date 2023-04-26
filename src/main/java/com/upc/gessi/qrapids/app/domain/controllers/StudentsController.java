@@ -41,7 +41,7 @@ public class StudentsController {
         List<Student> students =studentRepository.findAllByProjectId(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();
         for(Student s:students) {
-            dtoStudents.add(new DTOStudent(s.getId(),s.getName(),s.getTaigaUsername(),s.getGithubUsername()));
+            dtoStudents.add(new DTOStudent(s.getId(),s.getName(),s.getTaigaUsername(),s.getGithubUsername(),s.getPrtUsername()));
         }
         return dtoStudents;
     }
@@ -56,20 +56,25 @@ public class StudentsController {
             List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
             List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
             List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
+            List<DTOMetricEvaluation> metricListPRT = new ArrayList<>();
             List<DTOMetricEvaluation> metricListNoSource = new ArrayList<>();
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
                 if("Taiga".equals(typeOfFactor)) metricListTaiga.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
                 else if("Github".equals(typeOfFactor)) metricListGithub.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                else if("PRT".equals(typeOfFactor)) metricListPRT.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
                 else metricListNoSource.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
             }
             for(DTOMetricEvaluation dto : metricListTaiga) {
                 metricListGithub.add(dto);
             }
+            for(DTOMetricEvaluation dto : metricListPRT) {
+                metricListGithub.add(dto);
+            }
             for(DTOMetricEvaluation list : metricListNoSource) {
                 metricListGithub.add(list);
             }
-            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub);
+            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), s.getPrtUsername(), metricListGithub);
             dtoStudentMetrics.add(temp);
         }
         return dtoStudentMetrics;
@@ -86,20 +91,25 @@ public class StudentsController {
             Integer number = metrics.size();
             List<DTOMetricEvaluation> metricListTaiga = new ArrayList<>();
             List<DTOMetricEvaluation> metricListGithub = new ArrayList<>();
+            List<DTOMetricEvaluation> metricListPRT = new ArrayList<>();
             List<DTOMetricEvaluation> metricListNoSource = new ArrayList<>();
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
                 if("Taiga".equals(typeOfFactor)) metricListTaiga.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
                 else if("Github".equals(typeOfFactor)) metricListGithub.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                else if("PRT".equals(typeOfFactor)) metricListPRT.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
                 else metricListNoSource.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
             }
             for(DTOMetricEvaluation list : metricListTaiga) {
                 metricListGithub.add(list);
             }
+            for(DTOMetricEvaluation list : metricListPRT) {
+                metricListGithub.add(list);
+            }
             for(DTOMetricEvaluation list : metricListNoSource) {
                 metricListGithub.add(list);
             }
-            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), metricListGithub, number);
+            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), s.getTaigaUsername(), s.getGithubUsername(), s.getPrtUsername(), metricListGithub, number);
             dtoStudentMetricsHistorical.add(temp);
         }
         return dtoStudentMetricsHistorical;
@@ -114,6 +124,7 @@ public class StudentsController {
             student.setName(students.getStudentName());
             student.setGithubUsername(students.getGithubUsername());
             student.setTaigaUsername(students.getTaigaUsername());
+            student.setPrtUsername(students.getPrtUsername());
             studentRepository.save(student);
             List<Metric> metrics = metricRepository.findAllByStudentId(student.getId());
             for (Metric m : metrics) {
@@ -131,7 +142,7 @@ public class StudentsController {
             return student.getId();
         }
         else {
-            Student student = new Student(students.getStudentName(), students.getTaigaUsername(), students.getGithubUsername(), externalProj);
+            Student student = new Student(students.getStudentName(), students.getTaigaUsername(), students.getGithubUsername(), students.getPrtUsername(), externalProj);
             studentRepository.save(student);
             for(int i=0; i<userMetrics.length; ++i) {
                 Optional<Metric> m = metricRepository.findById(Long.parseLong(userMetrics[i]));

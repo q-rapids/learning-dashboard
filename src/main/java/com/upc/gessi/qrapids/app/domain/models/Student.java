@@ -14,6 +14,8 @@ public class Student {
     private String taiga_username;
     @Column(name = "github_username")
     private String github_username;
+    @Column(name = "prt_username")
+    private String prt_username;
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
@@ -21,10 +23,11 @@ public class Student {
 
     public Student(){}
 
-    public Student(String name, String taiga_username, String github_username, Project project) {
+    public Student(String name, String taiga_username, String github_username, String prt_username, Project project) {
         this.name=name;
         this.taiga_username=taiga_username;
         this.github_username=github_username;
+        this.prt_username=prt_username;
         this.project=project;
     }
 
@@ -47,6 +50,10 @@ public class Student {
     public String getGithubUsername() {return this.github_username;}
 
     public void setGithubUsername(String github_username) {this.github_username=github_username;}
+
+    public String getPrtUsername() {return this.prt_username;}
+
+    public void setPrtUsername(String prt_username) {this.prt_username=prt_username;}
 
     public Project getProject() {
         return project;

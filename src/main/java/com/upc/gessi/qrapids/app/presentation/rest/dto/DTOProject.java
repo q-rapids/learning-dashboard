@@ -13,12 +13,13 @@ public class DTOProject {
     private String backlogId;
     private String taigaURL;
     private String githubURL;
+    private String prtURL;
     private Boolean isGlobal;
     private List<DTOStudent> students;
     
     public DTOProject(){}
     
-    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, String taigaURL, String githubURL, Boolean isGlobal) {
+    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, String taigaURL, String githubURL, String prtURL, Boolean isGlobal) {
     	this.id = id;
     	this.externalId = externalId;
     	this.name = name;
@@ -28,6 +29,7 @@ public class DTOProject {
     	this.backlogId = backlogId;
     	this.taigaURL = taigaURL;
     	this.githubURL = githubURL;
+        this.prtURL = prtURL;
     	this.isGlobal=isGlobal;
     }
     
@@ -94,6 +96,10 @@ public class DTOProject {
     public String getGithubURL() {return githubURL;}
 
     public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
+
+    public String getPrtURL() {return prtURL;}
+
+    public void setPrtURL(String prtURL) {this.prtURL=prtURL;}
 
     public Boolean getIsGlobal() { return isGlobal;}
 

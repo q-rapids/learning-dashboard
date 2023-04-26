@@ -76,7 +76,7 @@ public class ProfilesTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -124,6 +124,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)))
                 .andExpect(jsonPath("$[0].projects[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].projects[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$[0].projects[0].prtURL", is("testURL3")))
                 .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
                 .andExpect(jsonPath("$[0].allSIs", hasSize(1)))
@@ -169,6 +170,8 @@ public class ProfilesTest {
                                         .description("Taiga repository URL"),
                                 fieldWithPath("[].projects[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("[].projects[].prtURL")
+                                        .description("PRT sheet URL"),
                                 fieldWithPath("[].projects[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].projects[].students")
@@ -194,7 +197,7 @@ public class ProfilesTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -239,6 +242,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)))
                 .andExpect(jsonPath("$.projects[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$.projects[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$.projects[0].prtURL", is("testURL3")))
                 .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$.projects[0].students", is(nullValue())))
                 .andExpect(jsonPath("$.allSIs", hasSize(1)))
@@ -288,6 +292,8 @@ public class ProfilesTest {
                                         .description("Taiga repository URL"),
                                 fieldWithPath("projects[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("projects[].prtURL")
+                                        .description("PRT sheet URL"),
                                 fieldWithPath("projects[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("projects[].students")
@@ -313,7 +319,7 @@ public class ProfilesTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -402,7 +408,7 @@ public class ProfilesTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -486,7 +492,7 @@ public class ProfilesTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -567,7 +573,7 @@ public class ProfilesTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 

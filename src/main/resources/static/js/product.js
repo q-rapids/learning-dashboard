@@ -244,6 +244,23 @@ function getChosenProject(currentProjectId) {
 			firstGithubUrlRow.appendChild(inputfirstGithubUrl);
 			projectForm.appendChild(firstGithubUrlRow);
 
+			var PrtUrlRow = document.createElement('div');
+            PrtUrlRow.classList.add("productInfoRow");
+            var PrtURLp = document.createElement('p');
+            PrtURLp.appendChild(document.createTextNode("PRT URL:"));
+            PrtURLp.setAttribute('style', 'font-size: 18px; width: 15%');
+            PrtUrlRow.appendChild(PrtURLp);
+            var inputPrtUrl = document.createElement("input");
+            inputPrtUrl.setAttribute('id', 'inputPrtUrl');
+            inputPrtUrl.setAttribute('type', 'text');
+            var PrtURL = "";
+            if (data.prtURL) PrtURL = data.prtURL;
+            inputPrtUrl.setAttribute('value', PrtURL);
+            inputPrtUrl.setAttribute('style', 'width: 100%;');
+            inputPrtUrl.setAttribute('placeholder', 'Write the PRT URL');
+            PrtUrlRow.appendChild(inputPrtUrl);
+            projectForm.appendChild(PrtUrlRow);
+
 			var globalCheckRow = document.createElement("div");
 			globalCheckRow.classList.add("productInfoRow")
 			var globalCheckp =document.createElement("p");
@@ -362,13 +379,16 @@ function getChosenProject(currentProjectId) {
 			var projectbody = document.createElement('tbody');
 			var thName=document.createElement('th');
 			thName.appendChild(document.createTextNode("Name*"));
-			thName.setAttribute("style", "width:20%")
+			thName.setAttribute("style", "width:16%")
 			var thTaiga=document.createElement('th');
 			thTaiga.appendChild(document.createTextNode("Taiga username"));
-			thTaiga.setAttribute("style", "width:25%")
+			thTaiga.setAttribute("style", "width:18%")
 			var thGithub=document.createElement('th');
 			thGithub.appendChild(document.createTextNode("Github username"));
-			thGithub.setAttribute("style", "width:25%")
+			thGithub.setAttribute("style", "width:18%")
+			var thPrt=document.createElement('th');
+			thPrt.appendChild(document.createTextNode("PRT username"));
+			thPrt.setAttribute("style", "width:18%")
 			var thMetric = document.createElement('th');
 			thMetric.appendChild(document.createTextNode("Assign metrics and save student*"))
 			thMetric.setAttribute("style", "width:15%;text-align: center")
@@ -382,11 +402,12 @@ function getChosenProject(currentProjectId) {
 				selectedStudent=tempId;
 				//since Id can not be negative this would not have conflicts
 				tempId=tempId-1;
-				buildRow("","","", selectedStudent);});
+				buildRow("","","","", selectedStudent);});
 			thSpan.appendChild(Span);
 			projetctr.appendChild(thName);
 			projetctr.appendChild(thTaiga);
 			projetctr.appendChild(thGithub);
+			projetctr.appendChild(thPrt);
 			projetctr.appendChild(thMetric);
 			projetctr.appendChild(thEmpty2);
 			projetctr.appendChild(thSpan);
@@ -410,7 +431,7 @@ function getChosenProject(currentProjectId) {
 
 			for(let i = 0 ; i<data.students.length; i++) {
 				var s = data.students[i];
-				buildRow(s.studentName, s.taigaUsername, s.githubUsername, s.student_id);
+				buildRow(s.studentName, s.taigaUsername, s.githubUsername, s.prtUsername, s.student_id);
 			}
 
     		currentProject = currentProjectId;
@@ -418,7 +439,7 @@ function getChosenProject(currentProjectId) {
     });
 }
 
-function fieldEdited(studentName, taigaUsername, githubUsername, studentId) {
+function fieldEdited(studentName, taigaUsername, githubUsername, prtUsername, studentId) {
 	var warning = document.getElementById("warning"+studentId);
 	if(studentId<0 && warning!=null) {
 		warning.hidden=false;
@@ -427,7 +448,8 @@ function fieldEdited(studentName, taigaUsername, githubUsername, studentId) {
 		var name = document.getElementById("studentName" + studentId).innerHTML
 		var taigaName = document.getElementById("studentTaigaName" + studentId).innerHTML
 		var githubName = document.getElementById("studentGithubName" + studentId).innerHTML
-		if(name!==studentName || taigaName!==taigaUsername || githubName!==githubUsername) {
+		var prtName = document.getElementById("studentPrtName" + studentId).innerHTML
+		if(name!==studentName || taigaName!==taigaUsername || githubName!==githubUsername || prtName!==prtUsername) {
 			warning.hidden=false;
 		}
 		else{
@@ -438,31 +460,37 @@ function fieldEdited(studentName, taigaUsername, githubUsername, studentId) {
 
 }
 
-function buildRow(studentName, taigaUsername, githubUsername, studentId) {
+function buildRow(studentName, taigaUsername, githubUsername, prtUsername, studentId) {
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 	var name = document.createElement("td");
 	name.setAttribute("contenteditable", "true");
 	name.setAttribute("id" , "studentName" + studentId)
 	name.setAttribute("style", "border:1px solid lightgray")
-	name.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, studentId)});
+	name.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, prtUsername, studentId)});
 	name.innerHTML=studentName;
 	row.appendChild(name);
 	var taigaName = document.createElement("td");
 	taigaName.setAttribute("contenteditable", "true");
 	taigaName.setAttribute("style", "border:1px solid lightgray")
 	taigaName.setAttribute("id" , "studentTaigaName" + studentId)
-	taigaName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, studentId)});
+	taigaName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, prtUsername, studentId)});
 	taigaName.innerHTML=taigaUsername;
 	row.appendChild(taigaName);
 	var githubName = document.createElement("td");
 	githubName.setAttribute("contenteditable", "true");
 	githubName.setAttribute("style", "border:1px solid lightgray")
 	githubName.setAttribute("id" , "studentGithubName" + studentId)
-	githubName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, studentId) });
+	githubName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, prtUsername, studentId) });
 	githubName.innerHTML=githubUsername;
 	row.appendChild(githubName);
-
+	var prtName = document.createElement("td");
+	prtName.setAttribute("contenteditable", "true");
+	prtName.setAttribute("style", "border:1px solid lightgray")
+	prtName.setAttribute("id" , "studentPrtName" + studentId)
+	prtName.addEventListener("input", function () {fieldEdited(studentName, taigaUsername, githubUsername, prtUsername, studentId) });
+	prtName.innerHTML=prtUsername;
+	row.appendChild(prtName);
 	var metricButton = document.createElement("th");
 	//metricButton.setAttribute("style", "padding-left:5%")
 	var warning = document.createElement("p")
@@ -559,14 +587,19 @@ $("#acceptMetricsButton").click(function () {
 		}
 		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).innerText
 		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerText
+		var prtNameText = document.getElementById("studentPrtName"+selectedStudent).innerText
+		var taigaName = taigaNameText
+		var githubName = githubNameText
+		var prtName = prtNameText
 		if(taigaNameText === "") taigaName="empty"
 		if(githubNameText === "") githubName="empty"
+		if(prtNameText === "") prtName="empty"
 		var externalId =document.getElementById(currentSelectionId).innerHTML;
 		var formData = new FormData();
 		formData.append("studentId", selectedStudent)
 		formData.append("userTemp", userSelectedMetrics)
 		formData.append("projectId", externalId)
-		formData.append("studentsList", nameText+","+taigaNameText+","+githubNameText)
+		formData.append("studentsList", nameText+","+taigaName+","+githubName+","+prtName)
 		jQuery.ajax({
 			data: formData,
 			url: "../api/metrics/student",
@@ -581,18 +614,23 @@ $("#acceptMetricsButton").click(function () {
 					var name = document.getElementById("studentName" + selectedStudent)
 					var nameClone = name.cloneNode(true)
 					nameClone.setAttribute("id", "studentName" + data)
-					nameClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, data) })
+					nameClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
 					name.parentNode.replaceChild(nameClone,name)
 					var taigaName = document.getElementById("studentTaigaName" + selectedStudent)
 					var taigaClone = taigaName.cloneNode(true)
 					taigaClone.setAttribute("id", "studentTaigaName" + data)
-					taigaClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, data) })
+					taigaClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
 					taigaName.parentNode.replaceChild(taigaClone, taigaName)
 					var githubName = document.getElementById("studentGithubName" + selectedStudent)
 					var githubClone=githubName.cloneNode(true)
 					githubClone.setAttribute("id", "studentGithubName" + data)
-					githubClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, data) })
+					githubClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
 					githubName.parentNode.replaceChild(githubClone,githubName)
+					var prtName = document.getElementById("studentPrtName" + selectedStudent)
+					var prtClone=prtName.cloneNode(true)
+					prtClone.setAttribute("id", "studentPrtName" + data)
+					prtClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
+					prtName.parentNode.replaceChild(prtClone,prtName)
 					var selMetricsBtn = document.getElementById("selMetricsBtn"+selectedStudent)
 					var selMetricsClone = selMetricsBtn.cloneNode(true)
 					selMetricsClone.setAttribute("id", "selMetricsBtn"+data)
@@ -708,9 +746,17 @@ function saveProject() {
 	        var formData = new FormData();
 	        formData.append("externalId", document.getElementById("projectId").innerHTML);
 	        formData.append("name", $('#projectName').val());
-	        formData.append("description", $('#projectDescription').val());
+	        var description = $('#projectDescription').val()
+	        if (description === "") {
+	            description="No description specified";
+	        }
+	        formData.append("description", description);
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
-	        formData.append("backlogId", $("#projectBacklogId").val());
+	        var backlogId = $("#projectBacklogId").val()
+	        if (backlogId === "") {
+	            backlogId=null;
+	        }
+	        formData.append("backlogId", backlogId);
 	        var taigaURL = $('#inputTaigaUrl').val()
 			if (taigaURL === "") {
 				taigaURL=null;
@@ -721,6 +767,11 @@ function saveProject() {
 				githubURL=null;
 			}
 			formData.append("githubURL", githubURL);
+			var prtURL = $('#inputPrtUrl').val()
+            if (prtURL === "") {
+                prtURL=null;
+            }
+            formData.append("prtURL", prtURL);
 	        formData.append("isGlobal", globalChecked);
 
 	        var url = "/api/projects/" + currentProject;

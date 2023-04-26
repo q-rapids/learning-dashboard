@@ -148,7 +148,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -170,6 +170,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
                 .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$[0].prtURL", is("testURL3")))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("projects/all",
@@ -194,6 +195,8 @@ public class ProjectsTest {
                                         .description("Taiga repository URL"),
                                 fieldWithPath("[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("[].prtURL")
+                                        .description("PRT sheet URL"),
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
@@ -213,7 +216,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
         Long profileID = 1L;
@@ -237,6 +240,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
                 .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
+                .andExpect(jsonPath("$[0].prtURL", is("testURL3")))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("profile/projects/all",
@@ -261,6 +265,8 @@ public class ProjectsTest {
                                         .description("Taiga repository URL"),
                                 fieldWithPath("[].githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("[].prtURL")
+                                        .description("PRT sheet URL"),
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
@@ -281,13 +287,14 @@ public class ProjectsTest {
         String projectBacklogId = "999";
         String taigaURl = "taigaURl";
         String githubURL = "githubURL";
+        String prtURL = "prtURL";
         Boolean isGlobal = false;
         // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, taigaURl, githubURL, prtURL, false);
 
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
 
@@ -301,6 +308,7 @@ public class ProjectsTest {
                 .param("backlogId", projectBacklogId)
                 .param("taigaURL", taigaURl)
                 .param("githubURL", githubURL)
+                .param("prtURL", prtURL)
                 .param("isGlobal", String.valueOf(isGlobal))
                 .with(new RequestPostProcessor() {
                     @Override
@@ -328,6 +336,8 @@ public class ProjectsTest {
                                         .description("Taiga repository URL"),
                                 parameterWithName("githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
+                                parameterWithName("prtURL")
+                                        .description("PRT sheet"),
                                 parameterWithName("isGlobal")
                                         .description("Is a global project?")),
                         requestParts(
@@ -348,6 +358,10 @@ public class ProjectsTest {
         assertEquals(dtoProject.getActive(), argument.getValue().getActive());
         assertEquals(dtoProject.getExternalId(), argument.getValue().getExternalId());
 
+        assertEquals(dtoProject.getTaigaURL(), argument.getValue().getTaigaURL());
+        assertEquals(dtoProject.getGithubURL(), argument.getValue().getGithubURL());
+        assertEquals(dtoProject.getPrtURL(), argument.getValue().getPrtURL());
+
         verifyNoMoreInteractions(projectsDomainController);
     }
 
@@ -360,6 +374,7 @@ public class ProjectsTest {
         String projectBacklogId = "999";
         String taigaURl = "taigaURl";
         String githubURL = "githubURL";
+        String prtURL = "prtURL";
         Boolean isGlobal = false;
 // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
@@ -378,6 +393,7 @@ public class ProjectsTest {
                 .param("backlogId", projectBacklogId)
                 .param("taigaURL", taigaURl)
                 .param("githubURL", githubURL)
+                .param("prtURL", prtURL)
                 .param("isGlobal", String.valueOf(isGlobal))
                 .with(new RequestPostProcessor() {
                     @Override
@@ -408,7 +424,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2",false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
 
         when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
 
@@ -427,6 +443,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$.backlogId", is(projectBacklogId)))
                 .andExpect(jsonPath("$.taigaURL", is("testURL1")))
                 .andExpect(jsonPath("$.githubURL", is("testURL2")))
+                .andExpect(jsonPath("$.prtURL", is("testURL3")))
                 .andExpect(jsonPath("$.isGlobal",is(false)))
                 .andExpect(jsonPath("$.students", is(nullValue())))
                 .andDo(document("projects/single",
@@ -455,6 +472,8 @@ public class ProjectsTest {
                                         .description("Taiga repository URL"),
                                 fieldWithPath("githubURL")
                                         .description("Github repositories URLs separated by a ';'"),
+                                fieldWithPath("prtURL")
+                                        .description("PRT sheet URL"),
                                 fieldWithPath("isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("students")
