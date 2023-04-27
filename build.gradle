@@ -41,6 +41,18 @@ war {
 	enabled = true
 }
 
+bootWar {
+	from 'README.md'
+	baseName = 'learning-dashboard'
+	version =  version
+	webXml = file('src/main/resources/web.xml')
+	from ('src/main/resources') {
+		include 'Logs-servlet.xml'
+		into 'WEB-INF'
+	}
+	enabled = true
+}
+
 repositories {
 	mavenCentral()
 }
