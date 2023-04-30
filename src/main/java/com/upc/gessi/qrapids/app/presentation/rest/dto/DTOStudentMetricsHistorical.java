@@ -1,14 +1,17 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
+
 import java.util.List;
+import java.util.Map;
 
 public class DTOStudentMetricsHistorical extends DTOStudent{
 
     private List<DTOMetricEvaluation> metrics;
     private Integer numberMetrics;
 
-    public DTOStudentMetricsHistorical(String student_name, String taiga_username, String github_username, String prt_username, List<DTOMetricEvaluation> metrics, Integer numberMetrics) {
-        super(student_name,taiga_username,github_username, prt_username);
+    public DTOStudentMetricsHistorical(String student_name, Map<DataSource, DTOStudentIdentity> identities, List<DTOMetricEvaluation> metrics, Integer numberMetrics) {
+        super(student_name, identities);
         this.metrics=metrics;
         this.numberMetrics=numberMetrics;
     }

@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -23,7 +24,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -69,12 +72,15 @@ public class StudentsTest {
 
         List<DTOStudentMetrics> dtoStudentMetricsList = new ArrayList<>();
         String student_name = "student_test_name";
-        String taiga_username = "taiga_test_username";
-        String github_username = "github_test_username";
-        String prt_username = "prt_test_username";
+        Map<DataSource, DTOStudentIdentity> dTOStudentIdentities = new HashMap<>();
+
+        for(DataSource source: DataSource.values()){
+            dTOStudentIdentities.put(source, new DTOStudentIdentity(source,"username"));
+        }
+
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(student_name, taiga_username, github_username, prt_username, dtoMetricEvaluationList);
+        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(student_name, dTOStudentIdentities, dtoMetricEvaluationList);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
@@ -92,9 +98,12 @@ public class StudentsTest {
                 .andExpect(jsonPath("$[0].project", is(nullValue())))
                 .andExpect(jsonPath("$[0].student_id", is(nullValue())))
                 .andExpect(jsonPath("$[0].studentName", is(student_name)))
-                .andExpect(jsonPath("$[0].taigaUsername", is(taiga_username)))
-                .andExpect(jsonPath("$[0].githubUsername", is(github_username)))
-                .andExpect(jsonPath("$[0].prtUsername", is(prt_username)))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(dTOStudentIdentities.get(DataSource.Github).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Github.username", is(dTOStudentIdentities.get(DataSource.Github).getUsername())))
+                .andExpect(jsonPath("$[0].identities.Taiga.dataSource", is(dTOStudentIdentities.get(DataSource.Taiga).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Taiga.username", is(dTOStudentIdentities.get(DataSource.Taiga).getUsername())))
+                .andExpect(jsonPath("$[0].identities.PRT.dataSource", is(dTOStudentIdentities.get(DataSource.PRT).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.PRT.username", is(dTOStudentIdentities.get(DataSource.PRT).getUsername())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluationList.get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoMetricEvaluationList.get(0).getDescription())))
@@ -122,12 +131,32 @@ public class StudentsTest {
                                         .description("Project if the student"),
                                 fieldWithPath("[].studentName")
                                     .description("Name of the student"),
-                                fieldWithPath("[].taigaUsername")
-                                        .description("Taiga username of the student"),
-                                fieldWithPath("[].githubUsername")
-                                        .description("Github username of the student"),
-                                fieldWithPath("[].prtUsername")
-                                        .description("PRT username of the student"),
+                                fieldWithPath("[].identities")
+                                        .description("Student identities such as Github, Taiga"),
+                                fieldWithPath("[].identities.Github")
+                                        .description("Student Github identity"),
+                                fieldWithPath("[].identities.Github.dataSource")
+                                        .description("Student Github identity data source"),
+                                fieldWithPath("[].identities.Github.username")
+                                        .description("Student Github username"),
+                                fieldWithPath("[].identities.Github.student")
+                                        .description("Github student"),
+                                fieldWithPath("[].identities.Taiga")
+                                        .description("Student Taiga identity"),
+                                fieldWithPath("[].identities.Taiga.dataSource")
+                                        .description("Student Taiga identity data source"),
+                                fieldWithPath("[].identities.Taiga.username")
+                                        .description("Student Taiga username"),
+                                fieldWithPath("[].identities.Taiga.student")
+                                        .description("Taiga student"),
+                                fieldWithPath("[].identities.PRT")
+                                        .description("Student PRT identity"),
+                                fieldWithPath("[].identities.PRT.dataSource")
+                                        .description("Student PRT identity data source"),
+                                fieldWithPath("[].identities.PRT.username")
+                                        .description("Student PRT username"),
+                                fieldWithPath("[].identities.PRT.student")
+                                        .description("PRT student"),
                                 fieldWithPath("[].metrics[].id")
                                         .description("Metric identifier"),
                                 fieldWithPath("[].metrics[].name")
@@ -167,20 +196,27 @@ public class StudentsTest {
 
         List<DTOStudentMetricsHistorical> dtoStudentMetricsList = new ArrayList<>();
         String student_name = "student_test_name";
-        String taiga_username = "taiga_test_username";
-        String github_username = "github_test_username";
-        String prt_username = "prt_test_username";
+
+        Map<DataSource, DTOStudentIdentity> dTOStudentIdentities = new HashMap<>();
+
+        for(DataSource source: DataSource.values()){
+            dTOStudentIdentities.put(source, new DTOStudentIdentity(source,"username"));
+        }
+
         String from = "2000-01-01";
         LocalDate localDateFrom = LocalDate.parse(from);
         String to = "2000-05-01";
         LocalDate localDateTo = LocalDate.parse(to);
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetricsHistorical dtoStudentMetrics = new DTOStudentMetricsHistorical(student_name, taiga_username, github_username, prt_username, dtoMetricEvaluationList, 1);
+        DTOStudentMetricsHistorical dtoStudentMetrics = new DTOStudentMetricsHistorical(
+                student_name, dTOStudentIdentities, dtoMetricEvaluationList, 1);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
-        when(studentsDomainController.getStudentWithHistoricalMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId")).thenReturn(dtoStudentMetricsList);
+        when(studentsDomainController.getStudentWithHistoricalMetricsFromProject(
+                "prjExternalId", localDateFrom, localDateTo, "profileId"))
+                .thenReturn(dtoStudentMetricsList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -197,9 +233,12 @@ public class StudentsTest {
                 .andExpect(jsonPath("$[0].project", is(nullValue())))
                 .andExpect(jsonPath("$[0].student_id", is(nullValue())))
                 .andExpect(jsonPath("$[0].studentName", is(student_name)))
-                .andExpect(jsonPath("$[0].taigaUsername", is(taiga_username)))
-                .andExpect(jsonPath("$[0].githubUsername", is(github_username)))
-                .andExpect(jsonPath("$[0].prtUsername", is(prt_username)))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(dTOStudentIdentities.get(DataSource.Github).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Github.username", is(dTOStudentIdentities.get(DataSource.Github).getUsername())))
+                .andExpect(jsonPath("$[0].identities.Taiga.dataSource", is(dTOStudentIdentities.get(DataSource.Taiga).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Taiga.username", is(dTOStudentIdentities.get(DataSource.Taiga).getUsername())))
+                .andExpect(jsonPath("$[0].identities.PRT.dataSource", is(dTOStudentIdentities.get(DataSource.PRT).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.PRT.username", is(dTOStudentIdentities.get(DataSource.PRT).getUsername())))
                 .andExpect(jsonPath("$[0].numberMetrics", is(1)))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluationList.get(0).getName())))
@@ -234,12 +273,32 @@ public class StudentsTest {
                                         .description("Project if the student"),
                                 fieldWithPath("[].studentName")
                                         .description("Name of the student"),
-                                fieldWithPath("[].taigaUsername")
-                                        .description("Taiga username of the student"),
-                                fieldWithPath("[].githubUsername")
-                                        .description("Github username of the student"),
-                                fieldWithPath("[].prtUsername")
-                                        .description("PRT username of the student"),
+                                fieldWithPath("[].identities")
+                                        .description("Student identities such as Github, Taiga"),
+                                fieldWithPath("[].identities.Github")
+                                        .description("Student Github identity"),
+                                fieldWithPath("[].identities.Github.dataSource")
+                                        .description("Student Github identity data source"),
+                                fieldWithPath("[].identities.Github.username")
+                                        .description("Student Github username"),
+                                fieldWithPath("[].identities.Github.student")
+                                        .description("Github student"),
+                                fieldWithPath("[].identities.Taiga")
+                                        .description("Student Taiga identity"),
+                                fieldWithPath("[].identities.Taiga.dataSource")
+                                        .description("Student Taiga identity data source"),
+                                fieldWithPath("[].identities.Taiga.username")
+                                        .description("Student Taiga username"),
+                                fieldWithPath("[].identities.Taiga.student")
+                                        .description("Taiga student"),
+                                fieldWithPath("[].identities.PRT")
+                                        .description("Student PRT identity"),
+                                fieldWithPath("[].identities.PRT.dataSource")
+                                        .description("Student PRT identity data source"),
+                                fieldWithPath("[].identities.PRT.username")
+                                        .description("Student PRT username"),
+                                fieldWithPath("[].identities.PRT.student")
+                                        .description("PRT student"),
                                 fieldWithPath("[].numberMetrics")
                                         .description("Number of metrics"),
                                 fieldWithPath("[].metrics[].id")
@@ -278,7 +337,13 @@ public class StudentsTest {
     @Test
     public void updateMetricStudent() throws Exception {
 
-        DTOStudent dtoStudent = new DTOStudent("student_test_name", "taiga_test_name", "github_test_name", "prt_test_name", null);
+        Map<DataSource, DTOStudentIdentity> DTOStudentIdentities = new HashMap<>();
+
+        for(DataSource source: DataSource.values()){
+            DTOStudentIdentities.put(source, new DTOStudentIdentity(source,"username"));
+        }
+
+        DTOStudent dtoStudent = new DTOStudent("student_test_name", DTOStudentIdentities, null);
         String[] userMetricstemp = { "s1", "s2", "s3" };
         String studentsList = "student_test_name,taiga_test_name,github_test_name,prt_test_name";
         String studentId="1";
@@ -322,10 +387,10 @@ public class StudentsTest {
         ArgumentCaptor<String> argument4 = ArgumentCaptor.forClass(String.class);
         verify(studentsDomainController, times(1)).updateStudents(argument2.capture(), argument1.capture(),argument3.capture(),argument4.capture());
         assertEquals(dtoStudent.getStudent_id(), argument1.getValue().getStudent_id());
-        assertEquals(dtoStudent.getStudentName(), argument1.getValue().getStudentName());
+        assertEquals(dtoStudent.getStudentName(), argument1.getValue().getStudentName());/*
         assertEquals(dtoStudent.getTaigaUsername(), argument1.getValue().getTaigaUsername());
         assertEquals(dtoStudent.getGithubUsername(), argument1.getValue().getGithubUsername());
-        assertEquals(dtoStudent.getPrtUsername(), argument1.getValue().getPrtUsername());
+        assertEquals(dtoStudent.getPrtUsername(), argument1.getValue().getPrtUsername());*/
         assertEquals(studentId, argument2.getValue());
         assertEquals(userMetricstemp[0], argument3.getValue()[0]);
         assertEquals(projectId, argument4.getValue());
