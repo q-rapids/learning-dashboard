@@ -455,8 +455,11 @@ public class FactorsController {
         Project proj = projectsController.findProjectByExternalId(project);
 
         // CHECK METRICS ALERTS
-        for (DTOMetricEvaluation m : metricList) {
-            alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
+        LocalDate today = LocalDate.now();
+        if(evaluationDate.equals(today)) {
+            for (DTOMetricEvaluation m : metricList) {
+                alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
+            }
         }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -642,8 +645,8 @@ public class FactorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK FACTORS ALERTS
-            Project proj = projectsController.findProjectByExternalId(project);
-            alertsController.shouldCreateFactorAlert(qualityFactor,value);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateFactorAlert(qualityFactor,value);
         }
         return assessmentValueOrLabel;
     }
