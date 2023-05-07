@@ -111,7 +111,6 @@ public class Metrics {
         String prjId = request.getParameter("projectId");
         String[] students = request.getParameter("studentsList").split(",");
 
-
         for (int i = 1; i < students.length ; i++) {
             if(students[i].equals("empty")) students[i] = null;
         }

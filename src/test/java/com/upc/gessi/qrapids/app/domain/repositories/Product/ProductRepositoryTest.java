@@ -27,9 +27,9 @@ public class ProductRepositoryTest {
     @Test
     public void findByName() {
         // Given
-        Project project1 = new Project("project1", "Project 1", "test project", null, true, "testURL1", "testURL2", "testULR3", false);
+        Project project1 = new Project("project1", "Project 1", "test project", null, true, false);
         entityManager.persist(project1);
-        Project project2 = new Project("project2", "Project 2", "test project", null, true, "testURL1", "testURL2", "testURL3", false);
+        Project project2 = new Project("project2", "Project 2", "test project", null, true, false);
         entityManager.persist(project2);
         List<Project> projectList1 = new ArrayList<>();
         projectList1.add(project1);
@@ -39,9 +39,9 @@ public class ProductRepositoryTest {
         Product product1 = new Product(product1Name, product1Description, null, projectList1);
         entityManager.persist(product1);
 
-        Project project3 = new Project("project3", "Project 3", "test project", null, true, "testURL1", "testURL2", "testURL3", false);
+        Project project3 = new Project("project3", "Project 3", "test project", null, true, false);
         entityManager.persist(project3);
-        Project project4 = new Project("project4", "Project 4", "test project", null, true, "testURL1", "testURL2", "testURL3", false);
+        Project project4 = new Project("project4", "Project 4", "test project", null, true, false);
         entityManager.persist(project4);
         List<Project> projectList2 = new ArrayList<>();
         projectList2.add(project3);

@@ -4,12 +4,10 @@ import com.upc.gessi.qrapids.app.domain.controllers.IterationsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOIteration;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -22,7 +20,10 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -102,7 +103,11 @@ public class Projects {
                 logoBytes = p.getLogo();
             }
             if (projectsController.checkProjectByName(id, name)) {
-                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, taigaURL, githubURL, prtURL, isGlobal);
+                Map<DataSource,DTOProjectIdentity> identities = new HashMap<>();
+                identities.put(DataSource.Github,new DTOProjectIdentity(DataSource.Github, githubURL));
+                identities.put(DataSource.Taiga,new DTOProjectIdentity(DataSource.Taiga, taigaURL));
+                identities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
+                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, isGlobal, identities);
                 projectsController.updateProject(p);
             } else {
                 throw new ElementAlreadyPresentException();

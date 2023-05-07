@@ -1,9 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.repositories.Alert;
 
-import com.upc.gessi.qrapids.app.domain.models.Alert;
-import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
-import com.upc.gessi.qrapids.app.domain.models.AlertType;
-import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +71,8 @@ public class AlertRepositoryTest {
     @Test
     public void countByProject_IdAndStatus() {
         // Given
-        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2", "testurl3", false);
+
+        Project project1 = new Project("test", "Test", null, null, true, false);
         entityManager.persist(project1);
 
         Alert alert1 = new Alert();
@@ -87,7 +85,7 @@ public class AlertRepositoryTest {
         alert2.setStatus(AlertStatus.VIEWED);
         entityManager.persist(alert2);
 
-        Project project2 = new Project("test2", "Test 2", null, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project2 = new Project("test2", "Test 2", null, null, true, false);
         entityManager.persist(project2);
 
         Alert alert3 = new Alert();
@@ -106,7 +104,7 @@ public class AlertRepositoryTest {
     @Test
     public void countByProject_IdAndReqAssociatIsTrueAndStatusEquals() {
         // Given
-        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project1 = new Project("test", "Test", null, null, true, false);
         entityManager.persist(project1);
 
         Alert alert1 = new Alert();
@@ -127,7 +125,7 @@ public class AlertRepositoryTest {
         alert3.setReqAssociat(true);
         entityManager.persist(alert3);
 
-        Project project2 = new Project("test2", "Test 2", null, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project2 = new Project("test2", "Test 2", null, null, true, false);
         entityManager.persist(project2);
 
         Alert alert4 = new Alert();
@@ -146,7 +144,7 @@ public class AlertRepositoryTest {
 
     @Test
     public void getAlerts () {
-        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project1 = new Project("test", "Test", null, null, true, false);
         project1 = entityManager.persist(project1);
 
         Alert alert1 = new Alert("duplication", "Duplication", AlertType.METRIC, 0.4f, 0.5f, "duplication", new Date(), AlertStatus.NEW, true, project1);
@@ -166,7 +164,7 @@ public class AlertRepositoryTest {
 
     @Test
     public void getAlertsByName () {
-        Project project1 = new Project("test", "Test", null, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project1 = new Project("test", "Test", null, null, true, false);
         entityManager.persist(project1);
 
         Alert alert1 = new Alert("duplication", "Duplication", AlertType.METRIC, 0.4f, 0.5f, "duplication", new Date(), AlertStatus.NEW, true, project1);

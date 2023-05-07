@@ -2,10 +2,13 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.ProjectIdentity;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.ProjectIdentityRepository.ProjectIdentityRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -13,6 +16,8 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -22,6 +27,9 @@ public class ProjectsController {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private ProjectIdentityRepository projectIdentityRepository;
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -43,10 +51,22 @@ public class ProjectsController {
         return project;
     }
 
-    public DTOProject getProjectByExternalId(String externalId) throws ProjectNotFoundException {
-        Project p = projectRepository.findByExternalId(externalId);
-        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(), p.getPrtURL(), p.getIsGlobal());
+    public Map<DataSource,DTOProjectIdentity> getProjectIdentitiesByProject(Project project){
+        List<ProjectIdentity> projectIdentities = projectIdentityRepository.findAllByProject(project);
+
+        Map<DataSource,DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        projectIdentities.forEach(projectIdentity -> {
+            dtoProjectIdentities.put(projectIdentity.getDataSource(),new DTOProjectIdentity(projectIdentity.getDataSource(), projectIdentity.getUrl()));
+        });
+
+        return dtoProjectIdentities;
     }
+
+    public DTOProject getProjectByExternalId(String externalId) throws ProjectNotFoundException {
+        Project project = projectRepository.findByExternalId(externalId);
+
+        return getProjectDTO(project);
+       }
 
     public List<DTOProject> getProjects(Long id) throws ProjectNotFoundException {
         List<DTOProject> projects = new ArrayList<>();
@@ -61,8 +81,8 @@ public class ProjectsController {
         List<Project> projectsBD = new ArrayList<>();
         projectIterable.forEach(projectsBD::add);
         for (Project p : projectsBD) {
-            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId(), p.getTaigaURL(), p.getGithubURL(), p.getPrtURL(), p.getIsGlobal());
-            projects.add(project);
+
+            projects.add(getProjectDTO(p));
         }
         Collections.sort(projects, new Comparator<DTOProject>() {
             @Override
@@ -79,24 +99,39 @@ public class ProjectsController {
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
             List<DTOStudent> s = studentsController.getStudentsFromProject(Long.parseLong(id));
-            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getTaigaURL(), project.getGithubURL(), project.getPrtURL(), project.getIsGlobal());
+
+            dtoProject = getProjectDTO(project);
             dtoProject.setStudents(s);
         }
         return dtoProject;
     }
 
+    //return true if a project with name not exists, if not also true in case that project contains given id
     public boolean checkProjectByName(Long id, String name) throws ProjectNotFoundException {
         Project p = projectRepository.findByName(name);
         return (p == null || p.getId() == id);
     }
 
-    public void updateProject(DTOProject p) {
-        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getTaigaURL(), p.getGithubURL(), p.getPrtURL(), p.getIsGlobal());
-        project.setId(p.getId());
-        String backlogId = p.getBacklogId();
+
+    public void updateProjectIdentities(Collection<DTOProjectIdentity> dtoProjectIdentities, Project project){
+        List<ProjectIdentity> identities = new ArrayList<>();
+        dtoProjectIdentities.forEach(identity -> {
+            identities.add(new ProjectIdentity(identity.getDataSource(), identity.getUrl(), project));
+        });
+        projectIdentityRepository.saveAll(identities);
+    }
+
+    @Transactional
+    public void updateProject(DTOProject dtoProject) {
+
+        Project project = new Project(dtoProject.getExternalId(), dtoProject.getName(), dtoProject.getDescription(), dtoProject.getLogo(), dtoProject.getActive(), dtoProject.getIsGlobal());
+        project.setId(dtoProject.getId());
+        String backlogId = dtoProject.getBacklogId();
         if (backlogId.equals("null")) project.setBacklogId(null);
-        else project.setBacklogId(p.getBacklogId());
+        else project.setBacklogId(dtoProject.getBacklogId());
         projectRepository.save(project);
+
+        updateProjectIdentities(dtoProject.getIdentities().values(), project);
     }
 
     public List<String> getAllProjectsExternalID() throws IOException, CategoriesException {
@@ -113,7 +148,7 @@ public class ProjectsController {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {
-                Project newProject = new Project(project, project, "No description specified", null, true, null, null, null, false);
+                Project newProject = new Project(project, project, "No description specified", null, true, false);
                 projectRepository.save(newProject);
             }
         }
@@ -127,5 +162,10 @@ public class ProjectsController {
     public List<DTOPhase> getPhasesForProject (String projectExternalId, LocalDate date) throws ProjectNotFoundException {
         Project project = findProjectByExternalId(projectExternalId);
         return backlog.getPhases(project.getBacklogId(), date);
+    }
+
+    public DTOProject getProjectDTO(Project project){
+        Map<DataSource,DTOProjectIdentity> dtoProjectIdentities = getProjectIdentitiesByProject(project);
+        return new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getIsGlobal(),dtoProjectIdentities);
     }
 }

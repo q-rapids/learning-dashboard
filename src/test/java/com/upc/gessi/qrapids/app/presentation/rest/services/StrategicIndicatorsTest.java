@@ -1922,7 +1922,10 @@ public class StrategicIndicatorsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2", "testURL3", false);
+
+
+
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, false);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
@@ -2650,7 +2653,7 @@ public class StrategicIndicatorsTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2", "testURL3", false);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, false);
 
         when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
         when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(false);

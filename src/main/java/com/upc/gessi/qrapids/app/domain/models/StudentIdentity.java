@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "UniqueStudentConnector", columnNames = {"dataSource", "studentId"})
+        @UniqueConstraint(name = "UniqueStudentIdentity", columnNames = {"dataSource", "studentId"})
 })
 public class StudentIdentity {
 
