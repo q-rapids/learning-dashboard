@@ -2,10 +2,12 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProjectIdentity;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,7 +32,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -148,7 +152,14 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+
+        // PROJECT DTO
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -168,9 +179,8 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
-                .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
-                .andExpect(jsonPath("$[0].prtURL", is("testURL3")))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$[0].identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("projects/all",
@@ -191,12 +201,16 @@ public class ProjectsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].backlogId")
                                         .description("Project identifier in the backlog"),
-                                fieldWithPath("[].taigaURL")
-                                        .description("Taiga repository URL"),
-                                fieldWithPath("[].githubURL")
-                                        .description("Github repositories URLs separated by a ';'"),
-                                fieldWithPath("[].prtURL")
-                                        .description("PRT sheet URL"),
+                                fieldWithPath("[].identities")
+                                        .description("Project identities"),
+                                fieldWithPath("[].identities.Github")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("[].identities.Github.dataSource")
+                                        .description("Identity data source. Example: Github, Taiga, PRT"),
+                                fieldWithPath("[].identities.Github.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("[].identities.Github.project")
+                                        .description("Identity project"),
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
@@ -216,7 +230,14 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+
+        // PROJECT DTO
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
         Long profileID = 1L;
@@ -238,9 +259,8 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].taigaURL", is("testURL1")))
-                .andExpect(jsonPath("$[0].githubURL", is("testURL2")))
-                .andExpect(jsonPath("$[0].prtURL", is("testURL3")))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$[0].identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
                 .andDo(document("profile/projects/all",
@@ -261,12 +281,16 @@ public class ProjectsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].backlogId")
                                         .description("Project identifier in the backlog"),
-                                fieldWithPath("[].taigaURL")
-                                        .description("Taiga repository URL"),
-                                fieldWithPath("[].githubURL")
-                                        .description("Github repositories URLs separated by a ';'"),
-                                fieldWithPath("[].prtURL")
-                                        .description("PRT sheet URL"),
+                                fieldWithPath("[].identities")
+                                        .description("Project identities"),
+                                fieldWithPath("[].identities.Github")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("[].identities.Github.dataSource")
+                                        .description("Identity data source. Example: Github, Taiga, PRT"),
+                                fieldWithPath("[].identities.Github.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("[].identities.Github.project")
+                                        .description("Identity project"),
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
@@ -294,7 +318,12 @@ public class ProjectsTest {
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, taigaURl, githubURL, prtURL, false);
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+
+        dtoProjectIdentities.put(DataSource.Github,new DTOProjectIdentity(DataSource.Github, githubURL));
+        dtoProjectIdentities.put(DataSource.Taiga,new DTOProjectIdentity(DataSource.Taiga, taigaURl));
+        dtoProjectIdentities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities);
 
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
 
@@ -358,9 +387,12 @@ public class ProjectsTest {
         assertEquals(dtoProject.getActive(), argument.getValue().getActive());
         assertEquals(dtoProject.getExternalId(), argument.getValue().getExternalId());
 
-        assertEquals(dtoProject.getTaigaURL(), argument.getValue().getTaigaURL());
-        assertEquals(dtoProject.getGithubURL(), argument.getValue().getGithubURL());
-        assertEquals(dtoProject.getPrtURL(), argument.getValue().getPrtURL());
+        dtoProject.getIdentities().values().forEach(identity -> {
+            DTOProjectIdentity argumentIdentity = argument.getValue().getIdentities().get(identity.getDataSource());
+            assertEquals(identity.getDataSource(), argumentIdentity.getDataSource());
+            assertEquals(identity.getUrl(), argumentIdentity.getUrl());
+            assertEquals(identity.getProject(), argumentIdentity.getProject());
+        });
 
         verifyNoMoreInteractions(projectsDomainController);
     }
@@ -424,7 +456,12 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+
+
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities);
 
         when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
 
@@ -441,9 +478,8 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$.logo", is(nullValue())))
                 .andExpect(jsonPath("$.active", is(active)))
                 .andExpect(jsonPath("$.backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$.taigaURL", is("testURL1")))
-                .andExpect(jsonPath("$.githubURL", is("testURL2")))
-                .andExpect(jsonPath("$.prtURL", is("testURL3")))
+                .andExpect(jsonPath("$.identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$.identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$.isGlobal",is(false)))
                 .andExpect(jsonPath("$.students", is(nullValue())))
                 .andDo(document("projects/single",
@@ -468,12 +504,16 @@ public class ProjectsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("backlogId")
                                         .description("Project identifier in the backlog"),
-                                fieldWithPath("taigaURL")
-                                        .description("Taiga repository URL"),
-                                fieldWithPath("githubURL")
-                                        .description("Github repositories URLs separated by a ';'"),
-                                fieldWithPath("prtURL")
-                                        .description("PRT sheet URL"),
+                                fieldWithPath("identities")
+                                        .description("Project identities"),
+                                fieldWithPath("identities.Github")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("identities.Github.dataSource")
+                                        .description("Identity data source. Example: Github, Taiga, PRT"),
+                                fieldWithPath("identities.Github.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("identities.Github.project")
+                                        .description("Identity project"),
                                 fieldWithPath("isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("students")

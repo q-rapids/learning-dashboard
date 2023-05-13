@@ -1,43 +1,38 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
-import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
+
+import java.util.Map;
 
 public class DTOStudent {
     private Long student_id;
     private String student_name;
-    private String taiga_username;
-    private String github_username;
-    private String prt_username;
+
+    private Map<DataSource, DTOStudentIdentity> identities;
     private DTOProject project;
 
     public DTOStudent() {
 
     }
 
-    public DTOStudent( String student_name, String taiga_username, String github_username, String prt_username, DTOProject project) {
+    public DTOStudent( String student_name, Map<DataSource, DTOStudentIdentity> identities, DTOProject project) {
         this.student_id=null;
         this.student_name=student_name;
-        this.taiga_username=taiga_username;
-        this.github_username=github_username;
-        this.prt_username=prt_username;
+        this.identities=identities;
         this.project=project;
     }
 
-    public DTOStudent(Long id, String student_name, String taiga_username, String github_username, String prt_username) {
+    public DTOStudent(Long id, String student_name, Map<DataSource, DTOStudentIdentity> identities) {
         this.student_id=id;
         this.student_name=student_name;
-        this.taiga_username=taiga_username;
-        this.github_username=github_username;
-        this.prt_username=prt_username;
+        this.identities=identities;
         this.project=null;
     }
 
-    public DTOStudent(String student_name, String taiga_username, String github_username, String prt_username) {
+    public DTOStudent(String student_name, Map<DataSource, DTOStudentIdentity> identities) {
         this.student_id=null;
         this.student_name=student_name;
-        this.taiga_username=taiga_username;
-        this.github_username=github_username;
-        this.prt_username=prt_username;
+        this.identities=identities;
         this.project=null;
     }
 
@@ -49,17 +44,13 @@ public class DTOStudent {
 
     public void setStudentName(String student_name) {this.student_name=student_name;}
 
-    public String getTaigaUsername() {return this.taiga_username;}
+    public Map<DataSource, DTOStudentIdentity> getIdentities() {
+        return identities;
+    }
 
-    public void setTaigaUsername(String taiga_username) {this.taiga_username=taiga_username;}
-
-    public String getGithubUsername() {return this.github_username;}
-
-    public void setGithubUsername(String github_username) {this.github_username=github_username;}
-
-    public String getPrtUsername() {return prt_username;}
-
-    public void setPrtUsername(String prt_username) {this.prt_username=prt_username;}
+    public void setIdentities(Map<DataSource, DTOStudentIdentity> identities) {
+        this.identities = identities;
+    }
 
     public DTOProject getProject() {
         return project;

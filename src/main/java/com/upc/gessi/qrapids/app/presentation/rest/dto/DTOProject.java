@@ -1,7 +1,10 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
+
 import java.util.List;
+import java.util.Map;
 
 public class DTOProject {
     private Long id;
@@ -11,15 +14,14 @@ public class DTOProject {
     private byte[] logo;
     private boolean active;
     private String backlogId;
-    private String taigaURL;
-    private String githubURL;
-    private String prtURL;
     private Boolean isGlobal;
+
+    private Map<DataSource, DTOProjectIdentity> identities;
     private List<DTOStudent> students;
     
     public DTOProject(){}
     
-    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, String taigaURL, String githubURL, String prtURL, Boolean isGlobal) {
+    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, Boolean isGlobal, Map<DataSource, DTOProjectIdentity> identities) {
     	this.id = id;
     	this.externalId = externalId;
     	this.name = name;
@@ -27,10 +29,8 @@ public class DTOProject {
     	this.logo = logo;
     	this.active = active;
     	this.backlogId = backlogId;
-    	this.taigaURL = taigaURL;
-    	this.githubURL = githubURL;
-        this.prtURL = prtURL;
     	this.isGlobal=isGlobal;
+        this.identities = identities;
     }
     
     public Long getId() {
@@ -89,18 +89,6 @@ public class DTOProject {
         this.backlogId = backlogId;
     }
 
-    public String getTaigaURL() {return taigaURL;}
-
-    public void setTaigaURL(String taigaURL) {this.taigaURL=taigaURL;}
-
-    public String getGithubURL() {return githubURL;}
-
-    public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
-
-    public String getPrtURL() {return prtURL;}
-
-    public void setPrtURL(String prtURL) {this.prtURL=prtURL;}
-
     public Boolean getIsGlobal() { return isGlobal;}
 
     public void setIsGlobal(Boolean global) { isGlobal = global;}
@@ -108,4 +96,12 @@ public class DTOProject {
     public List<DTOStudent> getStudents() { return students; }
 
     public void setStudents(List<DTOStudent> students) {this.students=students;}
+
+    public Map<DataSource, DTOProjectIdentity> getIdentities() {
+        return identities;
+    }
+
+    public void setIdentities(Map<DataSource, DTOProjectIdentity> identities) {
+        this.identities = identities;
+    }
 }

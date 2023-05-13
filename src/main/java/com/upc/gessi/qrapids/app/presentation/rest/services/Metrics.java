@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,10 +110,17 @@ public class Metrics {
         String studentId = request.getParameter("studentId");
         String prjId = request.getParameter("projectId");
         String[] students = request.getParameter("studentsList").split(",");
-        if (students[1].equals("empty")) students[1] = null;
-        if (students[2].equals("empty")) students[2] = null;
-        if (students[3].equals("empty")) students[3] = null;
-        DTOStudent dtostudents = new DTOStudent(students[0], students[1], students[2], students[3]);
+
+        for (int i = 1; i < students.length ; i++) {
+            if(students[i].equals("empty")) students[i] = null;
+        }
+
+        Map<DataSource, DTOStudentIdentity> identities = new HashMap<>();
+
+        identities.put(DataSource.Github, new DTOStudentIdentity(DataSource.Github, students[1]));
+        identities.put(DataSource.Taiga, new DTOStudentIdentity(DataSource.Taiga, students[2]));
+        identities.put(DataSource.PRT, new DTOStudentIdentity(DataSource.PRT, students[3]));
+        DTOStudent dtostudents = new DTOStudent(students[0], identities);
 
         Long id = studentsController.updateStudents(studentId,dtostudents,userMetrics, prjId);
         return id;

@@ -33,6 +33,7 @@ war {
 	from 'README.md'
 	baseName = 'learning-dashboard'
 	version =  version
+	enabled = true
 }
 
 repositories {
