@@ -3,7 +3,9 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.*;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
@@ -61,6 +63,9 @@ public class QMAQualityFactors {
 
     @Autowired
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
+
+    @Autowired
+    private StudentsController studentsController;
 
     @Autowired
     QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
@@ -258,6 +263,9 @@ public class QMAQualityFactors {
             }
         }
 
+        //normalize student names
+        normalizeQFMetricsStudentNames(qf, project);
+
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
             if (profile.getAllSIByProject(project)) { // if allSI true, return all quality factors
@@ -278,6 +286,20 @@ public class QMAQualityFactors {
             }
         } else { // if profile is null, return all quality factors
             return qf;
+        }
+    }
+
+    private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project) {
+        if(project != null) {
+            List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
+            qf.forEach(factor -> {
+                factor.getMetrics().forEach(metric -> {
+                    students.forEach(student -> {
+                        List<DTOStudentIdentity> studentIdentities = new ArrayList<>(student.getIdentities().values());
+                        metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, student.getStudentName()));
+                    });
+                });
+            });
         }
     }
 }

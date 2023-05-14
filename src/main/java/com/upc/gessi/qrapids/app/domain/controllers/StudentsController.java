@@ -35,30 +35,48 @@ public class StudentsController {
     @Autowired
     private QualityFactorMetricsController qualityFactorMetricsController;
 
+
+    public DTOStudent getDTOStudentFromStudent(Student student){
+        List<StudentIdentity> studentIdentities = studentIdentityRepository.findAllByStudent(student);
+
+        Map<DataSource, DTOStudentIdentity> DTOStudentIdentities = new HashMap<>();
+
+        studentIdentities.forEach(identity -> DTOStudentIdentities.put(identity.getDataSource(), new DTOStudentIdentity(identity.getDataSource(), identity.getUsername())));
+
+        return new DTOStudent(student.getId(),student.getName(),DTOStudentIdentities);
+    }
     public List<DTOStudent> getStudentsFromProject(Long projectId){
         List<Student> students = studentRepository.findAllByProjectId(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();
         for(Student s:students) {
-            List<StudentIdentity> studentIdentities = studentIdentityRepository.findAllByStudent(s);
-
-            Map<DataSource, DTOStudentIdentity> DTOStudentIdentities = new HashMap<>();
-
-            studentIdentities.forEach(identity -> DTOStudentIdentities.put(identity.getDataSource(), new DTOStudentIdentity(identity.getDataSource(), identity.getUsername())));
-
-            dtoStudents.add(new DTOStudent(s.getId(),s.getName(),DTOStudentIdentities));
+            dtoStudents.add(getDTOStudentFromStudent(s));
         }
         return dtoStudents;
     }
 
+    public List<StudentIdentity> getStudentIdentities(Student student){
+        return studentIdentityRepository.findAllByStudent(student);
+    }
+
+    public String normalizedName(String name, List<DTOStudentIdentity> studentIdentities,  String replace_name){
+        String normalizedMetricName = name;
+        int i = 0;
+        while (normalizedMetricName.equals(name) && i < studentIdentities.size()) {
+            if (name.contains(studentIdentities.get(i).getUsername())) {
+                normalizedMetricName = name.replace(studentIdentities.get(i).getUsername(), replace_name);
+            }
+            ++i;
+        }
+       return normalizedMetricName;
+    }
     public List<DTOStudentMetrics> getStudentWithMetricsFromProject(String projectName) throws IOException {
         Project p = projectRepository.findByExternalId(projectName);
         Long projectId = p.getId();
         String projectExternalId = p.getExternalId();
-        List<Student> students =studentRepository.findAllByProjectIdOrderByName(projectId);
+        List<Student> students = studentRepository.findAllByProjectIdOrderByName(projectId);
         List<DTOStudentMetrics> dtoStudentMetrics = new ArrayList<>();
         for(Student s : students) {
             List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
-            List<StudentIdentity> studentIdentities = studentIdentityRepository.findAllByStudent(s);
             Map<DataSource, List<DTOMetricEvaluation>> dataSourceMetrics = new HashMap<>();
             for(DataSource source : DataSource.values()){
                 dataSourceMetrics.put(source, new ArrayList<>());
@@ -66,11 +84,15 @@ public class StudentsController {
             List<DTOMetricEvaluation> metricListNoSource = new ArrayList<>();
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
-                try{
-                    DataSource source = DataSource.valueOf(typeOfFactor);
-                    dataSourceMetrics.get(source).add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
-                } catch (IllegalArgumentException exception){
+                if(typeOfFactor == null){
                     metricListNoSource.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                } else {
+                    try {
+                        DataSource source = DataSource.valueOf(typeOfFactor);
+                        dataSourceMetrics.get(source).add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()), projectExternalId));
+                    } catch (IllegalArgumentException exception) {
+                        metricListNoSource.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()), projectExternalId));
+                    }
                 }
             }
 
@@ -85,16 +107,20 @@ public class StudentsController {
 
             orderedMetricList.addAll(metricListNoSource);
 
-            Map<DataSource, DTOStudentIdentity> DTOStudentIdentities = new HashMap<>();
+            Map<DataSource, DTOStudentIdentity> dtoStudentIdentities = getDTOStudentFromStudent(s).getIdentities();
 
-            studentIdentities.forEach(identity -> DTOStudentIdentities.put(identity.getDataSource(), new DTOStudentIdentity(identity.getDataSource(), identity.getUsername())));
+            orderedMetricList.forEach(metric -> {
+                List<DTOStudentIdentity> studentIdentities = new ArrayList<>(dtoStudentIdentities.values());
+                metric.setName(normalizedName(metric.getName(),studentIdentities,s.getName()));
+            });
 
-
-            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), DTOStudentIdentities, orderedMetricList);
+            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), dtoStudentIdentities, orderedMetricList);
             dtoStudentMetrics.add(temp);
         }
         return dtoStudentMetrics;
     }
+
+
 
     public List<DTOStudentMetricsHistorical> getStudentWithHistoricalMetricsFromProject(String projectName, LocalDate from, LocalDate to, String profileId) throws IOException {
         Project p = projectRepository.findByExternalId(projectName);
@@ -104,7 +130,6 @@ public class StudentsController {
         List<DTOStudentMetricsHistorical> dtoStudentMetricsHistorical = new ArrayList<>();
         for(Student s : students) {
             List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
-            List<StudentIdentity> studentIdentities = studentIdentityRepository.findAllByStudent(s);
             Integer number = metrics.size();
             Map<DataSource, List<DTOMetricEvaluation>> dataSourceMetrics = new HashMap<>();
 
@@ -116,11 +141,15 @@ public class StudentsController {
 
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
-                try{
-                    DataSource source = DataSource.valueOf(typeOfFactor);
-                    dataSourceMetrics.get(source).addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
-                } catch (IllegalArgumentException exception){
-                    metricListNoSource.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()) , from, to, projectExternalId, profileId));
+                if(typeOfFactor == null){
+                    metricListNoSource.add(qmaMetrics.SingleCurrentEvaluation(String.valueOf(m.getExternalId()) ,projectExternalId));
+                } else {
+                    try {
+                        DataSource source = DataSource.valueOf(typeOfFactor);
+                        dataSourceMetrics.get(source).addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()), from, to, projectExternalId, profileId));
+                    } catch (IllegalArgumentException exception) {
+                        metricListNoSource.addAll(qmaMetrics.SingleHistoricalData(String.valueOf(m.getExternalId()), from, to, projectExternalId, profileId));
+                    }
                 }
             }
 
@@ -134,11 +163,15 @@ public class StudentsController {
             });
 
             orderedMetricList.addAll(metricListNoSource);
-            Map<DataSource, DTOStudentIdentity> DTOStudentIdentities = new HashMap<>();
 
-            studentIdentities.forEach(identity -> DTOStudentIdentities.put(identity.getDataSource(), new DTOStudentIdentity(identity.getDataSource(), identity.getUsername())));
+            Map<DataSource, DTOStudentIdentity> dtoStudentIdentities = getDTOStudentFromStudent(s).getIdentities();
+            //normalize names
+            orderedMetricList.forEach(metric -> {
+                List<DTOStudentIdentity> studentIdentities = new ArrayList<>(dtoStudentIdentities.values());
+                metric.setName(normalizedName(metric.getName(),studentIdentities,s.getName()));
+            });
 
-            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), DTOStudentIdentities, orderedMetricList, number);
+            DTOStudentMetricsHistorical temp = new DTOStudentMetricsHistorical(s.getName(), dtoStudentIdentities, orderedMetricList, number);
             dtoStudentMetricsHistorical.add(temp);
         }
         return dtoStudentMetricsHistorical;
