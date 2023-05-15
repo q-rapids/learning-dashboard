@@ -204,85 +204,105 @@ function getActiveUserProjects() {
 }
 
 function showProjectSelector (projects) {
-    // clear old project list
+    // clear old project list and old no projects message
     $("#projectsModalItems").empty()
-    // create new project list
-    for (var i = 0; i < projects.length; i++) {
-        $("#projectsModalItems").append('<button class="list-group-item">' + projects[i] + '</button>');
+    $("#noProjects").empty()
+
+    // create new project list or new no projects message
+    if (projects.length == 0) {
+        $("#listGroupModalBody").remove()
+
+        $("#noProjects").append('<div style="display: inline-block; padding: 6px 12px 6px 0px;">' +
+            "There are no projects available" + '</div>');
+        $("#noProjects").append('<div> <button class="btn" ' +
+            'id="noProjectsButton" style="float:right;">' + "Close" + '</button> </div>');
+
+        $('#noProjectsButton').on('click', function () {
+            $("#projectsModal").modal('hide');
+        });
+
+        $("#projectsModal").modal();
     }
+    else {
+        $("#noProjects").remove()
 
-    $('.list-group-item').on('click', function () {
-        var $this = $(this);
+        for (var i = 0; i < projects.length; i++) {
+            $("#projectsModalItems").append('<button class="list-group-item">' + projects[i] + '</button>');
+        }
 
-        $('.active').removeClass('active');
-        $this.toggleClass('active');
+        $('.list-group-item').on('click', function () {
+            var $this = $(this);
 
-        $("#projectsModal").modal('hide');
+            $('.active').removeClass('active');
+            $this.toggleClass('active');
 
-        var url = window.location.href;
-        var profileId = sessionStorage.getItem("profile_id");
-        if (!profileId || profileId == "null"){
-            sessionStorage.setItem("profile_qualitylvl", "ALL");
-            // if without profile select representationMode and qmMode to default values
-            sessionStorage.setItem("DSIRepresentationMode", "Radar");
-            sessionStorage.setItem("DQFRepresentationMode", "Radar");
-            sessionStorage.setItem("metRepresentationMode", "Gauge");
-            sessionStorage.setItem("qmMode", "Graph");
-        } else {
-            jQuery.ajax({
-                dataType: "json",
-                url: "../api/profiles/" + profileId,
-                cache: false,
-                type: "GET",
-                async: false,
-                success: function (data) {
-                    // select representationMode and qmMode by profile
-                    sessionStorage.setItem("DSIRepresentationMode", data.dsiView);
-                    sessionStorage.setItem("DQFRepresentationMode", data.dqfView);
-                    sessionStorage.setItem("metRepresentationMode", data.mView);
-                    sessionStorage.setItem("qmMode", data.qmView);
-                    // specific cases: redirect to correct visualization
-                    if (currentURL.search("/QualityModel") !== -1) // qm
-                        url = serverUrl + "/QualityModel" + sessionStorage.getItem("qmMode");
-                    else if (currentURL.search("/Metrics/CurrentChart") !== -1) {// metrics
-                        console.log("else if metrics");
-                        console.log(sessionStorage.getItem("metRepresentationMode"));
-                        url = serverUrl + "/Metrics/CurrentChart" + sessionStorage.getItem("metRepresentationMode");
-                    } else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
-                        url = serverUrl + "/DetailedStrategicIndicators/CurrentChart" + sessionStorage.getItem("DSIRepresentationMode");
-                    else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) // dqf
-                        url = serverUrl + "/DetailedQualityFactors/CurrentChart" + sessionStorage.getItem("DQFRepresentationMode");
-                    sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
-                    if (data.qualityLevel == "METRICS") {
-                        sessionStorage.setItem("prediction", "Metrics");
-                        sessionStorage.setItem("configuration", "Categories");
-                        sessionStorage.setItem("assessment", "Metrics");
-                        if (currentURL.search("/Prediction") !== -1)
-                            url = serverUrl + "/Metrics/PredictionChart";
-                        else
-                            url = serverUrl + "/Metrics/" + time + viewMode + sessionStorage.getItem("metRepresentationMode");
-                    } else if (data.qualityLevel == "METRICS_FACTORS") {
-                        sessionStorage.setItem("prediction", "QualityFactors");
-                        sessionStorage.setItem("configuration", "Categories");
-                        sessionStorage.setItem("assessment", "QualityFactors");
-                        sessionStorage.setItem("simulation", "Metrics");
-                        sessionStorage.setItem("qmMode", "Graph");
-                        if (currentURL.search("/Prediction") !== -1)
-                            url = serverUrl + "/QualityFactors/PredictionChart";
-                        else if (currentURL.search("/Simulation") !== -1)
-                            url = serverUrl + "/Simulation/Metrics";
-                        else {
-                            url = serverUrl + "/QualityFactors/" + time + viewMode;
+            $("#projectsModal").modal('hide');
+
+            var url = window.location.href;
+            var profileId = sessionStorage.getItem("profile_id");
+            if (!profileId || profileId == "null"){
+                sessionStorage.setItem("profile_qualitylvl", "ALL");
+                // if without profile select representationMode and qmMode to default values
+                sessionStorage.setItem("DSIRepresentationMode", "Radar");
+                sessionStorage.setItem("DQFRepresentationMode", "Radar");
+                sessionStorage.setItem("metRepresentationMode", "Gauge");
+                sessionStorage.setItem("qmMode", "Graph");
+            } else {
+                jQuery.ajax({
+                    dataType: "json",
+                    url: "../api/profiles/" + profileId,
+                    cache: false,
+                    type: "GET",
+                    async: false,
+                    success: function (data) {
+                        // select representationMode and qmMode by profile
+                        sessionStorage.setItem("DSIRepresentationMode", data.dsiView);
+                        sessionStorage.setItem("DQFRepresentationMode", data.dqfView);
+                        sessionStorage.setItem("metRepresentationMode", data.mView);
+                        sessionStorage.setItem("qmMode", data.qmView);
+                        // specific cases: redirect to correct visualization
+                        if (currentURL.search("/QualityModel") !== -1) // qm
+                            url = serverUrl + "/QualityModel" + sessionStorage.getItem("qmMode");
+                        else if (currentURL.search("/Metrics/CurrentChart") !== -1) {// metrics
+                            console.log("else if metrics");
+                            console.log(sessionStorage.getItem("metRepresentationMode"));
+                            url = serverUrl + "/Metrics/CurrentChart" + sessionStorage.getItem("metRepresentationMode");
+                        } else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
+                            url = serverUrl + "/DetailedStrategicIndicators/CurrentChart" + sessionStorage.getItem("DSIRepresentationMode");
+                        else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) // dqf
+                            url = serverUrl + "/DetailedQualityFactors/CurrentChart" + sessionStorage.getItem("DQFRepresentationMode");
+                        sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
+                        if (data.qualityLevel == "METRICS") {
+                            sessionStorage.setItem("prediction", "Metrics");
+                            sessionStorage.setItem("configuration", "Categories");
+                            sessionStorage.setItem("assessment", "Metrics");
+                            if (currentURL.search("/Prediction") !== -1)
+                                url = serverUrl + "/Metrics/PredictionChart";
+                            else
+                                url = serverUrl + "/Metrics/" + time + viewMode + sessionStorage.getItem("metRepresentationMode");
+                        } else if (data.qualityLevel == "METRICS_FACTORS") {
+                            sessionStorage.setItem("prediction", "QualityFactors");
+                            sessionStorage.setItem("configuration", "Categories");
+                            sessionStorage.setItem("assessment", "QualityFactors");
+                            sessionStorage.setItem("simulation", "Metrics");
+                            sessionStorage.setItem("qmMode", "Graph");
+                            if (currentURL.search("/Prediction") !== -1)
+                                url = serverUrl + "/QualityFactors/PredictionChart";
+                            else if (currentURL.search("/Simulation") !== -1)
+                                url = serverUrl + "/Simulation/Metrics";
+                            else {
+                                url = serverUrl + "/QualityFactors/" + time + viewMode;
+                            }
                         }
                     }
-                }
-            });
-        }
-        setProject($this.text(), url);
+                });
+            }
+            setProject($this.text(), url);
 
-    });
+        });
 
-    $("#projectsModal").modal();
+        $("#projectsModal").modal();
+    }
 
 }
 
