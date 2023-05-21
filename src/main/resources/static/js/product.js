@@ -10,6 +10,27 @@ var globalChecked;
 var metrics = [];
 var selectedStudent;
 var tempId=-1;
+var identities = [];
+
+
+function loadIdentities(){
+	let url = "/api/projects/identities";
+	if (serverUrl) {
+		url = serverUrl + url;
+	}
+
+	console.log("Loading identities", url)
+	jQuery.ajax({
+		dataType: "json",
+		url: url,
+		cache: false,
+		type: "GET",
+		async: true,
+		success: function (data) {
+			console.log("GETTING IDENTITIES:", data)
+			identities = data;
+		}});
+}
 
 function buildFirstPartOfTree() {
 	var url = "/api/projects";
@@ -124,6 +145,8 @@ function clickOnTree(e){
 }
 
 
+
+
 function getChosenProject(currentProjectId) {
 
 	var url = "/api/projects/" + currentProjectId;
@@ -209,23 +232,26 @@ function getChosenProject(currentProjectId) {
 			backlogIdRow.appendChild(inputBacklogId);
 			projectForm.appendChild(backlogIdRow);
 
-            Object.values(data.identities).forEach(identity => {
+			//LOAD PROJECT IDENTITIES
+
+            identities.forEach(identity => {
                 var identityRow = document.createElement('div');
                 identityRow.classList.add("productInfoRow");
                 var identityURLp = document.createElement('p');
-                identityURLp.appendChild(document.createTextNode(identity.dataSource +" URL:"));
+                identityURLp.appendChild(document.createTextNode(identity +" URL:"));
                 identityURLp.setAttribute('style', 'font-size: 18px; width: 15%');
                 identityRow.appendChild(identityURLp);
                 var inputIdentityUrl = document.createElement("input");
-                inputIdentityUrl.setAttribute('id', 'input' + identity.dataSource + 'Url');
+
+                inputIdentityUrl.setAttribute('id', 'input' + identity + ' Url');
                 inputIdentityUrl.setAttribute('type', 'text');
                 var identityURL = "";
-                if (identity.url) identityURL = identity.url;
+                if (data.identities[identity] !== undefined) identityURL = identity.url;
                 inputIdentityUrl.setAttribute('value', identityURL);
                 inputIdentityUrl.setAttribute('style', 'width: 100%;');
 
-                var placeholder_text = 'Write the ' + identity.dataSource + ' URL';
-                if(identity.dataSource == "Github") placeholder_text += '. In case there are more than one separate them by a ";"';
+                var placeholder_text = 'Write the ' + identity + ' URL';
+                if(identity == "Github") placeholder_text += '. In case there are more than one separate them by a ";"';
                 inputIdentityUrl.setAttribute('placeholder',placeholder_text);
                 identityRow.appendChild(inputIdentityUrl);
                 projectForm.appendChild(identityRow);
@@ -351,15 +377,16 @@ function getChosenProject(currentProjectId) {
 			var thName=document.createElement('th');
 			thName.appendChild(document.createTextNode("Name*"));
 			thName.setAttribute("style", "width:16%")
-			var thTaiga=document.createElement('th');
-			thTaiga.appendChild(document.createTextNode("Taiga username"));
-			thTaiga.setAttribute("style", "width:18%")
-			var thGithub=document.createElement('th');
-			thGithub.appendChild(document.createTextNode("Github username"));
-			thGithub.setAttribute("style", "width:18%")
-			var thPrt=document.createElement('th');
-			thPrt.appendChild(document.createTextNode("PRT username"));
-			thPrt.setAttribute("style", "width:18%")
+
+			//LOAD PROJECT IDENTITIES
+			var thIdentities = []
+			identities.forEach(identity => {
+				let thIdentity = document.createElement('th');
+				thIdentity.appendChild(document.createTextNode(identity + "username"));
+				thIdentity.setAttribute("style", "width:18%");
+				thIdentities.push(thIdentity);
+			})
+
 			var thMetric = document.createElement('th');
 			thMetric.appendChild(document.createTextNode("Assign metrics and save student*"))
 			thMetric.setAttribute("style", "width:15%;text-align: center")
@@ -376,9 +403,7 @@ function getChosenProject(currentProjectId) {
 				buildRow("","","","", selectedStudent);});
 			thSpan.appendChild(Span);
 			projetctr.appendChild(thName);
-			projetctr.appendChild(thTaiga);
-			projetctr.appendChild(thGithub);
-			projetctr.appendChild(thPrt);
+			thIdentities.forEach(thIdentity => {projetctr.appendChild(thIdentity);})
 			projetctr.appendChild(thMetric);
 			projetctr.appendChild(thEmpty2);
 			projetctr.appendChild(thSpan);
@@ -436,26 +461,26 @@ function fieldEdited(studentName, identities, studentId) {
 
 }
 
-function buildRow(studentName, identities, studentId) {
+function buildRow(studentName, student_identities, studentId) {
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 	var name = document.createElement("td");
 	name.setAttribute("contenteditable", "true");
 	name.setAttribute("id" , "studentName" + studentId)
 	name.setAttribute("style", "border:1px solid lightgray")
-	name.addEventListener("input", function () {fieldEdited(studentName, identities, studentId)});
+	name.addEventListener("input", function () {fieldEdited(studentName, student_identities, studentId)});
 	name.innerHTML=studentName;
 	row.appendChild(name);
 
-	Object.values(identities).forEach(identity => {
+	identities.forEach(identity => {
 		var identityName = document.createElement("td");
-    	identityName.setAttribute("contenteditable", "true");
-    	identityName.setAttribute("style", "border:1px solid lightgray")
-    	identityName.setAttribute("id" , "student" + identity.dataSource + "Name" + studentId)
-    	identityName.addEventListener("input", function () {fieldEdited(studentName, identities, studentId)});
-    	identityName.innerHTML=identity.username;
-    	row.appendChild(identityName);
-	});
+		identityName.setAttribute("contenteditable", "true");
+		identityName.setAttribute("style", "border:1px solid lightgray")
+		identityName.setAttribute("id" , "student" + identity + "Name" + studentId)
+		identityName.addEventListener("input", function () {fieldEdited(studentName, student_identities, studentId)});
+		identityName.innerHTML= student_identities[identity] !== undefined ? student_identities.username : "";
+		row.appendChild(identityName);
+	})
 
 	var metricButton = document.createElement("th");
 	//metricButton.setAttribute("style", "padding-left:5%")
@@ -553,7 +578,7 @@ $("#acceptMetricsButton").click(function () {
 		}
 		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).innerText
 		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerText
-		var prtNameText = document.getElementById("studentPrtName"+selectedStudent).innerText
+		var prtNameText = document.getElementById("studentPRTName"+selectedStudent).innerText
 		var taigaName = taigaNameText
 		var githubName = githubNameText
 		var prtName = prtNameText
@@ -1280,4 +1305,7 @@ function goToEvaluation() {
 
 window.onload = function() {
 	buildFirstPartOfTree();
+	loadIdentities();
 };
+
+
