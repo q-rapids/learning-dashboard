@@ -156,7 +156,7 @@ public class ProjectsTest {
         // PROJECT DTO
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
 
@@ -179,7 +179,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(DataSource.GITHUB.toString())))
                 .andExpect(jsonPath("$[0].identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
@@ -234,7 +234,7 @@ public class ProjectsTest {
         // PROJECT DTO
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
 
@@ -259,7 +259,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
                 .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(DataSource.GITHUB.toString())))
                 .andExpect(jsonPath("$[0].identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
@@ -320,8 +320,8 @@ public class ProjectsTest {
 
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
 
-        dtoProjectIdentities.put(DataSource.Github,new DTOProjectIdentity(DataSource.Github, githubURL));
-        dtoProjectIdentities.put(DataSource.Taiga,new DTOProjectIdentity(DataSource.Taiga, taigaURl));
+        dtoProjectIdentities.put(DataSource.GITHUB,new DTOProjectIdentity(DataSource.GITHUB, githubURL));
+        dtoProjectIdentities.put(DataSource.TAIGA,new DTOProjectIdentity(DataSource.TAIGA, taigaURl));
         dtoProjectIdentities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities);
 
@@ -460,7 +460,7 @@ public class ProjectsTest {
 
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities);
 
         when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
@@ -478,7 +478,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$.logo", is(nullValue())))
                 .andExpect(jsonPath("$.active", is(active)))
                 .andExpect(jsonPath("$.backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$.identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$.identities.Github.dataSource", is(DataSource.GITHUB.toString())))
                 .andExpect(jsonPath("$.identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$.isGlobal",is(false)))
                 .andExpect(jsonPath("$.students", is(nullValue())))

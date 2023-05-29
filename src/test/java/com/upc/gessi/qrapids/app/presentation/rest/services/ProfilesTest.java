@@ -82,7 +82,7 @@ public class ProfilesTest {
         //PROJECT DTOS
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
@@ -130,7 +130,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$[0].projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].projects[0].active", is(active)))
                 .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].projects[0].identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$[0].projects[0].identities.Github.dataSource", is(DataSource.GITHUB.toString())))
                 .andExpect(jsonPath("$[0].projects[0].identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
@@ -211,7 +211,7 @@ public class ProfilesTest {
 
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
 
@@ -257,7 +257,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$.projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$.projects[0].active", is(active)))
                 .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$.projects[0].identities.Github.dataSource", is(DataSource.Github.toString())))
+                .andExpect(jsonPath("$.projects[0].identities.Github.dataSource", is(DataSource.GITHUB.toString())))
                 .andExpect(jsonPath("$.projects[0].identities.Github.url", is(identityURL)))
                 .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$.projects[0].students", is(nullValue())))

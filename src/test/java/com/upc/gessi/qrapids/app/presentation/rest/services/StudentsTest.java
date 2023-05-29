@@ -2,7 +2,6 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
-import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
@@ -98,10 +97,10 @@ public class StudentsTest {
                 .andExpect(jsonPath("$[0].project", is(nullValue())))
                 .andExpect(jsonPath("$[0].student_id", is(nullValue())))
                 .andExpect(jsonPath("$[0].studentName", is(student_name)))
-                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(dTOStudentIdentities.get(DataSource.Github).getDataSource().toString())))
-                .andExpect(jsonPath("$[0].identities.Github.username", is(dTOStudentIdentities.get(DataSource.Github).getUsername())))
-                .andExpect(jsonPath("$[0].identities.Taiga.dataSource", is(dTOStudentIdentities.get(DataSource.Taiga).getDataSource().toString())))
-                .andExpect(jsonPath("$[0].identities.Taiga.username", is(dTOStudentIdentities.get(DataSource.Taiga).getUsername())))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(dTOStudentIdentities.get(DataSource.GITHUB).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Github.username", is(dTOStudentIdentities.get(DataSource.GITHUB).getUsername())))
+                .andExpect(jsonPath("$[0].identities.Taiga.dataSource", is(dTOStudentIdentities.get(DataSource.TAIGA).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Taiga.username", is(dTOStudentIdentities.get(DataSource.TAIGA).getUsername())))
                 .andExpect(jsonPath("$[0].identities.PRT.dataSource", is(dTOStudentIdentities.get(DataSource.PRT).getDataSource().toString())))
                 .andExpect(jsonPath("$[0].identities.PRT.username", is(dTOStudentIdentities.get(DataSource.PRT).getUsername())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
@@ -194,7 +193,7 @@ public class StudentsTest {
     @Test
     public void getStudentsAndMetricsHistorical() throws Exception {
 
-        List<DTOStudentMetricsHistorical> dtoStudentMetricsList = new ArrayList<>();
+        List<DTOStudentMetrics> dtoStudentMetricsList = new ArrayList<>();
         String student_name = "student_test_name";
 
         Map<DataSource, DTOStudentIdentity> dTOStudentIdentities = new HashMap<>();
@@ -209,12 +208,12 @@ public class StudentsTest {
         LocalDate localDateTo = LocalDate.parse(to);
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetricsHistorical dtoStudentMetrics = new DTOStudentMetricsHistorical(
+        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(
                 student_name, dTOStudentIdentities, dtoMetricEvaluationList, 1);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
-        when(studentsDomainController.getStudentWithHistoricalMetricsFromProject(
+        when(studentsDomainController.getStudentMetricsFromProject(
                 "prjExternalId", localDateFrom, localDateTo, "profileId"))
                 .thenReturn(dtoStudentMetricsList);
 
@@ -233,10 +232,10 @@ public class StudentsTest {
                 .andExpect(jsonPath("$[0].project", is(nullValue())))
                 .andExpect(jsonPath("$[0].student_id", is(nullValue())))
                 .andExpect(jsonPath("$[0].studentName", is(student_name)))
-                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(dTOStudentIdentities.get(DataSource.Github).getDataSource().toString())))
-                .andExpect(jsonPath("$[0].identities.Github.username", is(dTOStudentIdentities.get(DataSource.Github).getUsername())))
-                .andExpect(jsonPath("$[0].identities.Taiga.dataSource", is(dTOStudentIdentities.get(DataSource.Taiga).getDataSource().toString())))
-                .andExpect(jsonPath("$[0].identities.Taiga.username", is(dTOStudentIdentities.get(DataSource.Taiga).getUsername())))
+                .andExpect(jsonPath("$[0].identities.Github.dataSource", is(dTOStudentIdentities.get(DataSource.GITHUB).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Github.username", is(dTOStudentIdentities.get(DataSource.GITHUB).getUsername())))
+                .andExpect(jsonPath("$[0].identities.Taiga.dataSource", is(dTOStudentIdentities.get(DataSource.TAIGA).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.Taiga.username", is(dTOStudentIdentities.get(DataSource.TAIGA).getUsername())))
                 .andExpect(jsonPath("$[0].identities.PRT.dataSource", is(dTOStudentIdentities.get(DataSource.PRT).getDataSource().toString())))
                 .andExpect(jsonPath("$[0].identities.PRT.username", is(dTOStudentIdentities.get(DataSource.PRT).getUsername())))
                 .andExpect(jsonPath("$[0].numberMetrics", is(1)))
@@ -329,7 +328,7 @@ public class StudentsTest {
                 ));
 
         // Verify mock interactions
-        verify(studentsDomainController, times(1)).getStudentWithHistoricalMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId");
+        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId");
         verifyNoMoreInteractions(studentsDomainController);
 
     }
@@ -383,16 +382,16 @@ public class StudentsTest {
         // Verify mock interactions
         ArgumentCaptor<DTOStudent> argument1 = ArgumentCaptor.forClass(DTOStudent.class);
         ArgumentCaptor<String> argument2 = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String[]> argument3 = ArgumentCaptor.forClass(String[].class);
+        ArgumentCaptor<List<Long>> argument3 = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<String> argument4 = ArgumentCaptor.forClass(String.class);
-        verify(studentsDomainController, times(1)).updateStudents(argument2.capture(), argument1.capture(),argument3.capture(),argument4.capture());
-        assertEquals(dtoStudent.getStudent_id(), argument1.getValue().getStudent_id());
-        assertEquals(dtoStudent.getStudentName(), argument1.getValue().getStudentName());/*
+        verify(studentsDomainController, times(1)).updateStudentAndMetrics(Long.valueOf(argument2.capture()), argument1.capture(),argument3.capture(),argument4.capture());
+        assertEquals(dtoStudent.getId(), argument1.getValue().getId());
+        assertEquals(dtoStudent.getName(), argument1.getValue().getName());/*
         assertEquals(dtoStudent.getTaigaUsername(), argument1.getValue().getTaigaUsername());
         assertEquals(dtoStudent.getGithubUsername(), argument1.getValue().getGithubUsername());
         assertEquals(dtoStudent.getPrtUsername(), argument1.getValue().getPrtUsername());*/
         assertEquals(studentId, argument2.getValue());
-        assertEquals(userMetricstemp[0], argument3.getValue()[0]);
+        assertEquals(userMetricstemp[0], argument3.getValue().get(0));
         assertEquals(projectId, argument4.getValue());
         verifyNoMoreInteractions(studentsDomainController);
 

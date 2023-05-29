@@ -5,7 +5,6 @@ import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
-import com.upc.gessi.qrapids.app.domain.models.Student;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
@@ -33,9 +32,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-
-import static com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators.*;
 
 @Component
 public class QMAQualityFactors {
@@ -296,7 +292,7 @@ public class QMAQualityFactors {
                 factor.getMetrics().forEach(metric -> {
                     students.forEach(student -> {
                         List<DTOStudentIdentity> studentIdentities = new ArrayList<>(student.getIdentities().values());
-                        metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, student.getStudentName()));
+                        metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, student.getName()));
                     });
                 });
             });
