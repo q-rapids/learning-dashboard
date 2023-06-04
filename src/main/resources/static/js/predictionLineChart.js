@@ -189,11 +189,27 @@ function drawChart() {
             }
         };
 
+        //add as first element of the predicted array the last element of the historical data array
+        //so the last historical element and the first predicted element can be joined with a dashed line
+        var lastHistoricValue = value[i][0][value[i][0].length-1];
+        var tmpPredictionsArray = [lastHistoricValue];
+        tmpPredictionsArray.push(...value[i][1]);
+        value[i][1]=tmpPredictionsArray;
+
         for (j = 0; j < value[i].length; ++j) {
             if (value[i][j].length === 0) hidden = true;
+            var borderDash;
+            var pointRadius;
+            if (labels[i][j].includes("Predicted ")) {
+                borderDash=[5,5]
+                pointRadius = 2.5;
+            }
+            else {
+                borderDash= [0];
+                pointRadius = 2;
+            }
             var showLine = true;
             var pointStyle = 'circle';
-            var pointRadius = 2.5;
             var borderWidth = 1;
             var color = [];
             if (isdqf || isdsi) {
@@ -204,6 +220,7 @@ function drawChart() {
                     color = colors[(j-num) % colors.length];
                 }
             } else color = colors[j % colors.length];
+
             // to paint areas for confidence interval series
             if ((labels[i][j] == "80" || labels[i][j] == "95") && prediction) {
                 c.data.datasets.push({
@@ -223,34 +240,19 @@ function drawChart() {
                     borderWidth: borderWidth
                 });
             } else { // to paint mean serie
-                if (labels[i][j].includes("Predicted ")) { // normal line for predicted data
-                    c.data.datasets.push({
-                        label: labels[i][j],
-                        hidden: false,
-                        backgroundColor: color,
-                        borderColor: color,
-                        fill: false,
-                        data: value[i][j],
-                        showLine: showLine,
-                        pointStyle: pointStyle,
-                        radius: pointRadius,
-                        borderWidth: borderWidth
-                    });
-                } else { // dashed line for historical data
-                    c.data.datasets.push({
-                        label: labels[i][j],
-                        hidden: false,
-                        backgroundColor: color,
-                        borderColor: color,
-                        borderDash: [5,5],
-                        fill: false,
-                        data: value[i][j],
-                        showLine: showLine,
-                        pointStyle: pointStyle,
-                        radius: 0,
-                        borderWidth: borderWidth
-                    });
-                }
+                c.data.datasets.push({
+                    label: labels[i][j],
+                    hidden: false,
+                    backgroundColor: color,
+                    borderColor: color,
+                    borderDash: borderDash,
+                    fill: false,
+                    data: value[i][j],
+                    showLine: showLine,
+                    pointStyle: pointStyle,
+                    radius: pointRadius,
+                    borderWidth: borderWidth
+                });
 
             }
 
