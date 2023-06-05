@@ -160,7 +160,7 @@ public class Forecast {
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
         urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
         urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
-        for(DTOMetricEvaluation m : metric) {
+        for(DTOMetricEvaluation m : metric) { // if there are no evaluations, this causes a bad request
             urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getId(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
@@ -179,7 +179,7 @@ public class Forecast {
             return getDtoMetrics(metric, con);
         }
         else if (status == 400){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "BAD REQUEST");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
@@ -279,7 +279,7 @@ public class Forecast {
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
         urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
         urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
-        for(DTOFactorEvaluation f : factor) {
+        for(DTOFactorEvaluation f : factor) { // if there are no evaluations, this causes a bad request
             urlString.append(FACTOR_QUERY).append(URLEncoder.encode(f.getId(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
@@ -298,7 +298,7 @@ public class Forecast {
             return getDtoFactors(factor, con);
         }
         else if (status == 400){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "BAD REQUEST");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
@@ -407,7 +407,7 @@ public class Forecast {
 
         buildMetricsForFactors(factor, metrics, metricsNames);
 
-        for(Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
+        for(Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) { // if there are no evaluations, this causes a bad request
             urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getKey(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
@@ -426,7 +426,7 @@ public class Forecast {
             return getDtoQualityFactors(factor, metrics, metricsNames, con);
         }
         else if (status == 400){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "BAD REQUEST");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
@@ -562,7 +562,7 @@ public class Forecast {
 
         buildFactorsForStrategicIndicator(dsi, factors, factorsNames);
 
-        for(Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) {
+        for(Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) { // if there are no evaluations, this causes a bad request
             urlString.append(FACTOR_QUERY).append(URLEncoder.encode(m.getKey(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
@@ -581,7 +581,7 @@ public class Forecast {
             return getDtoDetailedStrategicIndicators(dsi, factors, factorsNames, con);
         }
         else if (status == 400){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "BAD REQUEST");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
@@ -705,7 +705,7 @@ public class Forecast {
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_STRATEGIC_INDICATORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
         urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
         urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
-        for(DTOStrategicIndicatorEvaluation s : si) {
+        for(DTOStrategicIndicatorEvaluation s : si) { // if there are no evaluations, this causes a bad request
             urlString.append(STRATEGIC_INDICATOR_QUERY).append(URLEncoder.encode(s.getId(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
@@ -724,7 +724,7 @@ public class Forecast {
             return getStrategicIndicatorEvaluation(si, con);
         }
         else if (status == 400){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "BAD REQUEST");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
