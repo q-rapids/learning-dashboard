@@ -42,6 +42,9 @@ public class MetricsController {
     @Autowired
     private ProjectsController projectController;
 
+    @Autowired
+    private AlertsController alertsController;
+
     public Metric findMetricByExternalId (String externalId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalId(externalId);
         if (metric == null) {
@@ -203,7 +206,9 @@ public class MetricsController {
     }
 
     public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
-        return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+        List<DTOMetricEvaluation> forecast = qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+        //alertsController.checkAlertsForMetricsPrediction(currentEvaluation, forecast, projectExternalId);
+        return forecast;
     }
 
     public String getMetricLabelFromValue(Float value) {

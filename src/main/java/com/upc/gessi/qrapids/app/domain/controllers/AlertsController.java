@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
@@ -50,9 +51,11 @@ public class AlertsController {
     private QMAMetrics qmaMetrics;
     @Autowired
     private QMAQualityFactors qmaFactors;
-
     @Autowired
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
+    @Autowired
+    private ProjectRepository projectRepository;
+
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicators.class);
 
@@ -402,6 +405,59 @@ public class AlertsController {
         return level;
     }
 
+    //CHECK ALERTS FOR PREDICTION
+    public void checkAlertsForMetricsPrediction(DTOMetricEvaluation currentEval, List<DTOMetricEvaluation> forecast, String projectExternalId){
+        Project project = projectRepository.findByExternalId(projectExternalId);
+        Metric metric = metricRepository.findByExternalIdAndProjectId(currentEval.getId(), project.getId());
+        List<MetricCategory> metricCategoryLevels = metricCategoryRepository.findAllByName(metric.getCategoryName());
+        List<Float> categoryThresholds = new ArrayList<>();
+        for (MetricCategory categoryValue:metricCategoryLevels) {
+            categoryThresholds.add(categoryValue.getUpperThreshold());
+        }
+        boolean alertCreated=false;
+        for(int i = 0; i < forecast.size() && !alertCreated; ++i) {
+            if(metric.getCategoryName()!=null && metric.getThreshold()!=null && !categoryThresholds.contains(metric.getThreshold())){
+                boolean categoryAlertCreated = checkPredictionColorChangedAlert(metric, currentEval, forecast.get(i).getValue(), categoryThresholds);
+                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(metric, forecast.get(i).getValue());
+                alertCreated =  categoryAlertCreated || thresholdAlertCreated;
+            }
+            else if (metric.getCategoryName()!=null) alertCreated = checkPredictionColorChangedAlert(metric,currentEval, forecast.get(i).getValue(), categoryThresholds);
+            else if (metric.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(metric, forecast.get(i).getValue());
+        }
+
+    }
+
+    private boolean checkPredictionColorChangedAlert(Metric metric, DTOMetricEvaluation currentEval, Float value, List<Float> categoryThresholds){
+        int previousCategoryLevel = findCategoryLevel(currentEval.getValue(), categoryThresholds);
+        int predictedCategoryLevel = findCategoryLevel(value, categoryThresholds);
+        boolean alertCreated= false;
+        if (currentEval.getValue() > value && previousCategoryLevel!=predictedCategoryLevel ){
+            createAlert(value, metric.getThreshold() != null ? metric.getThreshold() : Float.NaN, AlertType.PREDICTED_CATEGORY_DOWNGRADE, metric.getProject(),
+                    metric.getExternalId(), "metric");
+            alertCreated=true;
+        }
+        else if (currentEval.getValue() < value && previousCategoryLevel!=predictedCategoryLevel) {
+            createAlert(value, metric.getThreshold() != null ? metric.getThreshold() : Float.NaN, AlertType.PREDICTED_CATEGORY_UPGRADE, metric.getProject(),
+                    metric.getExternalId(), "metric");
+            alertCreated=true;
+        }
+        return alertCreated;
+    }
+
+    private boolean checkPredictionThresholdTrespassedAlert(Metric metric, DTOMetricEvaluation currentEval, Float value){
+        boolean alertCreated = false;
+        if (metric.getThreshold()!= null && value < metric.getThreshold()){
+            if (currentEval.getValue() >= metric.getThreshold()) {
+                createAlert(value, metric.getThreshold(),
+                        AlertType.PREDICTED_TRESPASSED_THRESHOLD, metric.getProject(), metric.getExternalId(), "metric");
+                alertCreated = true;
+            }
+        }
+        return alertCreated;
+    }
+
+
+
     //ACCESS TO DB METHODS
     public void changeAlertStatusToViewed(Alert alert){
         alertRepository.setViewedStatus(alert.getId());
@@ -471,5 +527,7 @@ public class AlertsController {
         else if (thirdAlert!=null) return thirdAlert;
         else return null;
     }
+
+
 
 }
