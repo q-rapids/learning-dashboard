@@ -25,7 +25,7 @@ public class AlertRepositoryTest {
     @Test
     public void findAlertById() {
         // Given
-        Alert alert = new Alert(0.30f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  null,  "badBacklogManagement", "metric");
+        Alert alert = new Alert(0.30f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  null,  "badBacklogManagement", "metric", null, null);
         entityManager.persistAndFlush(alert);
 
         // When
@@ -43,8 +43,8 @@ public class AlertRepositoryTest {
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
 
-        Alert alert1 = new Alert(0.30f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric");
-        Alert alert2 = new Alert(0.28f,  0.33f,  AlertType.ALERT_NOT_TREATED,  project,  "badBacklogManagement", "metric");
+        Alert alert1 = new Alert(0.30f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric", null, null);
+        Alert alert2 = new Alert(0.28f,  0.33f,  AlertType.ALERT_NOT_TREATED,  project,  "badBacklogManagement", "metric", null, null);
         entityManager.persistAndFlush(alert1);
         entityManager.persistAndFlush(alert2);
 
@@ -78,9 +78,9 @@ public class AlertRepositoryTest {
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
 
-        Alert alert = new Alert(0.30f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric");
-        Alert alert2 = new Alert(0.00f,  0.50f,  AlertType.ALERT_NOT_TREATED,  project,  "badBacklogManagement", "metric");
-        Alert alert3 = new Alert(0.30f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  project,  "acceptance_criteria_check", "metric");
+        Alert alert = new Alert(0.30f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric", null, null);
+        Alert alert2 = new Alert(0.00f,  0.50f,  AlertType.ALERT_NOT_TREATED,  project,  "badBacklogManagement", "metric", null, null);
+        Alert alert3 = new Alert(0.30f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  project,  "acceptance_criteria_check", "metric", null, null);
         entityManager.persistAndFlush(alert);
         entityManager.persistAndFlush(alert2);
         entityManager.persistAndFlush(alert3);
@@ -101,9 +101,9 @@ public class AlertRepositoryTest {
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
 
-        Alert alert = new Alert(0.31f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric");
-        Alert alert2 = new Alert(0.01f,  0.50f,  AlertType.ALERT_NOT_TREATED,  project,  "badBacklogManagement", "metric");
-        Alert alert3 = new Alert(0.31f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  project,  "acceptance_criteria_check", "metric");
+        Alert alert = new Alert(0.31f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric", null, null);
+        Alert alert2 = new Alert(0.01f,  0.50f,  AlertType.ALERT_NOT_TREATED,  project,  "badBacklogManagement", "metric", null, null);
+        Alert alert3 = new Alert(0.31f,  0.33f,  AlertType.TRESPASSED_THRESHOLD,  project,  "acceptance_criteria_check", "metric", null, null);
         entityManager.persistAndFlush(alert);
         entityManager.persistAndFlush(alert2);
         entityManager.persistAndFlush(alert3);
@@ -118,7 +118,7 @@ public class AlertRepositoryTest {
     @Test
     public void setStatusToViewed(){
         // Given
-        Alert alert = new Alert(0.31f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  null,  "badBacklogManagement", "metric");
+        Alert alert = new Alert(0.31f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  null,  "badBacklogManagement", "metric", null, null);
         entityManager.persistAndFlush(alert);
 
         // When

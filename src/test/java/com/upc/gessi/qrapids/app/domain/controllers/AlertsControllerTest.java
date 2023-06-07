@@ -78,7 +78,7 @@ public class AlertsControllerTest
         when(metricRepository.findByExternalIdAndProjectId(affectedId, project.getId())).thenReturn(new Metric());
 
         // When
-        alertsController.createAlert(value, threshold, type, project, affectedId, affectedType);
+        alertsController.createAlert(value, threshold, type, project, affectedId, affectedType, null, null);
 
         // Then
         ArgumentCaptor<Alert> alertArgCaptor = ArgumentCaptor.forClass(Alert.class);
@@ -91,6 +91,8 @@ public class AlertsControllerTest
         assertEquals(threshold, alertCreated.getThreshold(), 0.f);
         assertEquals(AlertStatus.NEW, alertCreated.getStatus());
         assertEquals(project, alertCreated.getProject());
+        assertNull(alertCreated.getPredictionDate());
+        assertNull(alertCreated.getPredictionTechnique());
     }
 
     @Test

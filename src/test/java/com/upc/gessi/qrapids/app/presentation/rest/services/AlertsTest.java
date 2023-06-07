@@ -269,7 +269,7 @@ public class AlertsTest {
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
         verifyNoMoreInteractions(projectsController);
 
-        verify(alertsController, times(1)).createAlert(value, threshold, AlertType.valueOf(type), project, affectedId, affectedType);
+        verify(alertsController, times(1)).createAlert(value, threshold, AlertType.valueOf(type), project, affectedId, affectedType, null, null);
         verifyNoMoreInteractions(alertsController);
 
         verify(simpleMessagingTemplate, times(1)).convertAndSend(eq("/queue/notify"), ArgumentMatchers.any(Notification.class));
@@ -408,7 +408,7 @@ public class AlertsTest {
         Map<String, Map<String, String>> body = new HashMap<>();
         body.put("element", element);
 
-        doThrow(new MetricNotFoundException()).when(alertsController).createAlert(value, threshold, type, project, affectedId, affectedType);
+        doThrow(new MetricNotFoundException()).when(alertsController).createAlert(value, threshold, type, project, affectedId, affectedType, null, null);
 
         //Request
         ObjectMapper mapper = new ObjectMapper();
