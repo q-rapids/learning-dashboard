@@ -758,8 +758,16 @@ public class FactorsController {
         return category;
     }
 
-    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException {
-        return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        List<DTOFactorEvaluation> forecast = qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+        int period=Integer.parseInt(horizon);
+        int j=-1;
+        for(int i=0; i<=forecast.size()-7; i+=period){
+            if (i%period == 0) ++j;
+            List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
+            alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j), forecastedValues, prj, technique);
+        }
+        return forecast;
     }
 
     public List<Factor> getQualityFactorsByProjectAndProfile(String prjExternalId, String profileId) throws ProjectNotFoundException {
