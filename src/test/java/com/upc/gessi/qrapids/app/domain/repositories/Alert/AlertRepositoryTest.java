@@ -11,6 +11,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -129,4 +133,24 @@ public class AlertRepositoryTest {
         assertEquals(viewedAlert.getStatus(), AlertStatus.VIEWED);
     }
 
+    @Test
+    public void findTodayExactAlert(){
+        //Given
+        Project project = new Project("test_project", "TestProject", "", null, true, null,null,false);
+        entityManager.persistAndFlush(project);
+        Long projectId = project.getId();
+        Date predDate = new Date();
+        Alert alert = new Alert(0.31f,  0.50f,  AlertType.TRESPASSED_THRESHOLD,  project,  "badBacklogManagement", "metric", predDate, "PROPHET");
+        entityManager.persistAndFlush(alert);
+        LocalDate todayDate= LocalDate.now();
+        LocalDateTime todayStart = todayDate.atStartOfDay();
+        Date startDate= Date.from(todayStart.atZone(ZoneId.systemDefault()).toInstant());
+        Date now = new Date();
+        // When
+        Alert alertFound = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(project.getId(),"badBacklogManagement","metric", 0.31f, AlertType.TRESPASSED_THRESHOLD,"PROPHET",predDate, startDate, now, 0.50f);
+
+        // Then
+        assertNotNull(alertFound);
+        assertEquals(alert.getId(), alertFound.getId());
+    }
 }

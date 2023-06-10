@@ -394,11 +394,11 @@ public class AlertsController {
         return !improvedSinceLastAlert;
     }
 
-    int findCategoryLevel(float value, List<Float> categoryThresholds) {
+    int findCategoryLevel(Float value, List<Float> categoryThresholds) {
         boolean levelFound = false;
         int level = -1;
         for (int i = categoryThresholds.size() - 1; i >= 0 && !levelFound; i--) {
-            if (value <= categoryThresholds.get(i)) {
+            if (value!=null && value <= categoryThresholds.get(i)) {
                 level = i + 1;
                 levelFound = true;
             }
@@ -482,18 +482,18 @@ public class AlertsController {
         Date todayStartDate = getTodayStartOfDayInstant();
         Date now = new Date();
 
-        if (currentValue > predictedValue && previousCategoryLevel!=predictedCategoryLevel ){
+        if (predictedValue!=null && currentValue > predictedValue && previousCategoryLevel!=predictedCategoryLevel ){
             //check if today an exact alert has been created (it means the prediction has been refreshed and the result has been the same forecast)
-            Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
-                    project.getId(), affectedId, predictedValue, AlertType.PREDICTED_CATEGORY_DOWNGRADE, technique, predictionDate,  todayStartDate, now, threshold);
+            Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
+                    project.getId(), affectedId, affectedType, predictedValue, AlertType.PREDICTED_CATEGORY_DOWNGRADE, technique, predictionDate,  todayStartDate, now, threshold);
             if (alreadyCreated == null) createAlert(predictedValue, threshold, AlertType.PREDICTED_CATEGORY_DOWNGRADE, project,
                     affectedId, affectedType, predictionDate, technique);
             alertCreated=true;
         }
-        else if (currentValue < predictedValue && previousCategoryLevel!=predictedCategoryLevel) {
+        else if (predictedValue!=null && currentValue < predictedValue && previousCategoryLevel!=predictedCategoryLevel) {
             //check if today an exact alert has been created (it means the prediction has been refreshed and the result has been the same forecast)
-            Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
-                    project.getId(), affectedId, predictedValue, AlertType.PREDICTED_CATEGORY_UPGRADE, technique, predictionDate,  todayStartDate, now, threshold);
+            Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
+                    project.getId(), affectedId, affectedType, predictedValue, AlertType.PREDICTED_CATEGORY_UPGRADE, technique, predictionDate,  todayStartDate, now, threshold);
             if (alreadyCreated == null) createAlert(predictedValue, threshold, AlertType.PREDICTED_CATEGORY_UPGRADE, project,
                     affectedId, affectedType,predictionDate, technique);
             alertCreated=true;
@@ -506,10 +506,10 @@ public class AlertsController {
         Date todayStartDate = getTodayStartOfDayInstant();
         Date now = new Date();
 
-        if (threshold!= null && predictedValue < threshold && currentValue >= threshold ){
+        if (threshold!= null && predictedValue!=null && predictedValue < threshold && currentValue >= threshold ){
             //check if today an exact alert has been created (it means the prediction has been refreshed and the result has been the same forecast)
-            Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
-                    project.getId(), affectedId, predictedValue, AlertType.PREDICTED_TRESPASSED_THRESHOLD, technique, predictionDate,  todayStartDate, now, threshold);
+            Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
+                    project.getId(), affectedId,affectedType, predictedValue, AlertType.PREDICTED_TRESPASSED_THRESHOLD, technique, predictionDate,  todayStartDate, now, threshold);
             if (alreadyCreated == null) createAlert(predictedValue, threshold, AlertType.PREDICTED_TRESPASSED_THRESHOLD,
                    project, affectedId, affectedType, predictionDate, technique );
             alertCreated = true;
@@ -518,7 +518,7 @@ public class AlertsController {
         return alertCreated;
     }
 
-    private Date getTodayStartOfDayInstant (){
+    public Date getTodayStartOfDayInstant (){
         LocalDate todayDate= LocalDate.now();
         LocalDateTime todayStart = todayDate.atStartOfDay();
         return Date.from(todayStart.atZone(ZoneId.systemDefault()).toInstant());
