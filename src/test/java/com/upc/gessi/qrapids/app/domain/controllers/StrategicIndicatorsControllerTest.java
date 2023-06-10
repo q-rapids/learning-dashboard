@@ -471,7 +471,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void getDetailedStrategicIndicatorsPrediction() throws IOException {
+    public void getDetailedStrategicIndicatorsPrediction() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
 

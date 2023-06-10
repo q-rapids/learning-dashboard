@@ -12,10 +12,10 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.StrategicIndicators;
-import evaluation.StrategicIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +41,8 @@ public class AlertsController {
     private QualityFactorRepository factorRepository;
     @Autowired
     private StrategicIndicatorRepository siRepository;
+    @Autowired
+    private StrategicIndicatorQualityFactorsRepository dsiRepository;
     @Autowired
     private MetricCategoryRepository metricCategoryRepository;
     @Autowired
@@ -429,9 +431,9 @@ public class AlertsController {
 
     }
 
-    public void checkAlertsForFactorsPrediction(DTOFactorEvaluation currentEval, List<DTOFactorEvaluation> forecast, String projectExternalId, String technique) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    public void checkAlertsForFactorsPrediction(Float currentValue, String id, List<Float> predictedValues, List<Date> predictionDates, String projectExternalId, String technique) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         Project project = projectRepository.findByExternalId(projectExternalId);
-        Factor factor = factorRepository.findByExternalIdAndProjectId(currentEval.getId(), project.getId());
+        Factor factor = factorRepository.findByExternalIdAndProjectId(id, project.getId());
 
         List<QFCategory> qfCategoryLevels = qfCategoryRepository.findAllByName(factor.getCategoryName());
         List<Float> categoryThresholds = new ArrayList<>();
@@ -440,20 +442,20 @@ public class AlertsController {
         }
         boolean alertCreated=false;
         //for each forecasted value, until the first alert created, we check if it has trespassed the threshold or a category (depending on if ti has categories and/or threshold)
-        for(int i = 0; i < forecast.size() && !alertCreated; ++i) {
+        for(int i = 0; i < predictedValues.size() && !alertCreated; ++i) {
             if(factor.getCategoryName()!=null && factor.getThreshold()!=null && !categoryThresholds.contains(factor.getThreshold())){
-                boolean categoryAlertCreated = checkPredictionColorChangedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), factor.getThreshold(), factor.getExternalId(), "factor", project, categoryThresholds, technique);
-                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), factor.getThreshold(), factor.getExternalId(), "factor", project, technique);
+                boolean categoryAlertCreated = checkPredictionColorChangedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), factor.getThreshold(), factor.getExternalId(), "factor", project, categoryThresholds, technique);
+                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), factor.getThreshold(), factor.getExternalId(), "factor", project, technique);
                 alertCreated =  categoryAlertCreated || thresholdAlertCreated;
             }
-            else if (factor.getCategoryName()!=null) alertCreated = checkPredictionColorChangedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), factor.getThreshold(), factor.getExternalId(), "factor", project, categoryThresholds, technique);
-            else if (factor.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), factor.getThreshold(), factor.getExternalId(), "factor", project, technique);
+            else if (factor.getCategoryName()!=null) alertCreated = checkPredictionColorChangedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), factor.getThreshold(), factor.getExternalId(), "factor", project, categoryThresholds, technique);
+            else if (factor.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), factor.getThreshold(), factor.getExternalId(), "factor", project, technique);
         }
     }
 
-    public void checkAlertsForIndicatorsPrediction(DTOStrategicIndicatorEvaluation currentEval, List<DTOStrategicIndicatorEvaluation> forecast, String projectExternalId, String technique) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    public void checkAlertsForIndicatorsPrediction(Float currentValue, String id, List<Float> predictedValues, List<Date> predictionDates, String projectExternalId, String technique) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         Project project = projectRepository.findByExternalId(projectExternalId);
-        Strategic_Indicator si = siRepository.findByExternalIdAndProjectId(currentEval.getId(), project.getId());
+        Strategic_Indicator si = siRepository.findByExternalIdAndProjectId(id, project.getId());
 
         List<SICategory> SICategories = new ArrayList<>();
         Iterable<SICategory>  siCategoryIterable = siCategoryRepository.findAll();
@@ -462,14 +464,14 @@ public class AlertsController {
 
         boolean alertCreated=false;
         //for each forecasted value, until the first alert created, we check if it has trespassed the threshold or a category (depending on if ti has categories and/or threshold)
-        for(int i = 0; i < forecast.size() && !alertCreated; ++i) {
+        for(int i = 0; i < predictedValues.size() && !alertCreated; ++i) {
             if(!SICategories.isEmpty() && si.getThreshold()!=null && !categoryThresholds.contains(si.getThreshold())){
-                boolean categoryAlertCreated = checkPredictionColorChangedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), si.getThreshold(), si.getExternalId(), "indicator", project, categoryThresholds, technique);
-                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), si.getThreshold(), si.getExternalId(), "indicator", project, technique);
+                boolean categoryAlertCreated = checkPredictionColorChangedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), si.getThreshold(), si.getExternalId(), "indicator", project, categoryThresholds, technique);
+                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), si.getThreshold(), si.getExternalId(), "indicator", project, technique);
                 alertCreated =  categoryAlertCreated || thresholdAlertCreated;
             }
-            else if (!SICategories.isEmpty()) alertCreated = checkPredictionColorChangedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), si.getThreshold(), si.getExternalId(), "indicator", project, categoryThresholds, technique);
-            else if (si.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue().getFirst(), forecast.get(i).getValue().getFirst(), java.sql.Date.valueOf(forecast.get(i).getDate()), si.getThreshold(), si.getExternalId(), "indicator", project, technique);
+            else if (!SICategories.isEmpty()) alertCreated = checkPredictionColorChangedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), si.getThreshold(), si.getExternalId(), "indicator", project, categoryThresholds, technique);
+            else if (si.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(currentValue, predictedValues.get(i), predictionDates.get(i), si.getThreshold(), si.getExternalId(), "indicator", project, technique);
         }
     }
 
