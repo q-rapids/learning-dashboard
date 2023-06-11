@@ -76,6 +76,7 @@ function drawChart() {
                     },
                     onClick: function(e, legendItem) {
                         // default function
+                        console.log("clicat");
                         var index = legendItem.index;
                         var chart = this.chart;
                         chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
@@ -189,30 +190,7 @@ function drawChart() {
             }
         };
 
-        //create new dataset with only the last valu eof historical data and the first value of predicted data
-        //to join the two datasets with a line
-
-        var lastHistoricValue = value[i][0][value[i][0].length-1];
-        var firstPredictedValue = value[i][1][0];
-        var extraDataset = [lastHistoricValue,firstPredictedValue];
-
-        c.data.datasets.push({
-            label: "",
-            hidden: false,
-            borderColor: colors[0],
-            pointHitRadius:0,
-            pointHoverRadius: 0,
-            pointRadius: 0,
-            pointBorderWidth: 0,
-            fill: 0,
-            data: extraDataset,
-            showLine: true,
-            borderDash: [5,5],
-            radius: 0,
-            borderWidth: 1
-        });
-
-        for (j = 0; j < value[i].length; ++j) {
+       for (j = 0; j < value[i].length; ++j) {
             if (value[i][j].length === 0) hidden = true;
             var borderDash;
             var pointRadius;
@@ -328,12 +306,41 @@ function drawChart() {
 
             c.options.annotation.annotations = annotations;
         }
+        //create new dataset with only the last valu eof historical data and the first value of predicted data
+        //to join the two datasets with a line
+        var numberOfElements;
+        if (isdqf || isdsi) numberOfElements = value[i].length/2;
+        else numberOfElements=1;
+        for (j = 0; j < numberOfElements; ++j){
+            var color = colors[j % colors.length];
+            var lastHistoricValue = value[i][j][value[i][j].length-1];
+            var firstPredictedValue = value[i][j+numberOfElements][0];
+            var extraDataset = [lastHistoricValue,firstPredictedValue];
+
+            c.data.datasets.push({
+                label: "",
+                hidden: false,
+                borderColor: color,
+                pointHitRadius:0,
+                pointHoverRadius: 0,
+                pointRadius: 0,
+                pointBorderWidth: 0,
+                fill: 0,
+                backgroundColor: 'transparent',
+                data: extraDataset,
+                showLine: true,
+                borderDash: [5,5],
+                radius: 0,
+                borderWidth: 0
+            });
+
+        }
 
         // filter legend in case of SIs, TODO: Factors i Metrics
         if (!isdqf && !isdsi) {
             var filter = function(legendItem) {
                 // hide duplicated 80 and 95 from legend and Predicted data too
-                if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1) {
+                if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1 || legendItem.text==="") {
                     return false;
                 }
                 return true;
@@ -342,7 +349,7 @@ function drawChart() {
         } else  { // filter legend in case of DSIs and Factors
             var filter = function(legendItem) {
                 // hide Predicted data from legend
-                if (legendItem.text.includes('Predicted') || legendItem.text.includes('Predic...')) {
+                if (legendItem.text.includes('Pred') || legendItem.text.includes('Predic...')  || legendItem.text==="") {
                     return false;
                 }
                 return true;
