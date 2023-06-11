@@ -53,7 +53,7 @@ public class Alerts {
             for (Alert a : alerts) {
                 Date predictionDate;
                 if (a.getPredictionDate()==null)  predictionDate = null;
-                else predictionDate = (Date) a.getPredictionDate();
+                else predictionDate = new java.sql.Date(a.getPredictionDate().getTime());
                 DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), predictionDate, a.getPredictionTechnique());
                 dtoAlerts.add(dtoAlert);
             }
