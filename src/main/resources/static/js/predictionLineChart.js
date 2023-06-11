@@ -189,17 +189,34 @@ function drawChart() {
             }
         };
 
-        //add as first element of the predicted array the last element of the historical data array
-        //so the last historical element and the first predicted element can be joined with a dashed line
+        //create new dataset with only the last valu eof historical data and the first value of predicted data
+        //to join the two datasets with a line
+
         var lastHistoricValue = value[i][0][value[i][0].length-1];
-        var tmpPredictionsArray = [lastHistoricValue];
-        tmpPredictionsArray.push(...value[i][1]);
-        value[i][1]=tmpPredictionsArray;
+        var firstPredictedValue = value[i][1][0];
+        var extraDataset = [lastHistoricValue,firstPredictedValue];
+
+        c.data.datasets.push({
+            label: "",
+            hidden: false,
+            borderColor: colors[0],
+            pointHitRadius:0,
+            pointHoverRadius: 0,
+            pointRadius: 0,
+            pointBorderWidth: 0,
+            fill: 0,
+            data: extraDataset,
+            showLine: true,
+            borderDash: [5,5],
+            radius: 0,
+            borderWidth: 1
+        });
 
         for (j = 0; j < value[i].length; ++j) {
             if (value[i][j].length === 0) hidden = true;
             var borderDash;
             var pointRadius;
+
             if (labels[i][j].includes("Predicted ")) {
                 borderDash=[5,5]
                 pointRadius = 2.5;
@@ -253,7 +270,6 @@ function drawChart() {
                     radius: pointRadius,
                     borderWidth: borderWidth
                 });
-
             }
 
             if (!showLine) {
@@ -336,6 +352,8 @@ function drawChart() {
 
         config.push(c);
     }
+
+
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');

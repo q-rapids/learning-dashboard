@@ -71,6 +71,9 @@ public class Forecast {
     @Value("${qma.prefix}")
     private String prefix;
 
+    @Value("${elastic.rbase.host}")
+    private String rbase_elastic_host;
+
     @Autowired
     private QMADetailedStrategicIndicators qmadsi;
 
@@ -89,7 +92,7 @@ public class Forecast {
     public List<String> getForecastTechniques () {
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/ForecastTechniques")
-                .queryParam("host", connection.getIp())
+                .queryParam("host", rbase_elastic_host)
                 .queryParam("port", String.valueOf(connection.getPort()))
                 .queryParam("path", path)
                 .queryParam("user", connection.getUsername())
@@ -136,7 +139,7 @@ public class Forecast {
         if (prefix == null) prefix = "";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/Train")
-                .queryParam("host", connection.getIp())
+                .queryParam("host", rbase_elastic_host)
                 .queryParam("port", String.valueOf(connection.getPort()))
                 .queryParam("path", path)
                 .queryParam("user", connection.getUsername())
@@ -163,7 +166,7 @@ public class Forecast {
         for(DTOMetricEvaluation m : metric) { // if there are no evaluations, this causes a bad request
             urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getId(), UTF_8));
         }
-        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(rbase_elastic_host, UTF_8));
         urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
         urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
         urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
@@ -282,7 +285,7 @@ public class Forecast {
         for(DTOFactorEvaluation f : factor) { // if there are no evaluations, this causes a bad request
             urlString.append(FACTOR_QUERY).append(URLEncoder.encode(f.getId(), UTF_8));
         }
-        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(rbase_elastic_host, UTF_8));
         urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
         urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
         urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
@@ -410,7 +413,7 @@ public class Forecast {
         for(Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) { // if there are no evaluations, this causes a bad request
             urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getKey(), UTF_8));
         }
-        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(rbase_elastic_host, UTF_8));
         urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
         urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
         urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
@@ -565,7 +568,7 @@ public class Forecast {
         for(Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) { // if there are no evaluations, this causes a bad request
             urlString.append(FACTOR_QUERY).append(URLEncoder.encode(m.getKey(), UTF_8));
         }
-        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(rbase_elastic_host, UTF_8));
         urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
         urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
         urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
@@ -708,7 +711,7 @@ public class Forecast {
         for(DTOStrategicIndicatorEvaluation s : si) { // if there are no evaluations, this causes a bad request
             urlString.append(STRATEGIC_INDICATOR_QUERY).append(URLEncoder.encode(s.getId(), UTF_8));
         }
-        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(rbase_elastic_host, UTF_8));
         urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
         urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
         urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
