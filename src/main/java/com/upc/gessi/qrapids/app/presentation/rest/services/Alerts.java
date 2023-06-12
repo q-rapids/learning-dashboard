@@ -37,12 +37,6 @@ public class Alerts {
     private ProjectsController projectsController;
 
     @Autowired
-    private MetricsController metricsController;
-
-    @Autowired
-    private FactorsController factorsController;
-
-    @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
     private final Logger logger = LoggerFactory.getLogger(Alerts.class);
@@ -57,7 +51,10 @@ public class Alerts {
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
             for (Alert a : alerts) {
-                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), new java.sql.Date(a.getPredictionDate().getTime()), a.getPredictionTechnique());
+                Date predictionDate;
+                if (a.getPredictionDate()==null)  predictionDate = null;
+                else predictionDate = new java.sql.Date(a.getPredictionDate().getTime());
+                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), predictionDate, a.getPredictionTechnique());
                 dtoAlerts.add(dtoAlert);
             }
             return dtoAlerts;
@@ -104,19 +101,20 @@ public class Alerts {
 
         //check technique is correct
         List<String> forecastTechniques = strategicIndicatorsController.getForecastTechniques();
-        if (!forecastTechniques.contains(technique)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.TECHNIQUE_NOT_VALID);
+        if (technique!=null && !forecastTechniques.contains(technique)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.TECHNIQUE_NOT_VALID);
 
         //check predictionDate format is correct
         DateFormat formatter = new SimpleDateFormat("YYYY-MM-DD");
         Date prediction_date;
         try {
-            prediction_date = (Date)formatter.parse(predictionDate);
+            if (predictionDate!=null) prediction_date = (Date)formatter.parse(predictionDate);
+            else prediction_date = null;
         } catch (ParseException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_FORMAT_DATE);
         }
 
         if (typeString != null && valueString != null && thresholdString != null && prj != null &&
-                affectedId != null && affectedType != null && predictionDate!=null && technique !=null) {
+                affectedId != null && affectedType != null ) {
             try {
                 AlertType type = AlertType.valueOf(typeString);
                 float value = Float.parseFloat(valueString);
