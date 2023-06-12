@@ -86,14 +86,12 @@ public class AlertRepositoryTest {
         entityManager.persistAndFlush(alert3);
 
         //When
-        List<Alert> alertsFound = alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(projectId, "badBacklogManagement", AlertType.TRESPASSED_THRESHOLD);
+        Alert alertFound = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(projectId, "badBacklogManagement", AlertType.TRESPASSED_THRESHOLD);
 
         //Then
-        assertFalse(alertsFound.isEmpty());
-        assertEquals(1, alertsFound.size());
-        assertEquals(alertsFound.get(0).getProject().getId(),projectId);
-        assertEquals(alertsFound.get(0).getAffectedId(),"badBacklogManagement");
-        assertEquals(alertsFound.get(0).getType(),AlertType.TRESPASSED_THRESHOLD);
+        assertEquals(alertFound.getProject().getId(),projectId);
+        assertEquals(alertFound.getAffectedId(),"badBacklogManagement");
+        assertEquals(alertFound.getType(),AlertType.TRESPASSED_THRESHOLD);
     }
 
     @Test

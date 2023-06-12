@@ -13,6 +13,9 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.StrategicIndicators;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +54,8 @@ public class AlertsController {
     @Autowired
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
 
+    private Logger logger = LoggerFactory.getLogger(StrategicIndicators.class);
+
 
     public void createAlert(float value, float threshold, AlertType type, Project project, String affectedId, String affectedType) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (!checkAffectedIdExists(affectedId, affectedType, project.getId())) {
@@ -74,22 +79,26 @@ public class AlertsController {
         for (MetricCategory categoryValue:metricCategoryLevels) {
             categoryThresholds.add(categoryValue.getUpperThreshold());
         }
-
-        if(!metric.getCategoryName().equals("Default") && metric.getThreshold()!=null && !categoryThresholds.contains(metric.getThreshold())){
+        if(metric.getCategoryName()!=null && metric.getThreshold()!=null && !categoryThresholds.contains(metric.getThreshold())){
             checkMetricColorChangedAlert(metric, value, categoryThresholds);
             checkMetricThresholdTrespassedAlert(metric, value);
         }
-        else if (!metric.getCategoryName().equals("Default")) checkMetricColorChangedAlert(metric, value, categoryThresholds); //ISSUE: the value to determine that it has not category is "Default" when it should be null to avoid problems
+        else if (metric.getCategoryName()!=null) checkMetricColorChangedAlert(metric, value, categoryThresholds); //ISSUE: the value to determine that it has not category is "Default" when it should be null to avoid problems
         else if (metric.getThreshold()!= null) checkMetricThresholdTrespassedAlert(metric, value);
 
     }
 
     void checkMetricThresholdTrespassedAlert(Metric metric, float value) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (metric.getThreshold()!= null && value < metric.getThreshold()){
-            List<Alert> previousAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
+            Alert previousThresholdAlert= alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(metric.getProject().getId(),
                     metric.getExternalId(), AlertType.TRESPASSED_THRESHOLD);
-            if (!previousAlerts.isEmpty()){
-                Alert lastAlert = previousAlerts.get(0);
+            Alert previousNotTreatedAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(metric.getProject().getId(),
+                    metric.getExternalId(), AlertType.ALERT_NOT_TREATED);
+
+
+            Alert lastAlert = obtainMostRecentAlert(previousThresholdAlert, previousNotTreatedAlert);
+
+            if (lastAlert!=null){
                 Date lastAlertDate = lastAlert.getDate();
 
                 LocalDate fromDate = lastAlertDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -104,23 +113,31 @@ public class AlertsController {
                     metricEvaluationsValues.add(metricEvaluation.getValue());
                 }
 
-                if (isATrespassedThresholdNotTreated(lastAlertDate,metric.getThreshold(), metricEvaluationsValues)) createAlert(value, metric.getThreshold(),
+                Date today = new Date();
+                long diff = today.getTime() - lastAlertDate.getTime();
+                boolean isAlertNotTreated = isATrespassedThresholdNotTreated(metric.getThreshold(), metricEvaluationsValues);
+                if (isAlertNotTreated && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value, metric.getThreshold(),
                         AlertType.ALERT_NOT_TREATED, metric.getProject(), metric.getExternalId(), "metric");
-                else createAlert(value, metric.getThreshold(),
+                else if (!isAlertNotTreated) createAlert(value, metric.getThreshold(),
                         AlertType.TRESPASSED_THRESHOLD, metric.getProject(), metric.getExternalId(), "metric");
             }
             else createAlert(value, metric.getThreshold(),
                     AlertType.TRESPASSED_THRESHOLD, metric.getProject(), metric.getExternalId(), "metric");
-
         }
     }
-
     void checkMetricColorChangedAlert(Metric metric, float value, List<Float> metricCategoryThresholds) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
     LocalDate toDate = LocalDate.now();
     LocalDate fromDate = toDate.minusDays(30);
 
-        List<DTOMetricEvaluation> metricEvaluations = qmaMetrics.SingleHistoricalData(metric.getExternalId(),
-                fromDate, toDate, metric.getProject().getExternalId(), null);
+        List<DTOMetricEvaluation> metricEvaluations = new ArrayList<>();
+        try{
+            metricEvaluations = qmaMetrics.SingleHistoricalData(metric.getExternalId(),
+                    fromDate, toDate, metric.getProject().getExternalId(), null);
+        }
+        catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+
         if(!metricEvaluations.isEmpty()){
             DTOMetricEvaluation lastEvaluation = metricEvaluations.get(0);
             int previousCategoryLevel = findCategoryLevel(lastEvaluation.getValue(), metricCategoryThresholds);
@@ -136,18 +153,20 @@ public class AlertsController {
             }
 
             else{
-                List<Alert> previousDowngradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
+                Alert previousDowngradeAlert= alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(metric.getProject().getId(),
                     metric.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
-                List<Alert> previousUpgradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(metric.getProject().getId(),
+                Alert previousUpgradeAlert= alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(metric.getProject().getId(),
                         metric.getExternalId(), AlertType.CATEGORY_UPGRADE);
-                Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
-                Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
+                Alert previousNotTreatedAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(metric.getProject().getId(),
+                        metric.getExternalId(), AlertType.ALERT_NOT_TREATED);
+                Alert lastAlert = obtainMostRecentAlert(previousDowngradeAlert, previousUpgradeAlert, previousNotTreatedAlert);
 
-                Date todayDate = new Date();
-                long diff = todayDate.getTime() - lastDowngradeAlertDate.getTime();
-
-                if (lastUpgradeAlertDate.before(lastDowngradeAlertDate) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value, metric.getThreshold() != null ? metric.getThreshold() : Float.NaN, AlertType.ALERT_NOT_TREATED, metric.getProject(),
-                        metric.getExternalId(), "metric");
+                if (lastAlert!=null && (lastAlert.getType() == AlertType.CATEGORY_DOWNGRADE || lastAlert.getType() == AlertType.ALERT_NOT_TREATED)){
+                    Date todayDate = new Date();
+                    long diff = todayDate.getTime() - lastAlert.getDate().getTime();
+                    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value, metric.getThreshold() != null ? metric.getThreshold() : Float.NaN, AlertType.ALERT_NOT_TREATED, metric.getProject(),
+                            metric.getExternalId(), "metric");
+                }
             }
         }
     }
@@ -160,20 +179,27 @@ public class AlertsController {
             categoryThresholds.add(categoryValue.getUpperThreshold());
         }
 
-        if(!factor.getCategoryName().equals("Default") && factor.getThreshold()!=null && !categoryThresholds.contains(factor.getThreshold())){
+        if (factor.getCategoryName()!=null && factor.getThreshold()!=null && !categoryThresholds.contains(factor.getThreshold())){
             checkFactorColorChangedAlert(factor, value, categoryThresholds);
             checkFactorThresholdTrespassedAlert(factor, value);
         }
-        else if (!factor.getCategoryName().equals("Default")) checkFactorColorChangedAlert(factor, value, categoryThresholds); //ISSUE: the value to determine that it has not category is "Default" when it should be null to avoid problems
+        else if (factor.getCategoryName()!=null) checkFactorColorChangedAlert(factor, value, categoryThresholds); //ISSUE: the value to determine that it has not category is "Default" when it should be null to avoid problems
         else if (factor.getThreshold()!= null) checkFactorThresholdTrespassedAlert(factor, value);
 
     }
 
     private void checkFactorColorChangedAlert(Factor factor, float value, List<Float> categoryThresholds) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
-    LocalDate fromDate = LocalDate.now().minusDays(30);
-    LocalDate toDate = LocalDate.now();
-        List<DTODetailedFactorEvaluation> factorEvaluations = qmaFactors.HistoricalData(factor.getExternalId(),
-                fromDate, toDate, factor.getProject().getExternalId(), null);
+        LocalDate fromDate = LocalDate.now().minusDays(30);
+        LocalDate toDate = LocalDate.now();
+        List<DTODetailedFactorEvaluation> factorEvaluations = new ArrayList<>();
+        try{
+            factorEvaluations = qmaFactors.HistoricalData(factor.getExternalId(),
+                    fromDate, toDate, factor.getProject().getExternalId(), null);
+        }
+        catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+
         if (!factorEvaluations.isEmpty()) {
             DTODetailedFactorEvaluation lastEvaluation = factorEvaluations.get(0); //assuming most recents are first
 
@@ -187,28 +213,35 @@ public class AlertsController {
                 createAlert(value, factor.getThreshold() != null ? factor.getThreshold() : Float.NaN, AlertType.CATEGORY_UPGRADE, factor.getProject(),
                         factor.getExternalId(), "factor");
             } else {
-                List<Alert> previousDowngradeAlerts = alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(factor.getProject().getId(),
+                Alert previousDowngradeAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(factor.getProject().getId(),
                         factor.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
-                List<Alert> previousUpgradeAlerts = alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(factor.getProject().getId(),
+                Alert previousUpgradeAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(factor.getProject().getId(),
                         factor.getExternalId(), AlertType.CATEGORY_UPGRADE);
-                Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
-                Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
-                Date todayDate = new Date();
-                long diff = todayDate.getTime() - lastDowngradeAlertDate.getTime();
+                Alert previousNotTreatedAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(factor.getProject().getId(),
+                        factor.getExternalId(), AlertType.ALERT_NOT_TREATED);
+                Alert lastAlert = obtainMostRecentAlert(previousDowngradeAlert, previousUpgradeAlert, previousNotTreatedAlert);
 
-                if (lastUpgradeAlertDate.before(lastDowngradeAlertDate) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7)
-                    createAlert(value, factor.getThreshold() != null ? factor.getThreshold() : Float.NaN, AlertType.ALERT_NOT_TREATED, factor.getProject(),
-                            factor.getExternalId(), "factor");
+                if (lastAlert!=null && (lastAlert.getType() == AlertType.CATEGORY_DOWNGRADE || lastAlert.getType() == AlertType.ALERT_NOT_TREATED)){
+                    Date todayDate = new Date();
+                    long diff = todayDate.getTime() - lastAlert.getDate().getTime();
+                    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value,
+                            factor.getThreshold() != null ? factor.getThreshold() : Float.NaN, AlertType.ALERT_NOT_TREATED,
+                            factor.getProject(), factor.getExternalId(), "factor");
+                }
             }
         }
     }
 
     private void checkFactorThresholdTrespassedAlert(Factor factor, float value) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (value < factor.getThreshold()){
-            List<Alert> previousAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(factor.getProject().getId(),
+            Alert previousThresholdAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(factor.getProject().getId(),
                     factor.getExternalId(), AlertType.TRESPASSED_THRESHOLD);
-            if (!previousAlerts.isEmpty()){
-                Alert lastAlert = previousAlerts.get(0);
+            Alert previousNotTreatedAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(factor.getProject().getId(),
+                    factor.getExternalId(), AlertType.ALERT_NOT_TREATED);
+
+            Alert lastAlert = obtainMostRecentAlert(previousThresholdAlert, previousNotTreatedAlert);
+
+            if (lastAlert!=null){
                 Date lastAlertDate = lastAlert.getDate();
 
                 LocalDate fromDate = lastAlertDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -220,11 +253,15 @@ public class AlertsController {
                 for (DTODetailedFactorEvaluation factorEvaluation : factorEvaluations) {
                     factorEvaluationValues.add(factorEvaluation.getValue().getFirst());
                 }
-                if (isATrespassedThresholdNotTreated(lastAlertDate, factor.getThreshold(),factorEvaluationValues)){
+
+                Date today = new Date();
+                long diff = today.getTime() - lastAlertDate.getTime();
+                boolean isAlertNotTreated = isATrespassedThresholdNotTreated(factor.getThreshold(),factorEvaluationValues);
+                if (isAlertNotTreated && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7){
                     createAlert(value, factor.getThreshold(),
                             AlertType.ALERT_NOT_TREATED, factor.getProject(), factor.getExternalId(), "factor");
                 }
-                else createAlert(value, factor.getThreshold(),
+                else if (!isAlertNotTreated) createAlert(value, factor.getThreshold(),
                         AlertType.TRESPASSED_THRESHOLD, factor.getProject(), factor.getExternalId(), "factor");
             }
             else createAlert(value, factor.getThreshold(),
@@ -251,9 +288,16 @@ public class AlertsController {
     private void checkSIColorChangedAlert(Strategic_Indicator strategicIndicator, float value, List<Float>categoryThresholds) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         LocalDate fromDate = LocalDate.now().minusDays(30);
         LocalDate toDate = LocalDate.now();
-        List<DTODetailedStrategicIndicatorEvaluation> siEvaluations = qmaDetailedStrategicIndicators.HistoricalData
-                (strategicIndicator.getExternalId(), fromDate, toDate, strategicIndicator.getProject().getExternalId(),
-                        null);
+        List<DTODetailedStrategicIndicatorEvaluation> siEvaluations = new ArrayList<>();
+        try{
+            siEvaluations = qmaDetailedStrategicIndicators.HistoricalData
+                    (strategicIndicator.getExternalId(), fromDate, toDate, strategicIndicator.getProject().getExternalId(),
+                            null);
+        }
+        catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+
         if (!siEvaluations.isEmpty()){
             DTODetailedStrategicIndicatorEvaluation lastEvaluation = siEvaluations.get(0); //assuming most recents are first
 
@@ -271,19 +315,21 @@ public class AlertsController {
                         "indicator");
             }
             else {
-                List<Alert> previousDowngradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(strategicIndicator.getProject().getId(),
+                Alert previousDowngradeAlert= alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(strategicIndicator.getProject().getId(),
                         strategicIndicator.getExternalId(), AlertType.CATEGORY_DOWNGRADE);
-                List<Alert> previousUpgradeAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(strategicIndicator.getProject().getId(),
+                Alert previousUpgradeAlert= alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(strategicIndicator.getProject().getId(),
                         strategicIndicator.getExternalId(), AlertType.CATEGORY_UPGRADE);
-                Date lastDowngradeAlertDate = previousDowngradeAlerts.get(0).getDate();
-                Date lastUpgradeAlertDate = previousUpgradeAlerts.get(0).getDate();
-                Date todayDate = new Date();
-                long diff = todayDate.getTime() - lastDowngradeAlertDate.getTime();
+                Alert previousNotTreatedAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(strategicIndicator.getProject().getId(),
+                        strategicIndicator.getExternalId(), AlertType.ALERT_NOT_TREATED);
+                Alert lastAlert = obtainMostRecentAlert(previousDowngradeAlert, previousUpgradeAlert, previousNotTreatedAlert);
 
-                if (lastUpgradeAlertDate.before(lastDowngradeAlertDate) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7)
-                    createAlert(value, strategicIndicator.getThreshold() != null ? strategicIndicator.getThreshold() : Float.NaN,
+                if (lastAlert!=null && (lastAlert.getType() == AlertType.CATEGORY_DOWNGRADE || lastAlert.getType() == AlertType.ALERT_NOT_TREATED)){
+                    Date todayDate = new Date();
+                    long diff = todayDate.getTime() - lastAlert.getDate().getTime();
+                    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7) createAlert(value, strategicIndicator.getThreshold() != null ? strategicIndicator.getThreshold() : Float.NaN,
                             AlertType.ALERT_NOT_TREATED, strategicIndicator.getProject(), strategicIndicator.getExternalId(),
                             "indicator");
+                }
             }
         }
 
@@ -292,10 +338,14 @@ public class AlertsController {
 
     private void checkSIThresholdTrespassedAlert(Strategic_Indicator strategicIndicator, float value) throws ProjectNotFoundException, IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (value < strategicIndicator.getThreshold()){
-            List<Alert> previousAlerts= alertRepository.findAllByProjectIdAndAffectedIdAndTypeOrderByDateDesc(strategicIndicator.getProject().getId(),
+            Alert previousThresholdAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(strategicIndicator.getProject().getId(),
                     strategicIndicator.getExternalId(), AlertType.TRESPASSED_THRESHOLD);
-            if (!previousAlerts.isEmpty()){
-                Alert lastAlert = previousAlerts.get(0);
+            Alert previousNotTreatedAlert = alertRepository.findTopByProjectIdAndAffectedIdAndTypeOrderByIdDesc(strategicIndicator.getProject().getId(),
+                    strategicIndicator.getExternalId(), AlertType.ALERT_NOT_TREATED);
+
+            Alert lastAlert = obtainMostRecentAlert(previousThresholdAlert, previousNotTreatedAlert);
+
+            if (lastAlert!=null){
                 Date lastAlertDate = lastAlert.getDate();
 
                 LocalDate fromDate = lastAlertDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -311,11 +361,14 @@ public class AlertsController {
                     siEvaluationsValues.add(eval.getValue().getFirst());
                 }
 
-                if (isATrespassedThresholdNotTreated(lastAlertDate, strategicIndicator.getThreshold(), siEvaluationsValues)){
+                Date today = new Date();
+                long diff = today.getTime() - lastAlertDate.getTime();
+                boolean isAlertNotTreated = isATrespassedThresholdNotTreated(strategicIndicator.getThreshold(), siEvaluationsValues);
+                if (isAlertNotTreated && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7){
                     createAlert(value, strategicIndicator.getThreshold(),
                             AlertType.ALERT_NOT_TREATED, strategicIndicator.getProject(), strategicIndicator.getExternalId(), "indicator");
                 }
-                else {
+                else if (!isAlertNotTreated) {
                     createAlert(value, strategicIndicator.getThreshold(),
                             AlertType.TRESPASSED_THRESHOLD, strategicIndicator.getProject(), strategicIndicator.getExternalId(), "indicator");
                 }
@@ -326,17 +379,15 @@ public class AlertsController {
     }
 
 
-     boolean isATrespassedThresholdNotTreated(Date lastAlertDate, float threshold, List<Float> previousEvaluationsValues){
+     boolean isATrespassedThresholdNotTreated(float threshold, List<Float> previousEvaluationsValues){
         boolean improvedSinceLastAlert = false;
-        Date today = new Date();
-        long diff = today.getTime() - lastAlertDate.getTime();
         for (Float evalValue : previousEvaluationsValues) {
             if (evalValue >= threshold) {
                 improvedSinceLastAlert = true;
                 break;
             }
         }
-        return !improvedSinceLastAlert && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 7;
+        return !improvedSinceLastAlert;
     }
 
     int findCategoryLevel(float value, List<Float> categoryThresholds) {
@@ -382,4 +433,43 @@ public class AlertsController {
         else if (affectedType.equals("indicator")) return siRepository.findByExternalIdAndProjectId(affectedId,projectId)!=null;
         return false;
     }
+
+    public Alert obtainMostRecentAlert(Alert firstAlert, Alert secondAlert){
+        if (firstAlert!=null && secondAlert!=null){
+            Date firstDate = firstAlert.getDate();
+            Date secondDate= secondAlert.getDate();
+            if (firstDate.compareTo(secondDate)>0) return firstAlert;
+            else if (firstDate.compareTo(secondDate)<0) return secondAlert;
+            else{
+                if(firstAlert.getType()==AlertType.ALERT_NOT_TREATED) return firstAlert;
+                else if (secondAlert.getType()==AlertType.ALERT_NOT_TREATED) return secondAlert;
+                else return firstAlert; //default, should never happen
+            }
+        }
+        else if (firstAlert!=null) return firstAlert;
+        else if (secondAlert!=null) return secondAlert;
+        else return null;
+    }
+    public Alert obtainMostRecentAlert(Alert firstAlert, Alert secondAlert, Alert thirdAlert){
+        if (firstAlert!=null && secondAlert!=null && thirdAlert!=null){
+            Alert recentAlert = obtainMostRecentAlert(firstAlert,secondAlert);
+            Date recentAlertDate = recentAlert.getDate();
+            Date thirdAlertDate = thirdAlert.getDate();
+            if (thirdAlertDate.compareTo(recentAlertDate)>0) return thirdAlert;
+            else if (thirdAlertDate.compareTo(recentAlertDate)<0) return recentAlert;
+            else{
+                if(thirdAlert.getType()==AlertType.ALERT_NOT_TREATED) return thirdAlert;
+                else if (recentAlert.getType()==AlertType.ALERT_NOT_TREATED) return recentAlert;
+                else return thirdAlert; //default, should never happen
+            }
+        }
+        else if (secondAlert!=null && thirdAlert!=null) return obtainMostRecentAlert(secondAlert,thirdAlert);
+        else if (firstAlert!=null && secondAlert!=null) return obtainMostRecentAlert(firstAlert,secondAlert);
+        else if (firstAlert!=null && thirdAlert!=null) return obtainMostRecentAlert(firstAlert,thirdAlert);
+        else if (firstAlert!=null) return firstAlert;
+        else if (secondAlert!=null) return secondAlert;
+        else if (thirdAlert!=null) return thirdAlert;
+        else return null;
+    }
+
 }

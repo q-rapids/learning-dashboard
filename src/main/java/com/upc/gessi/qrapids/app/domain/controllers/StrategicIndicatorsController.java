@@ -542,7 +542,8 @@ public class StrategicIndicatorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK STRATEGIC INDICATOR ALERT
-            alertsController.shouldCreateIndicatorAlert(strategicIndicator, value);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateIndicatorAlert(strategicIndicator, value);
         }
         return assessmentValueOrLabel;
     }
@@ -572,7 +573,8 @@ public class StrategicIndicatorsController {
                     factorsMismatch))
                 throw new AssessmentErrorException();
             // CHECK STRATEGIC INDICATOR ALERT
-            alertsController.shouldCreateIndicatorAlert(strategicIndicator, valueAndLabel.getFirst());
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateIndicatorAlert(strategicIndicator, valueAndLabel.getFirst());
         }
         else {
             throw new AssessmentErrorException();
