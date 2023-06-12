@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
@@ -66,6 +67,8 @@ public class AlertsTest {
 
     @Mock
     private AlertsController alertsController;
+    @Mock
+    private StrategicIndicatorsController siController;
 
     @InjectMocks
     private Alerts alertsServiceController;
@@ -110,6 +113,8 @@ public class AlertsTest {
                 .andExpect(jsonPath("$[0].threshold", is(HelperFunctions.getFloatAsDouble(alert.getThreshold()))))
                 .andExpect(jsonPath("$[0].date", is(alert.getDate().getTime())))
                 .andExpect(jsonPath("$[0].status", is(alert.getStatus().toString())))
+                .andExpect(jsonPath("$[0].predictionDate", is(alert.getPredictionDate())))
+                .andExpect(jsonPath("$[0].predictionTechnique", is(alert.getPredictionTechnique())))
                 .andDo(document("alerts/get-all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -133,7 +138,11 @@ public class AlertsTest {
                                 fieldWithPath("[].date")
                                         .description("Generation date of the alert"),
                                 fieldWithPath("[].status")
-                                        .description("Status of the alert (NEW or VIEWED)")
+                                        .description("Status of the alert (NEW or VIEWED)"),
+                                fieldWithPath("[].predictionDate")
+                                        .description("Date for the prediction that has raised an alert"),
+                                fieldWithPath("[].predictionTechnique")
+                                        .description("Technique used for the prediction that raised an alert")
                         )
                 ));
 
@@ -216,7 +225,8 @@ public class AlertsTest {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
-
+        List<String> forecastTechniques = Arrays.asList("PROPHET");
+        when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
         // Perform request
         String affectedId = "Duplication";
         String affectedType = "metric";
@@ -269,7 +279,7 @@ public class AlertsTest {
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
         verifyNoMoreInteractions(projectsController);
 
-        verify(alertsController, times(1)).createAlert(value, threshold, AlertType.valueOf(type), project, affectedId, affectedType);
+        verify(alertsController, times(1)).createAlert(value, threshold, AlertType.valueOf(type), project, affectedId, affectedType, null, null);
         verifyNoMoreInteractions(alertsController);
 
         verify(simpleMessagingTemplate, times(1)).convertAndSend(eq("/queue/notify"), ArgumentMatchers.any(Notification.class));
@@ -278,6 +288,9 @@ public class AlertsTest {
 
     @Test
     public void createAlertWrongType() throws Exception {
+        List<String> forecastTechniques = Arrays.asList("PROPHET");
+        when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
+
         Map<String, String> element = new HashMap<>();
         String affectedId = "Duplication";
         String affectedType = "metric";
@@ -314,6 +327,9 @@ public class AlertsTest {
 
     @Test
     public void createAlertWrongAffectedType() throws Exception {
+        List<String> forecastTechniques = Arrays.asList("PROPHET");
+        when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
+
         Map<String, String> element = new HashMap<>();
         String affectedId = "Duplication";
         String affectedType = "wrong_type";
@@ -353,6 +369,8 @@ public class AlertsTest {
         //Given
         String projectExternalId = "prj";
         when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        List<String> forecastTechniques = Arrays.asList("PROPHET");
+        when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
 
         Map<String, String> element = new HashMap<>();
         String affectedId = "Duplication";
@@ -392,6 +410,8 @@ public class AlertsTest {
         //Given
         Project project = domainObjectsBuilder.buildProject();
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+        List<String> forecastTechniques = Arrays.asList("PROPHET");
+        when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
 
         Map<String, String> element = new HashMap<>();
         String affectedId = "wrong_id";
@@ -408,7 +428,7 @@ public class AlertsTest {
         Map<String, Map<String, String>> body = new HashMap<>();
         body.put("element", element);
 
-        doThrow(new MetricNotFoundException()).when(alertsController).createAlert(value, threshold, type, project, affectedId, affectedType);
+        doThrow(new MetricNotFoundException()).when(alertsController).createAlert(value, threshold, type, project, affectedId, affectedType, null, null);
 
         //Request
         ObjectMapper mapper = new ObjectMapper();
@@ -451,6 +471,9 @@ public class AlertsTest {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
         String bodyJson = objectWriter.writeValueAsString(body);
+
+        List<String> forecastTechniques = Arrays.asList("PROPHET");
+        when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/api/alerts")

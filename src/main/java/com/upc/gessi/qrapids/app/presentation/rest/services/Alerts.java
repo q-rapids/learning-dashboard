@@ -16,6 +16,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +37,6 @@ public class Alerts {
     private ProjectsController projectsController;
 
     @Autowired
-    private MetricsController metricsController;
-
-    @Autowired
-    private FactorsController factorsController;
-
-    @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
     private final Logger logger = LoggerFactory.getLogger(Alerts.class);
@@ -53,7 +51,10 @@ public class Alerts {
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
             for (Alert a : alerts) {
-                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus());
+                Date predictionDate;
+                if (a.getPredictionDate()==null)  predictionDate = null;
+                else predictionDate = new java.sql.Date(a.getPredictionDate().getTime());
+                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), predictionDate, a.getPredictionTechnique());
                 dtoAlerts.add(dtoAlert);
             }
             return dtoAlerts;
@@ -90,20 +91,37 @@ public class Alerts {
         String prj = element.get("project_id");
         String affectedId = element.get("affectedId");
         String affectedType = element.get("affectedType");
+        String predictionDate = element.get("predictionDate");
+        String technique = element.get("technique");
 
+        //check affected type is correct
         if (affectedType!=null && !affectedType.equals("metric") && !affectedType.equals("factor") && !affectedType.equals("indicator")){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.AFFECTED_TYPE_NOT_VALID);
         }
 
+        //check technique is correct
+        List<String> forecastTechniques = strategicIndicatorsController.getForecastTechniques();
+        if (technique!=null && !forecastTechniques.contains(technique)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.TECHNIQUE_NOT_VALID);
+
+        //check predictionDate format is correct
+        DateFormat formatter = new SimpleDateFormat("YYYY-MM-DD");
+        Date prediction_date;
+        try {
+            if (predictionDate!=null) prediction_date = (Date)formatter.parse(predictionDate);
+            else prediction_date = null;
+        } catch (ParseException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_FORMAT_DATE);
+        }
+
         if (typeString != null && valueString != null && thresholdString != null && prj != null &&
-                affectedId != null && affectedType != null) {
+                affectedId != null && affectedType != null ) {
             try {
                 AlertType type = AlertType.valueOf(typeString);
                 float value = Float.parseFloat(valueString);
-                float threshold = Float.parseFloat(thresholdString);
+                Float threshold = Float.parseFloat(thresholdString);
                 Project project = projectsController.findProjectByExternalId(prj);
 
-                alertsController.createAlert(value, threshold, type, project, affectedId, affectedType);
+                alertsController.createAlert(value, threshold, type, project, affectedId, affectedType, prediction_date, technique);
 
                 smt.convertAndSend(
                         "/queue/notify",

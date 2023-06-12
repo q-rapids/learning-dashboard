@@ -1,11 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
-import org.hibernate.annotations.CollectionId;
-
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "Alert")
@@ -21,7 +17,7 @@ public class Alert {
     @Column(name = "value")
     private float value;
     @Column(name = "threshold")
-    private float threshold;
+    private Float threshold;
     @Column(name = "type")
     private AlertType type;
     @ManyToOne
@@ -31,17 +27,22 @@ public class Alert {
     private String affectedId;
     @Column(name = "affectedtype")
     private String affectedType;
+    @Column(name = "prediction_date")
+    private Date predictionDate;
+    @Column(name = "prediction_technique")
+    private String predictionTechnique;
 
-    public Alert (float value, float threshold, AlertType type, Project project, String affectedId, String affectedType) {
+    public Alert (float value, Float threshold, AlertType type, Project project, String affectedId, String affectedType, Date predictionDate, String technique) {
         this.value = value;
         this.threshold = threshold;
         this.type = type;
         this.project = project;
         this.affectedId = affectedId;
         this.affectedType = affectedType;
+        this.predictionDate=predictionDate;
+        this.predictionTechnique=technique;
         date =  new Date();
         status = AlertStatus.NEW;
-
     };
 
     public Alert() {
@@ -73,10 +74,10 @@ public class Alert {
         value = alertValue;
     }
 
-    public float getThreshold() {
+    public Float getThreshold() {
         return threshold;
     }
-    public void setThreshold(float alertThreshold) {
+    public void setThreshold(Float alertThreshold) {
         threshold = alertThreshold;
     }
 
@@ -101,4 +102,14 @@ public class Alert {
 
     public String getAffectedType() {return affectedType;}
     public void setAffectedType(String affectedType){this.affectedType=affectedType;}
+
+    public Date getPredictionDate(){
+        return predictionDate;
+    }
+    public void setPredictionDate( Date predDate){
+        predictionDate = predDate;
+    }
+
+    public String getPredictionTechnique() {return predictionTechnique;}
+    public void setPredictionTechnique(String technique){predictionTechnique = technique;}
 }

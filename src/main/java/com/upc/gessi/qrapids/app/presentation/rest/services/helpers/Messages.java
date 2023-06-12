@@ -13,5 +13,9 @@ public class Messages {
     public static final String METRIC_NOT_FOUND = "Metric not found";
     public static final String FACTOR_DELETE_FORBIDDEN = "This factor can't be deleted, it's involved in Strategic Indicators computation";
     public static final String AFFECTED_TYPE_NOT_VALID = "The affected type provided is not valid. It must be either metric, factor or indicator.";
+    public static final String TECHNIQUE_NOT_VALID = "The technique provided is not valid.";
+    public static final String BAD_FORMAT_DATE = "The date provided is not of the format yyyy-mm-dd";
+
+
 
 }

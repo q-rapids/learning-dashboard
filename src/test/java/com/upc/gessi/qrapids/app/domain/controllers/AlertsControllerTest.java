@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
@@ -24,6 +25,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,6 +42,8 @@ public class AlertsControllerTest
     @InjectMocks
     private AlertsController alertsController;
     @Mock
+    private AlertsController alertsControllerMock;
+    @Mock
     private AlertRepository alertRepository;
     @Mock
     private MetricRepository metricRepository;
@@ -50,6 +55,8 @@ public class AlertsControllerTest
     private QFCategoryRepository QFCategoryRepository;
     @Mock
     private QualityFactorRepository factorRepository;
+    @Mock
+    private ProjectRepository projectRepository;
     @Mock
     private QMAQualityFactors qmaFactors;
     @Mock
@@ -78,7 +85,7 @@ public class AlertsControllerTest
         when(metricRepository.findByExternalIdAndProjectId(affectedId, project.getId())).thenReturn(new Metric());
 
         // When
-        alertsController.createAlert(value, threshold, type, project, affectedId, affectedType);
+        alertsController.createAlert(value, threshold, type, project, affectedId, affectedType, null, null);
 
         // Then
         ArgumentCaptor<Alert> alertArgCaptor = ArgumentCaptor.forClass(Alert.class);
@@ -91,6 +98,8 @@ public class AlertsControllerTest
         assertEquals(threshold, alertCreated.getThreshold(), 0.f);
         assertEquals(AlertStatus.NEW, alertCreated.getStatus());
         assertEquals(project, alertCreated.getProject());
+        assertNull(alertCreated.getPredictionDate());
+        assertNull(alertCreated.getPredictionTechnique());
     }
 
     @Test
@@ -670,6 +679,469 @@ public class AlertsControllerTest
         assertTrue(isNonTreated);
     }
 
+    @Test
+    public void shouldCreateMetricPredictionAlertWithCategoryDowngrade() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        //current eval
+        DTOMetricEvaluation metricEval = domainObjectsBuilder.buildDTOMetric();
+        Metric metric = domainObjectsBuilder.buildMetric(project);
+        metric.setThreshold(null); //we want it to not have a threshold for this test
+        metric.setExternalId(metricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
+        List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
+        when(metricCategoryRepository.findAllByName(metric.getCategoryName())).thenReturn(metricCategories);
+
+        //predicted evals (adding more than one that has value < threshold to check that only one alert should checked and then stop
+        DTOMetricEvaluation metricPredictedEval = domainObjectsBuilder.buildDTOMetric();
+        metricPredictedEval.setValue(0.05f);
+        DTOMetricEvaluation metricPredictedEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        metricPredictedEval.setValue(0.21f);
+        List<DTOMetricEvaluation> forecast = Arrays.asList(metricPredictedEval, metricPredictedEvalTwo);
+
+        // When
+        alertsController.checkAlertsForMetricsPrediction(metricEval, forecast, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(metric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_CATEGORY_DOWNGRADE, alertSaved.getType());
+        assertEquals(metricPredictedEval.getValue(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(metricPredictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void shouldCreateMetricPredictionAlertWithCategoryUpgrade() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        //current eval
+        DTOMetricEvaluation metricEval = domainObjectsBuilder.buildDTOMetric();
+        metricEval.setValue(0.30f);
+        Metric metric = domainObjectsBuilder.buildMetric(project);
+        metric.setThreshold(null); //we want it to not have a threshold for this test
+        metric.setExternalId(metricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
+        List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
+        when(metricCategoryRepository.findAllByName(metric.getCategoryName())).thenReturn(metricCategories);
+
+        //predicted evals (adding more than one that has value < threshold to check that only one alert should checked and then stop
+        DTOMetricEvaluation metricPredictedEval = domainObjectsBuilder.buildDTOMetric();
+        DTOMetricEvaluation metricPredictedEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetricEvaluation> forecast = Arrays.asList(metricPredictedEval, metricPredictedEvalTwo);
+
+        // When
+        alertsController.checkAlertsForMetricsPrediction(metricEval, forecast, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(metric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_CATEGORY_UPGRADE, alertSaved.getType());
+        assertEquals(metricPredictedEval.getValue(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(metricPredictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void shouldCreateMetricPredictionAlertWithThresholdTrespassed() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        //current eval (must be a value over the threshold)
+        DTOMetricEvaluation metricEval = domainObjectsBuilder.buildDTOMetric();
+        metricEval.setValue(0.5f);
+
+        //metric
+        Metric metric = domainObjectsBuilder.buildMetric(project);
+        metric.setThreshold(0.33f);
+        metric.setExternalId(metricEval.getId());
+        metric.setCategoryName(null); //we don't want it to have a category for this test
+        when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
+        List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
+        when(metricCategoryRepository.findAllByName(metric.getCategoryName())).thenReturn(metricCategories);
+
+        //predicted evals (adding more than one that has value < threshold to check that only one alert should checked and then stop
+        DTOMetricEvaluation metricPredictedEval = domainObjectsBuilder.buildDTOMetric();
+        metricPredictedEval.setValue(0.10f);
+        DTOMetricEvaluation metricPredictedEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        metricPredictedEvalTwo.setValue(0.23f);
+        List<DTOMetricEvaluation> forecast = Arrays.asList(metricPredictedEval, metricPredictedEvalTwo);
+
+        // When
+        alertsController.checkAlertsForMetricsPrediction(metricEval, forecast, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(metricRepository, times(2)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(metric.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("metric", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_TRESPASSED_THRESHOLD, alertSaved.getType());
+        assertEquals(metric.getThreshold(), alertSaved.getThreshold(), 0f);
+        assertEquals(metricPredictedEval.getValue(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(metricPredictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void shouldCreateFactorPredictionAlertWithCategoryDowngrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+        factor.setThreshold(null); //we want it to not have a threshold for this test
+        when(factorRepository.findByExternalIdAndProjectId(factor.getExternalId(),projectId)).thenReturn(factor);
+
+        List<QFCategory> factorCategories = domainObjectsBuilder.buildFactorCategoryList();
+        when(QFCategoryRepository.findAllByName(factor.getCategoryName())).thenReturn(factorCategories);
+
+        //creating the current eval that will have a higher value, so it will be in a different level thant the predicted and raise an alert
+        DTODetailedFactorEvaluation currentEval = domainObjectsBuilder.buildDTOQualityFactor();
+        currentEval.setValue(Pair.of(0.8f, "0.8"));
+
+        //predicted evals
+        DTODetailedFactorEvaluation predictedEval = domainObjectsBuilder.buildDTOQualityFactor();
+        predictedEval.setValue(Pair.of(0.4f, "0.4"));
+        predictedEval.setDate(LocalDate.now());
+        DTODetailedFactorEvaluation predictedEvalTwo = domainObjectsBuilder.buildDTOQualityFactor();
+        predictedEvalTwo.setValue(Pair.of(0.2f, "0.2"));
+        predictedEvalTwo.setDate(LocalDate.now());
+        List<Float> values = Arrays.asList(predictedEval.getValue().getFirst(), predictedEvalTwo.getValue().getFirst());
+        List<Date> dates = Arrays.asList(java.sql.Date.valueOf(predictedEval.getDate()), java.sql.Date.valueOf(predictedEvalTwo.getDate()));
+
+
+        // When
+        alertsController.checkAlertsForFactorsPrediction(currentEval.getValue().getFirst(), factor.getExternalId(), values, dates, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(factorRepository,times(2)).findByExternalIdAndProjectId(factor.getExternalId(),projectId);
+        verify(QFCategoryRepository, times(1)).findAllByName(factor.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a category downgrade alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(factor.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("factor", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_CATEGORY_DOWNGRADE, alertSaved.getType());
+        assertEquals(predictedEval.getValue().getFirst(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(predictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+    }
+
+    @Test
+    public void shouldCreateFactorPredictionAlertWithCategoryUpgrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+        factor.setThreshold(null); //we want it to not have a threshold for this test
+        when(factorRepository.findByExternalIdAndProjectId(factor.getExternalId(),projectId)).thenReturn(factor);
+
+        List<QFCategory> factorCategories = domainObjectsBuilder.buildFactorCategoryList();
+        when(QFCategoryRepository.findAllByName(factor.getCategoryName())).thenReturn(factorCategories);
+
+        //creating the current eval that will have a higher value, so it will be in a different level thant the predicted and raise an alert
+        DTODetailedFactorEvaluation currentEval = domainObjectsBuilder.buildDTOQualityFactor();
+        currentEval.setValue(Pair.of(0.3f, "0.3"));
+
+        //predicted evals
+        DTODetailedFactorEvaluation predictedEval = domainObjectsBuilder.buildDTOQualityFactor();
+        predictedEval.setValue(Pair.of(0.4f, "0.4"));
+        predictedEval.setDate(LocalDate.now());
+        DTODetailedFactorEvaluation predictedEvalTwo = domainObjectsBuilder.buildDTOQualityFactor();
+        predictedEvalTwo.setValue(Pair.of(0.8f, "0.8"));
+        predictedEvalTwo.setDate(LocalDate.now());
+        List<Float> values = Arrays.asList(predictedEval.getValue().getFirst(), predictedEvalTwo.getValue().getFirst());
+        List<Date> dates = Arrays.asList(java.sql.Date.valueOf(predictedEval.getDate()), java.sql.Date.valueOf(predictedEvalTwo.getDate()));
+
+
+        // When
+        alertsController.checkAlertsForFactorsPrediction(currentEval.getValue().getFirst(), factor.getExternalId(), values, dates, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(factorRepository,times(2)).findByExternalIdAndProjectId(factor.getExternalId(),projectId);
+        verify(QFCategoryRepository, times(1)).findAllByName(factor.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a category upgrade alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(factor.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("factor", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_CATEGORY_UPGRADE, alertSaved.getType());
+        assertEquals(predictedEval.getValue().getFirst(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(predictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+    }
+
+    @Test
+    public void shouldCreateFactorPredictionAlertWithThresholdTrespassed() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+        factor.setThreshold(0.33f);
+        factor.setCategoryName(null); //we don't want it to have a category for this test
+        when(factorRepository.findByExternalIdAndProjectId(factor.getExternalId(),projectId)).thenReturn(factor);
+
+        //creating the current eval that will have a higher value, so it will be in a different level thant the predicted and raise an alert
+        DTODetailedFactorEvaluation currentEval = domainObjectsBuilder.buildDTOQualityFactor();
+        currentEval.setValue(Pair.of(0.40f, "0.40"));
+
+        //predicted evals
+        DTODetailedFactorEvaluation predictedEval = domainObjectsBuilder.buildDTOQualityFactor();
+        predictedEval.setValue(Pair.of(0.2f, "0.2"));
+        predictedEval.setDate(LocalDate.now());
+        DTODetailedFactorEvaluation predictedEvalTwo = domainObjectsBuilder.buildDTOQualityFactor();
+        predictedEvalTwo.setValue(Pair.of(0.05f, "0.05"));
+        predictedEvalTwo.setDate(LocalDate.now());
+        List<Float> values = Arrays.asList(predictedEval.getValue().getFirst(), predictedEvalTwo.getValue().getFirst());
+        List<Date> dates = Arrays.asList(java.sql.Date.valueOf(predictedEval.getDate()), java.sql.Date.valueOf(predictedEvalTwo.getDate()));
+
+        // When
+        alertsController.checkAlertsForFactorsPrediction(currentEval.getValue().getFirst(), factor.getExternalId(), values, dates, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(factorRepository,times(2)).findByExternalIdAndProjectId(factor.getExternalId(),projectId);
+        verify(QFCategoryRepository, times(1)).findAllByName(factor.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a threshold trespassed alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(factor.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("factor", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_TRESPASSED_THRESHOLD, alertSaved.getType());
+        assertEquals(predictedEval.getValue().getFirst(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(predictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+    }
+
+    @Test
+    public void shouldCreateIndicatorPredictionAlertWithCategoryDowngrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        Strategic_Indicator si = domainObjectsBuilder.buildStrategicIndicator(project);
+        si.setThreshold(null); //we want it to not have a threshold for this test
+        when(siRepository.findByExternalIdAndProjectId(si.getExternalId(),projectId)).thenReturn(si);
+
+        List<SICategory> siCategories = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategories);
+
+        //creating current eval
+        DTOStrategicIndicatorEvaluation currentEval = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        currentEval.setValue(Pair.of(0.8f, "0.8"));
+
+        //predicted evals
+        DTOStrategicIndicatorEvaluation predictedEval = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        predictedEval.setValue(Pair.of(0.4f, "0.4"));
+        DTOStrategicIndicatorEvaluation predictedEvalTwo = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        predictedEval.setValue(Pair.of(0.3f, "0.3"));
+        List<Float> values = Arrays.asList(predictedEval.getValue().getFirst(), predictedEvalTwo.getValue().getFirst());
+        List<Date> dates = Arrays.asList(java.sql.Date.valueOf(predictedEval.getDate()), java.sql.Date.valueOf(predictedEvalTwo.getDate()));
+
+
+        // When
+        alertsController.checkAlertsForIndicatorsPrediction(currentEval.getValue().getFirst(), si.getExternalId(), values, dates, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(siRepository,times(2)).findByExternalIdAndProjectId(si.getExternalId(),projectId);
+        verify(siCategoryRepository, times(1)).findAll();
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a category downgrade alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(si.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("indicator", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_CATEGORY_DOWNGRADE, alertSaved.getType());
+        assertEquals(predictedEval.getValue().getFirst(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(predictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+    }
+
+    @Test
+    public void shouldCreateIndicatorPredictionAlertWithCategoryUpgrade() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        Strategic_Indicator si = domainObjectsBuilder.buildStrategicIndicator(project);
+        si.setThreshold(null); //we want it to not have a threshold for this test
+        when(siRepository.findByExternalIdAndProjectId(si.getExternalId(),projectId)).thenReturn(si);
+
+        List<SICategory> siCategories = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategories);
+
+        //creating current eval
+        DTOStrategicIndicatorEvaluation currentEval = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        currentEval.setValue(Pair.of(0.6f, "0.6"));
+
+        //predicted evals
+        DTOStrategicIndicatorEvaluation predictedEval = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        predictedEval.setValue(Pair.of(0.8f, "0.8"));
+        DTOStrategicIndicatorEvaluation predictedEvalTwo = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        predictedEval.setValue(Pair.of(0.9f, "0.9"));
+        List<Float> values = Arrays.asList(predictedEval.getValue().getFirst(), predictedEvalTwo.getValue().getFirst());
+        List<Date> dates = Arrays.asList(java.sql.Date.valueOf(predictedEval.getDate()), java.sql.Date.valueOf(predictedEvalTwo.getDate()));
+
+
+        // When
+        alertsController.checkAlertsForIndicatorsPrediction(currentEval.getValue().getFirst(), si.getExternalId(), values, dates, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(siRepository,times(2)).findByExternalIdAndProjectId(si.getExternalId(),projectId);
+        verify(siCategoryRepository, times(1)).findAll();
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a category upgrade alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(si.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("indicator", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_CATEGORY_UPGRADE, alertSaved.getType());
+        assertEquals(predictedEval.getValue().getFirst(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(predictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+    }
+
+    @Test
+    public void shouldCreateIndicatorPredictionAlertWithThresholdTrespassed() throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        Strategic_Indicator si = domainObjectsBuilder.buildStrategicIndicator(project);
+        si.setThreshold(0.55f);
+        when(siRepository.findByExternalIdAndProjectId(si.getExternalId(),projectId)).thenReturn(si);
+
+        //creating current eval
+        DTOStrategicIndicatorEvaluation currentEval = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        currentEval.setValue(Pair.of(0.6f, "0.6"));
+
+        //predicted evals
+        DTOStrategicIndicatorEvaluation predictedEval = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        predictedEval.setValue(Pair.of(0.33f, "0.33"));
+        DTOStrategicIndicatorEvaluation predictedEvalTwo = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        predictedEval.setValue(Pair.of(0.23f, "0.23"));
+        List<Float> values = Arrays.asList(predictedEval.getValue().getFirst(), predictedEvalTwo.getValue().getFirst());
+        List<Date> dates = Arrays.asList(java.sql.Date.valueOf(predictedEval.getDate()), java.sql.Date.valueOf(predictedEvalTwo.getDate()));
+
+
+        // When
+        alertsController.checkAlertsForIndicatorsPrediction(currentEval.getValue().getFirst(), si.getExternalId(), values, dates, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(siRepository,times(2)).findByExternalIdAndProjectId(si.getExternalId(),projectId);
+        verify(siCategoryRepository, times(1)).findAll();
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        //Checking that a category upgrade alert has been created
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(si.getExternalId(), alertSaved.getAffectedId());
+        assertEquals("indicator", alertSaved.getAffectedType());
+        assertEquals(AlertType.PREDICTED_TRESPASSED_THRESHOLD, alertSaved.getType());
+        assertEquals(predictedEval.getValue().getFirst(), alertSaved.getValue(), 0f);
+        assertEquals(java.sql.Date.valueOf(predictedEval.getDate()), alertSaved.getPredictionDate());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertEquals(project, alertSaved.getProject());
+        assertEquals("PROPHET", alertSaved.getPredictionTechnique());
+    }
+
+    @Test
+    public void shouldNotCreateMetricPredictionAlertBecauseTodayExactAlertHasBeenCreated() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Long projectId = project.getId();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+
+        //current eval
+        DTOMetricEvaluation metricEval = domainObjectsBuilder.buildDTOMetric();
+        Metric metric = domainObjectsBuilder.buildMetric(project);
+        metric.setThreshold(null); //we want it to not have a threshold for this test
+        metric.setExternalId(metricEval.getId());
+        when(metricRepository.findByExternalIdAndProjectId(metricEval.getId(), projectId)).thenReturn(metric);
+        List<MetricCategory> metricCategories = domainObjectsBuilder.buildMetricCategoryList();
+        when(metricCategoryRepository.findAllByName(metric.getCategoryName())).thenReturn(metricCategories);
+
+        //predicted evals
+        DTOMetricEvaluation metricPredictedEval = domainObjectsBuilder.buildDTOMetric();
+        metricPredictedEval.setValue(0.5f);
+        DTOMetricEvaluation metricPredictedEvalTwo = domainObjectsBuilder.buildDTOMetric();
+        metricPredictedEval.setValue(0.21f);
+        List<DTOMetricEvaluation> forecast = Arrays.asList(metricPredictedEval, metricPredictedEvalTwo);
+
+        //create the "alreadyCreated" alert for this prediction
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        alert.setDate(new Date());
+        alert.setPredictionDate(java.sql.Date.valueOf(metricPredictedEval.getDate()));
+        alert.setValue(metricPredictedEval.getValue());
+        alert.setPredictionTechnique("PROPHET");
+        alert.setAffectedType("metric");
+        alert.setAffectedId(metricEval.getId());
+        alert.setThreshold(metric.getThreshold());
+        alert.setProject(project);
+        alert.setType(AlertType.PREDICTED_CATEGORY_DOWNGRADE);
+        alert.setStatus(AlertStatus.NEW);
+        LocalDate todayDate= LocalDate.now();
+        LocalDateTime todayStart = todayDate.atStartOfDay();
+        Date startDate= Date.from(todayStart.atZone(ZoneId.systemDefault()).toInstant());
+        Date now = new Date();
+        when(alertsControllerMock.getTodayStartOfDayInstant()).thenReturn(startDate);
+        when(alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(eq(projectId), eq(alert.getAffectedId()), eq("metric"), eq(alert.getValue()), eq(alert.getType()), eq("PROPHET"), eq(alert.getPredictionDate()), eq(startDate), any(), eq(alert.getThreshold()))).thenReturn(alert);
+
+        // When
+        alertsController.checkAlertsForMetricsPrediction(metricEval, forecast, project.getExternalId(), "PROPHET");
+
+        // Then
+        verify(metricRepository, times(1)).findByExternalIdAndProjectId(metricEval.getId(), projectId);
+        verify(metricCategoryRepository, times(1)).findAllByName(metric.getCategoryName());
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(0)).save(alertArgumentCaptor.capture());
+    }
 
     @Test
     public void findCategoryLevel(){

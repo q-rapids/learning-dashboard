@@ -76,6 +76,7 @@ function drawChart() {
                     },
                     onClick: function(e, legendItem) {
                         // default function
+                        console.log("clicat");
                         var index = legendItem.index;
                         var chart = this.chart;
                         chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
@@ -189,11 +190,21 @@ function drawChart() {
             }
         };
 
-        for (j = 0; j < value[i].length; ++j) {
+       for (j = 0; j < value[i].length; ++j) {
             if (value[i][j].length === 0) hidden = true;
+            var borderDash;
+            var pointRadius;
+
+            if (labels[i][j].includes("Predicted ")) {
+                borderDash=[5,5]
+                pointRadius = 2.5;
+            }
+            else {
+                borderDash= [0];
+                pointRadius = 2;
+            }
             var showLine = true;
             var pointStyle = 'circle';
-            var pointRadius = 2.5;
             var borderWidth = 1;
             var color = [];
             if (isdqf || isdsi) {
@@ -204,6 +215,7 @@ function drawChart() {
                     color = colors[(j-num) % colors.length];
                 }
             } else color = colors[j % colors.length];
+
             // to paint areas for confidence interval series
             if ((labels[i][j] == "80" || labels[i][j] == "95") && prediction) {
                 c.data.datasets.push({
@@ -223,35 +235,19 @@ function drawChart() {
                     borderWidth: borderWidth
                 });
             } else { // to paint mean serie
-                if (labels[i][j].includes("Predicted ")) { // normal line for predicted data
-                    c.data.datasets.push({
-                        label: labels[i][j],
-                        hidden: false,
-                        backgroundColor: color,
-                        borderColor: color,
-                        fill: false,
-                        data: value[i][j],
-                        showLine: showLine,
-                        pointStyle: pointStyle,
-                        radius: pointRadius,
-                        borderWidth: borderWidth
-                    });
-                } else { // dashed line for historical data
-                    c.data.datasets.push({
-                        label: labels[i][j],
-                        hidden: false,
-                        backgroundColor: color,
-                        borderColor: color,
-                        borderDash: [5,5],
-                        fill: false,
-                        data: value[i][j],
-                        showLine: showLine,
-                        pointStyle: pointStyle,
-                        radius: 0,
-                        borderWidth: borderWidth
-                    });
-                }
-
+                c.data.datasets.push({
+                    label: labels[i][j],
+                    hidden: false,
+                    backgroundColor: color,
+                    borderColor: color,
+                    borderDash: borderDash,
+                    fill: false,
+                    data: value[i][j],
+                    showLine: showLine,
+                    pointStyle: pointStyle,
+                    radius: pointRadius,
+                    borderWidth: borderWidth
+                });
             }
 
             if (!showLine) {
@@ -315,7 +311,7 @@ function drawChart() {
         if (!isdqf && !isdsi) {
             var filter = function(legendItem) {
                 // hide duplicated 80 and 95 from legend and Predicted data too
-                if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1) {
+                if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1 || legendItem.text==="") {
                     return false;
                 }
                 return true;
@@ -324,7 +320,7 @@ function drawChart() {
         } else  { // filter legend in case of DSIs and Factors
             var filter = function(legendItem) {
                 // hide Predicted data from legend
-                if (legendItem.text.includes('Predicted') || legendItem.text.includes('Predic...')) {
+                if (legendItem.text.includes('Pred') || legendItem.text.includes('Predic...')) {
                     return false;
                 }
                 return true;
@@ -334,6 +330,8 @@ function drawChart() {
 
         config.push(c);
     }
+
+
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');

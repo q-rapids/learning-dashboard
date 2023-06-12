@@ -147,6 +147,9 @@ app.controller('TablesCtrl', function($scope, $http) {
             getMetricsNames();
 
             response.data.forEach(function (alert) {
+                if (alert.predictionDate===null) alert.predictionDate="-";
+                if (alert.predictionTechnique===null) alert.predictionTechnique="-";
+                if (alert.threshold===null) alert.threshold="-";
                 if (alert.affectedType==="metric"){
                     alert.thrownby = "Metric: "+ metricsMap.get(alert.affectedId);
                 }

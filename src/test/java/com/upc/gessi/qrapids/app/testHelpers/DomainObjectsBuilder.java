@@ -40,7 +40,7 @@ public class DomainObjectsBuilder {
         AlertType alertType = AlertType.TRESPASSED_THRESHOLD;
         float value = 0.4f;
         float threshold = 0.5f;
-        Alert alert = new Alert(value,threshold,alertType, project, affectedId,affectedType);
+        Alert alert = new Alert(value,threshold,alertType, project, affectedId,affectedType,null,null);
         alert.setId(alertId);
         return alert;
     }

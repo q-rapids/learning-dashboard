@@ -10,14 +10,16 @@ public class DTOAlert {
     private Long id;
     private AlertType type;
     private float value;
-    private float threshold;
+    private Float threshold;
     private Date date;
     private AlertStatus status;
     private String affectedId;
     private String affectedType;
+    private Date predictionDate;
+    private String predictionTechnique;
 
 
-    public DTOAlert(Long id, String affectedId, String affectedType, AlertType type, float value, float threshold, Date date, AlertStatus status) {
+    public DTOAlert(Long id, String affectedId, String affectedType, AlertType type, float value, Float threshold, Date date, AlertStatus status, Date predictionDate, String technique) {
         this.id = id;
         this.type = type;
         this.value = value;
@@ -26,6 +28,8 @@ public class DTOAlert {
         this.status = status;
         this.affectedId = affectedId;
         this.affectedType =affectedType;
+        this.predictionDate = predictionDate;
+        this.predictionTechnique = technique;
     }
 
     public Long getId() {
@@ -68,11 +72,11 @@ public class DTOAlert {
         this.value = value;
     }
 
-    public float getThreshold() {
+    public Float getThreshold() {
         return threshold;
     }
 
-    public void setThreshold(float threshold) {
+    public void setThreshold(Float threshold) {
         this.threshold = threshold;
     }
 
@@ -92,4 +96,19 @@ public class DTOAlert {
         this.status = status;
     }
 
+    public Date getPredictionDate() {
+        return predictionDate;
+    }
+
+    public void setPredictionDate(Date predictionDate) {
+        this.predictionDate = predictionDate;
+    }
+
+    public String getPredictionTechnique() {
+        return predictionTechnique;
+    }
+
+    public void setPredictionTechnique(String technique) {
+        this.predictionTechnique = technique;
+    }
 }
