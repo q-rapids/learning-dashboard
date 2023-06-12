@@ -485,11 +485,11 @@ public class StrategicIndicatorsController {
             } else {
                 assessmentValueOrLabel = assessStrategicIndicatorWithoutBayesianNetwork(evaluationDate, project, strategicIndicator, listFactorsAssessmentValues, siFactors, missingFactors, factorsMismatch, assessmentValueOrLabel);
             }
-        } catch (AssessmentErrorException e) {
+        } catch (AssessmentErrorException | ProjectNotFoundException | QualityFactorNotFoundException |
+                 StrategicIndicatorNotFoundException | MetricNotFoundException e) {
             logger.error(e.getMessage(), e);
             correct = false;
         }
-
 
 
         // Save relations of factor -> SI
@@ -500,7 +500,7 @@ public class StrategicIndicatorsController {
         return correct;
     }
 
-    private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException {
+    private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (!listFactorsAssessmentValues.isEmpty()) {
             float value;
             List<Float> weights = new ArrayList<>();
@@ -542,12 +542,13 @@ public class StrategicIndicatorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK STRATEGIC INDICATOR ALERT
-            alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), value,project);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateIndicatorAlert(strategicIndicator, value);
         }
         return assessmentValueOrLabel;
     }
 
-    private String assessStrategicIndicatorWithBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<String> missingFactors, long factorsMismatch, Map<String, String> mapSIFactors) throws IOException, AssessmentErrorException {
+    private String assessStrategicIndicatorWithBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<String> missingFactors, long factorsMismatch, Map<String, String> mapSIFactors) throws IOException, AssessmentErrorException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         String assessmentValueOrLabel;
         File tempFile = File.createTempFile("network", ".dne", null);
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -572,7 +573,8 @@ public class StrategicIndicatorsController {
                     factorsMismatch))
                 throw new AssessmentErrorException();
             // CHECK STRATEGIC INDICATOR ALERT
-            alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), valueAndLabel.getFirst(),project);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateIndicatorAlert(strategicIndicator, valueAndLabel.getFirst());
         }
         else {
             throw new AssessmentErrorException();
