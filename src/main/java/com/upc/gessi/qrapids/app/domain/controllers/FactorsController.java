@@ -713,26 +713,19 @@ public class FactorsController {
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<DTODetailedFactorEvaluation> forecast = qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
-        int j=0;
-        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
-            while (forecast.get(i).getValue().getFirst()==null){
-                ++i;
-                ++j;
+        for (int qf=0; qf <= forecast.size(); ++qf){
+            List <DTOMetricEvaluation> qfMetricsPredictions = forecast.get(qf).getMetrics();
+            int j=0;
+            for(int i=0; i<=qfMetricsPredictions.size()-period; i+=period, ++j){
+                while (qfMetricsPredictions.get(i).getValue()==null){
+                    ++i;
+                    ++j;
+                }
+                List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(qfMetricsPredictions.subList(i, i + period));
+                alertsController.checkAlertsForMetricsPrediction(currentEvaluation.get(qf).getMetrics().get(j), forecastedValues, projectExternalId, technique);
             }
-            List<DTODetailedFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
-            List<Float> predictedValues = new ArrayList<>();
-            List<Date> predictionDates = new ArrayList<>();
-            for (int f=0 ;f<forecastedValues.size();++f){
-                predictedValues.add(forecastedValues.get(f).getValue().getFirst());
-                LocalDate predictedDate = forecastedValues.get(f).getDate();
-                Date date;
-                if (predictedDate==null) date = null;
-                else date = java.sql.Date.valueOf(predictedDate);
-                predictionDates.add(date);
-            }
-
-            alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(i).getId(), predictedValues, predictionDates, projectExternalId, technique);
         }
+
         return forecast;
     }
 
@@ -784,7 +777,7 @@ public class FactorsController {
         List<DTOFactorEvaluation> forecast = qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
         int period=Integer.parseInt(horizon);
         int j=0;
-        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+        for(int i=0; i<=forecast.size()-period; i+=period, ++j){
             while (forecast.get(i).getValue().getFirst()==null){
                 ++i;
                 ++j;
@@ -800,7 +793,7 @@ public class FactorsController {
                 else date = java.sql.Date.valueOf(predictedDate);
                 predictionDates.add(date);
             }
-            alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(i).getId(), predictedValues, predictionDates, prj, technique);
+            alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(j).getId(), predictedValues, predictionDates, prj, technique);
         }
         return forecast;
     }

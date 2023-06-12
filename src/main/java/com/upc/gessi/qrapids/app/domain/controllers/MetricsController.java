@@ -204,7 +204,7 @@ public class MetricsController {
         List<DTOMetricEvaluation> forecast = qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
         int j=0;
-        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+        for(int i=0; i<=forecast.size()-period; i+=period, ++j){
             while (forecast.get(i).getForecastingError()!=null){
                 ++i;
                 ++j;
