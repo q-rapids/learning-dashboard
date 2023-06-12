@@ -10,5 +10,8 @@ public class Messages {
     public static final String ASSESSMENT_ERROR = "Assessment error";
     public static final String STRATEGIC_INDICATOR_NOT_FOUND = "Strategic indicator not found";
     public static final String FACTOR_NOT_FOUND = "Factor not found";
+    public static final String METRIC_NOT_FOUND = "Metric not found";
     public static final String FACTOR_DELETE_FORBIDDEN = "This factor can't be deleted, it's involved in Strategic Indicators computation";
+    public static final String AFFECTED_TYPE_NOT_VALID = "The affected type provided is not valid. It must be either metric, factor or indicator.";
+
 }

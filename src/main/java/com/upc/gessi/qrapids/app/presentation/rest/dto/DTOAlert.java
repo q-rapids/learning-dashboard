@@ -17,7 +17,7 @@ public class DTOAlert {
     private String affectedType;
 
 
-    public DTOAlert(Long id, String affectedId, AlertType type, float value, float threshold, Date date, AlertStatus status, String affectedType) {
+    public DTOAlert(Long id, String affectedId, String affectedType, AlertType type, float value, float threshold, Date date, AlertStatus status) {
         this.id = id;
         this.type = type;
         this.value = value;

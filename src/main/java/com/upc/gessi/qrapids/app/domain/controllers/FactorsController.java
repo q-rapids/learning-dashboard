@@ -400,7 +400,7 @@ public class FactorsController {
         }
     }
 
-    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
+    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         boolean correct = true;
         if (dateFrom != null) {
             LocalDate dateTo = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -414,7 +414,7 @@ public class FactorsController {
         return correct;
     }
 
-    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
+    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         boolean correct = true;
 
         // if there is no specific project as a parameter, all the projects are assessed
@@ -434,7 +434,7 @@ public class FactorsController {
         return correct;
     }
 
-    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException {
+    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         //metrics list, each of them includes list of QF in which is involved
         MetricEvaluation metricEvaluationQma = new MetricEvaluation();
         List<DTOMetricEvaluation> metricList;
@@ -455,8 +455,11 @@ public class FactorsController {
         Project proj = projectsController.findProjectByExternalId(project);
 
         // CHECK METRICS ALERTS
-        for (DTOMetricEvaluation m : metricList) {
-            alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
+        LocalDate today = LocalDate.now();
+        if(evaluationDate.equals(today)) {
+            for (DTOMetricEvaluation m : metricList) {
+                alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
+            }
         }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -509,7 +512,8 @@ public class FactorsController {
         String assessmentValueOrLabel = "";
         try {
             assessmentValueOrLabel = assessQualityFactors(evaluationDate, project, qualityFactor, listMetricsAssessmentValues, qfMetrics, missingMetrics, metricsMismatch, assessmentValueOrLabel);
-        } catch (AssessmentErrorException | CategoriesException | ProjectNotFoundException e) {
+        } catch (AssessmentErrorException | CategoriesException | ProjectNotFoundException |
+                 QualityFactorNotFoundException | MetricNotFoundException | StrategicIndicatorNotFoundException e) {
             logger.error(e.getMessage(), e);
             correct = false;
         }
@@ -590,7 +594,7 @@ public class FactorsController {
         return qmaRelations.setQualityFactorMetricRelation(prj, metricsIds, qf, evaluationDate, weights, metricValues, metricsLabels, qfValueOrLabel);
     }
 
-    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException, ProjectNotFoundException {
+    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (!listMetricsAssessmentValues.isEmpty()) {
             float value;
             List<Float> weights = new ArrayList<>();
@@ -641,8 +645,8 @@ public class FactorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK FACTORS ALERTS
-            Project proj = projectsController.findProjectByExternalId(project);
-            alertsController.shouldCreateFactorAlert(qualityFactor,value);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateFactorAlert(qualityFactor,value);
         }
         return assessmentValueOrLabel;
     }
