@@ -9,7 +9,7 @@
     <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
     <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
     <br/>
-    <div class="contanier" style="padding-right: 15em; padding-left: 15em; margin-right: auto; margin-left: auto;" id="tableCurrent" ng-init="getAlerts()">
+    <div class="contanier" style="padding-right: 10em; padding-left: 10em; margin-right: auto; margin-left: auto;" id="tableCurrent" ng-init="getAlerts()">
         <br/>
         <br/>
         <span><b>Search:</b></span> <input ng-model="f"></input>
@@ -24,21 +24,33 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <th ng-click="sortBy('type')">Type
-                    <span ng-show="sortType == 'type' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'type' &amp;&amp; !sortReverse" class="dropup">
-                        <span class="caret"></span>
-                    </span>
-                </th>
                 <th ng-click="sortBy('value')">Value
                     <span ng-show="sortType == 'value' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'value' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
                     </span>
                 </th>
+                <th ng-click="sortBy('type')">Type
+                    <span ng-show="sortType == 'type' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'type' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
                 <th ng-click="sortBy('threshold')">Threshold
                     <span ng-show="sortType == 'threshold' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'threshold' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('predictionDate')">Prediction Date
+                    <span ng-show="sortType == 'predictionDate' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'predictionDate' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('predictionTechnique')">Prediction Technique
+                    <span ng-show="sortType == 'predictionTechnique' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'predictionTechnique' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
                     </span>
                 </th>
@@ -59,9 +71,11 @@
             <tbody>
             <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse:customComparator">
                 <td id="date" ng-class="{'color-red': (d.status == 'NEW')}">{{d.date}}</td>
-                <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
                 <td id="value" ng-class="{'color-red': (d.status == 'NEW')}">{{d.value}}</td>
+                <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
                 <td id="threshold" ng-class="{'color-red': (d.status == 'NEW')}">{{d.threshold}}</td>
+                <td id="predictionDate" ng-class="{'color-red': (d.status == 'NEW')}">{{d.predictionDate}}</td>
+                <td id="predictionTechnique" ng-class="{'color-red': (d.status == 'NEW')}">{{d.predictionTechnique}}</td>
                 <td id="thrownby" ng-class="{'color-red': (d.status == 'NEW')}">{{d.thrownby}}</td>
                 <td id="status" ng-class="{'color-red': (d.status == 'NEW')}">{{d.status}}</td>
             </tr>
