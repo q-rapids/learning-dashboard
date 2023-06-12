@@ -306,35 +306,6 @@ function drawChart() {
 
             c.options.annotation.annotations = annotations;
         }
-        //create new dataset with only the last valu eof historical data and the first value of predicted data
-        //to join the two datasets with a line
-        var numberOfElements;
-        if (isdqf || isdsi) numberOfElements = value[i].length/2;
-        else numberOfElements=1;
-        for (j = 0; j < numberOfElements; ++j){
-            var color = colors[j % colors.length];
-            var lastHistoricValue = value[i][j][value[i][j].length-1];
-            var firstPredictedValue = value[i][j+numberOfElements][0];
-            var extraDataset = [lastHistoricValue,firstPredictedValue];
-
-            c.data.datasets.push({
-                label: "",
-                hidden: false,
-                borderColor: color,
-                pointHitRadius:0,
-                pointHoverRadius: 0,
-                pointRadius: 0,
-                pointBorderWidth: 0,
-                fill: 0,
-                backgroundColor: 'transparent',
-                data: extraDataset,
-                showLine: true,
-                borderDash: [5,5],
-                radius: 0,
-                borderWidth: 0
-            });
-
-        }
 
         // filter legend in case of SIs, TODO: Factors i Metrics
         if (!isdqf && !isdsi) {
@@ -349,7 +320,7 @@ function drawChart() {
         } else  { // filter legend in case of DSIs and Factors
             var filter = function(legendItem) {
                 // hide Predicted data from legend
-                if (legendItem.text.includes('Pred') || legendItem.text.includes('Predic...')  || legendItem.text==="") {
+                if (legendItem.text.includes('Pred') || legendItem.text.includes('Predic...')) {
                     return false;
                 }
                 return true;
