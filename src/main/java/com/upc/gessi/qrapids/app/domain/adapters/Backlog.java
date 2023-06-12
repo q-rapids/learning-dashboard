@@ -2,7 +2,6 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.upc.gessi.qrapids.app.domain.models.QualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOBacklog;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
@@ -29,34 +28,6 @@ public class Backlog {
 
     @Value("${backlog.phases.url}")
     private String phasesUrl;
-
-    public QualityRequirement postNewQualityRequirement (QualityRequirement qualityRequirement) {
-        if (newIssueUrl != null && qualityRequirement.getProject().getBacklogId() != null) {
-            RestTemplate restTemplate = new RestTemplate();
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(newIssueUrl);
-
-            Map<String, String> params = new HashMap<>();
-            params.put("issue_summary", qualityRequirement.getRequirement());
-            params.put("issue_description", qualityRequirement.getDescription());
-            params.put("issue_type", "Story");
-            params.put("project_id", qualityRequirement.getProject().getBacklogId());
-            params.put("decision_rationale", qualityRequirement.getDecision().getRationale());
-
-            HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(params);
-
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
-
-            HttpStatus statusCode = responseEntity.getStatusCode();
-            if (statusCode == HttpStatus.OK || statusCode == HttpStatus.CREATED) {
-                Gson gson = new Gson();
-                DTOBacklog dtoBacklog = gson.fromJson(responseEntity.getBody(), DTOBacklog.class);
-                qualityRequirement.setBacklogId(dtoBacklog.getIssue_id());
-                qualityRequirement.setBacklogUrl(dtoBacklog.getIssue_url());
-            }
-        }
-
-        return qualityRequirement;
-    }
 
     public List<DTOMilestone> getMilestones (String backlogProjectId, LocalDate dateFrom) {
         List<DTOMilestone> dtoMilestonesList = new ArrayList<>();
