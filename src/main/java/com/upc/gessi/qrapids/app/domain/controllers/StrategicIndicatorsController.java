@@ -291,17 +291,23 @@ public class StrategicIndicatorsController {
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (List<DTOStrategicIndicatorEvaluation> si, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<DTOStrategicIndicatorEvaluation> forecast = qmaForecast.ForecastSI(si,technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
-        int j=-1;
-        for(int i=0; i<=forecast.size()-7; i+=period){
-            if (i%period == 0) ++j;
+        int j=0;
+        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+            while (forecast.get(i).getValue().getFirst()==null){
+                ++i;
+                ++j;
+            }
             List<DTOStrategicIndicatorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
             for (int f=0 ;f<forecastedValues.size();++f){
                 predictedValues.add(forecastedValues.get(f).getValue().getFirst());
-                predictionDates.add(java.sql.Date.valueOf(forecastedValues.get(f).getDate()));
+                LocalDate predictedDate = forecastedValues.get(f).getDate();
+                Date date;
+                if (predictedDate==null) date = null;
+                else date = java.sql.Date.valueOf(predictedDate);
+                predictionDates.add(date);
             }
-
             alertsController.checkAlertsForIndicatorsPrediction(si.get(j).getValue().getFirst(),si.get(i).getId(), predictedValues, predictionDates, projectExternalId, technique);
         }
         return forecast;
@@ -310,15 +316,22 @@ public class StrategicIndicatorsController {
     public List<DTODetailedStrategicIndicatorEvaluation> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<DTODetailedStrategicIndicatorEvaluation> forecast = qmaForecast.ForecastDSI(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
-        int j=-1;
-        for(int i=0; i<=forecast.size()-7; i+=period){
-            if (i%period == 0) ++j;
+        int j=0;
+        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+            while (forecast.get(i).getValue().getFirst()==null){
+                ++i;
+                ++j;
+            }
             List<DTODetailedStrategicIndicatorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
             for (int f=0 ;f<forecastedValues.size();++f){
                 predictedValues.add(forecastedValues.get(f).getValue().getFirst());
-                predictionDates.add(java.sql.Date.valueOf(forecastedValues.get(f).getDate()));
+                LocalDate predictedDate = forecastedValues.get(f).getDate();
+                Date date;
+                if (predictedDate==null) date = null;
+                else date = java.sql.Date.valueOf(predictedDate);
+                predictionDates.add(date);
             }
 
             alertsController.checkAlertsForIndicatorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(i).getId(), predictedValues, predictionDates, projectExternalId, technique);

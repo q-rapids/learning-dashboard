@@ -419,13 +419,18 @@ public class AlertsController {
         boolean alertCreated=false;
         //for each forecasted value, until the first alert created, we check if it has trespassed the threshold or a category (depending on if ti has categories and/or threshold)
         for(int i = 0; i < forecast.size() && !alertCreated; ++i) {
+            LocalDate predictedDate = forecast.get(i).getDate();
+            Date date;
+            if (predictedDate==null) date = null;
+            else date = java.sql.Date.valueOf(predictedDate);
+
             if(metric.getCategoryName()!=null && metric.getThreshold()!=null && !categoryThresholds.contains(metric.getThreshold())){
-                boolean categoryAlertCreated = checkPredictionColorChangedAlert(currentEval.getValue(), forecast.get(i).getValue(), java.sql.Date.valueOf(forecast.get(i).getDate()), metric.getThreshold(), metric.getExternalId(), "metric", project, categoryThresholds, technique);
-                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue(), forecast.get(i).getValue(), java.sql.Date.valueOf(forecast.get(i).getDate()), metric.getThreshold(), metric.getExternalId(), "metric", project, technique);
+                boolean categoryAlertCreated = checkPredictionColorChangedAlert(currentEval.getValue(), forecast.get(i).getValue(), date, metric.getThreshold(), metric.getExternalId(), "metric", project, categoryThresholds, technique);
+                boolean thresholdAlertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue(), forecast.get(i).getValue(), date, metric.getThreshold(), metric.getExternalId(), "metric", project, technique);
                 alertCreated =  categoryAlertCreated || thresholdAlertCreated;
             }
-            else if (metric.getCategoryName()!=null) alertCreated = checkPredictionColorChangedAlert(currentEval.getValue(), forecast.get(i).getValue(), java.sql.Date.valueOf(forecast.get(i).getDate()), metric.getThreshold(), metric.getExternalId(), "metric", project, categoryThresholds, technique);
-            else if (metric.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue(), forecast.get(i).getValue(), java.sql.Date.valueOf(forecast.get(i).getDate()), metric.getThreshold(), metric.getExternalId(), "metric", project, technique);
+            else if (metric.getCategoryName()!=null) alertCreated = checkPredictionColorChangedAlert(currentEval.getValue(), forecast.get(i).getValue(), date, metric.getThreshold(), metric.getExternalId(), "metric", project, categoryThresholds, technique);
+            else if (metric.getThreshold()!= null) alertCreated = checkPredictionThresholdTrespassedAlert(currentEval.getValue(), forecast.get(i).getValue(), date, metric.getThreshold(), metric.getExternalId(), "metric", project, technique);
         }
 
 

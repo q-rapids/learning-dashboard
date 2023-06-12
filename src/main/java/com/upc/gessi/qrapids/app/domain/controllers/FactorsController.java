@@ -713,15 +713,22 @@ public class FactorsController {
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<DTODetailedFactorEvaluation> forecast = qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
-        int j=-1;
-        for(int i=0; i<=forecast.size()-7; i+=period){
-            if (i%period == 0) ++j;
+        int j=0;
+        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+            while (forecast.get(i).getValue().getFirst()==null){
+                ++i;
+                ++j;
+            }
             List<DTODetailedFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
             for (int f=0 ;f<forecastedValues.size();++f){
                 predictedValues.add(forecastedValues.get(f).getValue().getFirst());
-                predictionDates.add(java.sql.Date.valueOf(forecastedValues.get(f).getDate()));
+                LocalDate predictedDate = forecastedValues.get(f).getDate();
+                Date date;
+                if (predictedDate==null) date = null;
+                else date = java.sql.Date.valueOf(predictedDate);
+                predictionDates.add(date);
             }
 
             alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(i).getId(), predictedValues, predictionDates, projectExternalId, technique);
@@ -776,15 +783,22 @@ public class FactorsController {
     public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<DTOFactorEvaluation> forecast = qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
         int period=Integer.parseInt(horizon);
-        int j=-1;
-        for(int i=0; i<=forecast.size()-7; i+=period){
-            if (i%period == 0) ++j;
+        int j=0;
+        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+            while (forecast.get(i).getValue().getFirst()==null){
+                ++i;
+                ++j;
+            }
             List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
             for (int f=0 ;f<forecastedValues.size();++f){
                 predictedValues.add(forecastedValues.get(f).getValue().getFirst());
-                predictionDates.add(java.sql.Date.valueOf(forecastedValues.get(f).getDate()));
+                LocalDate predictedDate = forecastedValues.get(f).getDate();
+                Date date;
+                if (predictedDate==null) date = null;
+                else date = java.sql.Date.valueOf(predictedDate);
+                predictionDates.add(date);
             }
             alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(i).getId(), predictedValues, predictionDates, prj, technique);
         }

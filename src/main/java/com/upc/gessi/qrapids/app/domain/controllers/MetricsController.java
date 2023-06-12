@@ -203,9 +203,12 @@ public class MetricsController {
     public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<DTOMetricEvaluation> forecast = qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
-        int j=-1;
-        for(int i=0; i<=forecast.size()-7; i+=period){
-            if (i%period == 0) ++j;
+        int j=0;
+        for(int i=0; i<=forecast.size()-7; i+=period, ++j){
+            while (forecast.get(i).getForecastingError()!=null){
+                ++i;
+                ++j;
+            }
             List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             alertsController.checkAlertsForMetricsPrediction(currentEvaluation.get(j), forecastedValues, projectExternalId, technique);
         }
