@@ -487,7 +487,7 @@ public class AlertsController {
         Date todayStartDate = getTodayStartOfDayInstant();
         Date now = new Date();
 
-        if (predictedValue!=null && currentValue > predictedValue && previousCategoryLevel!=predictedCategoryLevel ){
+        if (predictedValue!=null && predictedValue >= 0.f && currentValue > predictedValue && previousCategoryLevel!=predictedCategoryLevel ){
             //check if today an exact alert has been created (it means the prediction has been refreshed and the result has been the same forecast)
             Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
                     project.getId(), affectedId, affectedType, predictedValue, AlertType.PREDICTED_CATEGORY_DOWNGRADE, technique, predictionDate,  todayStartDate, now, threshold);
@@ -495,7 +495,7 @@ public class AlertsController {
                     affectedId, affectedType, predictionDate, technique);
             alertCreated=true;
         }
-        else if (predictedValue!=null && currentValue < predictedValue && previousCategoryLevel!=predictedCategoryLevel) {
+        else if (predictedValue!=null && predictedValue <= 1.f && currentValue < predictedValue && previousCategoryLevel!=predictedCategoryLevel) {
             //check if today an exact alert has been created (it means the prediction has been refreshed and the result has been the same forecast)
             Alert alreadyCreated = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(
                     project.getId(), affectedId, affectedType, predictedValue, AlertType.PREDICTED_CATEGORY_UPGRADE, technique, predictionDate,  todayStartDate, now, threshold);
