@@ -711,18 +711,29 @@ public class FactorsController {
     }
 
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        //Save the current evaluations metrics dto as they are going to be changed for the forecast creation
+        Map<String,DTOMetricEvaluation> currentMetricEvals = new HashMap<>();
+        for (int f = 0; f < currentEvaluation.size(); ++f){
+            for (int m = 0; m < currentEvaluation.get(f).getMetrics().size(); ++m){
+                currentMetricEvals.put(currentEvaluation.get(f).getId()+currentEvaluation.get(f).getMetrics().get(m).getId(),currentEvaluation.get(f).getMetrics().get(m));
+            }
+        }
         List<DTODetailedFactorEvaluation> forecast = qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
-        for (int qf=0; qf <= forecast.size(); ++qf){
+        for (int qf=0; qf < forecast.size(); ++qf){
+            String factorId = forecast.get(qf).getId();
             List <DTOMetricEvaluation> qfMetricsPredictions = forecast.get(qf).getMetrics();
             int j=0;
-            for(int i=0; i<=qfMetricsPredictions.size()-period; i+=period, ++j){
+            for(int i=0; i<qfMetricsPredictions.size(); i+=period, ++j){
                 while (qfMetricsPredictions.get(i).getValue()==null){
                     ++i;
                     ++j;
                 }
+                if(i>=qfMetricsPredictions.size()) break;
                 List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(qfMetricsPredictions.subList(i, i + period));
-                alertsController.checkAlertsForMetricsPrediction(currentEvaluation.get(qf).getMetrics().get(j), forecastedValues, projectExternalId, technique);
+                String metricId = forecastedValues.get(0).getId();
+                DTOMetricEvaluation currentMetricEval = currentMetricEvals.get(factorId+metricId);
+                alertsController.checkAlertsForMetricsPrediction(currentMetricEval, forecastedValues, projectExternalId, technique);
             }
         }
 
@@ -777,11 +788,12 @@ public class FactorsController {
         List<DTOFactorEvaluation> forecast = qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
         int period=Integer.parseInt(horizon);
         int j=0;
-        for(int i=0; i<=forecast.size()-period; i+=period, ++j){
+        for(int i=0; i < forecast.size(); i+=period, ++j){
             while (forecast.get(i).getValue().getFirst()==null){
                 ++i;
                 ++j;
             }
+            if (i>=forecast.size()) break;
             List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();

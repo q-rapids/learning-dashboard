@@ -204,11 +204,12 @@ public class MetricsController {
         List<DTOMetricEvaluation> forecast = qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
         int j=0;
-        for(int i=0; i<=forecast.size()-period; i+=period, ++j){
+        for(int i=0; i < forecast.size(); i+=period, ++j){
             while (forecast.get(i).getForecastingError()!=null){
                 ++i;
                 ++j;
             }
+            if (i >= forecast.size()) break;
             List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             alertsController.checkAlertsForMetricsPrediction(currentEvaluation.get(j), forecastedValues, projectExternalId, technique);
         }

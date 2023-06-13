@@ -292,11 +292,12 @@ public class StrategicIndicatorsController {
         List<DTOStrategicIndicatorEvaluation> forecast = qmaForecast.ForecastSI(si,technique, freq, horizon, projectExternalId);
         int period=Integer.parseInt(horizon);
         int j=0;
-        for(int i=0; i<=forecast.size()-period; i+=period, ++j){
+        for(int i=0; i<forecast.size(); i+=period, ++j){
             while (forecast.get(i).getValue().getFirst()==null){
                 ++i;
                 ++j;
             }
+            if (i>=forecast.size()) break;
             List<DTOStrategicIndicatorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
@@ -314,20 +315,35 @@ public class StrategicIndicatorsController {
     }
 
     public List<DTODetailedStrategicIndicatorEvaluation> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        //Save the current evaluations values as they will be modified to obtain the forecast. Using a string made of siId+factorId as key.
+        Map<String,Float> currentValues = new HashMap<>();
+        for (int si = 0; si < currentEvaluation.size(); ++si){
+            for (int f = 0; f < currentEvaluation.get(si).getFactors().size(); ++f){
+                currentValues.put(currentEvaluation.get(si).getId()+currentEvaluation.get(si).getFactors().get(f).getId(),currentEvaluation.get(si).getFactors().get(f).getValue().getFirst());
+            }
+        }
+        //obtain the forecast
         List<DTODetailedStrategicIndicatorEvaluation> forecast = qmaForecast.ForecastDSI(currentEvaluation, technique, freq, horizon, projectExternalId);
+
+        //check for alerts
         int period=Integer.parseInt(horizon);
-        for (int si = 0; si<=forecast.size();++si){
+        for (int si = 0; si<forecast.size();++si){
+            String siId = forecast.get(si).getId();
             List <DTOFactorEvaluation> siFactorsPredictions = forecast.get(si).getFactors();
             int j=0;
-            for(int i=0; i<=siFactorsPredictions.size()-period; i+=period, ++j){
+            //iterate over the si predictions. If the prediction is correct, 'period' consecutive predictions will belong to the same si factor.
+            for(int i=0; i < siFactorsPredictions.size(); i+=period, ++j){
+                //if the prediction has an error, jump to the next
                 while (siFactorsPredictions.get(i).getValue().getFirst()==null){
                     ++i;
                     ++j;
                 }
+                if (i >=  siFactorsPredictions.size()) break;
+
                 List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(siFactorsPredictions.subList(i, i + period));
                 List<Float> predictedValues = new ArrayList<>();
                 List<Date> predictionDates = new ArrayList<>();
-                for (int f=0 ;f<forecastedValues.size();++f){
+                for (int f=0; f < forecastedValues.size(); ++f){
                     predictedValues.add(forecastedValues.get(f).getValue().getFirst());
                     LocalDate predictedDate = forecastedValues.get(f).getDate();
                     Date date;
@@ -335,8 +351,9 @@ public class StrategicIndicatorsController {
                     else date = java.sql.Date.valueOf(predictedDate);
                     predictionDates.add(date);
                 }
-
-                alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(si).getFactors().get(j).getValue().getFirst(),currentEvaluation.get(si).getFactors().get(j).getId(), predictedValues, predictionDates, projectExternalId, technique);
+                String factorId = forecastedValues.get(0).getId();
+                Float currentValue = currentValues.get(siId+factorId);
+                alertsController.checkAlertsForFactorsPrediction(currentValue, factorId, predictedValues, predictionDates, projectExternalId, technique);
             }
         }
 
