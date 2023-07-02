@@ -26,6 +26,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -91,11 +92,11 @@ public class AlertsTest {
 
         Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
+        alert.setPredictionTechnique("PROPHET");
+        alert.setPredictionDate(new Date());
         alertList.add(alert);
 
-        when(metricsController.getMetricLabelFromValue(alert.getValue())).thenReturn("Normal");
-
-        when(alertsController.getAllProjectAlerts(project.getId())).thenReturn(alertList);
+        when(alertsController.getAllProjectAlertsWithProfile(project.getId(), null)).thenReturn(alertList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -113,14 +114,17 @@ public class AlertsTest {
                 .andExpect(jsonPath("$[0].threshold", is(HelperFunctions.getFloatAsDouble(alert.getThreshold()))))
                 .andExpect(jsonPath("$[0].date", is(alert.getDate().getTime())))
                 .andExpect(jsonPath("$[0].status", is(alert.getStatus().toString())))
-                .andExpect(jsonPath("$[0].predictionDate", is(alert.getPredictionDate())))
+                .andExpect(jsonPath("$[0].predictionDate", is(alert.getPredictionDate().getTime())))
                 .andExpect(jsonPath("$[0].predictionTechnique", is(alert.getPredictionTechnique())))
                 .andDo(document("alerts/get-all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Alert identifier"),
@@ -129,8 +133,7 @@ public class AlertsTest {
                                 fieldWithPath("[].affectedType")
                                         .description("Type of the affected element causing the alert (metric, factor or indicator)"),
                                 fieldWithPath("[].type")
-                                        .description("Type of the alert causing the alert (CATEGORY_DOWNGRADE, CATEGORY_UPGRADE, " +
-                                                "TRESPASSED_THRESHOLD, ALERT_NOT_TREATED)"),
+                                        .description("Type of the alert causing the alert"),
                                 fieldWithPath("[].value")
                                         .description("Current value of the element causing the alert"),
                                 fieldWithPath("[].threshold")
@@ -140,14 +143,14 @@ public class AlertsTest {
                                 fieldWithPath("[].status")
                                         .description("Status of the alert (NEW or VIEWED)"),
                                 fieldWithPath("[].predictionDate")
-                                        .description("Date for the prediction that has raised an alert"),
+                                        .description("Date for the prediction that has raised an alert, if it is a prediction alert"),
                                 fieldWithPath("[].predictionTechnique")
-                                        .description("Technique used for the prediction that raised an alert")
+                                        .description("Technique used for the prediction that raised an alert, if it is a prediction alert")
                         )
                 ));
 
         // Verify mock interactions
-        verify(alertsController, times(1)).getAllProjectAlerts(project.getId());
+        verify(alertsController, times(1)).getAllProjectAlertsWithProfile(project.getId(),null);
         verify(alertsController, times(alertList.size())).changeAlertStatusToViewed(any());
         verifyNoMoreInteractions(alertsController);
     }
@@ -187,10 +190,21 @@ public class AlertsTest {
                 .get("/api/alerts/countNew")
                 .param("prj", project.getExternalId());
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("alerts/count-new",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestParameters(
+                        parameterWithName("prj")
+                                .description("Project external identifier"),
+                        parameterWithName("profile")
+                                .description("Profile data base identifier")
+                                .optional()),
+                responseBody()
+        ));
 
         // Verify mock interactions
-        verify(alertsController, times(1)).countNewAlerts(project.getId());
+        verify(alertsController, times(1)).countNewAlertsWithProfile(project.getId(),null);
         verifyNoMoreInteractions(alertsController);
     }
 
