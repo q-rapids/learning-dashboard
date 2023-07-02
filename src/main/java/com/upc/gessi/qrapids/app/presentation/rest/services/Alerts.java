@@ -43,10 +43,10 @@ public class Alerts {
 
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
+    public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            List<Alert> alerts = alertsController.getAllProjectAlerts(project.getId());
+            List<Alert> alerts = alertsController.getAllProjectAlertsWithProfile(project.getId(), profile);
             for (Alert alert:alerts) alertsController.changeAlertStatusToViewed(alert);
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
@@ -66,10 +66,10 @@ public class Alerts {
 
     @GetMapping("/api/alerts/countNew")
     @ResponseStatus(HttpStatus.OK)
-    public int countNewAlerts(@RequestParam(value = "prj") String prj) {
+    public int countNewAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            return alertsController.countNewAlerts(project.getId());
+            return alertsController.countNewAlertsWithProfile(project.getId(), profile);
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);

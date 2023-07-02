@@ -178,7 +178,6 @@ public class AlertsTest {
     public void countNewAlerts() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        String profileId = null; // without profile
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
         int newAlerts = 23;
         when(alertsController.countNewAlerts(project.getId())).thenReturn(newAlerts);

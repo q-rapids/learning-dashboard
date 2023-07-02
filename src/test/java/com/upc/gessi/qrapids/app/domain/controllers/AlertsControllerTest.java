@@ -1198,7 +1198,7 @@ public class AlertsControllerTest
     }
 
     @Test
-    public void getAllProjectAlerts() {
+    public void getAllProjectAlertsWithoutProfile() {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Alert alert = domainObjectsBuilder.buildAlert(project);

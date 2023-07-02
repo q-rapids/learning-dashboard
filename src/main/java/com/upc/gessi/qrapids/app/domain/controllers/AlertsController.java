@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
@@ -16,6 +17,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.StrategicIndicators;
+import com.upc.gessi.qrapids.app.presentation.web.mapping.ProfileController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -57,6 +56,8 @@ public class AlertsController {
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private ProfilesController profilesController;
 
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicators.class);
@@ -534,7 +535,28 @@ public class AlertsController {
         alertRepository.setViewedStatus(alert.getId());
     }
 
-    public int countNewAlerts(Long projectId){return alertRepository.countByProjectIdAndStatus(projectId, AlertStatus.NEW);}
+    public int countNewAlerts(Long projectId) {
+        return alertRepository.countByProjectIdAndStatus(projectId, AlertStatus.NEW);
+    }
+
+    public int countNewAlertsWithProfile(Long projectId, String profile){
+        int newAlertsCount = alertRepository.countByProjectIdAndStatus(projectId, AlertStatus.NEW);
+        if ( profile == null || profile.equals("null")){
+            return newAlertsCount;
+        }
+        else {
+            Profile prof = profilesController.findProfileById(profile);
+            Project proj = projectRepository.findById(projectId).get();
+            if (prof.getAllSIByProject(proj)) {
+                return newAlertsCount;
+            }
+            else {
+                List<Alert> newAlerts = alertRepository.findAllByProjectId(projectId);
+                List<Alert> newFilteredAlerts = filterAlertsByProfileIndicatorsAndLevels(proj, prof, newAlerts);
+                return newFilteredAlerts.size();
+            }
+        }
+    }
 
     public List<Alert>  getAllAlerts(){
         return alertRepository.findAll();
@@ -543,6 +565,62 @@ public class AlertsController {
     public List<Alert> getAllProjectAlerts(Long projectId){
         return alertRepository.findAllByProjectId(projectId);
     }
+
+    public List<Alert> getAllProjectAlertsWithProfile(Long projectId, String profile){
+        List<Alert> alerts = alertRepository.findAllByProjectId(projectId);
+        if ( profile == null || profile.equals("null")){
+            return alerts;
+        }
+        else{ //filter alerts by profile
+            Profile prof = profilesController.findProfileById(profile);
+            Project proj = projectRepository.findById(projectId).get();
+            if (prof.getAllSIByProject(proj)){
+                if(prof.getQualityLevel().equals(Profile.QualityLevel.METRICS_FACTORS))
+                    alerts.removeIf(alert -> alert.getAffectedType().equals("indicator"));
+                else if (prof.getQualityLevel().equals(Profile.QualityLevel.METRICS)) {
+                    alerts.removeIf(alert -> alert.getAffectedType().equals("indicator"));
+                    alerts.removeIf(alert -> alert.getAffectedType().equals("factor"));
+                }
+                return alerts;
+            } else {
+                return filterAlertsByProfileIndicatorsAndLevels(proj,prof,alerts);
+            }
+        }
+    }
+
+    public List<Alert> filterAlertsByProfileIndicatorsAndLevels (Project project, Profile profile, List<Alert> alerts){
+        List<ProfileProjectStrategicIndicators> siList = profile.getProfileProjectStrategicIndicatorsList();
+        List<String> profileSIIds = new ArrayList<>();
+        Set<String> profileQFIds = new HashSet<>();
+        Set<String> profileMetricsIds = new HashSet<>();
+
+        for (ProfileProjectStrategicIndicators si: siList) {
+            profileSIIds.add(si.getStrategicIndicator().getExternalId());
+            for(String f : si.getStrategicIndicator().getQuality_factors()){
+                profileQFIds.add(f);
+                Factor factor = factorRepository.findByExternalId(f).get();
+                for(String m : factor.getMetrics()){
+                    profileMetricsIds.add(m);
+                }
+            }
+        }
+
+        List<Alert> result = new ArrayList<>();
+        Profile.QualityLevel ql = profile.getQualityLevel();
+        for (Alert alert : alerts) {
+            if (alert.getAffectedType().equals("indicator") && profileSIIds.contains(alert.getAffectedId()) && profile.getQualityLevel().equals(Profile.QualityLevel.ALL)){
+                result.add(alert);
+            }
+            else if (alert.getAffectedType().equals("factor") && profileQFIds.contains(alert.getAffectedId()) && (profile.getQualityLevel().equals(Profile.QualityLevel.METRICS_FACTORS)) || profile.getQualityLevel().equals(Profile.QualityLevel.ALL)){
+                result.add(alert);
+            }
+            else if (alert.getAffectedType().equals("metric") && profileMetricsIds.contains(alert.getAffectedId())){
+                result.add(alert);
+            }
+        }
+        return result;
+    }
+
 
     public Alert getAlertById(Long alertId) throws AlertNotFoundException {
         Alert alert = alertRepository.findAlertById(alertId);
