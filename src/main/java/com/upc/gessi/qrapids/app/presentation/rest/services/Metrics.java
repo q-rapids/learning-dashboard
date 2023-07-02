@@ -39,7 +39,7 @@ public class Metrics {
 
     private Logger logger = LoggerFactory.getLogger(Metrics.class);
 
-    @GetMapping("/api/metrics/import")
+    @GetMapping("/api/projects/metrics/import")
     @ResponseStatus(HttpStatus.OK)
     public void importMetrics() {
         try {
@@ -53,20 +53,20 @@ public class Metrics {
         }
     }
 
-    @GetMapping("/api/metrics/list")
+    @GetMapping("/api/projects/metrics/list")
     @ResponseStatus(HttpStatus.OK)
     public List<String> getList() {
         return metricsController.getAllNames();
     }
 
-    @PutMapping("/api/metrics/{id}")
+    @PutMapping("/api/projects/metrics/{metric_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void editMetric(@PathVariable Long id, HttpServletRequest request) {
+    public void editMetric(@PathVariable Long metricId, HttpServletRequest request) {
         try {
             String threshold = request.getParameter("threshold");
             String webUrl = request.getParameter("url");
             String categoryName = request.getParameter("categoryName");
-            metricsController.editMetric(id,threshold,webUrl,categoryName); // at the moment is only possible change threshold
+            metricsController.editMetric(metricId,threshold,webUrl,categoryName); // at the moment is only possible change threshold
         } catch (MetricNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -74,14 +74,14 @@ public class Metrics {
     }
 
 
-    @DeleteMapping("/api/metrics/students/{id}")
+    @DeleteMapping("/api/projects/metrics/students/{studentId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long id) {
+    public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long studentId) {
 
-        studentsController.deleteStudents(id);
+        studentsController.deleteStudents(studentId);
     }
 
-    @GetMapping("/api/metrics/categories")
+    @GetMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricCategory> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
         Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories(name);
@@ -93,7 +93,7 @@ public class Metrics {
     }
 
 
-    @PostMapping("/api/metrics/categories")
+    @PostMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
         try {
@@ -105,7 +105,7 @@ public class Metrics {
         }
     }
 
-    @PutMapping("/api/metrics/categories")
+    @PutMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name") String name) {
         try {
@@ -116,7 +116,7 @@ public class Metrics {
         }
     }
 
-    @DeleteMapping("/api/metrics/categories")
+    @DeleteMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMetricsCategories (@RequestParam(value = "name") String name) {
         try {
@@ -129,9 +129,9 @@ public class Metrics {
 
     // PROJECT RELATED ENDPOINTS
 
-    @GetMapping("/api/projects/{projectExternalId}/metrics")
+    @GetMapping("/api/projects/metrics")
     @ResponseStatus(HttpStatus.OK)
-    public List<Metric> getMetrics(@PathVariable String projectExternalId) {
+    public List<Metric> getMetrics(@RequestParam(value="project-external-id") String projectExternalId) {
         try {
             return metricsController.getMetricsByProject(projectExternalId);
         } catch (ProjectNotFoundException e) {
@@ -139,16 +139,16 @@ public class Metrics {
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         }
     }
-    @GetMapping("/api/projects/{projectExternalId}/metrics/students")
+    @GetMapping("/api/projects/metrics/students")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStudentMetrics> getStudentsAndMetrics(@PathVariable String projectExternalId) throws IOException {
+    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="project-external-id") String projectExternalId) throws IOException {
 
         return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
     }
 
-    @GetMapping("/api/projects/{projectExternalId}/metrics/students/historical")
+    @GetMapping("/api/projects/metrics/students/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStudentMetrics> getStudentsAndMetricsHistorical(@PathVariable String projectExternalId,
+    public List<DTOStudentMetrics> getStudentsAndMetricsHistorical(@RequestParam(value="project-external-id") String projectExternalId,
                                                                              @RequestParam(value = "profile", required = false) String profileId,
                                                                              @RequestParam("from") String from,
                                                                              @RequestParam("to") String to) throws IOException {
@@ -156,9 +156,9 @@ public class Metrics {
         return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId);
     }
 
-    @PutMapping("/api/projects/{projectExternalId}/metrics/students")
+    @PutMapping("/api/projects/metrics/students")
     @ResponseStatus(HttpStatus.OK)
-    public Long updateMetricStudent(@PathVariable String projectExternalId, @RequestBody @Valid DTOCreateStudent body,
+    public Long updateMetricStudent(@RequestParam(value="project-external-id") String projectExternalId, @RequestBody @Valid DTOCreateStudent body,
                                     Errors errors) {
 
         if(errors.hasErrors()){
@@ -178,9 +178,9 @@ public class Metrics {
 
 
 
-    @RequestMapping("/api/projects/{projectExternalId}/metrics/current")
+    @RequestMapping("/api/projects/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsEvaluations(@PathVariable String projectExternalId,
+    public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value="project-external-id") String projectExternalId,
                                                            @RequestParam(value = "profile", required = false) String profile) {
         try {
             return metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profile);
@@ -193,9 +193,9 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/{projectExternalId}/metrics/{metricId}/current")
+    @RequestMapping("/api/projects/metrics/{metricId}/current")
     @ResponseStatus(HttpStatus.OK)
-    public DTOMetricEvaluation getSingleMetricEvaluation(@PathVariable String projectExternalId,
+    public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam(value="project-external-id") String projectExternalId,
                                                          @PathVariable String metricId) {
         try {
             return metricsController.getSingleMetricCurrentEvaluation(metricId, projectExternalId);
@@ -208,9 +208,9 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/{projectExternalId}/metrics/historical")
+    @RequestMapping("/api/projects/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsHistoricalData(@PathVariable String projectExternalId,
+    public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value="project-external-id") String projectExternalId,
                                                               @RequestParam(value = "profile_id", required = false) String profileId,
                                                               @RequestParam("from") String from,
                                                               @RequestParam("to") String to) {
@@ -225,14 +225,14 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/{projectExternalId}/metrics/{id}/historical")
+    @RequestMapping("/api/projects/metrics/{metricId}/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@PathVariable String projectExternalId,
+    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value="project-external-id") String projectExternalId,
                                                                 @RequestParam(value = "profile_id", required = false) String profileId,
-                                                                @PathVariable String id, @RequestParam("from") String from,
+                                                                @PathVariable String metricId, @RequestParam("from") String from,
                                                                 @RequestParam("to") String to) {
         try {
-            return metricsController.getSingleMetricHistoricalEvaluation(id, projectExternalId, profileId, LocalDate.parse(from), LocalDate.parse(to));
+            return metricsController.getSingleMetricHistoricalEvaluation(metricId, projectExternalId, profileId, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -242,15 +242,15 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/{projectExternalId}/metrics/prediction")
+    @RequestMapping("/api/projects/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsPredictionData(@PathVariable String projectExternalId,
+    public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value="project-external-id") String projectExternalId,
                                                               @RequestParam(value = "profile_id", required = false) String profileId,
-                                                              @RequestParam("technique") String techinique,
+                                                              @RequestParam("technique") String technique,
                                                               @RequestParam("horizon") String horizon) throws IOException {
         try {
             List<DTOMetricEvaluation> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId);
-            return metricsController.getMetricsPrediction(currentEvaluation, projectExternalId, techinique, "7", horizon);
+            return metricsController.getMetricsPrediction(currentEvaluation, projectExternalId, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -260,9 +260,9 @@ public class Metrics {
         }
     }
 
-    @GetMapping("/api/projects/{projectExternalId}/metrics/current-date")
+    @GetMapping("/api/projects/metrics/current-date")
     @ResponseStatus(HttpStatus.OK)
-    public LocalDate getCurrentDate(@PathVariable String projectExternalId,
+    public LocalDate getCurrentDate(@RequestParam(value="project-external-id") String projectExternalId,
                                     @RequestParam(value = "profile_id", required = false) String profileId) {
         try {
             List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId);

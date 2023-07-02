@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
 
 import java.util.List;
@@ -9,6 +10,7 @@ public class DTOStudentMetrics extends DTOStudent{
 
     private List<DTOMetricEvaluation> metrics;
 
+    @JsonProperty("metrics_size")
     private Integer numberMetrics;
     public DTOStudentMetrics(String student_name, Map<DataSource, DTOStudentIdentity> identities, List<DTOMetricEvaluation> metrics) {
         super(student_name,identities);
