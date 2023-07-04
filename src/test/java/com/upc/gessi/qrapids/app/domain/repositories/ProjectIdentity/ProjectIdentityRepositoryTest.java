@@ -2,7 +2,6 @@ package com.upc.gessi.qrapids.app.domain.repositories.ProjectIdentity;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.ProjectIdentityRepository.ProjectIdentityRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.StudentIdentity.StudentIdentityRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class ProjectIdentityRepositoryTest {
         String description = "test";
         String url = "test";
         Project project = new Project(externalId, name, description, null, true, true);
-        ProjectIdentity projectIdentity = new ProjectIdentity(DataSource.Github, url, project);
+        ProjectIdentity projectIdentity = new ProjectIdentity(DataSource.GITHUB, url, project);
 
         List<ProjectIdentity> projectIdentities = Collections.singletonList(projectIdentity);
         entityManager.persistAndFlush(project);

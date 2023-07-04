@@ -20,10 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -104,8 +101,8 @@ public class Projects {
             }
             if (projectsController.checkProjectByName(id, name)) {
                 Map<DataSource,DTOProjectIdentity> identities = new HashMap<>();
-                identities.put(DataSource.Github,new DTOProjectIdentity(DataSource.Github, githubURL));
-                identities.put(DataSource.Taiga,new DTOProjectIdentity(DataSource.Taiga, taigaURL));
+                identities.put(DataSource.GITHUB,new DTOProjectIdentity(DataSource.GITHUB, githubURL));
+                identities.put(DataSource.TAIGA,new DTOProjectIdentity(DataSource.TAIGA, taigaURL));
                 identities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
                 DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, isGlobal, identities);
                 projectsController.updateProject(p);
@@ -160,5 +157,10 @@ public class Projects {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
+    }
+
+    @GetMapping("api/projects/identities")
+    public List<DataSource> getIdentities(){
+        return Arrays.asList(DataSource.values());
     }
 }

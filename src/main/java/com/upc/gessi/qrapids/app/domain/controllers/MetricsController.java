@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudentIdentity;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class MetricsController {
     @Autowired
     private ProjectsController projectController;
 
+    @Autowired
+    private StudentsController studentsController;
+
     public Metric findMetricByExternalId (String externalId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalId(externalId);
         if (metric == null) {
@@ -67,9 +71,32 @@ public class MetricsController {
         }
     }
 
+    public void normalizeStudentNamesByMetric(Metric metric) {
+        if (metric.getStudent() != null) {
+
+            Student student = metric.getStudent();
+            List<DTOStudentIdentity> studentIdentities = new ArrayList<>(studentsController.getDTOStudentFromStudent(student).getIdentities().values());
+
+            String normalizedMetricName = studentsController.normalizedName(metric.getName(), studentIdentities, student.getName());
+            metric.setName(normalizedMetricName);
+        }
+    }
+
+    public void normalizeStudentNamesByMetrics(List<Metric> metrics){
+        metrics.forEach(this::normalizeStudentNamesByMetric);
+    }
+
+    public List<Metric> getNormalizedMetricsByStudentIdOrderByName(Long studentId){
+        List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(studentId);
+        normalizeStudentNamesByMetrics(metrics);
+        return metrics;
+    }
+
     public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
         Project project = projectController.findProjectByExternalId(prj);
-        return metricRepository.findByProject_IdOrderByName(project.getId());
+        List<Metric> metrics = metricRepository.findByProject_IdOrderByName(project.getId());
+        normalizeStudentNamesByMetrics(metrics);
+        return metrics;
     }
 
     public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException {
@@ -235,5 +262,16 @@ public class MetricsController {
 
     public List<MetricCategory> getMetricCategories() {
         return (List<MetricCategory>) metricCategoryRepository.findAll();
+    }
+
+    public void updateStudentMetricsByIds(List<Long> metricsIds, Student student){
+        metricsIds.forEach(metricId ->{
+            Optional<Metric> metricSearchResult = metricRepository.findById(metricId);
+            if (metricSearchResult.isPresent()) {
+                Metric metric = metricSearchResult.get();
+                metric.setStudent(student);
+                metricRepository.save(metric);
+            }
+        });
     }
 }

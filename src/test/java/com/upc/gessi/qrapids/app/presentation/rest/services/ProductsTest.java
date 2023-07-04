@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
@@ -78,9 +77,9 @@ public class ProductsTest {
         boolean active = true;
         String projectBacklogId = "999";
 
-        String identityURL = "githubURL";
+        String identityURL = "GITHUBURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
         List<DTOProject> dtoProjectList = new ArrayList<>();
@@ -115,8 +114,8 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].projects[0].active", is(active)))
                 .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].projects[0].identities.Github.dataSource", is(DataSource.Github.toString())))
-                .andExpect(jsonPath("$[0].projects[0].identities.Github.url", is(identityURL)))
+                .andExpect(jsonPath("$[0].projects[0].identities.GITHUB.dataSource", is(DataSource.GITHUB.toString())))
+                .andExpect(jsonPath("$[0].projects[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
                 .andDo(document("products/all",
@@ -149,13 +148,13 @@ public class ProductsTest {
                                         .description("Project identifier in the backlog"),
                                 fieldWithPath("[].projects[].identities")
                                         .description("Project identities"),
-                                fieldWithPath("[].projects[].identities.Github")
+                                fieldWithPath("[].projects[].identities.GITHUB")
                                         .description("Example of identity, URLs separated by a ';'"),
-                                fieldWithPath("[].projects[].identities.Github.dataSource")
-                                        .description("Identity data source. Example: Github, Taiga, PRT"),
-                                fieldWithPath("[].projects[].identities.Github.url")
+                                fieldWithPath("[].projects[].identities.GITHUB.dataSource")
+                                        .description("Identity data source. Example: GITHUB, Taiga, PRT"),
+                                fieldWithPath("[].projects[].identities.GITHUB.url")
                                         .description("Identity URL"),
-                                fieldWithPath("[].projects[].identities.Github.project")
+                                fieldWithPath("[].projects[].identities.GITHUB.project")
                                         .description("Identity project"),
                                 fieldWithPath("[].projects[].isGlobal")
                                         .description("Is a global project?"),
@@ -180,7 +179,7 @@ public class ProductsTest {
 
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
-        dtoProjectIdentities.put(DataSource.Github, new DTOProjectIdentity(DataSource.Github, identityURL));
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
 
@@ -213,8 +212,8 @@ public class ProductsTest {
                 .andExpect(jsonPath("$.projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$.projects[0].active", is(active)))
                 .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$.projects[0].identities.Github.dataSource", is(DataSource.Github.toString())))
-                .andExpect(jsonPath("$.projects[0].identities.Github.url", is(identityURL)))
+                .andExpect(jsonPath("$.projects[0].identities.GITHUB.dataSource", is(DataSource.GITHUB.toString())))
+                .andExpect(jsonPath("$.projects[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$.projects[0].students", is(nullValue())))
                 .andDo(document("products/single",
@@ -251,13 +250,13 @@ public class ProductsTest {
                                         .description("Project identifier in the backlog"),
                                 fieldWithPath("projects[].identities")
                                         .description("Project identities"),
-                                fieldWithPath("projects[].identities.Github")
+                                fieldWithPath("projects[].identities.GITHUB")
                                         .description("Example of identity, URLs separated by a ';'"),
-                                fieldWithPath("projects[].identities.Github.dataSource")
-                                        .description("Identity data source. Example: Github, Taiga, PRT"),
-                                fieldWithPath("projects[].identities.Github.url")
+                                fieldWithPath("projects[].identities.GITHUB.dataSource")
+                                        .description("Identity data source. Example: GITHUB, Taiga, PRT"),
+                                fieldWithPath("projects[].identities.GITHUB.url")
                                         .description("Identity URL"),
-                                fieldWithPath("projects[].identities.Github.project")
+                                fieldWithPath("projects[].identities.GITHUB.project")
                                         .description("Identity project"),
                                 fieldWithPath("projects[].isGlobal")
                                         .description("Is a global project?"),
