@@ -86,6 +86,12 @@ public class MetricsController {
         metrics.forEach(this::normalizeStudentNamesByMetric);
     }
 
+    public List<Metric> getNormalizedMetricsByStudentIdOrderByName(Long studentId){
+        List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(studentId);
+        normalizeStudentNamesByMetrics(metrics);
+        return metrics;
+    }
+
     public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
         Project project = projectController.findProjectByExternalId(prj);
         List<Metric> metrics = metricRepository.findByProject_IdOrderByName(project.getId());
@@ -256,5 +262,16 @@ public class MetricsController {
 
     public List<MetricCategory> getMetricCategories() {
         return (List<MetricCategory>) metricCategoryRepository.findAll();
+    }
+
+    public void updateStudentMetricsByIds(List<Long> metricsIds, Student student){
+        metricsIds.forEach(metricId ->{
+            Optional<Metric> metricSearchResult = metricRepository.findById(metricId);
+            if (metricSearchResult.isPresent()) {
+                Metric metric = metricSearchResult.get();
+                metric.setStudent(student);
+                metricRepository.save(metric);
+            }
+        });
     }
 }

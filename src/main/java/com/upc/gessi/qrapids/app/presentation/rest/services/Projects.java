@@ -101,8 +101,8 @@ public class Projects {
             }
             if (projectsController.checkProjectByName(id, name)) {
                 Map<DataSource,DTOProjectIdentity> identities = new HashMap<>();
-                identities.put(DataSource.Github,new DTOProjectIdentity(DataSource.Github, githubURL));
-                identities.put(DataSource.Taiga,new DTOProjectIdentity(DataSource.Taiga, taigaURL));
+                identities.put(DataSource.GITHUB,new DTOProjectIdentity(DataSource.GITHUB, githubURL));
+                identities.put(DataSource.TAIGA,new DTOProjectIdentity(DataSource.TAIGA, taigaURL));
                 identities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
                 DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, isGlobal, identities);
                 projectsController.updateProject(p);

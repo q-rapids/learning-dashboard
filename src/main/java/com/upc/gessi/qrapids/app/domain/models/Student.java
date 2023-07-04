@@ -3,12 +3,12 @@ package com.upc.gessi.qrapids.app.domain.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "student")
+@Table(name = "student", uniqueConstraints = {@UniqueConstraint(name="UniqueNameByProject", columnNames = {"name", "projectId"})})
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name" , unique = true)
+    @Column(name = "name")
     private String name;
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")

@@ -30,7 +30,7 @@ public class StudentIdentityRepositoryTest {
         String studentName = "test";
         String username = "test";
         Student student = new Student(studentName, null);
-        StudentIdentity studentIdentity = new StudentIdentity(DataSource.Github, username, student);
+        StudentIdentity studentIdentity = new StudentIdentity(DataSource.GITHUB, username, student);
 
         List<StudentIdentity> studentIdentities = Collections.singletonList(studentIdentity);
         entityManager.persistAndFlush(student);

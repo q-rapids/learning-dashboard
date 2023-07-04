@@ -16,17 +16,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @RestController
 public class Metrics {
 
@@ -38,7 +39,7 @@ public class Metrics {
 
     private Logger logger = LoggerFactory.getLogger(Metrics.class);
 
-    @GetMapping("/api/metrics/import")
+    @GetMapping("/api/projects/metrics/import")
     @ResponseStatus(HttpStatus.OK)
     public void importMetrics() {
         try {
@@ -52,91 +53,35 @@ public class Metrics {
         }
     }
 
-    @GetMapping("/api/metrics")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Metric> getMetrics(@RequestParam(value = "prj") String prj) {
-        try {
-            return metricsController.getMetricsByProject(prj);
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
-        }
-    }
-
-    @GetMapping("api/metrics/list")
+    @GetMapping("/api/projects/metrics/list")
     @ResponseStatus(HttpStatus.OK)
     public List<String> getList() {
-
         return metricsController.getAllNames();
-
     }
 
-    @PutMapping("/api/metrics/{id}")
+    @PutMapping("/api/projects/metrics/{metric_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void editMetric(@PathVariable Long id, HttpServletRequest request) {
+    public void editMetric(@PathVariable Long metricId, HttpServletRequest request) {
         try {
             String threshold = request.getParameter("threshold");
             String webUrl = request.getParameter("url");
             String categoryName = request.getParameter("categoryName");
-            metricsController.editMetric(id,threshold,webUrl,categoryName); // at the moment is only possible change threshold
+            metricsController.editMetric(metricId,threshold,webUrl,categoryName); // at the moment is only possible change threshold
         } catch (MetricNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
-    @GetMapping("/api/metrics/student")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value = "prj") String prj) throws IOException {
 
-        return studentsController.getStudentWithMetricsFromProject(prj);
+    @DeleteMapping("/api/projects/metrics/students/{studentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long studentId) {
+
+        studentsController.deleteStudents(studentId);
     }
 
-    @GetMapping("/api/metrics/student/historical")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOStudentMetricsHistorical> getStudentsAndMetricsHistorical(@RequestParam(value = "prj") String prj,  @RequestParam(value = "profile", required = false) String profileId, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
-
-        return studentsController.getStudentWithHistoricalMetricsFromProject(prj, LocalDate.parse(from), LocalDate.parse(to), profileId);
-    }
-
-
-    @PutMapping("/api/metrics/student")
-    @ResponseStatus(HttpStatus.OK)
-    public Long updateMetricStudent(HttpServletRequest request) {
-
-        String userMetricstemp = request.getParameter("userTemp");
-        String[] userMetrics = new String[0];
-        if(userMetricstemp!="empty") userMetrics=userMetricstemp.split(",");
-        String studentId = request.getParameter("studentId");
-        String prjId = request.getParameter("projectId");
-        String[] students = request.getParameter("studentsList").split(",");
-
-        for (int i = 1; i < students.length ; i++) {
-            if(students[i].equals("empty")) students[i] = null;
-        }
-
-        Map<DataSource, DTOStudentIdentity> identities = new HashMap<>();
-
-        identities.put(DataSource.Github, new DTOStudentIdentity(DataSource.Github, students[1]));
-        identities.put(DataSource.Taiga, new DTOStudentIdentity(DataSource.Taiga, students[2]));
-        identities.put(DataSource.PRT, new DTOStudentIdentity(DataSource.PRT, students[3]));
-        DTOStudent dtostudents = new DTOStudent(students[0], identities);
-
-        Long id = studentsController.updateStudents(studentId,dtostudents,userMetrics, prjId);
-        return id;
-
-    }
-
-    @DeleteMapping("/api/metrics/student/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long id) {
-
-       studentsController.deleteStudents(id);
-
-
-    }
-
-    @GetMapping("/api/metrics/categories")
+    @GetMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricCategory> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
         Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories(name);
@@ -147,7 +92,8 @@ public class Metrics {
         return dtoMetricCategoryList;
     }
 
-    @PostMapping("/api/metrics/categories")
+
+    @PostMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
         try {
@@ -159,33 +105,85 @@ public class Metrics {
         }
     }
 
-    @PutMapping("/api/metrics/categories")
+    @PutMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
-    public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name", required = true) String name) {
+    public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name") String name) {
         try {
-             metricsController.updateMetricCategory(categories, name);
+            metricsController.updateMetricCategory(categories, name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
-    @DeleteMapping("/api/metrics/categories")
+    @DeleteMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteMetricsCategories (@RequestParam(value = "name", required = true) String name) {
+    public void deleteMetricsCategories (@RequestParam(value = "name") String name) {
         try {
-             metricsController.deleteMetricCategory(name);
+            metricsController.deleteMetricCategory(name);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
-    @RequestMapping("/api/metrics/current")
+    // PROJECT RELATED ENDPOINTS
+
+    @GetMapping("/api/projects/metrics")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
+    public List<Metric> getMetrics(@RequestParam(value="project-external-id") String projectExternalId) {
         try {
-            return metricsController.getAllMetricsCurrentEvaluation(prj, profile);
+            return metricsController.getMetricsByProject(projectExternalId);
+        } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        }
+    }
+    @GetMapping("/api/projects/metrics/students")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="project-external-id") String projectExternalId) throws IOException {
+
+        return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
+    }
+
+    @GetMapping("/api/projects/metrics/students/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStudentMetrics> getStudentsAndMetricsHistorical(@RequestParam(value="project-external-id") String projectExternalId,
+                                                                             @RequestParam(value = "profile", required = false) String profileId,
+                                                                             @RequestParam("from") String from,
+                                                                             @RequestParam("to") String to) throws IOException {
+
+        return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId);
+    }
+
+    @PutMapping("/api/projects/metrics/students")
+    @ResponseStatus(HttpStatus.OK)
+    public Long updateMetricStudent(@RequestParam(value="project-external-id") String projectExternalId, @RequestBody @Valid DTOCreateStudent body,
+                                    Errors errors) {
+
+        if(errors.hasErrors()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
+        }
+
+        Map<DataSource, DTOStudentIdentity> parsedIdentities = new HashMap<>();
+        body.getIdentities().forEach((dataSource, identity) -> {
+            parsedIdentities.put(dataSource, new DTOStudentIdentity(dataSource, identity));
+        });
+
+
+        DTOStudent dtoStudent = new DTOStudent(body.getName(),  parsedIdentities);
+        Long id = studentsController.updateStudentAndMetrics(body.getId(), dtoStudent, body.getMetrics(), projectExternalId);
+        return id;
+    }
+
+
+
+    @RequestMapping("/api/projects/metrics/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value="project-external-id") String projectExternalId,
+                                                           @RequestParam(value = "profile", required = false) String profile) {
+        try {
+            return metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profile);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -195,11 +193,12 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/metrics/{id}/current")
+    @RequestMapping("/api/projects/metrics/{metricId}/current")
     @ResponseStatus(HttpStatus.OK)
-    public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
+    public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam(value="project-external-id") String projectExternalId,
+                                                         @PathVariable String metricId) {
         try {
-            return metricsController.getSingleMetricCurrentEvaluation(id, prj);
+            return metricsController.getSingleMetricCurrentEvaluation(metricId, projectExternalId);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -209,11 +208,14 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/metrics/historical")
+    @RequestMapping("/api/projects/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value="project-external-id") String projectExternalId,
+                                                              @RequestParam(value = "profile_id", required = false) String profileId,
+                                                              @RequestParam("from") String from,
+                                                              @RequestParam("to") String to) {
         try {
-            return metricsController.getAllMetricsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
+            return metricsController.getAllMetricsHistoricalEvaluation(projectExternalId, profileId, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -223,11 +225,14 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/metrics/{id}/historical")
+    @RequestMapping("/api/projects/metrics/{metricId}/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value="project-external-id") String projectExternalId,
+                                                                @RequestParam(value = "profile_id", required = false) String profileId,
+                                                                @PathVariable String metricId, @RequestParam("from") String from,
+                                                                @RequestParam("to") String to) {
         try {
-            return metricsController.getSingleMetricHistoricalEvaluation(id, prj, profile, LocalDate.parse(from), LocalDate.parse(to));
+            return metricsController.getSingleMetricHistoricalEvaluation(metricId, projectExternalId, profileId, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -237,12 +242,15 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/metrics/prediction")
+    @RequestMapping("/api/projects/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("technique") String techinique, @RequestParam("horizon") String horizon) throws IOException {
+    public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value="project-external-id") String projectExternalId,
+                                                              @RequestParam(value = "profile_id", required = false) String profileId,
+                                                              @RequestParam("technique") String technique,
+                                                              @RequestParam("horizon") String horizon) throws IOException {
         try {
-            List<DTOMetricEvaluation> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(prj, profile);
-            return metricsController.getMetricsPrediction(currentEvaluation, prj, techinique, "7", horizon);
+            List<DTOMetricEvaluation> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId);
+            return metricsController.getMetricsPrediction(currentEvaluation, projectExternalId, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -252,11 +260,12 @@ public class Metrics {
         }
     }
 
-    @GetMapping("/api/metrics/currentDate")
+    @GetMapping("/api/projects/metrics/current-date")
     @ResponseStatus(HttpStatus.OK)
-    public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
+    public LocalDate getCurrentDate(@RequestParam(value="project-external-id") String projectExternalId,
+                                    @RequestParam(value = "profile_id", required = false) String profileId) {
         try {
-            List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(prj, profile);
+            List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId);
             return metrics.get(0).getDate();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
