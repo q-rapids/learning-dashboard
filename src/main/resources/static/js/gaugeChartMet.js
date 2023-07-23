@@ -16,6 +16,7 @@ var students;
 var global = false;
 
 
+
 const DEFAULT_CATEGORY = "Default";
 
 var url;
@@ -24,7 +25,7 @@ if (getParameterByName('id').length !== 0) {
     url = parseURLComposed("../api/qualityFactors/metrics/current");
 } else {
     var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLComposed("../api/metrics/current?profile="+profileId);
+    url = parseURLComposed(`../api/projects/metrics/current?profile=${profileId}&project-external-id=${prj}`);
 }
 
 var metricsDB = [];
@@ -102,7 +103,7 @@ function getData(width, height) {
             sortDataAlphabetically(data);
             jQuery.ajax({
                 dataType: "json",
-                url: "../api/metrics",
+                url: `../api/projects/metrics?project-external-id=${prj}`,
                 cache: false,
                 type: "GET",
                 async: false,
@@ -126,9 +127,10 @@ function getData(width, height) {
 
 function getStudents(data, width, height) {
     if (id)
-        url = parseURLComposed("../api/metrics/student");
+        url = parseURLComposed(`../api/projects/metrics/students?project-external-id=${prj}`);
     else
-        url = "../api/metrics/student"
+        url = `../api/projects/metrics/students?project-external-id=${prj}`
+
     jQuery.ajax({
         dataType: "json",
         url: url,
@@ -206,7 +208,7 @@ function sortFactors (factors) {
 
 function getMetricsCategories (data, width, height) {
     jQuery.ajax({
-        url: "../api/metrics/categories",
+        url: "../api/projects/metrics/categories",
         type: "GET",
         async: false,
         success: function (categories) {
@@ -244,6 +246,7 @@ function getCurrentProject() {
         type: "GET",
         async: false,
         success: function (data) {
+            console.log(data);
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
                     global = data[i].isGlobal

@@ -67,6 +67,17 @@ public class MetricsController {
         }
     }
 
+    public void normalizeMetricsEvaluation(List<DTOMetricEvaluation> metrics, List<DTOStudent> students, Map<Long, String> normalizedNames) {
+        metrics.forEach(metric -> {
+            students.forEach(student -> {
+                List<DTOStudentIdentity> studentIdentities = new ArrayList<>(student.getIdentities().values());
+                metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, normalizedNames.get(student.getId())));
+            });
+        });
+    }
+
+
+
     public void normalizeMetrics(List<Metric> metrics, List<DTOStudent> students, Map<Long, String> normalizedNames) {
         Map<Long, DTOStudent> studentMap = new HashMap<>();
         students.forEach(student -> {
@@ -76,12 +87,13 @@ public class MetricsController {
         metrics.forEach(metric -> {
             if(metric.getStudent() != null) {
                 Long studentId = metric.getStudent().getId();
-                List<DTOStudentIdentity> identities = (List<DTOStudentIdentity>) studentMap.get(studentId).getIdentities().values();
+                List<DTOStudentIdentity> identities = new ArrayList<>(studentMap.get(studentId).getIdentities().values());
                 metric.setName(studentsController.normalizedName(metric.getName(), identities ,  normalizedNames.get(studentId)));
             }
 
         });
     }
+
 
 
 

@@ -123,6 +123,7 @@ public class StudentsController {
 
             List<DTOMetricEvaluation> metricListNoSource = new ArrayList<>();
 
+
             for(Metric m : metrics) {
                 String typeOfFactor = qualityFactorMetricsController.getTypeFromFactorOfMetric(m);
                 if(typeOfFactor == null){
@@ -150,8 +151,9 @@ public class StudentsController {
 
             Map<DataSource, DTOStudentIdentity> dtoStudentIdentities = s.getIdentities();
 
+
             //normalize names
-            metricsController.normalizeMetrics(metrics, students, normalizedNames);
+            metricsController.normalizeMetricsEvaluation(orderedMetricList, students, normalizedNames);
 
             DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), dtoStudentIdentities, orderedMetricList, number);
             dtoStudentMetrics.add(temp);
@@ -163,7 +165,8 @@ public class StudentsController {
         String normalizedMetricName = name;
         int i = 0;
         while (normalizedMetricName.equals(name) && i < studentIdentities.size()) {
-            if (name.contains(studentIdentities.get(i).getUsername())) {
+            String username = studentIdentities.get(i).getUsername();
+            if (username != null && name.contains(username)) {
                 normalizedMetricName = name.replace(studentIdentities.get(i).getUsername(), replaceName);
             }
             ++i;

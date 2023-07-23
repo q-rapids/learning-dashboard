@@ -160,6 +160,7 @@ function getChosenProject(currentProjectId) {
         type: "GET",
         async: true,
         success: function (data) {
+            console.log(data, "projecttt")
         	var projectForm = document.createElement('div');
     		projectForm.setAttribute("id", "projectForm");
 			globalChecked=data.isGlobal
@@ -382,7 +383,7 @@ function getChosenProject(currentProjectId) {
 			var thIdentities = []
 			identities.forEach(identity => {
 				let thIdentity = document.createElement('th');
-				thIdentity.appendChild(document.createTextNode(identity + "username"));
+				thIdentity.appendChild(document.createTextNode(identity + " username"));
 				thIdentity.setAttribute("style", "width:18%");
 				thIdentities.push(thIdentity);
 			})
@@ -527,7 +528,7 @@ function buildRow(studentName, student_identities, studentId) {
 function deleteStudent(studentId) {
 	if (studentId >= 0) {
 		jQuery.ajax({
-			url: "../api/metrics/student/" + studentId,
+			url: `../api/projects/metrics/student/${studentId}?project-external-id=${externalId}`,
 			type: "DELETE",
 			contentType: false,
 			processData: false,
@@ -569,33 +570,34 @@ $("#acceptMetricsButton").click(function () {
 		warningUtils("Warning", "The name is empty");
 	}
 	else {
-		var userSelectedMetrics="";
+		var userSelectedMetrics=[];
 		$('#selMetricsBox').children().each (function (i, option) {
-			userSelectedMetrics+=option.value+",";
+		    userSelectedMetrics.push(option.value);
 		});
-		if(userSelectedMetrics=="") {
-			userSelectedMetrics=","
-		}
-		var taigaNameText = document.getElementById("studentTaigaName"+selectedStudent).innerText
-		var githubNameText = document.getElementById("studentGithubName"+selectedStudent).innerText
-		var prtNameText = document.getElementById("studentPRTName"+selectedStudent).innerText
-		var taigaName = taigaNameText
-		var githubName = githubNameText
-		var prtName = prtNameText
-		if(taigaNameText === "") taigaName="empty"
-		if(githubNameText === "") githubName="empty"
-		if(prtNameText === "") prtName="empty"
+
+		var student_new_identities = {}
+		identities.forEach(identity => {
+		    var identity_new_value = document.getElementById(`student${identity}Name${selectedStudent}`).innerText;
+		    if(identity_new_value === "") identity_new_value = null;
+		    student_new_identities[identity] = identity_new_value;
+		})
+
 		var externalId =document.getElementById(currentSelectionId).innerHTML;
 		var formData = new FormData();
-		formData.append("studentId", selectedStudent)
-		formData.append("userTemp", userSelectedMetrics)
-		formData.append("projectId", externalId)
-		formData.append("studentsList", nameText+","+taigaName+","+githubName+","+prtName)
+
+		body = JSON.stringify({
+		    "id": selectedStudent,
+		    "name": nameText,
+		    "identities": student_new_identities,
+		    "metrics": userSelectedMetrics
+		})
+
+        console.log("FORMDATA: ", body);
 		jQuery.ajax({
-			data: formData,
-			url: "../api/metrics/student",
+			data: body,
+			url: `../api/projects/metrics/students?project-external-id=${externalId}`,
 			type: "PUT",
-			contentType: false,
+			contentType: "application/json;",
 			processData: false,
 			success: function (data) {
 				$("#metricsModal").modal("hide");
@@ -691,7 +693,7 @@ function showMetrics(studentId) {
 	var externalId =document.getElementById(currentSelectionId).innerHTML;
 	jQuery.ajax({
 		dataType: "json",
-		url: "../api/metrics?prj="+externalId,
+		url: `../api/projects/metrics?project-external-id=${externalId}`,
 		cache: false,
 		type: "GET",
 		async: false,

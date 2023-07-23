@@ -137,7 +137,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //            Connection.closeConnection();
-        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true, false);
+        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true, true);
     }
 
     private static List<FactorEvaluationDTO> FactorEvaluationDTOtoDTOFactor(List<DTOFactorEvaluation> factors, String prj)
@@ -292,12 +292,7 @@ public class QMAQualityFactors {
             Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project, anonymize);
 
             qf.forEach(factor -> {
-                factor.getMetrics().forEach(metric -> {  
-                    students.forEach(student -> {
-                        List<DTOStudentIdentity> studentIdentities = new ArrayList<>(student.getIdentities().values());
-                        metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, normalizedNames.get(student.getId())));
-                    });
-                });
+                metricsController.normalizeMetricsEvaluation(factor.getMetrics(), students, normalizedNames);
             });
         }
     }
