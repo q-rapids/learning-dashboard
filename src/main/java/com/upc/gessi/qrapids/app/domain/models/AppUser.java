@@ -5,7 +5,6 @@ import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Entity
@@ -44,6 +43,9 @@ public class AppUser implements Serializable{
     @Column(name="last_connection")
     private LocalDateTime last_connection;
 
+    @Column(name="anonymize_mode")
+    private boolean anonymizeMode;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "user_project",
             joinColumns = { @JoinColumn(name = "user_id") },
@@ -61,6 +63,7 @@ public class AppUser implements Serializable{
         this.userGroup = userGroup;
         this.appuser_question = appuser_question;
         this.question = question;
+        this.anonymizeMode = false;
     }
 
     public AppUser(String username, String email, boolean admin, String password) {
@@ -149,7 +152,15 @@ public class AppUser implements Serializable{
         return question;
     }
 
-    public boolean hasRoute ( String route ) {
+    public boolean isAnonymizeMode() {
+        return anonymizeMode;
+    }
+
+    public void setAnonymizeMode(boolean anonymizeMode) {
+        this.anonymizeMode = anonymizeMode;
+    }
+
+    public boolean hasRoute (String route ) {
 
         if ( this.admin )
             return true;

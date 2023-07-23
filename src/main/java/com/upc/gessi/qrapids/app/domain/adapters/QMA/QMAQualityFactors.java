@@ -2,12 +2,9 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
 import DTOs.*;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
-import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.ProfileProjectStrategicIndicators;
@@ -32,6 +29,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class QMAQualityFactors {
@@ -53,6 +51,9 @@ public class QMAQualityFactors {
 
     @Autowired
     private ProjectsController projectsController;
+
+    @Autowired
+    private MetricsController metricsController;
     
     @Autowired
     private FactorsController factorsController;
@@ -285,14 +286,16 @@ public class QMAQualityFactors {
         }
     }
 
-    private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project) {
+    private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project, boolean anonymize) {
         if(project != null) {
             List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
+            Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project, anonymize);
+
             qf.forEach(factor -> {
-                factor.getMetrics().forEach(metric -> {
+                factor.getMetrics().forEach(metric -> {  
                     students.forEach(student -> {
                         List<DTOStudentIdentity> studentIdentities = new ArrayList<>(student.getIdentities().values());
-                        metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, student.getName()));
+                        metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, normalizedNames.get(student.getId())));
                     });
                 });
             });

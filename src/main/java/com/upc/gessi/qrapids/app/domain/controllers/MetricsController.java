@@ -9,21 +9,17 @@ import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudentIdentity;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MetricsController {
@@ -71,33 +67,40 @@ public class MetricsController {
         }
     }
 
-    public void normalizeStudentNamesByMetric(Metric metric) {
-        if (metric.getStudent() != null) {
+    public void normalizeMetrics(List<Metric> metrics, List<DTOStudent> students, Map<Long, String> normalizedNames) {
+        Map<Long, DTOStudent> studentMap = new HashMap<>();
+        students.forEach(student -> {
+            studentMap.put(student.getId(), student);
+        });
 
-            Student student = metric.getStudent();
-            List<DTOStudentIdentity> studentIdentities = new ArrayList<>(studentsController.getDTOStudentFromStudent(student).getIdentities().values());
+        metrics.forEach(metric -> {
+            if(metric.getStudent() != null) {
+                Long studentId = metric.getStudent().getId();
+                List<DTOStudentIdentity> identities = (List<DTOStudentIdentity>) studentMap.get(studentId).getIdentities().values();
+                metric.setName(studentsController.normalizedName(metric.getName(), identities ,  normalizedNames.get(studentId)));
+            }
 
-            String normalizedMetricName = studentsController.normalizedName(metric.getName(), studentIdentities, student.getName());
-            metric.setName(normalizedMetricName);
-        }
+        });
     }
 
-    public void normalizeStudentNamesByMetrics(List<Metric> metrics){
-        metrics.forEach(this::normalizeStudentNamesByMetric);
-    }
 
-    public List<Metric> getNormalizedMetricsByStudentIdOrderByName(Long studentId){
-        List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(studentId);
-        normalizeStudentNamesByMetrics(metrics);
-        return metrics;
-    }
 
-    public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
+
+
+
+    public List<Metric> getMetricsByProject (String prj, boolean anonymize) throws ProjectNotFoundException {
         Project project = projectController.findProjectByExternalId(prj);
         List<Metric> metrics = metricRepository.findByProject_IdOrderByName(project.getId());
-        normalizeStudentNamesByMetrics(metrics);
+        Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project, anonymize);
+
+        List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
+
+        normalizeMetrics(metrics, students, normalizedNames);
+
         return metrics;
     }
+
+
 
     public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException {
         List<String> projects = projectController.getAllProjectsExternalID();

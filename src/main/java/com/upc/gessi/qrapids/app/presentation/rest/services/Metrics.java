@@ -133,7 +133,7 @@ public class Metrics {
     @ResponseStatus(HttpStatus.OK)
     public List<Metric> getMetrics(@RequestParam(value="project-external-id") String projectExternalId) {
         try {
-            return metricsController.getMetricsByProject(projectExternalId);
+            return metricsController.getMetricsByProject(projectExternalId, false);
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
@@ -143,7 +143,7 @@ public class Metrics {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="project-external-id") String projectExternalId) throws IOException {
 
-        return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
+        return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null, false);
     }
 
     @GetMapping("/api/projects/metrics/students/historical")
@@ -153,7 +153,7 @@ public class Metrics {
                                                                              @RequestParam("from") String from,
                                                                              @RequestParam("to") String to) throws IOException {
 
-        return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId);
+        return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId, false);
     }
 
     @PutMapping("/api/projects/metrics/students")
