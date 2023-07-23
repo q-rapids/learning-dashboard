@@ -137,7 +137,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //            Connection.closeConnection();
-        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true);
+        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true, false);
     }
 
     private static List<FactorEvaluationDTO> FactorEvaluationDTOtoDTOFactor(List<DTOFactorEvaluation> factors, String prj)
@@ -187,7 +187,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //        Connection.closeConnection();
-        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, true, false);
+        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, true, false, false);
 
         return qf;
     }
@@ -215,7 +215,7 @@ public class QMAQualityFactors {
         Factor.setStrategicIndicatorRelation(qma_factors);
     }
 
-    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID,List<FactorMetricEvaluationDTO> evals, String profileId,  boolean filterDB, boolean currentData) throws ProjectNotFoundException {
+    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID,List<FactorMetricEvaluationDTO> evals, String profileId,  boolean filterDB, boolean currentData, boolean anonymize) throws ProjectNotFoundException {
         List<DTODetailedFactorEvaluation> qf = new ArrayList<>();
         boolean found; // to check if the factor is in the database
 
@@ -261,7 +261,7 @@ public class QMAQualityFactors {
         }
 
         //normalize student names
-        normalizeQFMetricsStudentNames(qf, project);
+        normalizeQFMetricsStudentNames(qf, project, anonymize);
 
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
