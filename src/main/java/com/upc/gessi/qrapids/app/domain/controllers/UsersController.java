@@ -11,9 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -94,6 +92,6 @@ public class UsersController {
     }
 
     public boolean hasCurrentUserAnonymousMode(){
-        return  getCurrentUser().isAnonymizeMode();
+        return  getCurrentUser().isAnonymousMode();
     }
 }

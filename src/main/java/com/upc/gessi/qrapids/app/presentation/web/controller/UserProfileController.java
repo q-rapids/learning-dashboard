@@ -94,6 +94,7 @@ public class UserProfileController {
             if(userOptional.isPresent()) {
                 AppUser userUpdate = userOptional.get();
                 userUpdate.setEmail(user.getEmail());
+                userUpdate.setAnonymousMode(user.isAnonymousMode());
 
                 if(!(user.getAppuser_question() == null))
                     userUpdate.setAppuser_question(user.getAppuser_question());

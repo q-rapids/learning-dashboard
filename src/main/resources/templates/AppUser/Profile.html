@@ -57,6 +57,11 @@
                 <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" th:value="${appuser.getEmail()}"  required="required"/>
             </div>
 
+            <div class="form-group">
+                <label for="anonymousMode">Anonymous Mode</label>
+                <input type="checkbox" class="form-control" th:name="anonymousMode" th:id="anonymousMode" th:field="*{anonymousMode}" th:value="${appuser.isAnonymousMode()}"/>
+            </div>
+
             <button type="submit" class="btn btn-border-black">Update</button>
 
         </form>
