@@ -43,8 +43,9 @@ public class AppUser implements Serializable{
     @Column(name="last_connection")
     private LocalDateTime last_connection;
 
-    @Column(name="anonymize_mode")
-    private boolean anonymizeMode;
+    @Column(name="anonymous_mode")
+    private boolean anonymousMode;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "user_project",
@@ -63,7 +64,7 @@ public class AppUser implements Serializable{
         this.userGroup = userGroup;
         this.appuser_question = appuser_question;
         this.question = question;
-        this.anonymizeMode = false;
+        this.anonymousMode = false;
     }
 
     public AppUser(String username, String email, boolean admin, String password) {
@@ -152,12 +153,12 @@ public class AppUser implements Serializable{
         return question;
     }
 
-    public boolean isAnonymizeMode() {
-        return anonymizeMode;
+    public boolean isAnonymousMode() {
+        return anonymousMode;
     }
 
-    public void setAnonymizeMode(boolean anonymizeMode) {
-        this.anonymizeMode = anonymizeMode;
+    public void setAnonymousMode(boolean anonymousMode) {
+        this.anonymousMode = anonymousMode;
     }
 
     public boolean hasRoute (String route ) {
