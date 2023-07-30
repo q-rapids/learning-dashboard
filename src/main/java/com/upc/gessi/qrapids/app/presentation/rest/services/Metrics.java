@@ -3,8 +3,10 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
+import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
@@ -16,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -133,7 +137,7 @@ public class Metrics {
     @ResponseStatus(HttpStatus.OK)
     public List<Metric> getMetrics(@RequestParam(value="project-external-id") String projectExternalId) {
         try {
-            return metricsController.getMetricsByProject(projectExternalId, true);
+            return metricsController.getMetricsByProject(projectExternalId);
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
@@ -143,7 +147,8 @@ public class Metrics {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="project-external-id") String projectExternalId) throws IOException {
 
-        return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null, true);
+
+        return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
     }
 
     @GetMapping("/api/projects/metrics/students/historical")
@@ -153,7 +158,7 @@ public class Metrics {
                                                                              @RequestParam("from") String from,
                                                                              @RequestParam("to") String to) throws IOException {
 
-        return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId, true);
+        return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId);
     }
 
     @PutMapping("/api/projects/metrics/students")

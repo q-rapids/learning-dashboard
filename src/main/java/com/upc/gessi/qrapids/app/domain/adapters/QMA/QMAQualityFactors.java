@@ -137,7 +137,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //            Connection.closeConnection();
-        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true, true);
+        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true);
     }
 
     private static List<FactorEvaluationDTO> FactorEvaluationDTOtoDTOFactor(List<DTOFactorEvaluation> factors, String prj)
@@ -187,7 +187,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //        Connection.closeConnection();
-        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, true, false, false);
+        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, true, false);
 
         return qf;
     }
@@ -215,7 +215,7 @@ public class QMAQualityFactors {
         Factor.setStrategicIndicatorRelation(qma_factors);
     }
 
-    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID,List<FactorMetricEvaluationDTO> evals, String profileId,  boolean filterDB, boolean currentData, boolean anonymize) throws ProjectNotFoundException {
+    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID,List<FactorMetricEvaluationDTO> evals, String profileId,  boolean filterDB, boolean currentData) throws ProjectNotFoundException {
         List<DTODetailedFactorEvaluation> qf = new ArrayList<>();
         boolean found; // to check if the factor is in the database
 
@@ -261,7 +261,7 @@ public class QMAQualityFactors {
         }
 
         //normalize student names
-        normalizeQFMetricsStudentNames(qf, project, anonymize);
+        normalizeQFMetricsStudentNames(qf, project);
 
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
@@ -286,10 +286,10 @@ public class QMAQualityFactors {
         }
     }
 
-    private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project, boolean anonymize) {
+    private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project) {
         if(project != null) {
             List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
-            Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project, anonymize);
+            Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
 
             qf.forEach(factor -> {
                 metricsController.normalizeMetricsEvaluation(factor.getMetrics(), students, normalizedNames);

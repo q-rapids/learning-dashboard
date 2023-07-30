@@ -39,6 +39,8 @@ public class StudentsController {
     @Autowired
     private MetricsController metricsController;
 
+    @Autowired
+    private UsersController usersController;
 
     public DTOStudent getDTOStudentFromStudent(Student student){
         List<StudentIdentity> studentIdentities = studentIdentityRepository.findAllByStudent(student);
@@ -71,7 +73,10 @@ public class StudentsController {
         }
     }
 
-    public Map<Long, String> getNormalizedNamesByProject(Project project, boolean anonymize) {
+    public Map<Long, String> getNormalizedNamesByProject(Project project) {
+
+        //Gets anonymize variable from the current user (request) context
+        boolean anonymize = usersController.hasCurrentUserAnonymousMode();
 
         List<Student> students = studentRepository.findAllByProjectIdOrderByName(project.getId());
 
@@ -102,14 +107,14 @@ public class StudentsController {
         return studentNormalizedNames;
     }
 
-    public List<DTOStudentMetrics> getStudentMetricsFromProject(String projectExternalId, LocalDate from, LocalDate to, String profileId, boolean anonymize) throws IOException {
+    public List<DTOStudentMetrics> getStudentMetricsFromProject(String projectExternalId, LocalDate from, LocalDate to, String profileId) throws IOException {
         Project project = projectRepository.findByExternalId(projectExternalId);
 
         List<DTOStudent> students = getStudentsFromProject(project.getId());
 
         List<DTOStudentMetrics> dtoStudentMetrics = new ArrayList<>();
 
-        Map<Long, String> normalizedNames = getNormalizedNamesByProject(project, anonymize);
+        Map<Long, String> normalizedNames = getNormalizedNamesByProject(project);
 
 
         for(DTOStudent s : students) {

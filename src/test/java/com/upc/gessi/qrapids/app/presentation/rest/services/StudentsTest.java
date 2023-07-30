@@ -85,7 +85,7 @@ public class StudentsTest {
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
-        when(studentsDomainController.getStudentMetricsFromProject("prjExternalId",null,null,null, false)).thenReturn(dtoStudentMetricsList);
+        when(studentsDomainController.getStudentMetricsFromProject("prjExternalId",null,null,null)).thenReturn(dtoStudentMetricsList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -188,7 +188,7 @@ public class StudentsTest {
                 ));
 
         // Verify mock interactions
-        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId",null,null,null, false);
+        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId",null,null,null);
         verifyNoMoreInteractions(studentsDomainController);
 
 
@@ -218,7 +218,7 @@ public class StudentsTest {
 
         // Given
         when(studentsDomainController.getStudentMetricsFromProject(
-                "prjExternalId", localDateFrom, localDateTo, "profileId", false))
+                "prjExternalId", localDateFrom, localDateTo, "profileId"))
                 .thenReturn(dtoStudentMetricsList);
 
         // Perform request
@@ -332,7 +332,7 @@ public class StudentsTest {
                 ));
 
         // Verify mock interactions
-        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId", false);
+        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId");
         verifyNoMoreInteractions(studentsDomainController);
 
     }

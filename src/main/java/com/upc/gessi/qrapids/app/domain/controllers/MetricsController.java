@@ -100,10 +100,10 @@ public class MetricsController {
 
 
 
-    public List<Metric> getMetricsByProject (String prj, boolean anonymize) throws ProjectNotFoundException {
+    public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
         Project project = projectController.findProjectByExternalId(prj);
         List<Metric> metrics = metricRepository.findByProject_IdOrderByName(project.getId());
-        Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project, anonymize);
+        Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
 
         List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
 
