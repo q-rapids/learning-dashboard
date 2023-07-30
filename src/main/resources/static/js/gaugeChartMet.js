@@ -25,7 +25,7 @@ if (getParameterByName('id').length !== 0) {
     url = parseURLComposed("../api/qualityFactors/metrics/current");
 } else {
     var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLComposed(`../api/projects/metrics/current?profile=${profileId}&project-external-id=${prj}`);
+    url = parseURLComposed("../api/projects/metrics/current?profile="+profileId);
 }
 
 var metricsDB = [];
@@ -103,7 +103,7 @@ function getData(width, height) {
             sortDataAlphabetically(data);
             jQuery.ajax({
                 dataType: "json",
-                url: `../api/projects/metrics?project-external-id=${prj}`,
+                url: "../api/projects/metrics",
                 cache: false,
                 type: "GET",
                 async: false,
@@ -127,9 +127,9 @@ function getData(width, height) {
 
 function getStudents(data, width, height) {
     if (id)
-        url = parseURLComposed(`../api/projects/metrics/students?project-external-id=${prj}`);
+        url = parseURLComposed("../api/projects/metrics/student");
     else
-        url = `../api/projects/metrics/students?project-external-id=${prj}`
+        url = "../api/projects/metrics/student"
 
     jQuery.ajax({
         dataType: "json",

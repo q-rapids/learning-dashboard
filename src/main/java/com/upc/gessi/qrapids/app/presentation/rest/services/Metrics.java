@@ -135,7 +135,7 @@ public class Metrics {
 
     @GetMapping("/api/projects/metrics")
     @ResponseStatus(HttpStatus.OK)
-    public List<Metric> getMetrics(@RequestParam(value="project-external-id") String projectExternalId) {
+    public List<Metric> getMetrics(@RequestParam(value="prj") String projectExternalId) {
         try {
             return metricsController.getMetricsByProject(projectExternalId);
         } catch (ProjectNotFoundException e) {
@@ -145,7 +145,7 @@ public class Metrics {
     }
     @GetMapping("/api/projects/metrics/students")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="project-external-id") String projectExternalId) throws IOException {
+    public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="prj") String projectExternalId) throws IOException {
 
 
         return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
@@ -153,7 +153,7 @@ public class Metrics {
 
     @GetMapping("/api/projects/metrics/students/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStudentMetrics> getStudentsAndMetricsHistorical(@RequestParam(value="project-external-id") String projectExternalId,
+    public List<DTOStudentMetrics> getStudentsAndMetricsHistorical(@RequestParam(value="prj") String projectExternalId,
                                                                              @RequestParam(value = "profile", required = false) String profileId,
                                                                              @RequestParam("from") String from,
                                                                              @RequestParam("to") String to) throws IOException {
@@ -163,7 +163,7 @@ public class Metrics {
 
     @PutMapping("/api/projects/metrics/students")
     @ResponseStatus(HttpStatus.OK)
-    public Long updateMetricStudent(@RequestParam(value="project-external-id") String projectExternalId, @RequestBody @Valid DTOCreateStudent body,
+    public Long updateMetricStudent(@RequestParam(value="prj") String projectExternalId, @RequestBody @Valid DTOCreateStudent body,
                                     Errors errors) {
 
         if(errors.hasErrors()){
@@ -185,7 +185,7 @@ public class Metrics {
 
     @RequestMapping("/api/projects/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value="project-external-id") String projectExternalId,
+    public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value="prj") String projectExternalId,
                                                            @RequestParam(value = "profile", required = false) String profile) {
         try {
             return metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profile);
@@ -200,7 +200,7 @@ public class Metrics {
 
     @RequestMapping("/api/projects/metrics/{metricId}/current")
     @ResponseStatus(HttpStatus.OK)
-    public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam(value="project-external-id") String projectExternalId,
+    public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam(value="prj") String projectExternalId,
                                                          @PathVariable String metricId) {
         try {
             return metricsController.getSingleMetricCurrentEvaluation(metricId, projectExternalId);
@@ -215,7 +215,7 @@ public class Metrics {
 
     @RequestMapping("/api/projects/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value="project-external-id") String projectExternalId,
+    public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value="prj") String projectExternalId,
                                                               @RequestParam(value = "profile_id", required = false) String profileId,
                                                               @RequestParam("from") String from,
                                                               @RequestParam("to") String to) {
@@ -232,7 +232,7 @@ public class Metrics {
 
     @RequestMapping("/api/projects/metrics/{metricId}/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value="project-external-id") String projectExternalId,
+    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value="prj") String projectExternalId,
                                                                 @RequestParam(value = "profile_id", required = false) String profileId,
                                                                 @PathVariable String metricId, @RequestParam("from") String from,
                                                                 @RequestParam("to") String to) {
@@ -249,7 +249,7 @@ public class Metrics {
 
     @RequestMapping("/api/projects/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value="project-external-id") String projectExternalId,
+    public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value="prj") String projectExternalId,
                                                               @RequestParam(value = "profile_id", required = false) String profileId,
                                                               @RequestParam("technique") String technique,
                                                               @RequestParam("horizon") String horizon) throws IOException {
@@ -267,7 +267,7 @@ public class Metrics {
 
     @GetMapping("/api/projects/metrics/current-date")
     @ResponseStatus(HttpStatus.OK)
-    public LocalDate getCurrentDate(@RequestParam(value="project-external-id") String projectExternalId,
+    public LocalDate getCurrentDate(@RequestParam(value="prj") String projectExternalId,
                                     @RequestParam(value = "profile_id", required = false) String profileId) {
         try {
             List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId);

@@ -192,7 +192,7 @@ public class MetricsTest {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/projects/metrics/current")
-                .param("project-external-id", projectExternalId);
+                .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -214,7 +214,7 @@ public class MetricsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("Project external identifier")),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -257,7 +257,7 @@ public class MetricsTest {
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
                 .get("/api/projects/metrics/{metricId}/current", dtoMetricEvaluation.getId())
-                .param("project-external-id", projectExternalId);
+                .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -282,7 +282,7 @@ public class MetricsTest {
                                 parameterWithName("metricId")
                                         .description("Metric identifier")),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("Project external identifier")),
                         responseFields(
                                 fieldWithPath("id")
@@ -327,7 +327,7 @@ public class MetricsTest {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/projects/metrics/historical")
-                .param("project-external-id", projectExternalId)
+                .param("prj", projectExternalId)
                 .param("from", dateFrom)
                 .param("to", dateTo);
 
@@ -351,7 +351,7 @@ public class MetricsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
@@ -400,7 +400,7 @@ public class MetricsTest {
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
                 .get("/api/projects/metrics/{metricId}/historical", dtoMetricEvaluation.getId())
-                .param("project-external-id", projectExternalId)
+                .param("prj", projectExternalId)
                 .param("from", dateFrom)
                 .param("to", dateTo);
 
@@ -427,7 +427,7 @@ public class MetricsTest {
                                 parameterWithName("metricId")
                                         .description("Metric identifier")),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
@@ -489,7 +489,7 @@ public class MetricsTest {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/projects/metrics/prediction")
-                .param("project-external-id", projectExternalId)
+                .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);
 
@@ -515,7 +515,7 @@ public class MetricsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),

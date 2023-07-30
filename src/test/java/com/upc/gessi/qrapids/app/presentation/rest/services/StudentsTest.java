@@ -90,7 +90,7 @@ public class StudentsTest {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/projects/metrics/students")
-                .param("project-external-id", "prjExternalId");
+                .param("prj", "prjExternalId");
 
 
         this.mockMvc.perform(requestBuilder)
@@ -123,7 +123,7 @@ public class StudentsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("Project external identifier")),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -224,7 +224,7 @@ public class StudentsTest {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/projects/metrics/students/historical")
-                .param("project-external-id", "prjExternalId")
+                .param("prj", "prjExternalId")
                 .param("from", String.valueOf(localDateFrom))
                 .param("to", String.valueOf(localDateTo))
                 .param("profile", "profileId");
@@ -261,7 +261,7 @@ public class StudentsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                     .description("Project external identifier"),
                                 parameterWithName("profile")
                                     .description("Profile identifier"),
@@ -371,7 +371,7 @@ public class StudentsTest {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/projects/metrics/students")
-                .param("project-external-id", projectId)
+                .param("prj", projectId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectWriter.writeValueAsString(dtoCreateStudent))
                 .with(request -> {
@@ -385,7 +385,7 @@ public class StudentsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("project-external-id")
+                                parameterWithName("prj")
                                         .description("External id of the student's project")
                         )
                 ));

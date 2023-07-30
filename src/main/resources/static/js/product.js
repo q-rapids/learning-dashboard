@@ -244,7 +244,7 @@ function getChosenProject(currentProjectId) {
                 identityRow.appendChild(identityURLp);
                 var inputIdentityUrl = document.createElement("input");
 
-                inputIdentityUrl.setAttribute('id', 'input' + identity + ' Url');
+                inputIdentityUrl.setAttribute('id', 'input' + identity + 'Url');
                 inputIdentityUrl.setAttribute('type', 'text');
                 var identityURL = "";
                 if (data.identities[identity] !== undefined) identityURL = identity.url;
@@ -379,7 +379,7 @@ function getChosenProject(currentProjectId) {
 			thName.appendChild(document.createTextNode("Name*"));
 			thName.setAttribute("style", "width:16%")
 
-			//LOAD PROJECT IDENTITIES
+			//LOAD TEAM MEMBERS HEAD IDENTITIES
 			var thIdentities = []
 			identities.forEach(identity => {
 				let thIdentity = document.createElement('th');
@@ -425,10 +425,11 @@ function getChosenProject(currentProjectId) {
     		document.getElementById('productInfo').innerHTML = "";
     		document.getElementById('productInfo').appendChild(projectForm);
     		document.getElementById('productInfo').appendChild(logoColumn);
-
+            console.log("LULLL",data)
 			for(let i = 0 ; i<data.students.length; i++) {
+			    console.log(data)
 				var s = data.students[i];
-				buildRow(s.studentName, s.identities, s.student_id);
+				buildRow(s.name, s.identities, s.id);
 			}
 
     		currentProject = currentProjectId;
@@ -463,6 +464,7 @@ function fieldEdited(studentName, identities, studentId) {
 }
 
 function buildRow(studentName, student_identities, studentId) {
+    console.log("BUILDING ROW:", studentName, student_identities, studentId)
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 	var name = document.createElement("td");
@@ -474,12 +476,16 @@ function buildRow(studentName, student_identities, studentId) {
 	row.appendChild(name);
 
 	identities.forEach(identity => {
+	    console.log(identity, )
 		var identityName = document.createElement("td");
 		identityName.setAttribute("contenteditable", "true");
 		identityName.setAttribute("style", "border:1px solid lightgray")
 		identityName.setAttribute("id" , "student" + identity + "Name" + studentId)
 		identityName.addEventListener("input", function () {fieldEdited(studentName, student_identities, studentId)});
-		identityName.innerHTML= student_identities[identity] !== undefined ? student_identities.username : "";
+
+		//CHECK IF username exists
+		identityName.innerHTML= (student_identities[identity] !== undefined || student_identities[identity].username !== undefined)
+		                        ? student_identities[identity].username : "";
 		row.appendChild(identityName);
 	})
 
@@ -528,7 +534,7 @@ function buildRow(studentName, student_identities, studentId) {
 function deleteStudent(studentId) {
 	if (studentId >= 0) {
 		jQuery.ajax({
-			url: `../api/projects/metrics/student/${studentId}?project-external-id=${externalId}`,
+			url: `../api/projects/metrics/student/${studentId}?prj=${externalId}`,
 			type: "DELETE",
 			contentType: false,
 			processData: false,
@@ -595,7 +601,7 @@ $("#acceptMetricsButton").click(function () {
         console.log("FORMDATA: ", body);
 		jQuery.ajax({
 			data: body,
-			url: `../api/projects/metrics/students?project-external-id=${externalId}`,
+			url: `../api/projects/metrics/students?prj=${externalId}`,
 			type: "PUT",
 			contentType: "application/json;",
 			processData: false,
@@ -693,7 +699,7 @@ function showMetrics(studentId) {
 	var externalId =document.getElementById(currentSelectionId).innerHTML;
 	jQuery.ajax({
 		dataType: "json",
-		url: `../api/projects/metrics?project-external-id=${externalId}`,
+		url: `../api/projects/metrics?prj=${externalId}`,
 		cache: false,
 		type: "GET",
 		async: false,
@@ -771,6 +777,24 @@ function saveProject() {
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
+
+            project_new_identities = {};
+
+            identities.forEach(identity => {
+                var identity_new_value = document.getElementById(`input{identity}URL`).innerText;
+                if(identity_new_value === "") identity_new_value = null;
+                project_new_identities[identity] = identity_new_value;
+            })
+
+            var externalId =document.getElementById(currentSelectionId).innerHTML;
+            var formData = new FormData();
+
+            body = JSON.stringify({
+                "id": selectedStudent,
+                "name": nameText,
+                "identities": student_new_identities,
+                "metrics": userSelectedMetrics
+            })
 	        $.ajax({
 	            url: url,
 	            data: formData,
