@@ -246,13 +246,13 @@ function getChosenProject(currentProjectId) {
 
                 inputIdentityUrl.setAttribute('id', 'input' + identity + 'Url');
                 inputIdentityUrl.setAttribute('type', 'text');
-                var identityURL = "";
-                if (data.identities[identity] !== undefined) identityURL = identity.url;
+                var identityURL = (data.identities[identity] !== undefined && data.identities[identity].url !== undefined)
+                                        ? data.identities[identity].url : "";
                 inputIdentityUrl.setAttribute('value', identityURL);
                 inputIdentityUrl.setAttribute('style', 'width: 100%;');
 
                 var placeholder_text = 'Write the ' + identity + ' URL';
-                if(identity == "Github") placeholder_text += '. In case there are more than one separate them by a ";"';
+                if(identity == "GITHUB") placeholder_text += '. In case there are more than one separate them by a ";"';
                 inputIdentityUrl.setAttribute('placeholder',placeholder_text);
                 identityRow.appendChild(inputIdentityUrl);
                 projectForm.appendChild(identityRow);
@@ -484,7 +484,7 @@ function buildRow(studentName, student_identities, studentId) {
 		identityName.addEventListener("input", function () {fieldEdited(studentName, student_identities, studentId)});
 
 		//CHECK IF username exists
-		identityName.innerHTML= (student_identities[identity] !== undefined || student_identities[identity].username !== undefined)
+		identityName.innerHTML = (student_identities[identity] !== undefined  && student_identities[identity].username !== undefined)
 		                        ? student_identities[identity].username : "";
 		row.appendChild(identityName);
 	})
@@ -598,7 +598,6 @@ $("#acceptMetricsButton").click(function () {
 		    "metrics": userSelectedMetrics
 		})
 
-        console.log("FORMDATA: ", body);
 		jQuery.ajax({
 			data: body,
 			url: `../api/projects/metrics/students?prj=${externalId}`,
@@ -743,35 +742,21 @@ function saveProject() {
     	var loadedFile = $('#projectLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
 	        var formData = new FormData();
-	        formData.append("externalId", document.getElementById("projectId").innerHTML);
-	        formData.append("name", $('#projectName').val());
+
+	        var project_new_external_id = document.getElementById("projectId").innerHTML;
+            var project_new_name = $('#projectName').val();
 	        var description = $('#projectDescription').val()
+
 	        if (description === "") {
 	            description="No description specified";
 	        }
-	        formData.append("description", description);
-	        formData.append("logo", $('#projectLogo')[0].files[0]);
-	        var backlogId = $("#projectBacklogId").val()
+
+            var project_new_logo = $('#projectLogo')[0].files[0];
+	        var backlogId = $("#projectBacklogId").val();
+
 	        if (backlogId === "") {
 	            backlogId=null;
 	        }
-	        formData.append("backlogId", backlogId);
-	        var taigaURL = $('#inputTaigaUrl').val()
-			if (taigaURL === "") {
-				taigaURL=null;
-			}
-	        formData.append("taigaURL", taigaURL);
-			var githubURL = $('#inputfirstGithubUrl').val()
-			if (githubURL === "") {
-				githubURL=null;
-			}
-			formData.append("githubURL", githubURL);
-			var prtURL = $('#inputPrtUrl').val()
-            if (prtURL === "") {
-                prtURL=null;
-            }
-            formData.append("prtURL", prtURL);
-	        formData.append("isGlobal", globalChecked);
 
 	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {
@@ -781,25 +766,26 @@ function saveProject() {
             project_new_identities = {};
 
             identities.forEach(identity => {
-                var identity_new_value = document.getElementById(`input{identity}URL`).innerText;
-                if(identity_new_value === "") identity_new_value = null;
-                project_new_identities[identity] = identity_new_value;
+                var identity_new_value = document.getElementById(`input${identity}Url`).value;
+                if(identity_new_value !== "") project_new_identities[identity] = identity_new_value;
             })
 
             var externalId =document.getElementById(currentSelectionId).innerHTML;
             var formData = new FormData();
 
             body = JSON.stringify({
-                "id": selectedStudent,
-                "name": nameText,
-                "identities": student_new_identities,
-                "metrics": userSelectedMetrics
+                "external_id": project_new_external_id,
+                "name": project_new_name,
+                "identities": project_new_identities,
+                "logo": project_new_logo,
+                "global": globalChecked,
+                "backlog_id": backlogId
             })
 	        $.ajax({
 	            url: url,
-	            data: formData,
+			    data: body,
+			    contentType: "application/json;",
 	            type: "PUT",
-	            contentType: false,
 	            processData: false,
 	            error: function(jqXHR, textStatus, errorThrown) {
 	                if (jqXHR.status == 409)

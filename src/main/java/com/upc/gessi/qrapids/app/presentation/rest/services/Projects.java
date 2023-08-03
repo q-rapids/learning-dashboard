@@ -14,10 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import javax.servlet.http.HttpServletRequest;
+
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -78,33 +79,30 @@ public class Projects {
 
     @PutMapping("/api/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
+    public void updateProject(@PathVariable Long id, @RequestBody @Valid DTOUpdateProject body, Errors errors) {
         try {
-            String externalId = request.getParameter("externalId");
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            String backlogId = request.getParameter("backlogId");
-            String taigaURL= request.getParameter("taigaURL");
-            if(taigaURL.equals("null")) taigaURL=null;
-            String githubURL= request.getParameter("githubURL");
-            if(githubURL.equals("null")) githubURL=null;
-            String prtURL= request.getParameter("prtURL");
-            if(prtURL.equals("null")) prtURL=null;
-            Boolean isGlobal = Boolean.parseBoolean(request.getParameter("isGlobal"));
+
+            if(errors.hasErrors()){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
+            }
+
             byte[] logoBytes = null;
-            if (logo != null) {
-                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            if (body.getLogo() != null) {
+                logoBytes = IOUtils.toByteArray(body.getLogo().getInputStream());
             }
             if (logoBytes != null && logoBytes.length < 10) {
                 DTOProject p = projectsController.getProjectById(Long.toString(id));
                 logoBytes = p.getLogo();
             }
-            if (projectsController.checkProjectByName(id, name)) {
-                Map<DataSource,DTOProjectIdentity> identities = new HashMap<>();
-                identities.put(DataSource.GITHUB,new DTOProjectIdentity(DataSource.GITHUB, githubURL));
-                identities.put(DataSource.TAIGA,new DTOProjectIdentity(DataSource.TAIGA, taigaURL));
-                identities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
-                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, isGlobal, identities);
+            if (projectsController.checkProjectByName(id, body.getName())) {
+
+                Map<DataSource, DTOProjectIdentity> parsedIdentities = new HashMap<>();
+                body.getIdentities().forEach((dataSource, identity) -> {
+                    parsedIdentities.put(dataSource, new DTOProjectIdentity(dataSource, identity));
+                });
+
+
+                DTOProject p = new DTOProject(id, body.getExternalId(), body.getName(), body.getDescription(), logoBytes, true, body.getBacklogId(), body.getGlobal(), parsedIdentities);
                 projectsController.updateProject(p);
             } else {
                 throw new ElementAlreadyPresentException();
@@ -113,7 +111,7 @@ public class Projects {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("YEPA"+ e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }

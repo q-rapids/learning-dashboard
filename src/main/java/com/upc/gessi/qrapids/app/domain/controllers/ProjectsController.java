@@ -114,11 +114,27 @@ public class ProjectsController {
 
 
     public void updateProjectIdentities(Collection<DTOProjectIdentity> dtoProjectIdentities, Project project){
-        List<ProjectIdentity> identities = new ArrayList<>();
-        dtoProjectIdentities.forEach(identity -> {
-            identities.add(new ProjectIdentity(identity.getDataSource(), identity.getUrl(), project));
+
+        List<ProjectIdentity> identities = projectIdentityRepository.findAllByProject(project);
+
+        Map<DataSource, ProjectIdentity> identityMap = new HashMap<>();
+
+        identities.forEach(identity -> {
+            identityMap.put(identity.getDataSource(), identity);
         });
-        projectIdentityRepository.saveAll(identities);
+
+        dtoProjectIdentities.forEach(identity -> {
+
+            DataSource currentDataSource = identity.getDataSource();
+            if(identityMap.containsKey(currentDataSource)){
+                identityMap.get(currentDataSource).setUrl(identity.getUrl());
+            }
+            else {
+                identityMap.put(currentDataSource,new ProjectIdentity(identity.getDataSource(), identity.getUrl(), project));
+            }
+        });
+
+        projectIdentityRepository.saveAll(identityMap.values());
     }
 
     @Transactional
@@ -127,8 +143,10 @@ public class ProjectsController {
         Project project = new Project(dtoProject.getExternalId(), dtoProject.getName(), dtoProject.getDescription(), dtoProject.getLogo(), dtoProject.getActive(), dtoProject.getIsGlobal());
         project.setId(dtoProject.getId());
         String backlogId = dtoProject.getBacklogId();
-        if (backlogId.equals("null")) project.setBacklogId(null);
-        else project.setBacklogId(dtoProject.getBacklogId());
+
+        if (backlogId == null || backlogId.equals("null")) backlogId = null;
+
+        project.setBacklogId(backlogId);
         projectRepository.save(project);
 
         updateProjectIdentities(dtoProject.getIdentities().values(), project);
