@@ -776,15 +776,20 @@ function saveProject() {
             body = JSON.stringify({
                 "external_id": project_new_external_id,
                 "name": project_new_name,
+                "description": description,
                 "identities": project_new_identities,
-                "logo": project_new_logo,
                 "global": globalChecked,
                 "backlog_id": backlogId
             })
+
+            var data = new FormData();
+            data.append("data", new Blob([body], {type: "application/json"}));
+            data.append("file", project_new_logo);
+
 	        $.ajax({
 	            url: url,
-			    data: body,
-			    contentType: "application/json;",
+			    data: data,
+			    contentType: false,
 	            type: "PUT",
 	            processData: false,
 	            error: function(jqXHR, textStatus, errorThrown) {
