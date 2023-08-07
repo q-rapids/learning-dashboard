@@ -1,13 +1,13 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProjectIdentity;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,7 +48,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.restdocs.snippet.Attributes.Attribute;
 public class ProjectsTest {
 
     private DomainObjectsBuilder domainObjectsBuilder;
@@ -305,40 +305,46 @@ public class ProjectsTest {
     @Test
     public void updateProject() throws Exception {
         Long projectId = 1L;
+
+
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
-        String taigaURl = "taigaURl";
-        String githubURL = "githubURL";
-        String prtURL = "prtURL";
+
+
         Boolean isGlobal = false;
         // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
-        MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
+        MockMultipartFile logoMultipartFile = new MockMultipartFile("file", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        Map<DataSource, String> dtoProjectIdentitiesBody = new HashMap<>();
 
-        dtoProjectIdentities.put(DataSource.GITHUB,new DTOProjectIdentity(DataSource.GITHUB, githubURL));
-        dtoProjectIdentities.put(DataSource.TAIGA,new DTOProjectIdentity(DataSource.TAIGA, taigaURl));
-        dtoProjectIdentities.put(DataSource.PRT,new DTOProjectIdentity(DataSource.PRT, prtURL));
+        for (DataSource dataSource : DataSource.values()) {
+            String dataSourceURL = dataSource.toString() + ".test";
+            dtoProjectIdentities.put(dataSource, new DTOProjectIdentity(dataSource, dataSourceURL));
+            dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
+        }
+
         DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities);
 
+        DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(dtoUpdateProject);
+
+        MockMultipartFile jsonFile = new MockMultipartFile("data", "", "application/json", requestJson.getBytes());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/projects/{id}", projectId)
                 .file(logoMultipartFile)
-                .param("externalId", projectExternalId)
-                .param("name", projectName)
-                .param("description", projectDescription)
-                .param("backlogId", projectBacklogId)
-                .param("taigaURL", taigaURl)
-                .param("githubURL", githubURL)
-                .param("prtURL", prtURL)
-                .param("isGlobal", String.valueOf(isGlobal))
+                .file(jsonFile)
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -352,26 +358,19 @@ public class ProjectsTest {
                 .andDo(document("projects/update",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("externalId")
-                                        .description("Project external identifier"),
-                                parameterWithName("name")
-                                        .description("Project name"),
-                                parameterWithName("description")
-                                        .description("Project description"),
-                                parameterWithName("backlogId")
-                                        .description("Project identifier in the backlog"),
-                                parameterWithName("taigaURL")
-                                        .description("Taiga repository URL"),
-                                parameterWithName("githubURL")
-                                        .description("Github repositories URLs separated by a ';'"),
-                                parameterWithName("prtURL")
-                                        .description("PRT sheet"),
-                                parameterWithName("isGlobal")
-                                        .description("Is a global project?")),
                         requestParts(
-                                partWithName("logo")
-                                        .description("Project logo file")
+                                partWithName("file")
+                                        .description("Project logo file").optional(),
+                                partWithName("data")
+                                        .description("JSON Project body:" +
+                                                "\n {\"external_id\": \"<project-external-id>\",\n" +
+                                                "    \"name\": \"<project-name>\",\n" +
+                                                "    \"description\": \"<description>\",\n" +
+                                                "    \"backlog_id\": \"<backlog>\",\n" +
+                                                "    \"global\": <true/false>,\n" +
+                                                "    \"identities\" :{\n" +
+                                                "        \"<IDENTITY>\": \"<URL>\"\n" +
+                                                "    }")
                         )
                 ));
 
@@ -400,33 +399,39 @@ public class ProjectsTest {
     @Test
     public void updateProjectNameAlreadyExists() throws Exception {
         Long projectId = 1L;
+
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
-        String taigaURl = "taigaURl";
-        String githubURL = "githubURL";
-        String prtURL = "prtURL";
         Boolean isGlobal = false;
-// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
-        MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
+        MockMultipartFile logoMultipartFile = new MockMultipartFile("file", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
-        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(false);
+        Map<DataSource, String> dtoProjectIdentitiesBody = new HashMap<>();
+
+        for (DataSource dataSource : DataSource.values()) {
+            String dataSourceURL = dataSource.toString() + ".test";
+            dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
+        }
+
+        DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
+        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(dtoUpdateProject);
+
+        MockMultipartFile jsonFile = new MockMultipartFile("data", "", "application/json", requestJson.getBytes());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/projects/{id}", projectId)
                 .file(logoMultipartFile)
-                .param("externalId", projectExternalId)
-                .param("name", projectName)
-                .param("description", projectDescription)
-                .param("backlogId", projectBacklogId)
-                .param("taigaURL", taigaURl)
-                .param("githubURL", githubURL)
-                .param("prtURL", prtURL)
-                .param("isGlobal", String.valueOf(isGlobal))
+                .file(jsonFile)
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -434,6 +439,8 @@ public class ProjectsTest {
                         return request;
                     }
                 });
+
+        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(false);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isConflict())
@@ -444,6 +451,61 @@ public class ProjectsTest {
 
         // Verify mock interactions
         verify(projectsDomainController, times(1)).checkProjectByName(projectId, projectName);
+
+        verifyNoMoreInteractions(projectsDomainController);
+    }
+
+    @Test
+    public void updateProjectBadRequest() throws Exception {
+        Long projectId = 1L;
+
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        String projectBacklogId = "999";
+        Boolean isGlobal = false;
+
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
+        File file = new File(projectImageUrl.getPath());
+        MockMultipartFile logoMultipartFile = new MockMultipartFile("file", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
+
+        Map<DataSource, String> dtoProjectIdentitiesBody = new HashMap<>();
+
+        for (DataSource dataSource : DataSource.values()) {
+            String dataSourceURL = dataSource.toString() + ".test";
+            dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
+        }
+
+        DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(dtoUpdateProject);
+
+        MockMultipartFile jsonFile = new MockMultipartFile("no-data", "", "application/json", requestJson.getBytes());
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/projects/{id}", projectId)
+                .file(logoMultipartFile)
+                .file(jsonFile)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(false);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andDo(document("projects/update-error-bad-request",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         verifyNoMoreInteractions(projectsDomainController);
     }

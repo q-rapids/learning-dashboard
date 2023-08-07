@@ -18,18 +18,15 @@ public class DTOUpdateProject {
     @JsonProperty("backlog_id")
     String backlogId;
 
-    MultipartFile logo;
-
     Map<DataSource, String> identities;
 
     Boolean global;
 
-    public DTOUpdateProject(String externalId, String name, String description, String backlogId, MultipartFile logo, Map<DataSource, String> identities, Boolean global) {
+    public DTOUpdateProject(String externalId, String name, String description, String backlogId, Map<DataSource, String> identities, Boolean global) {
         this.externalId = externalId;
         this.name = name;
         this.description = description;
         this.backlogId = backlogId;
-        this.logo = logo;
         this.identities = identities;
         this.global = global;
     }
@@ -67,14 +64,6 @@ public class DTOUpdateProject {
 
     public void setBacklogId(String backlogId) {
         this.backlogId = backlogId;
-    }
-
-    public MultipartFile getLogo() {
-        return logo;
-    }
-
-    public void setLogo(MultipartFile logo) {
-        this.logo = logo;
     }
 
     public Map<DataSource, String> getIdentities() {

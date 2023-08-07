@@ -37,8 +37,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -387,6 +386,22 @@ public class StudentsTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("External id of the student's project")
+                        ),
+                        requestFields(
+                                fieldWithPath("id")
+                                        .description("Student id"),
+                                fieldWithPath("name")
+                                        .description("Student name"),
+                                fieldWithPath("identities")
+                                        .description("Student identities such as Github, Taiga"),
+                                fieldWithPath("identities.GITHUB")
+                                        .description("Student Github identity"),
+                                fieldWithPath("identities.TAIGA")
+                                        .description("Student Taiga identity"),
+                                fieldWithPath("identities.PRT")
+                                        .description("Student PRT identity"),
+                                fieldWithPath("metrics[]")
+                                        .description("Metrics ids")
                         )
                 ));
 

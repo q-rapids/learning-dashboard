@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -79,7 +80,7 @@ public class Projects {
 
     @PutMapping("/api/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long id, @RequestBody @Valid DTOUpdateProject body, Errors errors) {
+    public void updateProject(@PathVariable Long id, @RequestPart("data") @Valid DTOUpdateProject body, Errors errors, @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         try {
 
             if(errors.hasErrors()){
@@ -87,9 +88,10 @@ public class Projects {
             }
 
             byte[] logoBytes = null;
-            if (body.getLogo() != null) {
-                logoBytes = IOUtils.toByteArray(body.getLogo().getInputStream());
+            if (multipartFile != null) {
+                logoBytes = IOUtils.toByteArray(multipartFile.getInputStream());
             }
+
             if (logoBytes != null && logoBytes.length < 10) {
                 DTOProject p = projectsController.getProjectById(Long.toString(id));
                 logoBytes = p.getLogo();
