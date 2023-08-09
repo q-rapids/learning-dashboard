@@ -288,7 +288,7 @@ public class QMAQualityFactors {
 
     private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project) {
         if(project != null) {
-            List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
+            List<DTOStudent> students = studentsController.getStudentsDTOFromProject(project.getId());
             Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
 
             qf.forEach(factor -> {

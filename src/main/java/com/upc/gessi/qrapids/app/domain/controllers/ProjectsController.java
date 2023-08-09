@@ -2,10 +2,8 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
-import com.upc.gessi.qrapids.app.domain.models.DataSource;
-import com.upc.gessi.qrapids.app.domain.models.Profile;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.ProjectIdentity;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.ProjectIdentityRepository.ProjectIdentityRepository;
@@ -93,16 +91,24 @@ public class ProjectsController {
         return projects;
     }
 
-    public DTOProject getProjectById(String id) throws ProjectNotFoundException {
-        Optional<Project> projectOptional = projectRepository.findById(Long.parseLong(id));
-        DTOProject dtoProject = null;
-        if (projectOptional.isPresent()) {
-            Project project = projectOptional.get();
-            List<DTOStudent> s = studentsController.getStudentsFromProject(Long.parseLong(id));
+    public Project getProjectById(Long projectId) throws ProjectNotFoundException {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
 
-            dtoProject = getProjectDTO(project);
-            dtoProject.setStudents(s);
-        }
+        if (!projectOptional.isPresent())
+            throw new ProjectNotFoundException();
+
+        return projectOptional.get();
+    }
+
+    public DTOProject getProjectDTOById(Long projectId) throws ProjectNotFoundException {
+        DTOProject dtoProject = null;
+
+        Project project = getProjectById(projectId);
+        List<DTOStudent> s = studentsController.getStudentsDTOFromProject(projectId);
+
+        dtoProject = getProjectDTO(project);
+        dtoProject.setStudents(s);
+
         return dtoProject;
     }
 
@@ -184,6 +190,31 @@ public class ProjectsController {
 
     public DTOProject getProjectDTO(Project project){
         Map<DataSource,DTOProjectIdentity> dtoProjectIdentities = getProjectIdentitiesByProject(project);
-        return new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getIsGlobal(),dtoProjectIdentities);
+        return new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getIsGlobal(),dtoProjectIdentities, project.isAnonymized());
+    }
+
+    public DTOProject anonymizeProject(Long projectId) throws ProjectNotFoundException, ProjectAlreadyAnonymizedException {
+        Project project = getProjectById(projectId);
+
+        if(project.isAnonymized())
+            throw new ProjectAlreadyAnonymizedException();
+
+        studentsController.anonymizeStudentsFromProject(project);
+
+        project.setAnonymized(true);
+        projectRepository.save(project);
+
+        return getProjectDTO(project);
+    }
+
+    @Transactional
+    public List<DTOProject> anonymizeProjects(List<Long> projectIds) throws ProjectNotFoundException, ProjectAlreadyAnonymizedException {
+        List<DTOProject> dtoProjects = new ArrayList<>();
+
+        for(Long projectId : projectIds){
+            dtoProjects.add(anonymizeProject(projectId));
+        }
+
+        return  dtoProjects;
     }
 }

@@ -16,12 +16,14 @@ public class DTOProject {
     private String backlogId;
     private Boolean isGlobal;
 
+    private boolean anonymized;
+
     private Map<DataSource, DTOProjectIdentity> identities;
     private List<DTOStudent> students;
     
     public DTOProject(){}
     
-    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, Boolean isGlobal, Map<DataSource, DTOProjectIdentity> identities) {
+    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId, Boolean isGlobal, Map<DataSource, DTOProjectIdentity> identities, boolean anonymized) {
     	this.id = id;
     	this.externalId = externalId;
     	this.name = name;
@@ -31,6 +33,7 @@ public class DTOProject {
     	this.backlogId = backlogId;
     	this.isGlobal=isGlobal;
         this.identities = identities;
+        this.anonymized = anonymized;
     }
     
     public Long getId() {
@@ -103,5 +106,13 @@ public class DTOProject {
 
     public void setIdentities(Map<DataSource, DTOProjectIdentity> identities) {
         this.identities = identities;
+    }
+
+    public boolean isAnonymized() {
+        return anonymized;
+    }
+
+    public void setAnonymized(boolean anonymized) {
+        this.anonymized = anonymized;
     }
 }

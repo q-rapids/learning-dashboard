@@ -83,7 +83,7 @@ public class ProfilesTest {
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -213,7 +213,8 @@ public class ProfilesTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null,
+                active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -345,7 +346,8 @@ public class ProfilesTest {
         for(DataSource source: DataSource.values()){
             dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
         }
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null,
+                active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -440,7 +442,8 @@ public class ProfilesTest {
         for(DataSource source: DataSource.values()){
             dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
         }
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null,
+                active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -530,7 +533,8 @@ public class ProfilesTest {
         for(DataSource source: DataSource.values()){
             dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
         }
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null,
+                active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -617,7 +621,8 @@ public class ProfilesTest {
         for(DataSource source: DataSource.values()){
             dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
         }
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null,
+                active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);

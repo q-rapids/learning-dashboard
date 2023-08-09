@@ -48,7 +48,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.restdocs.snippet.Attributes.Attribute;
+
 public class ProjectsTest {
 
     private DomainObjectsBuilder domainObjectsBuilder;
@@ -158,7 +158,7 @@ public class ProjectsTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -236,7 +236,7 @@ public class ProjectsTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -328,7 +328,7 @@ public class ProjectsTest {
             dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
         }
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, false);
 
         DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
@@ -523,9 +523,9 @@ public class ProjectsTest {
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, false);
 
-        when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
+        when(projectsDomainController.getProjectDTOById(projectId)).thenReturn(dtoProject);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -583,7 +583,7 @@ public class ProjectsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectsDomainController, times(1)).getProjectById(projectId.toString());
+        verify(projectsDomainController, times(1)).getProjectDTOById(projectId);
         verifyNoMoreInteractions(projectsDomainController);
     }
 

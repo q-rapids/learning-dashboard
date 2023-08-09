@@ -51,13 +51,17 @@ public class StudentsController {
 
         return new DTOStudent(student.getId(),student.getName(),DTOStudentIdentities);
     }
-    public List<DTOStudent> getStudentsFromProject(Long projectId){
+    public List<DTOStudent> getStudentsDTOFromProject(Long projectId){
         List<Student> students = studentRepository.findAllByProjectIdOrderByName(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();
         for(Student s:students) {
             dtoStudents.add(getDTOStudentFromStudent(s));
         }
         return dtoStudents;
+    }
+
+    public List<Student> getStudentsFromProject(Long projectId){
+        return studentRepository.findAllByProjectIdOrderByName(projectId);
     }
 
     public List<StudentIdentity> getStudentIdentities(Student student){
@@ -73,16 +77,22 @@ public class StudentsController {
         }
     }
 
-    public Map<Long, String> getNormalizedNamesByProject(Project project) {
+    public void anonymizeStudentsFromProject(Project project){
+        List<Student> students = getStudentsFromProject(project.getId());
 
-        //Gets anonymize variable from the current user (request) context
-        boolean anonymize = usersController.hasCurrentUserAnonymousMode();
+        Map<Long,String> studentAnonymizedNames = getAnonymizedStudentNames(students);
 
-        List<Student> students = studentRepository.findAllByProjectIdOrderByName(project.getId());
+        students.forEach(student -> {
+            student.setName(studentAnonymizedNames.get(student.getId()));
+        });
+
+        studentRepository.saveAll(students);
+    }
+
+    public Map<Long, String> getAnonymizedStudentNames(List<Student> students){
 
         Map<Long, String> studentNormalizedNames = new HashMap<>();
 
-        if(anonymize){
             students.forEach(student -> {
                 boolean uniqueName = false;
                 int it = 0;
@@ -98,7 +108,20 @@ public class StudentsController {
             });
 
             return studentNormalizedNames;
+    }
+
+    public Map<Long, String> getNormalizedNamesByProject(Project project) {
+
+        //Gets anonymize variable from the current user (request) context
+        boolean anonymize = usersController.hasCurrentUserAnonymousMode() && ! project.isAnonymized();
+
+        List<Student> students = studentRepository.findAllByProjectIdOrderByName(project.getId());
+
+        if(anonymize){
+            return getAnonymizedStudentNames(students);
         }
+
+        Map<Long, String> studentNormalizedNames = new HashMap<>();
 
         students.forEach(student -> {
             studentNormalizedNames.put(student.getId(), student.getName());
@@ -110,7 +133,7 @@ public class StudentsController {
     public List<DTOStudentMetrics> getStudentMetricsFromProject(String projectExternalId, LocalDate from, LocalDate to, String profileId) throws IOException {
         Project project = projectRepository.findByExternalId(projectExternalId);
 
-        List<DTOStudent> students = getStudentsFromProject(project.getId());
+        List<DTOStudent> students = getStudentsDTOFromProject(project.getId());
 
         List<DTOStudentMetrics> dtoStudentMetrics = new ArrayList<>();
 
