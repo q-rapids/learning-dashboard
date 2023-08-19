@@ -25,6 +25,9 @@ public class Project {
     @Column(name = "isGlobal")
     private Boolean isGlobal;
 
+    @Column(name = "anonymized")
+    private boolean anonymized;
+
     public Project(){}
     
     public Project(String externalId, String name, String description, byte[] logo, boolean active, Boolean isGlobal) {
@@ -34,6 +37,7 @@ public class Project {
     	this.logo = logo;
     	this.active = active;
         this.isGlobal=isGlobal;
+        this.anonymized = false;
     }
     
     public Long getId() {
@@ -95,4 +99,12 @@ public class Project {
     public Boolean getIsGlobal() { return isGlobal;}
 
     public void setIsGlobal(Boolean global) { isGlobal = global;}
+
+    public boolean isAnonymized() {
+        return anonymized;
+    }
+
+    public void setAnonymized(boolean anonymized) {
+        this.anonymized = anonymized;
+    }
 }

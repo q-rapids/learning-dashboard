@@ -4,7 +4,9 @@ import com.upc.gessi.qrapids.app.domain.controllers.IterationsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
+import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -66,11 +68,11 @@ public class Projects {
         }
     }
 
-    @GetMapping("/api/projects/{id}")
+    @GetMapping("/api/projects/{projectId}")
     @ResponseStatus(HttpStatus.OK)
-    public DTOProject getProjectById(@PathVariable String id) {
+    public DTOProject getProjectById(@PathVariable Long projectId) {
         try {
-            DTOProject p = projectsController.getProjectById(id);
+            DTOProject p = projectsController.getProjectDTOById(projectId);
             return p;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -78,14 +80,16 @@ public class Projects {
         }
     }
 
-    @PutMapping("/api/projects/{id}")
+    @PutMapping("/api/projects/{projectId}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long id, @RequestPart("data") @Valid DTOUpdateProject body, Errors errors, @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+    public void updateProject(@PathVariable Long projectId, @RequestPart("data") @Valid DTOUpdateProject body, Errors errors, @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         try {
 
             if(errors.hasErrors()){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
             }
+
+            DTOProject project = projectsController.getProjectDTOById(projectId);
 
             byte[] logoBytes = null;
             if (multipartFile != null) {
@@ -93,18 +97,18 @@ public class Projects {
             }
 
             if (logoBytes != null && logoBytes.length < 10) {
-                DTOProject p = projectsController.getProjectById(Long.toString(id));
-                logoBytes = p.getLogo();
+                logoBytes = project.getLogo();
             }
-            if (projectsController.checkProjectByName(id, body.getName())) {
+
+            if (projectsController.checkProjectByName(projectId, body.getName())) {
 
                 Map<DataSource, DTOProjectIdentity> parsedIdentities = new HashMap<>();
                 body.getIdentities().forEach((dataSource, identity) -> {
                     parsedIdentities.put(dataSource, new DTOProjectIdentity(dataSource, identity));
                 });
 
-
-                DTOProject p = new DTOProject(id, body.getExternalId(), body.getName(), body.getDescription(), logoBytes, true, body.getBacklogId(), body.getGlobal(), parsedIdentities);
+                System.out.println(body.getDescription() + Arrays.toString(logoBytes) + body.getBacklogId());
+                DTOProject p = new DTOProject(projectId, body.getExternalId(), body.getName(), body.getDescription(), logoBytes, true, body.getBacklogId(), body.getGlobal(), parsedIdentities, project.isAnonymized());
                 projectsController.updateProject(p);
             } else {
                 throw new ElementAlreadyPresentException();
@@ -113,16 +117,50 @@ public class Projects {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
-            logger.error("YEPA"+ e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
-    @GetMapping("api/project/{project_id}/iterations")
+    @PostMapping("api/projects/{projectId}/anonymize")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOIteration> getHistoricChartDates (@PathVariable Long project_id) {
+    public DTOProject anonymizeProject(@PathVariable Long projectId) {
         try {
-            return iterationsController.getIterationsByProjectId(project_id);
+            Project project = projectsController.getProjectById(projectId);
+            if(project.isAnonymized())
+                throw new ProjectAlreadyAnonymizedException();
+            return projectsController.anonymizeProject(project);
+        } catch (ProjectNotFoundException e){
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.PROJECT_NOT_FOUND);
+        } catch (ProjectAlreadyAnonymizedException e){
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.PROJECT_ALREADY_ANONYMIZED);
+        }
+    }
+
+    @PostMapping("api/projects/anonymize")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOProject> anonymizeProjects(@RequestBody @Valid List<Long> projectIds, Errors errors) {
+        try {
+            if(errors.hasErrors()){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
+            }
+            return projectsController.anonymizeProjects(projectIds);
+        } catch (ProjectNotFoundException e){
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.PROJECT_NOT_FOUND);
+        } catch (ProjectAlreadyAnonymizedException e){
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.PROJECT_ALREADY_ANONYMIZED);
+        }
+    }
+
+    @GetMapping("api/project/{projectId}/iterations")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOIteration> getHistoricChartDates (@PathVariable Long projectId) {
+        try {
+            return iterationsController.getIterationsByProjectId(projectId);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -155,7 +193,7 @@ public class Projects {
             return projectsController.getPhasesForProject(prj, localDate);
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.PROJECT_NOT_FOUND);
         }
     }
 

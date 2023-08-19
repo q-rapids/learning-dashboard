@@ -81,7 +81,7 @@ public class ProductsTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -146,6 +146,8 @@ public class ProductsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].projects[].backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("[].projects[].anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("[].projects[].identities")
                                         .description("Project identities"),
                                 fieldWithPath("[].projects[].identities.GITHUB")
@@ -181,7 +183,7 @@ public class ProductsTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities,false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -248,6 +250,8 @@ public class ProductsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("projects[].backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("projects[].anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("projects[].identities")
                                         .description("Project identities"),
                                 fieldWithPath("projects[].identities.GITHUB")
@@ -281,7 +285,7 @@ public class ProductsTest {
         for(DataSource source: DataSource.values()){
             dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
         }
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -350,7 +354,7 @@ public class ProductsTest {
         for(DataSource source: DataSource.values()){
             dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
         }
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 

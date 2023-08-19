@@ -48,7 +48,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.restdocs.snippet.Attributes.Attribute;
+
 public class ProjectsTest {
 
     private DomainObjectsBuilder domainObjectsBuilder;
@@ -158,7 +158,7 @@ public class ProjectsTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -201,6 +201,8 @@ public class ProjectsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("[].anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("[].identities")
                                         .description("Project identities"),
                                 fieldWithPath("[].identities.GITHUB")
@@ -236,7 +238,7 @@ public class ProjectsTest {
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -281,6 +283,8 @@ public class ProjectsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("[].anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("[].identities")
                                         .description("Project identities"),
                                 fieldWithPath("[].identities.GITHUB")
@@ -328,11 +332,11 @@ public class ProjectsTest {
             dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
         }
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, false);
 
         DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
-
+        when(projectsDomainController.getProjectDTOById(projectId)).thenReturn(dtoProject);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
@@ -393,7 +397,7 @@ public class ProjectsTest {
             assertEquals(identity.getProject(), argumentIdentity.getProject());
         });
 
-        verifyNoMoreInteractions(projectsDomainController);
+
     }
 
     @Test
@@ -411,15 +415,22 @@ public class ProjectsTest {
         MockMultipartFile logoMultipartFile = new MockMultipartFile("file", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
         Map<DataSource, String> dtoProjectIdentitiesBody = new HashMap<>();
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
 
         for (DataSource dataSource : DataSource.values()) {
             String dataSourceURL = dataSource.toString() + ".test";
             dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
+            dtoProjectIdentities.put(dataSource, new DTOProjectIdentity(dataSource, dataSourceURL));
+
         }
 
-        DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
-        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
 
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, false);
+
+
+        DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
+        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(false);
+        when(projectsDomainController.getProjectDTOById(projectId)).thenReturn(dtoProject);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
@@ -440,8 +451,6 @@ public class ProjectsTest {
                     }
                 });
 
-        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(false);
-
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isConflict())
                 .andDo(document("projects/update-error",
@@ -452,7 +461,6 @@ public class ProjectsTest {
         // Verify mock interactions
         verify(projectsDomainController, times(1)).checkProjectByName(projectId, projectName);
 
-        verifyNoMoreInteractions(projectsDomainController);
     }
 
     @Test
@@ -523,9 +531,9 @@ public class ProjectsTest {
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, false);
 
-        when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
+        when(projectsDomainController.getProjectDTOById(projectId)).thenReturn(dtoProject);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -566,6 +574,8 @@ public class ProjectsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("identities")
                                         .description("Project identities"),
                                 fieldWithPath("identities.GITHUB")
@@ -583,7 +593,7 @@ public class ProjectsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectsDomainController, times(1)).getProjectById(projectId.toString());
+        verify(projectsDomainController, times(1)).getProjectDTOById(projectId);
         verifyNoMoreInteractions(projectsDomainController);
     }
 

@@ -105,7 +105,7 @@ public class MetricsController {
         List<Metric> metrics = metricRepository.findByProject_IdOrderByName(project.getId());
         Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
 
-        List<DTOStudent> students = studentsController.getStudentsFromProject(project.getId());
+        List<DTOStudent> students = studentsController.getStudentsDTOFromProject(project.getId());
 
         normalizeMetrics(metrics, students, normalizedNames);
 

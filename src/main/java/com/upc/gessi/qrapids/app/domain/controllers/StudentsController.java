@@ -11,6 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -51,13 +56,17 @@ public class StudentsController {
 
         return new DTOStudent(student.getId(),student.getName(),DTOStudentIdentities);
     }
-    public List<DTOStudent> getStudentsFromProject(Long projectId){
+    public List<DTOStudent> getStudentsDTOFromProject(Long projectId){
         List<Student> students = studentRepository.findAllByProjectIdOrderByName(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();
         for(Student s:students) {
             dtoStudents.add(getDTOStudentFromStudent(s));
         }
         return dtoStudents;
+    }
+
+    public List<Student> getStudentsFromProject(Long projectId){
+        return studentRepository.findAllByProjectIdOrderByName(projectId);
     }
 
     public List<StudentIdentity> getStudentIdentities(Student student){
@@ -73,20 +82,26 @@ public class StudentsController {
         }
     }
 
-    public Map<Long, String> getNormalizedNamesByProject(Project project) {
+    public void anonymizeStudentsFromProject(Project project){
+        List<Student> students = getStudentsFromProject(project.getId());
 
-        //Gets anonymize variable from the current user (request) context
-        boolean anonymize = usersController.hasCurrentUserAnonymousMode();
+        Map<Long,String> studentAnonymizedNames = getAnonymizedStudentNames(students);
 
-        List<Student> students = studentRepository.findAllByProjectIdOrderByName(project.getId());
+        students.forEach(student -> {
+            student.setName(studentAnonymizedNames.get(student.getId()));
+        });
+
+        studentRepository.saveAll(students);
+    }
+
+    public Map<Long, String> getAnonymizedStudentNames(List<Student> students){
 
         Map<Long, String> studentNormalizedNames = new HashMap<>();
 
-        if(anonymize){
             students.forEach(student -> {
                 boolean uniqueName = false;
                 int it = 0;
-                while(!uniqueName || it == GreekAlphabet.values().length) {
+                while(!uniqueName) {
                     String anonymizedName = getAnonymizedName(student.getId().intValue(), it);
 
                     if (! studentNormalizedNames.containsValue(anonymizedName)) {
@@ -98,7 +113,20 @@ public class StudentsController {
             });
 
             return studentNormalizedNames;
+    }
+
+    public Map<Long, String> getNormalizedNamesByProject(Project project) {
+
+        //Gets anonymize variable from the current user (request) context
+        boolean anonymize = usersController.hasCurrentUserAnonymousMode() && ! project.isAnonymized();
+
+        List<Student> students = studentRepository.findAllByProjectIdOrderByName(project.getId());
+
+        if(anonymize){
+            return getAnonymizedStudentNames(students);
         }
+
+        Map<Long, String> studentNormalizedNames = new HashMap<>();
 
         students.forEach(student -> {
             studentNormalizedNames.put(student.getId(), student.getName());
@@ -110,7 +138,7 @@ public class StudentsController {
     public List<DTOStudentMetrics> getStudentMetricsFromProject(String projectExternalId, LocalDate from, LocalDate to, String profileId) throws IOException {
         Project project = projectRepository.findByExternalId(projectExternalId);
 
-        List<DTOStudent> students = getStudentsFromProject(project.getId());
+        List<DTOStudent> students = getStudentsDTOFromProject(project.getId());
 
         List<DTOStudentMetrics> dtoStudentMetrics = new ArrayList<>();
 
@@ -180,11 +208,32 @@ public class StudentsController {
     }
 
     public String getAnonymizedName(Integer id, Integer offset) {
-        GreekAlphabet[] alphabetValues = GreekAlphabet.values();
+
         int weekNumber = LocalDate.now().getDayOfYear() / 7; // Get the week number
 
-        int index = id % alphabetValues.length + weekNumber + offset;
-        return alphabetValues[index % alphabetValues.length].toString();
+        long seed = ((long)id << 32) + (weekNumber + offset); // Random Seed based on week number and offset
+
+        SecureRandom random = null;
+
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        random.setSeed(seed);
+
+
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 5;
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
     }
 
     public Long updateStudentAndMetrics(Long studentID, DTOStudent studentDTO, List<Long> metricsIds, String projectExternalId) {
