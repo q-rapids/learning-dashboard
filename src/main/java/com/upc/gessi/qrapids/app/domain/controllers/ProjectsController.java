@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.ProjectIdentityRepository.ProjectIdentityRepository;
@@ -40,6 +41,8 @@ public class ProjectsController {
 
     @Autowired
     private Backlog backlog;
+    @Autowired
+    private ProfileProjectsRepository profileProjectsRepository;
 
     public Project findProjectByExternalId (String externalId) throws ProjectNotFoundException {
         Project project = projectRepository.findByExternalId(externalId);
@@ -193,12 +196,7 @@ public class ProjectsController {
         return new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getIsGlobal(),dtoProjectIdentities, project.isAnonymized());
     }
 
-    public DTOProject anonymizeProject(Long projectId) throws ProjectNotFoundException, ProjectAlreadyAnonymizedException {
-        Project project = getProjectById(projectId);
-
-        if(project.isAnonymized())
-            throw new ProjectAlreadyAnonymizedException();
-
+    public DTOProject anonymizeProject(Project project) {
         studentsController.anonymizeStudentsFromProject(project);
 
         project.setAnonymized(true);
@@ -207,13 +205,24 @@ public class ProjectsController {
         return getProjectDTO(project);
     }
 
-    @Transactional
     public List<DTOProject> anonymizeProjects(List<Long> projectIds) throws ProjectNotFoundException, ProjectAlreadyAnonymizedException {
         List<DTOProject> dtoProjects = new ArrayList<>();
 
-        for(Long projectId : projectIds){
-            dtoProjects.add(anonymizeProject(projectId));
-        }
+        List<Project> projects = (List<Project>) projectRepository.findAllById(projectIds);
+
+        List<Long> projectIdsAlreadyAnonymized = new ArrayList<>();
+
+        projects.forEach(project -> {
+            if(project.isAnonymized())
+                projectIdsAlreadyAnonymized.add(project.getId());
+        });
+
+        if(projectIdsAlreadyAnonymized.size() > 0)
+            throw new ProjectAlreadyAnonymizedException();
+
+        projects.forEach(project -> {
+                dtoProjects.add(anonymizeProject(project));
+        });
 
         return  dtoProjects;
     }

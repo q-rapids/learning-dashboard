@@ -146,6 +146,8 @@ public class ProductsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].projects[].backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("[].projects[].anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("[].projects[].identities")
                                         .description("Project identities"),
                                 fieldWithPath("[].projects[].identities.GITHUB")
@@ -248,6 +250,8 @@ public class ProductsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("projects[].backlogId")
                                         .description("Project identifier in the backlog"),
+                                fieldWithPath("projects[].anonymized")
+                                        .description("If project students are anonymized"),
                                 fieldWithPath("projects[].identities")
                                         .description("Project identities"),
                                 fieldWithPath("projects[].identities.GITHUB")

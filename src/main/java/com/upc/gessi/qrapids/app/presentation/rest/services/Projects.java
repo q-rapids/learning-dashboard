@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
+import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -98,6 +99,7 @@ public class Projects {
             if (logoBytes != null && logoBytes.length < 10) {
                 logoBytes = project.getLogo();
             }
+
             if (projectsController.checkProjectByName(projectId, body.getName())) {
 
                 Map<DataSource, DTOProjectIdentity> parsedIdentities = new HashMap<>();
@@ -105,7 +107,7 @@ public class Projects {
                     parsedIdentities.put(dataSource, new DTOProjectIdentity(dataSource, identity));
                 });
 
-
+                System.out.println(body.getDescription() + Arrays.toString(logoBytes) + body.getBacklogId());
                 DTOProject p = new DTOProject(projectId, body.getExternalId(), body.getName(), body.getDescription(), logoBytes, true, body.getBacklogId(), body.getGlobal(), parsedIdentities, project.isAnonymized());
                 projectsController.updateProject(p);
             } else {
@@ -124,7 +126,10 @@ public class Projects {
     @ResponseStatus(HttpStatus.OK)
     public DTOProject anonymizeProject(@PathVariable Long projectId) {
         try {
-            return projectsController.anonymizeProject(projectId);
+            Project project = projectsController.getProjectById(projectId);
+            if(project.isAnonymized())
+                throw new ProjectAlreadyAnonymizedException();
+            return projectsController.anonymizeProject(project);
         } catch (ProjectNotFoundException e){
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.PROJECT_NOT_FOUND);
