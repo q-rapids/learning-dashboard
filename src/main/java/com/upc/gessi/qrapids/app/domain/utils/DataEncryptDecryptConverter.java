@@ -3,8 +3,12 @@ package com.upc.gessi.qrapids.app.domain.utils;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -14,12 +18,20 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 @Converter
-@Configurable
 public class DataEncryptDecryptConverter implements AttributeConverter<String, String> {
 
-    private String key = "1234567812345678";
-    private String initVector = "1234567812345678";
-    private String algo = "AES/CBC/PKCS5PADDING";
+    private static String key;
+    private static String initVector;
+
+    private static String algo;
+
+    // This method add the environment key, initVector and algorithm to encrypt and decrypt data
+    @Autowired
+    public void setData(@Value("${database.encryption.key}") String key, @Value("${database.encryption.initvector}") String initVector, @Value("${database.encryption.algorithm}") String algo){
+        DataEncryptDecryptConverter.key = key;
+        DataEncryptDecryptConverter.initVector = initVector;
+        DataEncryptDecryptConverter.algo = algo;
+    }
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
@@ -54,4 +66,5 @@ public class DataEncryptDecryptConverter implements AttributeConverter<String, S
         }
         return null;
     }
+
 }
