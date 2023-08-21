@@ -8,6 +8,8 @@ import com.upc.gessi.qrapids.app.domain.repositories.Student.StudentRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StudentIdentity.StudentIdentityRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -46,6 +48,8 @@ public class StudentsController {
 
     @Autowired
     private UsersController usersController;
+
+
 
     public DTOStudent getDTOStudentFromStudent(Student student){
         List<StudentIdentity> studentIdentities = studentIdentityRepository.findAllByStudent(student);

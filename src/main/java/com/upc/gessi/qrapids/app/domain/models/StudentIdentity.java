@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import com.upc.gessi.qrapids.app.domain.utils.DataEncryptDecryptConverter;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,6 +18,7 @@ public class StudentIdentity {
     private DataSource dataSource;
 
     @Column(name = "username")
+    @Convert(converter = DataEncryptDecryptConverter.class)
     private String username;
 
     @ManyToOne

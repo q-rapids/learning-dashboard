@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import com.upc.gessi.qrapids.app.domain.utils.DataEncryptDecryptConverter;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,6 +11,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name")
+    @Convert(converter = DataEncryptDecryptConverter.class)
     private String name;
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
