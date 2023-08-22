@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,8 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(exception.getStatus()).body(errorResponse);
     }
 
-    @ExceptionHandler(value = {
-    })
+    @ExceptionHandler(GeneralException.class)
     public ResponseEntity<Object> handleException(GeneralException exception, HttpServletRequest request){
         return buildErrorResponse(exception, request);
     }

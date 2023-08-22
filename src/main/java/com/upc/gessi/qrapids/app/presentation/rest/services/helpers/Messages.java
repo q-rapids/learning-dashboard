@@ -1,7 +1,19 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services.helpers;
 
 public class Messages {
+
+    //PROJECT MESSAGES
     public static final String PROJECT_NOT_FOUND = "The project identifier '%s' does not exist";
+
+    public static final String PROJECT_ALREADY_ANONYMIZED = "Project '%s' already anonymized";
+
+    public static final String PROJECTS_ALREADY_ANONYMIZED = "Projects '%s' already anonymized";
+
+    public static final String PROJECT_NAME_ALREADY_EXISTS = "Project name '%s already exists";
+
+    //HISTORIC CHART DATES HistoricChartDatesNotFoundExeption
+
+    public static final String HISTORIC_CHART_DATES_NOT_FOUND = "Historic chart dates not found";
     public static final String ALERT_NOT_FOUND = "Alert not found";
 
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
@@ -15,6 +27,6 @@ public class Messages {
 
     public static final String BAD_REQUEST = "Bad request:";
 
-    public static final String PROJECT_ALREADY_ANONYMIZED = "Project already anonymized";
+
 
 }

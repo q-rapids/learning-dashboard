@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectsController {
@@ -46,9 +47,11 @@ public class ProjectsController {
 
     public Project findProjectByExternalId (String externalId) throws ProjectNotFoundException {
         Project project = projectRepository.findByExternalId(externalId);
+
         if (project == null) {
             throw new ProjectNotFoundException(externalId);
         }
+
         return project;
     }
 
@@ -161,7 +164,7 @@ public class ProjectsController {
         updateProjectIdentities(dtoProject.getIdentities().values(), project);
     }
 
-    public List<String> getAllProjectsExternalID() throws IOException, CategoriesException {
+    public List<String> getAllProjectsExternalID() throws IOException {
         return qmaProjects.getAssessedProjects();
     }
 
@@ -217,8 +220,13 @@ public class ProjectsController {
                 projectIdsAlreadyAnonymized.add(project.getId());
         });
 
-        if(projectIdsAlreadyAnonymized.size() > 0)
-            throw new ProjectAlreadyAnonymizedException();
+        if(projectIdsAlreadyAnonymized.size() > 0) {
+
+            List<String> projectIdsAlreadyAnonymizedParsed = projectIdsAlreadyAnonymized.stream().map(Object::toString)
+                    .collect(Collectors.toList());
+
+            throw new ProjectAlreadyAnonymizedException(projectIdsAlreadyAnonymizedParsed);
+        }
 
         projects.forEach(project -> {
                 dtoProjects.add(anonymizeProject(project));
