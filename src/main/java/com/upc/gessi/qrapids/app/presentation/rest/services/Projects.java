@@ -71,13 +71,8 @@ public class Projects {
     @GetMapping("/api/projects/{projectId}")
     @ResponseStatus(HttpStatus.OK)
     public DTOProject getProjectById(@PathVariable Long projectId) {
-        try {
-            DTOProject p = projectsController.getProjectDTOById(projectId);
-            return p;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
+
+        return projectsController.getProjectDTOById(projectId);
     }
 
     @PutMapping("/api/projects/{projectId}")
@@ -126,7 +121,7 @@ public class Projects {
     @ResponseStatus(HttpStatus.OK)
     public DTOProject anonymizeProject(@PathVariable Long projectId) {
         try {
-            Project project = projectsController.getProjectById(projectId);
+            Project project = projectsController.<>getProjectById(projectId);
             if(project.isAnonymized())
                 throw new ProjectAlreadyAnonymizedException();
             return projectsController.anonymizeProject(project);

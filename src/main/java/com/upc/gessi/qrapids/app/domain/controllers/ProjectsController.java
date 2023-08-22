@@ -47,7 +47,7 @@ public class ProjectsController {
     public Project findProjectByExternalId (String externalId) throws ProjectNotFoundException {
         Project project = projectRepository.findByExternalId(externalId);
         if (project == null) {
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException(externalId);
         }
         return project;
     }
@@ -98,7 +98,7 @@ public class ProjectsController {
         Optional<Project> projectOptional = projectRepository.findById(projectId);
 
         if (!projectOptional.isPresent())
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException(projectId.toString());
 
         return projectOptional.get();
     }

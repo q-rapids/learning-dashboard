@@ -1,7 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services.helpers;
 
 public class Messages {
-    public static final String PROJECT_NOT_FOUND = "The project identifier does not exist";
+    public static final String PROJECT_NOT_FOUND = "The project identifier '%s' does not exist";
     public static final String ALERT_NOT_FOUND = "Alert not found";
 
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
