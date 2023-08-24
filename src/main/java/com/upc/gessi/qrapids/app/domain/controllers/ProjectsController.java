@@ -13,6 +13,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.InternalErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -164,17 +165,17 @@ public class ProjectsController {
         updateProjectIdentities(dtoProject.getIdentities().values(), project);
     }
 
-    public List<String> getAllProjectsExternalID() throws IOException {
+    public List<String> getAllProjectsExternalID() throws IOException, CategoriesException {
         return qmaProjects.getAssessedProjects();
     }
 
-    public List<String> importProjectsAndUpdateDatabase() throws IOException, CategoriesException {
+    public List<String> importProjectsAndUpdateDatabase() throws IOException, CategoriesException{
         List<String> projects = getAllProjectsExternalID();
         updateDataBaseWithNewProjects(projects);
         return projects;
     }
 
-    public void updateDataBaseWithNewProjects (List<String> projects) {
+    public void updateDataBaseWithNewProjects (List<String> projects)  {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {

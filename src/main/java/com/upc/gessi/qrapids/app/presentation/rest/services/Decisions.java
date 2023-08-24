@@ -36,36 +36,31 @@ public class Decisions {
     @GetMapping("/api/decisions")
     @ResponseStatus(HttpStatus.OK)
     public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs, @RequestParam(required = false) String from, @RequestParam(required = false) String to) {
-        try {
-            LocalDate fromDate = LocalDate.ofEpochDay(0);
-            if (from != null) {
-                fromDate = LocalDate.parse(from);
-            }
-            LocalDate toDate = LocalDate.now();
-            if (to != null) {
-                toDate = LocalDate.parse(to);
-            }
-            toDate = toDate.plusDays(1);
-
-            Project project = projectsController.findProjectByExternalId(prj);
-            List<DTODecision> dtoDecisions = new ArrayList<>();
-            if (qrs) {
-                dtoDecisions.addAll(decisionsController.getAllDecisionsWithQRByProjectAndDates(project, Date.valueOf(fromDate), Date.valueOf(toDate)));
-            } else {
-                List<Decision> decisions = decisionsController.getAllDecisionsByProject(project);
-                for (Decision decision : decisions) {
-                    String username = "";
-                    if (decision.getAuthor() != null)
-                        username = decision.getAuthor().getUsername();
-                    DTODecision dtoDecision = new DTODecision(decision.getId(), decision.getType(), new Date(decision.getDate().getTime()), username, decision.getRationale(), decision.getPatternId());
-                    dtoDecisions.add(dtoDecision);
-                }
-            }
-            return dtoDecisions;
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+        LocalDate fromDate = LocalDate.ofEpochDay(0);
+        if (from != null) {
+            fromDate = LocalDate.parse(from);
         }
+        LocalDate toDate = LocalDate.now();
+        if (to != null) {
+            toDate = LocalDate.parse(to);
+        }
+        toDate = toDate.plusDays(1);
+
+        Project project = projectsController.findProjectByExternalId(prj);
+        List<DTODecision> dtoDecisions = new ArrayList<>();
+        if (qrs) {
+            dtoDecisions.addAll(decisionsController.getAllDecisionsWithQRByProjectAndDates(project, Date.valueOf(fromDate), Date.valueOf(toDate)));
+        } else {
+            List<Decision> decisions = decisionsController.getAllDecisionsByProject(project);
+            for (Decision decision : decisions) {
+                String username = "";
+                if (decision.getAuthor() != null)
+                    username = decision.getAuthor().getUsername();
+                DTODecision dtoDecision = new DTODecision(decision.getId(), decision.getType(), new Date(decision.getDate().getTime()), username, decision.getRationale(), decision.getPatternId());
+                dtoDecisions.add(dtoDecision);
+            }
+        }
+        return dtoDecisions;
     }
 
 

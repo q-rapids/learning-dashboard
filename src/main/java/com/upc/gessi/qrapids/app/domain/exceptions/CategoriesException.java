@@ -1,8 +1,9 @@
 package com.upc.gessi.qrapids.app.domain.exceptions;
 
-public class CategoriesException extends Exception {
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.ConflictException;
 
-    public CategoriesException() {}
+public class CategoriesException extends ConflictException {
+
 
     // Constructor that accepts a message
     public CategoriesException(String message)

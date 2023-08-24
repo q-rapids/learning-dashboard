@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +98,7 @@ public class ProjectsControllerTest {
     @Test(expected = CategoriesException.class)
     public void importProjectsCategoriesException() throws IOException, CategoriesException {
         // Given
-        when(qmaProjects.getAssessedProjects()).thenThrow(new CategoriesException());
+        when(qmaProjects.getAssessedProjects()).thenThrow(new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH));
 
         // Throw
         projectsController.importProjectsAndUpdateDatabase();

@@ -10,6 +10,7 @@ import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.BadRequestException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class Projects {
     @GetMapping("/api/projects/import")
     @ResponseStatus(HttpStatus.OK)
     public List<String> importProjects() {
-    	try {
+        try {
             return projectsController.importProjectsAndUpdateDatabase();
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
@@ -74,7 +75,7 @@ public class Projects {
     public void updateProject(@PathVariable Long projectId, @RequestPart("data") @Valid DTOUpdateProject body, Errors errors, @RequestPart(value = "file", required = false) MultipartFile multipartFile) throws IOException {
 
             if(errors.hasErrors()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
+                throw new BadRequestException(Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
             }
 
             DTOProject project = projectsController.getProjectDTOById(projectId);
@@ -121,7 +122,7 @@ public class Projects {
     public List<DTOProject> anonymizeProjects(@RequestBody @Valid List<Long> projectIds, Errors errors) {
 
             if(errors.hasErrors()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
+                throw new BadRequestException(Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
             }
 
             return projectsController.anonymizeProjects(projectIds);

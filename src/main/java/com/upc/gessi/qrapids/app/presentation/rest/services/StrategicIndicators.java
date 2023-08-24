@@ -245,47 +245,37 @@ public class StrategicIndicators {
     @GetMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile ) {
-        try {
-            List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProjectAndProfile(prj, profile);
-            List<DTOSI> dtoSIList = new ArrayList<>();
-            for (Strategic_Indicator strategic_indicator : strategicIndicatorList) {
-                DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
-                        strategic_indicator.getExternalId(),
-                        strategic_indicator.getName(),
-                        strategic_indicator.getDescription(),
-                        strategic_indicator.getQuality_factorsIds(),
-                        strategic_indicator.isWeighted(),
-                        strategic_indicator.getWeights());
-                dtosi.setThreshold(strategic_indicator.getThreshold());
-                dtosi.setNetwork(strategic_indicator.getNetwork());
-                dtoSIList.add(dtosi);
-            }
-            return dtoSIList;
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+        List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProjectAndProfile(prj, profile);
+        List<DTOSI> dtoSIList = new ArrayList<>();
+        for (Strategic_Indicator strategic_indicator : strategicIndicatorList) {
+            DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
+                    strategic_indicator.getExternalId(),
+                    strategic_indicator.getName(),
+                    strategic_indicator.getDescription(),
+                    strategic_indicator.getQuality_factorsIds(),
+                    strategic_indicator.isWeighted(),
+                    strategic_indicator.getWeights());
+            dtosi.setThreshold(strategic_indicator.getThreshold());
+            dtosi.setNetwork(strategic_indicator.getNetwork());
+            dtoSIList.add(dtosi);
         }
+        return dtoSIList;
     }
 
     @GetMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DTOSI getSI(@PathVariable Long id) {
-        try {
-            Strategic_Indicator strategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
-            DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
-                    strategicIndicator.getExternalId(),
-                    strategicIndicator.getName(),
-                    strategicIndicator.getDescription(),
-                    strategicIndicator.getQuality_factorsIds(),
-                    strategicIndicator.isWeighted(),
-                    strategicIndicator.getWeights());
-            dtosi.setThreshold(strategicIndicator.getThreshold());
-            dtosi.setNetwork(strategicIndicator.getNetwork());
-            return dtosi;
-        } catch (StrategicIndicatorNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
-        }
+        Strategic_Indicator strategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
+        DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
+                strategicIndicator.getExternalId(),
+                strategicIndicator.getName(),
+                strategicIndicator.getDescription(),
+                strategicIndicator.getQuality_factorsIds(),
+                strategicIndicator.isWeighted(),
+                strategicIndicator.getWeights());
+        dtosi.setThreshold(strategicIndicator.getThreshold());
+        dtosi.setNetwork(strategicIndicator.getNetwork());
+        return dtosi;
     }
 
     @PostMapping("/api/strategicIndicators")
@@ -365,12 +355,7 @@ public class StrategicIndicators {
     @DeleteMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteSI (@PathVariable Long id) {
-        try {
-            strategicIndicatorsController.deleteStrategicIndicator(id);
-        } catch (StrategicIndicatorNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
-        }
+        strategicIndicatorsController.deleteStrategicIndicator(id);
     }
 
     @GetMapping("/api/strategicIndicators/categories")
@@ -387,12 +372,7 @@ public class StrategicIndicators {
     @PostMapping("/api/strategicIndicators/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newSICategories (@RequestBody List<Map<String, String>> categories) {
-        try {
-            strategicIndicatorsController.newStrategicIndicatorCategories(categories);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        strategicIndicatorsController.newStrategicIndicatorCategories(categories);
     }
 
     private enum TrainType {

@@ -12,6 +12,7 @@ import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.BadRequestException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
@@ -48,9 +49,6 @@ public class Metrics {
     public void importMetrics() {
         try {
             metricsController.importMetricsAndUpdateDatabase();
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
@@ -66,22 +64,16 @@ public class Metrics {
     @PutMapping("/api/projects/metrics/{metric_id}")
     @ResponseStatus(HttpStatus.OK)
     public void editMetric(@PathVariable Long metricId, HttpServletRequest request) {
-        try {
-            String threshold = request.getParameter("threshold");
-            String webUrl = request.getParameter("url");
-            String categoryName = request.getParameter("categoryName");
-            metricsController.editMetric(metricId,threshold,webUrl,categoryName); // at the moment is only possible change threshold
-        } catch (MetricNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
+        String threshold = request.getParameter("threshold");
+        String webUrl = request.getParameter("url");
+        String categoryName = request.getParameter("categoryName");
+        metricsController.editMetric(metricId,threshold,webUrl,categoryName); // at the moment is only possible change threshold
     }
 
 
     @DeleteMapping("/api/projects/metrics/students/{studentId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long studentId) {
-
         studentsController.deleteStudents(studentId);
     }
 
@@ -100,35 +92,20 @@ public class Metrics {
     @PostMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
-        try {
-            if(categories.size()<3) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
-            else metricsController.newMetricCategories(categories, name);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        if(categories.size()<3) throw new BadRequestException(Messages.NOT_ENOUGH_CATEGORIES);
+        else metricsController.newMetricCategories(categories, name);
     }
 
     @PutMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name") String name) {
-        try {
-            metricsController.updateMetricCategory(categories, name);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        metricsController.updateMetricCategory(categories, name);
     }
 
     @DeleteMapping("/api/projects/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMetricsCategories (@RequestParam(value = "name") String name) {
-        try {
-            metricsController.deleteMetricCategory(name);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        metricsController.deleteMetricCategory(name);
     }
 
     // PROJECT RELATED ENDPOINTS
@@ -136,18 +113,12 @@ public class Metrics {
     @GetMapping("/api/projects/metrics")
     @ResponseStatus(HttpStatus.OK)
     public List<Metric> getMetrics(@RequestParam(value="prj") String projectExternalId) {
-        try {
-            return metricsController.getMetricsByProject(projectExternalId);
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
-        }
+        return metricsController.getMetricsByProject(projectExternalId);
     }
+
     @GetMapping("/api/projects/metrics/students")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="prj") String projectExternalId) throws IOException {
-
-
         return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
     }
 
@@ -167,7 +138,7 @@ public class Metrics {
                                     Errors errors) {
 
         if(errors.hasErrors()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
+            throw new BadRequestException(Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
         }
 
         Map<DataSource, DTOStudentIdentity> parsedIdentities = new HashMap<>();

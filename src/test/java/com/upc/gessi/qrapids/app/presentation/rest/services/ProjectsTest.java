@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -108,7 +109,7 @@ public class ProjectsTest {
 
     @Test
     public void getProjectsCategoriesConflict() throws Exception {
-        when(projectsDomainController.importProjectsAndUpdateDatabase()).thenThrow(new CategoriesException());
+        when(projectsDomainController.importProjectsAndUpdateDatabase()).thenThrow(new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders

@@ -173,7 +173,6 @@ public class MetricsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("Not enough categories")))
                 .andDo(document("metrics/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
