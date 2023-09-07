@@ -447,7 +447,7 @@ function fieldEdited(studentName, identities, studentId) {
 		var change = name !== studentName;
 
 		Object.values(identities).forEach(identity => {
-		    var identity_name = document.getElementById("student"+identity.dataSource+"Name" + studentId).innerHTML
+		    var identity_name = document.getElementById("student"+identity.data_source+"Name" + studentId).innerHTML
 		    if (identity_name !== identity.username){
 		        change = false;
 		    }
@@ -532,9 +532,11 @@ function buildRow(studentName, student_identities, studentId) {
 }
 
 function deleteStudent(studentId) {
+
+
 	if (studentId >= 0) {
 		jQuery.ajax({
-			url: `../api/metrics/student/${studentId}?prj=${externalId}`,
+			url: `../api/metrics/students/${studentId}`,
 			type: "DELETE",
 			contentType: false,
 			processData: false,
@@ -605,30 +607,26 @@ $("#acceptMetricsButton").click(function () {
 			contentType: "application/json;",
 			processData: false,
 			success: function (data) {
+		        console.log(selectedStudent, data, "yy", selectedStudent<0)
 				$("#metricsModal").modal("hide");
-				if(selectedStudent<0) {
+				if(selectedStudent === "") {
+
 					var row = document.getElementById("row" + selectedStudent)
 					row.setAttribute("id", "row" + data);
 					var name = document.getElementById("studentName" + selectedStudent)
 					var nameClone = name.cloneNode(true)
 					nameClone.setAttribute("id", "studentName" + data)
-					nameClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
+					nameClone.addEventListener("input",function() {fieldEdited(nameText, student_new_identities, data) })
 					name.parentNode.replaceChild(nameClone,name)
-					var taigaName = document.getElementById("studentTaigaName" + selectedStudent)
-					var taigaClone = taigaName.cloneNode(true)
-					taigaClone.setAttribute("id", "studentTaigaName" + data)
-					taigaClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
-					taigaName.parentNode.replaceChild(taigaClone, taigaName)
-					var githubName = document.getElementById("studentGithubName" + selectedStudent)
-					var githubClone=githubName.cloneNode(true)
-					githubClone.setAttribute("id", "studentGithubName" + data)
-					githubClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
-					githubName.parentNode.replaceChild(githubClone,githubName)
-					var prtName = document.getElementById("studentPrtName" + selectedStudent)
-					var prtClone=prtName.cloneNode(true)
-					prtClone.setAttribute("id", "studentPrtName" + data)
-					prtClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
-					prtName.parentNode.replaceChild(prtClone,prtName)
+
+                    identities.forEach(identity => {
+                        var identityName = document.getElementById(`student${identity}Name` + selectedStudent)
+                        var identityClone = identityName.cloneNode(true)
+                        identityClone.setAttribute("id", `student${identity}Name` + data)
+                        identityClone.addEventListener("input",function() {fieldEdited(nameText, student_new_identities, data) })
+                        identityName.parentNode.replaceChild(identityClone, identityName)
+                    })
+
 					var selMetricsBtn = document.getElementById("selMetricsBtn"+selectedStudent)
 					var selMetricsClone = selMetricsBtn.cloneNode(true)
 					selMetricsClone.setAttribute("id", "selMetricsBtn"+data)

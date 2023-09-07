@@ -76,7 +76,7 @@ public class Metrics {
 
     @DeleteMapping("/api/metrics/students/{studentId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long studentId) {
+    public void deleteMetricStudent(@PathVariable Long studentId) {
         studentsController.deleteStudents(studentId);
     }
 
