@@ -60,6 +60,8 @@ public class StudentsController {
 
         return new DTOStudent(student.getId(),student.getName(),DTOStudentIdentities);
     }
+
+
     public List<DTOStudent> getStudentsDTOFromProject(Long projectId){
         List<Student> students = studentRepository.findAllByProjectIdOrderByName(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();

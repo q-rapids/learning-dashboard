@@ -88,7 +88,7 @@ public class StudentsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/students")
+                .get("/api/metrics/students")
                 .param("prj", "prjExternalId");
 
 
@@ -222,7 +222,7 @@ public class StudentsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/students/historical")
+                .get("/api/metrics/students/historical")
                 .param("prj", "prjExternalId")
                 .param("from", String.valueOf(localDateFrom))
                 .param("to", String.valueOf(localDateTo))
@@ -369,7 +369,7 @@ public class StudentsTest {
         when(studentsDomainController.updateStudentAndMetrics(dtoCreateStudent.getId(), dtoStudent, dtoCreateStudent.getMetrics(), projectId)).thenReturn(dtoCreateStudent.getId());
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/projects/metrics/students")
+                .multipart("/api/metrics/students")
                 .param("prj", projectId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectWriter.writeValueAsString(dtoCreateStudent))
@@ -431,7 +431,7 @@ public class StudentsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .delete("/api/projects/metrics/students/{studentId}", 1L);
+                .delete("/api/metrics/students/{studentId}", 1L);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

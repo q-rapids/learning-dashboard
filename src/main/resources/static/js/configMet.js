@@ -5,7 +5,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.metricCategory = ["Default"];
 
     this.$onInit = function () {
-        var url = "../api/projects/metrics/list";
+        var url = "../api/metrics/list";
         $http({
             method: "GET",
             url: url
@@ -17,7 +17,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.getMetricsConfig = function() {
         console.log("IN getMetricsConfig");
 
-        var url = "../api/projects/metrics";
+        var url = "../api/metrics";
         $http({
             method: "GET",
             url: url

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +27,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -72,11 +74,7 @@ public class Projects {
 
     @PutMapping("/api/projects/{projectId}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long projectId, @RequestPart("data") @Valid DTOUpdateProject body, Errors errors, @RequestPart(value = "file", required = false) MultipartFile multipartFile) throws IOException {
-
-            if(errors.hasErrors()){
-                throw new BadRequestException(Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
-            }
+    public void updateProject(@PathVariable Long projectId, @RequestPart("data") @Valid DTOUpdateProject body, @RequestPart(value = "file", required = false) MultipartFile multipartFile) throws IOException {
 
             DTOProject project = projectsController.getProjectDTOById(projectId);
 
@@ -96,7 +94,6 @@ public class Projects {
                     parsedIdentities.put(dataSource, new DTOProjectIdentity(dataSource, identity));
                 });
 
-                System.out.println(body.getDescription() + Arrays.toString(logoBytes) + body.getBacklogId());
                 DTOProject p = new DTOProject(projectId, body.getExternalId(), body.getName(), body.getDescription(), logoBytes, true, body.getBacklogId(), body.getGlobal(), parsedIdentities, project.isAnonymized());
                 projectsController.updateProject(p);
             } else {
@@ -119,13 +116,8 @@ public class Projects {
 
     @PostMapping("api/projects/anonymize")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOProject> anonymizeProjects(@RequestBody @Valid List<Long> projectIds, Errors errors) {
-
-            if(errors.hasErrors()){
-                throw new BadRequestException(Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
-            }
-
-            return projectsController.anonymizeProjects(projectIds);
+    public List<DTOProject> anonymizeProjects(@RequestBody @Valid List<Long> projectIds) {
+                    return projectsController.anonymizeProjects(projectIds);
     }
 
     @GetMapping("api/project/{projectId}/iterations") //!!!!!!!!!!!!!

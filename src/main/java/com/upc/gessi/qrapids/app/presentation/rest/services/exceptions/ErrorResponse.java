@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.presentation.rest.services.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.time.LocalDateTime;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
 
@@ -10,11 +12,14 @@ public class ErrorResponse {
     String message;
     String path;
 
-    public ErrorResponse(int status, String error, String message, String path) {
+    LocalDateTime timestamp;
+
+    public ErrorResponse(int status, String error, String message, String path, LocalDateTime timestamp) {
         this.status = status;
         this.error = error;
         this.message = message;
         this.path = path;
+        this.timestamp = timestamp;
     }
 
     public int getStatus() {
@@ -47,5 +52,13 @@ public class ErrorResponse {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

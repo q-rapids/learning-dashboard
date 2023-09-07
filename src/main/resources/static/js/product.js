@@ -534,7 +534,7 @@ function buildRow(studentName, student_identities, studentId) {
 function deleteStudent(studentId) {
 	if (studentId >= 0) {
 		jQuery.ajax({
-			url: `../api/projects/metrics/student/${studentId}?prj=${externalId}`,
+			url: `../api/metrics/student/${studentId}?prj=${externalId}`,
 			type: "DELETE",
 			contentType: false,
 			processData: false,
@@ -600,7 +600,7 @@ $("#acceptMetricsButton").click(function () {
 
 		jQuery.ajax({
 			data: body,
-			url: `../api/projects/metrics/students?prj=${externalId}`,
+			url: `../api/metrics/students?prj=${externalId}`,
 			type: "PUT",
 			contentType: "application/json;",
 			processData: false,
@@ -698,7 +698,7 @@ function showMetrics(studentId) {
 	var externalId =document.getElementById(currentSelectionId).innerHTML;
 	jQuery.ajax({
 		dataType: "json",
-		url: `../api/projects/metrics?prj=${externalId}`,
+		url: `../api/metrics?prj=${externalId}`,
 		cache: false,
 		type: "GET",
 		async: false,

@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 @RestController
 public class Metrics {
 
@@ -44,7 +47,7 @@ public class Metrics {
 
     private Logger logger = LoggerFactory.getLogger(Metrics.class);
 
-    @GetMapping("/api/projects/metrics/import")
+    @GetMapping("/api/metrics/import")
     @ResponseStatus(HttpStatus.OK)
     public void importMetrics() {
         try {
@@ -55,13 +58,13 @@ public class Metrics {
         }
     }
 
-    @GetMapping("/api/projects/metrics/list")
+    @GetMapping("/api/metrics/list")
     @ResponseStatus(HttpStatus.OK)
     public List<String> getList() {
         return metricsController.getAllNames();
     }
 
-    @PutMapping("/api/projects/metrics/{metric_id}")
+    @PutMapping("/api/metrics/{metric_id}")
     @ResponseStatus(HttpStatus.OK)
     public void editMetric(@PathVariable Long metricId, HttpServletRequest request) {
         String threshold = request.getParameter("threshold");
@@ -71,13 +74,13 @@ public class Metrics {
     }
 
 
-    @DeleteMapping("/api/projects/metrics/students/{studentId}")
+    @DeleteMapping("/api/metrics/students/{studentId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMetricStudent(HttpServletRequest request,@PathVariable Long studentId) {
         studentsController.deleteStudents(studentId);
     }
 
-    @GetMapping("/api/projects/metrics/categories")
+    @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricCategory> getMetricCategories ( @RequestParam(value = "name", required = false) String name) {
         Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories(name);
@@ -89,20 +92,20 @@ public class Metrics {
     }
 
 
-    @PostMapping("/api/projects/metrics/categories")
+    @PostMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
         if(categories.size()<3) throw new BadRequestException(Messages.NOT_ENOUGH_CATEGORIES);
         else metricsController.newMetricCategories(categories, name);
     }
 
-    @PutMapping("/api/projects/metrics/categories")
+    @PutMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public void updateMetricsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name") String name) {
         metricsController.updateMetricCategory(categories, name);
     }
 
-    @DeleteMapping("/api/projects/metrics/categories")
+    @DeleteMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMetricsCategories (@RequestParam(value = "name") String name) {
         metricsController.deleteMetricCategory(name);
@@ -110,19 +113,19 @@ public class Metrics {
 
     // PROJECT RELATED ENDPOINTS
 
-    @GetMapping("/api/projects/metrics")
+    @GetMapping("/api/metrics")
     @ResponseStatus(HttpStatus.OK)
     public List<Metric> getMetrics(@RequestParam(value="prj") String projectExternalId) {
         return metricsController.getMetricsByProject(projectExternalId);
     }
 
-    @GetMapping("/api/projects/metrics/students")
+    @GetMapping("/api/metrics/students")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStudentMetrics> getStudentsAndMetrics(@RequestParam(value="prj") String projectExternalId) throws IOException {
         return studentsController.getStudentMetricsFromProject(projectExternalId, null, null, null);
     }
 
-    @GetMapping("/api/projects/metrics/students/historical")
+    @GetMapping("/api/metrics/students/historical")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStudentMetrics> getStudentsAndMetricsHistorical(@RequestParam(value="prj") String projectExternalId,
                                                                              @RequestParam(value = "profile", required = false) String profileId,
@@ -132,14 +135,9 @@ public class Metrics {
         return studentsController.getStudentMetricsFromProject(projectExternalId, LocalDate.parse(from), LocalDate.parse(to), profileId);
     }
 
-    @PutMapping("/api/projects/metrics/students")
+    @PutMapping("/api/metrics/students")
     @ResponseStatus(HttpStatus.OK)
-    public Long updateMetricStudent(@RequestParam(value="prj") String projectExternalId, @RequestBody @Valid DTOCreateStudent body,
-                                    Errors errors) {
-
-        if(errors.hasErrors()){
-            throw new BadRequestException(Messages.BAD_REQUEST + errors.getAllErrors().get(0).getDefaultMessage());
-        }
+    public Long updateMetricStudent(@RequestParam(value="prj") String projectExternalId, @RequestBody @Valid DTOCreateStudent body) {
 
         Map<DataSource, DTOStudentIdentity> parsedIdentities = new HashMap<>();
         body.getIdentities().forEach((dataSource, identity) -> {
@@ -154,7 +152,7 @@ public class Metrics {
 
 
 
-    @RequestMapping("/api/projects/metrics/current")
+    @RequestMapping("/api/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value="prj") String projectExternalId,
                                                            @RequestParam(value = "profile", required = false) String profile) {
@@ -169,7 +167,7 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/metrics/{metricId}/current")
+    @RequestMapping("/api/metrics/{metricId}/current")
     @ResponseStatus(HttpStatus.OK)
     public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam(value="prj") String projectExternalId,
                                                          @PathVariable String metricId) {
@@ -184,7 +182,7 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/metrics/historical")
+    @RequestMapping("/api/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value="prj") String projectExternalId,
                                                               @RequestParam(value = "profile_id", required = false) String profileId,
@@ -201,7 +199,7 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/metrics/{metricId}/historical")
+    @RequestMapping("/api/metrics/{metricId}/historical")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value="prj") String projectExternalId,
                                                                 @RequestParam(value = "profile_id", required = false) String profileId,
@@ -218,7 +216,7 @@ public class Metrics {
         }
     }
 
-    @RequestMapping("/api/projects/metrics/prediction")
+    @RequestMapping("/api/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value="prj") String projectExternalId,
                                                               @RequestParam(value = "profile_id", required = false) String profileId,
@@ -236,7 +234,7 @@ public class Metrics {
         }
     }
 
-    @GetMapping("/api/projects/metrics/current-date")
+    @GetMapping("/api/metrics/current-date")
     @ResponseStatus(HttpStatus.OK)
     public LocalDate getCurrentDate(@RequestParam(value="prj") String projectExternalId,
                                     @RequestParam(value = "profile_id", required = false) String profileId) {
