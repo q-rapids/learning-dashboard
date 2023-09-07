@@ -161,12 +161,34 @@ function getChosenProject(currentProjectId) {
 			globalChecked=data.isGlobal
     		var title1Row = document.createElement('div');
     		title1Row.classList.add("productInfoRow");
+
     		var title1P = document.createElement('p');
     		title1P.appendChild(document.createTextNode("Project Information"));
     		title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
     		title1Row.appendChild(title1P);
+    		if(data.anonymized){
+    		    // Create an img element and set its attributes
+                let incognitoImg = document.createElement('img');
+                incognitoImg.classList.add("icons");
+                incognitoImg.setAttribute("src", "/icons/incognito.png");
+                incognitoImg.setAttribute("style", "margin-right: 1%");
+                title1Row.appendChild(incognitoImg);
+
+    		}
     		projectForm.appendChild(title1Row);
-    		
+
+    		if(data.anonymized){
+                // Create the main div
+                let incognitoDiv = document.createElement('div');
+
+                // Create a text node
+                let incognitoText = document.createTextNode('This project is anonymized');
+                incognitoDiv.classList.add("productInfoRow");
+                // Add text node to the div
+                incognitoDiv.appendChild(incognitoText);
+                projectForm.appendChild(incognitoDiv);
+    		}
+
     		var idRow = document.createElement('div');
     		idRow.classList.add("productInfoRow");
     		var idP = document.createElement('p');
