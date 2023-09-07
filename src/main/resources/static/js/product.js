@@ -19,7 +19,6 @@ function loadIdentities(){
 		url = serverUrl + url;
 	}
 
-	console.log("Loading identities", url)
 	jQuery.ajax({
 		dataType: "json",
 		url: url,
@@ -27,7 +26,6 @@ function loadIdentities(){
 		type: "GET",
 		async: true,
 		success: function (data) {
-			console.log("GETTING IDENTITIES:", data)
 			identities = data;
 		}});
 }
@@ -120,7 +118,6 @@ function buildSecondPartOfTree() {
 };
 
 function clickOnTree(e){
-	console.log(currentSelectionId);
 	if (e.target.classList.contains("Project")) {
 		currentSelection = "Project";
 		previousSelectionId = currentSelectionId;
@@ -130,7 +127,6 @@ function clickOnTree(e){
 		}
 		document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
 		var idString = e.target.id.split("-")[0];
-		console.log(idString.replace("project", ""));
 		getChosenProject(idString.replace("project", ""));
 	} else if (e.target.classList.contains("Product")) {
 		currentSelection = "Project";
@@ -160,7 +156,6 @@ function getChosenProject(currentProjectId) {
         type: "GET",
         async: true,
         success: function (data) {
-            console.log(data, "projecttt")
         	var projectForm = document.createElement('div');
     		projectForm.setAttribute("id", "projectForm");
 			globalChecked=data.isGlobal
@@ -425,9 +420,7 @@ function getChosenProject(currentProjectId) {
     		document.getElementById('productInfo').innerHTML = "";
     		document.getElementById('productInfo').appendChild(projectForm);
     		document.getElementById('productInfo').appendChild(logoColumn);
-            console.log("LULLL",data)
 			for(let i = 0 ; i<data.students.length; i++) {
-			    console.log(data)
 				var s = data.students[i];
 				buildRow(s.name, s.identities, s.id);
 			}
@@ -464,7 +457,6 @@ function fieldEdited(studentName, identities, studentId) {
 }
 
 function buildRow(studentName, student_identities, studentId) {
-    console.log("BUILDING ROW:", studentName, student_identities, studentId)
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 	var name = document.createElement("td");
@@ -476,7 +468,6 @@ function buildRow(studentName, student_identities, studentId) {
 	row.appendChild(name);
 
 	identities.forEach(identity => {
-	    console.log(identity, )
 		var identityName = document.createElement("td");
 		identityName.setAttribute("contenteditable", "true");
 		identityName.setAttribute("style", "border:1px solid lightgray")
@@ -607,7 +598,6 @@ $("#acceptMetricsButton").click(function () {
 			contentType: "application/json;",
 			processData: false,
 			success: function (data) {
-		        console.log(selectedStudent, data, "yy", selectedStudent<0)
 				$("#metricsModal").modal("hide");
 				if(selectedStudent === "") {
 
