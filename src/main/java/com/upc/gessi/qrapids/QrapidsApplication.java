@@ -74,30 +74,14 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 	}*/
 
 
-	public static void main(String[] args) {
-		System.out.println("YEPAAAAA");
-		System.out.println("asdasd");
+	public static void main(String[] args) throws Exception {
 
-		List<SICategory> siCategoryList = new ArrayList<>();
-		List<QFCategory> factorCategoryList = new ArrayList<>();
-		List<MetricCategory> metricCategoryList = new ArrayList<>();
+		context = SpringApplication.run(QrapidsApplication.class, args);
 
-		try {
-			context = SpringApplication.run(QrapidsApplication.class, args);
-			siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
-			factorCategoryList = context.getBean(FactorsController.class).getFactorCategories("Default");
-			metricCategoryList = context.getBean(MetricsController.class).getMetricCategories("Default");
-
-		} catch (Throwable e) {
-			if(e.getClass().getName().contains("SilentExitException")) {
-				// skipping for spring known bug https://github.com/spring-projects/spring-boot/issues/3100
-				System.out.println("Spring is restarting the main thread - See spring-boot-devtools");
-			} else {
-				throw e;
-			}
-		}
-		System.out.println("asdasd");
 		// Check the categories in the SQL database and if they are empty create the default ones
+		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
+		List<QFCategory> factorCategoryList = context.getBean(FactorsController.class).getFactorCategories("Default");
+		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories("Default");
 
 		try {
 			// Declare default categories
@@ -163,6 +147,5 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			logger.error(e.getMessage(), e);
 		}
 		*/
-		System.out.println("asaaaaaaaaaaaaaaaaaaaaadasd");
 	}
 }
