@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectsRepo
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.ProjectIdentityRepository.ProjectIdentityRepository;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -200,8 +201,8 @@ public class ProjectsController {
         return new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId(), project.getIsGlobal(),dtoProjectIdentities, project.isAnonymized());
     }
 
-    public DTOProject anonymizeProject(Project project) {
-        studentsController.anonymizeStudentsFromProject(project);
+    public DTOProject anonymizeProject(Project project, AnonymizationModes anonymizationMode) {
+        studentsController.anonymizeStudentsFromProject(project, anonymizationMode);
 
         project.setAnonymized(true);
         projectRepository.save(project);
@@ -209,7 +210,7 @@ public class ProjectsController {
         return getProjectDTO(project);
     }
 
-    public List<DTOProject> anonymizeProjects(List<Long> projectIds) throws ProjectNotFoundException, ProjectAlreadyAnonymizedException {
+    public List<DTOProject> anonymizeProjects(List<Long> projectIds,AnonymizationModes anonymizationMode) throws ProjectNotFoundException, ProjectAlreadyAnonymizedException {
         List<DTOProject> dtoProjects = new ArrayList<>();
 
         List<Project> projects = (List<Project>) projectRepository.findAllById(projectIds);
@@ -230,7 +231,7 @@ public class ProjectsController {
         }
 
         projects.forEach(project -> {
-                dtoProjects.add(anonymizeProject(project));
+                dtoProjects.add(anonymizeProject(project,anonymizationMode));
         });
 
         return  dtoProjects;
