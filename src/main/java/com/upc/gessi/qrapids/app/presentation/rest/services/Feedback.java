@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFeedback;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.BadRequestException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +62,7 @@ public class Feedback {
             com.upc.gessi.qrapids.app.domain.models.Feedback feedback = feedbackController.buildFeedback(id, date, author, user, value, oldValue);
             feedbackController.saveFeedbackForStrategicIndicator(feedback, factorIds, factorNames, factorValues, factorEvaluationDates);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+            throw new BadRequestException(Messages.MISSING_ATTRIBUTES_IN_BODY);
         }
     }
 

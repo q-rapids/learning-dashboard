@@ -14,6 +14,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +137,7 @@ public class FactorsController {
 
     }
 
-    public void deleteFactorCategory(String name) throws CategoriesException {
+    public void deleteFactorCategory(String name) {
 
         Iterable<QFCategory> factorCategoryIterable = factorCategoryRepository.findAllByName(name);
         for(QFCategory m : factorCategoryIterable)  {
@@ -147,7 +148,7 @@ public class FactorsController {
 
     public void updateFactorCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
         deleteFactorCategory(name);
         newFactorCategories(categories, name);
     }
@@ -171,9 +172,9 @@ public class FactorsController {
     public void newFactorCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
 
         boolean exists=CheckIfNameExists(name);
-        if(exists) throw new CategoriesException();
+        if(exists) throw new CategoriesException(Messages.CATEGORY_ALREADY_EXISTS);
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
         if (categories.size() > 2) {
             //metricCategoryRepository.deleteAll();
@@ -187,7 +188,7 @@ public class FactorsController {
                 factorCategoryRepository.save(qfCategory);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 

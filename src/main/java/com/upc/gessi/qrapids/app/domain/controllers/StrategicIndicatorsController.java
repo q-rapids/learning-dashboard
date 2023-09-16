@@ -14,6 +14,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +129,7 @@ public class StrategicIndicatorsController {
         if (strategicIndicatorOptional.isPresent()) {
             return strategicIndicatorOptional.get();
         } else {
-            throw new StrategicIndicatorNotFoundException();
+            throw new StrategicIndicatorNotFoundException(strategicIndicatorId.toString());
         }
     }
 
@@ -235,7 +236,7 @@ public class StrategicIndicatorsController {
             if (ppsi != null) profileProjectStrategicIndicatorsRepository.delete(ppsi);
             strategicIndicatorRepository.deleteById(strategicIndicatorId);
         } else {
-            throw new StrategicIndicatorNotFoundException();
+            throw new StrategicIndicatorNotFoundException(strategicIndicatorId.toString());
         }
     }
 
@@ -256,7 +257,7 @@ public class StrategicIndicatorsController {
                 strategicIndicatorCategoryRepository.save(sic);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 

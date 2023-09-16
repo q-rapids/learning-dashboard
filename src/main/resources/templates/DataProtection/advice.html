@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+  <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+
+<br/>
+<div style="margin-left: 1%">
+  <h1>Learning Dashboard Privacy and Cookies Policy</h1>
+
+  <h2>1. Data Controller</h2>
+  <p>[Organization address, phone number, email address] is the Data Controller of the processing of your personal data.</p>
+  <p>You may contact us in the postal address previously indicated or in the following email address for any query, request, or clarification regarding the processing of your personal data: <a href="mailto:xxx@xx.xx">xxx@xx.xx</a></p>
+
+  <h2>2. What Personal Data We Process and How We Have Obtained It</h2>
+  <p>Learning Dashboard shall process the following personal data:</p>
+  <ol>
+    <li>Any initial data that you voluntarily provide related to a request to register as a student.</li>
+    <li>Any data that are subsequently generated or exchanged from the initial request, such as metrics.</li>
+  </ol>
+  <p>Here are the details of which personal data is collected when you register in Learning Dashboard as User:</p>
+  <ul>
+    <li>Contact data: E-mail.</li>
+    <li>Other information: Account username, last connection, account password.</li>
+  </ul>
+  <p>Here are the details of which personal data is collected when you register in Learning Dashboard as Student:</p>
+  <ul>
+    <li>Identifying data: Name, surname/s.</li>
+    <li>Academic and professional data: usernames to third link profiles (Github, Taiga, PRT).</li>
+  </ul>
+
+  <h2>3. What We Process Your Personal Data For</h2>
+  <p>Learning Dashboard shall process your personal data to handle and process requests received from you, teachers, and your project partners, providing services during your subject course.</p>
+
+  <h2>4. Why We May Process Your Personal Data</h2>
+  <p>When the subject project starts, we may process your personal data in order to extract metrics from the data sources to let you, project partners, and teachers know the project's status, and how your job is being in the project.</p>
+
+  <h2>5. When and Why We May Transfer Your Data to Third Parties</h2>
+  <p>Your data will not be transferred to third parties.</p>
+
+  <h2>6. International Data Transfers</h2>
+  <p>Your data will not be transferred to countries that do not have a data protection regulation equivalent to the European ("third Countries").</p>
+
+  <h2>7. How Long We Will Store Your Data</h2>
+  <p>Your personal data will be stored while your relationship with the Learning Dashboard is going, or during a year.</p>
+
+  <h2>8. What Are Your Rights</h2>
+  <p>We inform you that you have a right to access your personal data, rectify inaccurate data, request their erasure when they are no longer necessary, oppose or limit the processing or request the portability of the data, through the postal and electronic addresses indicated.</p>
+  <p>Furthermore, if you consider the processing of your personal data violates the regulation or your rights to privacy, you may file a complaint:</p>
+  <ul>
+    <li>To Facultat d'Informàtica de Barcelona, Universitat Politécnica de Barcelona, through the electronic and postal addresses indicated.</li>
+    <li>To the Spanish Data Protection Agency (Agencia Española de Protección de Datos) through its electronic or postal addresses.</li>
+  </ul>
+
+  <h2>9. Cookies</h2>
+  <p>A cookie is a small text file that is stored on a user's computer for record-keeping purposes. We do not link the information we store in cookies to any personally identifiable information you submit while on our Website. By accessing the Site, you expressly accept the use of this type of cookies on your devices.</p>
+  <p>The Essential cookies are used, these cookies are necessary for the operation of our website and cannot be disabled. They include cookies that allow you to log in to our website and use its features.</p>
+  <p><strong>Which cookies do we use?</strong></p>
+  <p><strong>Can I refuse or opt out of cookies?</strong></p>
+  <p>You can delete cookies at any time using the special settings of your web browser. Given the large number of browsers and versions available on the market, we cannot provide technical assistance on the process of blocking or removing cookies from each of them. For such purposes, you should consult the manuals and support services provided by the manufacturer of the browser that you are using.</p>
+
+  <!-- Include links to browser-specific instructions for managing cookies -->
+
+  <p>If you choose to disable cookies, we may not be able to offer you some of our services.</p>
+  <p>Last Reviewed: September 4, 2023.</p>
+</div>
+</body>
+  <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

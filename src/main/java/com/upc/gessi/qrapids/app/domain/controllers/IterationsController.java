@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
-import com.upc.gessi.qrapids.app.domain.exceptions.HistoricChartDatesNotFoundExeption;
+import com.upc.gessi.qrapids.app.domain.exceptions.HistoricChartDatesNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Iteration;
 import com.upc.gessi.qrapids.app.domain.models.ProjectIterations;
 import com.upc.gessi.qrapids.app.domain.repositories.Iteration.IterationRepository;
@@ -22,11 +22,11 @@ public class IterationsController {
     @Autowired
     private IterationRepository iterationRepository;
 
-    public DTOIteration getIterationsByIterationId(Long date_id) throws HistoricChartDatesNotFoundExeption {
+    public DTOIteration getIterationsByIterationId(Long date_id) throws HistoricChartDatesNotFoundException {
         List<Long> project_ids = new ArrayList<>();
         Optional<Iteration> historicDate = iterationRepository.findById(date_id);
         if(!historicDate.isPresent()){
-            throw new HistoricChartDatesNotFoundExeption();
+            throw new HistoricChartDatesNotFoundException();
         }
         List<ProjectIterations> projectHistoricDates = projectIterationsRepository.findByDate_id(date_id);
         for(ProjectIterations projectHistoricDate : projectHistoricDates){
@@ -37,7 +37,7 @@ public class IterationsController {
     }
 
 
-    public List<DTOIteration> getIterationsByProjectId(Long project_id) throws HistoricChartDatesNotFoundExeption {
+    public List<DTOIteration> getIterationsByProjectId(Long project_id) throws HistoricChartDatesNotFoundException {
         List<DTOIteration> historicDatesDTO = new ArrayList<>();
         List<ProjectIterations> projectHistoricDates = projectIterationsRepository.findByProject_id(project_id);
 
@@ -79,7 +79,7 @@ public class IterationsController {
         projectIterationsRepository.deleteByDate_id(dateId);
     }
 
-    public List<DTOIteration> getAllIterations() throws HistoricChartDatesNotFoundExeption {
+    public List<DTOIteration> getAllIterations() throws HistoricChartDatesNotFoundException {
         List<Long> ids = iterationRepository.getAllIds();
         List<DTOIteration> dtoIterations = new ArrayList<>();
         for(Long id : ids) {

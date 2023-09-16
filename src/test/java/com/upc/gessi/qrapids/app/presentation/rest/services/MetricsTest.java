@@ -88,7 +88,7 @@ public class MetricsTest {
         when(metricsDomainController.getMetricCategories(null)).thenReturn(metricCategoryList);
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/categories");
+                .get("/api/metrics/categories");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -134,7 +134,7 @@ public class MetricsTest {
         // Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/projects/metrics/categories?name=Default")
+                .post("/api/metrics/categories?name=Default")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(metricRawCategoriesList));
 
@@ -167,13 +167,12 @@ public class MetricsTest {
         // Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/projects/metrics/categories?name=Default")
+                .post("/api/metrics/categories?name=Default")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(metricRawCategoriesList));
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("Not enough categories")))
                 .andDo(document("metrics/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -191,7 +190,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/current")
+                .get("/api/metrics/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -256,7 +255,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/projects/metrics/{metricId}/current", dtoMetricEvaluation.getId())
+                .get("/api/metrics/{metricId}/current", dtoMetricEvaluation.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -326,7 +325,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/historical")
+                .get("/api/metrics/historical")
                 .param("prj", projectExternalId)
                 .param("from", dateFrom)
                 .param("to", dateTo);
@@ -399,7 +398,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/projects/metrics/{metricId}/historical", dtoMetricEvaluation.getId())
+                .get("/api/metrics/{metricId}/historical", dtoMetricEvaluation.getId())
                 .param("prj", projectExternalId)
                 .param("from", dateFrom)
                 .param("to", dateTo);
@@ -488,7 +487,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/prediction")
+                .get("/api/metrics/prediction")
                 .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);
@@ -568,7 +567,7 @@ public class MetricsTest {
     public void importMetricsAndUpdateDatabase() throws Exception {
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/projects/metrics/import");
+                .get("/api/metrics/import");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

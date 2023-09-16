@@ -53,7 +53,7 @@ public class AlertsController {
         if (alertOptional.isPresent()) {
             return alertOptional.get();
         } else {
-            throw new AlertNotFoundException();
+            throw new AlertNotFoundException(Long.toString(alertId));
         }
     }
 

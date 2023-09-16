@@ -13,6 +13,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.InternalErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectsController {
@@ -46,9 +48,11 @@ public class ProjectsController {
 
     public Project findProjectByExternalId (String externalId) throws ProjectNotFoundException {
         Project project = projectRepository.findByExternalId(externalId);
+
         if (project == null) {
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException(externalId);
         }
+
         return project;
     }
 
@@ -98,7 +102,7 @@ public class ProjectsController {
         Optional<Project> projectOptional = projectRepository.findById(projectId);
 
         if (!projectOptional.isPresent())
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException(projectId.toString());
 
         return projectOptional.get();
     }
@@ -165,13 +169,13 @@ public class ProjectsController {
         return qmaProjects.getAssessedProjects();
     }
 
-    public List<String> importProjectsAndUpdateDatabase() throws IOException, CategoriesException {
+    public List<String> importProjectsAndUpdateDatabase() throws IOException, CategoriesException{
         List<String> projects = getAllProjectsExternalID();
         updateDataBaseWithNewProjects(projects);
         return projects;
     }
 
-    public void updateDataBaseWithNewProjects (List<String> projects) {
+    public void updateDataBaseWithNewProjects (List<String> projects)  {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {
@@ -217,8 +221,13 @@ public class ProjectsController {
                 projectIdsAlreadyAnonymized.add(project.getId());
         });
 
-        if(projectIdsAlreadyAnonymized.size() > 0)
-            throw new ProjectAlreadyAnonymizedException();
+        if(projectIdsAlreadyAnonymized.size() > 0) {
+
+            List<String> projectIdsAlreadyAnonymizedParsed = projectIdsAlreadyAnonymized.stream().map(Object::toString)
+                    .collect(Collectors.toList());
+
+            throw new ProjectAlreadyAnonymizedException(projectIdsAlreadyAnonymizedParsed);
+        }
 
         projects.forEach(project -> {
                 dtoProjects.add(anonymizeProject(project));

@@ -11,6 +11,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudentIdentity;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class MetricsController {
     public Metric findMetricByExternalId (String externalId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalId(externalId);
         if (metric == null) {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException(externalId);
         }
         return metric;
     }
@@ -63,7 +64,7 @@ public class MetricsController {
         if (metricOptional.isPresent()) {
             return metricOptional.get();
         } else {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException(metricId.toString());
         }
     }
 
@@ -114,7 +115,7 @@ public class MetricsController {
 
 
 
-    public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException {
+    public void importMetricsAndUpdateDatabase() throws IOException {
         List<String> projects = projectController.getAllProjectsExternalID();
         for (String prj : projects) {
             List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj, null);
@@ -159,18 +160,16 @@ public class MetricsController {
 
     }
 
-    public void deleteMetricCategory(String name) throws CategoriesException {
-
+    public void deleteMetricCategory(String name) {
         Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAllByName(name);
         for(MetricCategory m : metricCategoryIterable)  {
             metricCategoryRepository.deleteById(m.getId());
         }
-
     }
 
     public void updateMetricCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
         deleteMetricCategory(name);
         newMetricCategories(categories, name);
     }
@@ -194,9 +193,9 @@ public class MetricsController {
     public void newMetricCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
 
         boolean exists=CheckIfNameExists(name);
-        if(exists) throw new CategoriesException();
+        if(exists) throw new CategoriesException(Messages.CATEGORY_ALREADY_EXISTS);
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
         if (categories.size() > 2) {
             //metricCategoryRepository.deleteAll();
@@ -210,7 +209,7 @@ public class MetricsController {
                 metricCategoryRepository.save(metricCategory);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 

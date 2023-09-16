@@ -60,6 +60,8 @@ public class StudentsController {
 
         return new DTOStudent(student.getId(),student.getName(),DTOStudentIdentities);
     }
+
+
     public List<DTOStudent> getStudentsDTOFromProject(Long projectId){
         List<Student> students = studentRepository.findAllByProjectIdOrderByName(projectId);
         List<DTOStudent> dtoStudents = new ArrayList<>();
@@ -244,18 +246,26 @@ public class StudentsController {
 
         Project externalProj = projectRepository.findByExternalId(projectExternalId);
         Optional<Student> studentSearchResult = studentRepository.findStudentById(studentID);
-        Map<DataSource, DTOStudentIdentity> identities = studentDTO.getIdentities();
 
         Student student = null;
+
+        boolean modifiedIdentity = false;
         if(studentSearchResult.isPresent()) {
             student = studentSearchResult.get();
+
+            if(! student.getName().equals(studentDTO.getName()))
+                modifiedIdentity = true;
+
             updateStudent(student,studentDTO.getName(),studentDTO.getIdentities(), metricsIds);
         }
         else {
             student = createStudent(studentDTO, externalProj, metricsIds);
+            modifiedIdentity = true;
         }
-
-
+        if (modifiedIdentity) {
+            externalProj.setAnonymized(false);
+            projectRepository.save(externalProj);
+        }
         return student.getId();
     }
 
@@ -267,7 +277,11 @@ public class StudentsController {
         }
         Optional<Student> s = studentRepository.findStudentById(id);
         if(s.isPresent()) {
+
             Student student = s.get();
+            List<StudentIdentity> identities = studentIdentityRepository.findAllByStudent(student);
+
+            studentIdentityRepository.deleteAll(identities);
             studentRepository.delete(student);
         }
 

@@ -642,7 +642,7 @@ function updateMetricCategories (name) {
         warningUtils("Warning", "There has to be at least 2 categories for each factor");
     else {
         $.ajax({
-            url: '../api/projects/metrics/categories?name=' + name,
+            url: '../api/metrics/categories?name=' + name,
             data: JSON.stringify(dataMetrics),
             type: "PUT",
             contentType: "application/json",
@@ -661,7 +661,7 @@ function updateMetricCategories (name) {
 
 function deleteMetricCategories(name) {
     $.ajax({
-        url: '../api/projects/metrics/categories?name=' + name,
+        url: '../api/metrics/categories?name=' + name,
         type: "DELETE",
         success: function() {
             selectElement($(this));
@@ -688,7 +688,7 @@ function loadMetricsCategories (name) {
     }
     previousSelectionId = "classifier"+name;
     $.ajax({
-        url: '../api/projects/metrics/categories?name=' + name,
+        url: '../api/metrics/categories?name=' + name,
         type: "GET",
         success: function(categories) {
 
@@ -1049,7 +1049,7 @@ function saveMetricCategories () {
             warningUtils("Warning", "There has to be at least 2 categories for each factor");
         else {
             $.ajax({
-                url: '../api/projects/metrics/categories?name=' + name,
+                url: '../api/metrics/categories?name=' + name,
                 data: JSON.stringify(dataMetrics),
                 type: "POST",
                 contentType: "application/json",

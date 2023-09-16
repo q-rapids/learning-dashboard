@@ -60,13 +60,9 @@ public class QualityRequirements {
     public void ignoreQR (@RequestParam(value = "prj") String prj, HttpServletRequest request) {
         String rationale = request.getParameter("rationale");
         String patternId = request.getParameter("patternId");
-        try {
-            Project project = projectsController.findProjectByExternalId(prj);
-            qualityRequirementController.ignoreQualityRequirement(project, rationale, Integer.parseInt(patternId));
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }
+
+        Project project = projectsController.findProjectByExternalId(prj);
+        qualityRequirementController.ignoreQualityRequirement(project, rationale, Integer.parseInt(patternId));
     }
 
     @PostMapping("/api/qr")
@@ -97,8 +93,7 @@ public class QualityRequirements {
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
         } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ProjectNotFoundException(prj);
         }catch (HttpClientErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
@@ -111,46 +106,41 @@ public class QualityRequirements {
     @GetMapping("/api/qr")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQualityRequirement> getQRs(@RequestParam(value = "prj") String prj) {
-        try {
-            Project project = projectsController.findProjectByExternalId(prj);
-            List<QualityRequirement> qualityRequirements = qualityRequirementController.getAllQualityRequirementsForProject(project);
-            List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
-            for (QualityRequirement qualityRequirement : qualityRequirements) {
-                DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
-                        qualityRequirement.getId(),
-                        new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
-                        qualityRequirement.getRequirement(),
-                        qualityRequirement.getDescription(),
-                        qualityRequirement.getGoal(),
-                        qualityRequirement.getBacklogId(),
-                        qualityRequirement.getBacklogUrl());
+        Project project = projectsController.findProjectByExternalId(prj);
+        List<QualityRequirement> qualityRequirements = qualityRequirementController.getAllQualityRequirementsForProject(project);
+        List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
+        for (QualityRequirement qualityRequirement : qualityRequirements) {
+            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
+                    qualityRequirement.getId(),
+                    new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
+                    qualityRequirement.getRequirement(),
+                    qualityRequirement.getDescription(),
+                    qualityRequirement.getGoal(),
+                    qualityRequirement.getBacklogId(),
+                    qualityRequirement.getBacklogUrl());
 
-                Alert alert = qualityRequirement.getAlert();
-                if (alert != null) {
-                    DTOAlert dtoAlert = new DTOAlert(
-                            alert.getId(),
-                            alert.getId_element(),
-                            alert.getName(),
-                            alert.getType(),
-                            alert.getValue(),
-                            alert.getThreshold(),
-                            alert.getCategory(),
-                            new java.sql.Date(alert.getDate().getTime()),
-                            alert.getStatus(),
-                            alert.isReqAssociat(),
-                            null);
-                    dtoQualityRequirement.setAlert(dtoAlert);
-                }
-
-                dtoQualityRequirement.setBacklogProjectId(project.getBacklogId());
-
-                dtoQualityRequirements.add(dtoQualityRequirement);
+            Alert alert = qualityRequirement.getAlert();
+            if (alert != null) {
+                DTOAlert dtoAlert = new DTOAlert(
+                        alert.getId(),
+                        alert.getId_element(),
+                        alert.getName(),
+                        alert.getType(),
+                        alert.getValue(),
+                        alert.getThreshold(),
+                        alert.getCategory(),
+                        new java.sql.Date(alert.getDate().getTime()),
+                        alert.getStatus(),
+                        alert.isReqAssociat(),
+                        null);
+                dtoQualityRequirement.setAlert(dtoAlert);
             }
-            return dtoQualityRequirements;
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+
+            dtoQualityRequirement.setBacklogProjectId(project.getBacklogId());
+
+            dtoQualityRequirements.add(dtoQualityRequirement);
         }
+        return dtoQualityRequirements;
     }
 
     @GetMapping("/api/qrPatterns")

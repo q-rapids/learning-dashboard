@@ -35,6 +35,10 @@ public class DataEncryptDecryptConverter implements AttributeConverter<String, S
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
+
+        if(attribute == null)
+            return  null;
+
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
             SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
@@ -52,6 +56,10 @@ public class DataEncryptDecryptConverter implements AttributeConverter<String, S
 
     @Override
     public String convertToEntityAttribute(String dbData) {
+
+        if (dbData == null)
+            return null;
+
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
             SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");

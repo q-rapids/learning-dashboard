@@ -19,7 +19,6 @@ function loadIdentities(){
 		url = serverUrl + url;
 	}
 
-	console.log("Loading identities", url)
 	jQuery.ajax({
 		dataType: "json",
 		url: url,
@@ -27,7 +26,6 @@ function loadIdentities(){
 		type: "GET",
 		async: true,
 		success: function (data) {
-			console.log("GETTING IDENTITIES:", data)
 			identities = data;
 		}});
 }
@@ -120,7 +118,6 @@ function buildSecondPartOfTree() {
 };
 
 function clickOnTree(e){
-	console.log(currentSelectionId);
 	if (e.target.classList.contains("Project")) {
 		currentSelection = "Project";
 		previousSelectionId = currentSelectionId;
@@ -130,7 +127,6 @@ function clickOnTree(e){
 		}
 		document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
 		var idString = e.target.id.split("-")[0];
-		console.log(idString.replace("project", ""));
 		getChosenProject(idString.replace("project", ""));
 	} else if (e.target.classList.contains("Product")) {
 		currentSelection = "Project";
@@ -160,18 +156,39 @@ function getChosenProject(currentProjectId) {
         type: "GET",
         async: true,
         success: function (data) {
-            console.log(data, "projecttt")
         	var projectForm = document.createElement('div');
     		projectForm.setAttribute("id", "projectForm");
 			globalChecked=data.isGlobal
     		var title1Row = document.createElement('div');
     		title1Row.classList.add("productInfoRow");
+
     		var title1P = document.createElement('p');
     		title1P.appendChild(document.createTextNode("Project Information"));
     		title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
     		title1Row.appendChild(title1P);
+    		if(data.anonymized){
+    		    // Create an img element and set its attributes
+                let incognitoImg = document.createElement('img');
+                incognitoImg.classList.add("icons");
+                incognitoImg.setAttribute("src", "/icons/incognito.png");
+                incognitoImg.setAttribute("style", "margin-right: 1%");
+                title1Row.appendChild(incognitoImg);
+
+    		}
     		projectForm.appendChild(title1Row);
-    		
+
+    		if(data.anonymized){
+                // Create the main div
+                let incognitoDiv = document.createElement('div');
+
+                // Create a text node
+                let incognitoText = document.createTextNode('This project is anonymized');
+                incognitoDiv.classList.add("productInfoRow");
+                // Add text node to the div
+                incognitoDiv.appendChild(incognitoText);
+                projectForm.appendChild(incognitoDiv);
+    		}
+
     		var idRow = document.createElement('div');
     		idRow.classList.add("productInfoRow");
     		var idP = document.createElement('p');
@@ -425,9 +442,7 @@ function getChosenProject(currentProjectId) {
     		document.getElementById('productInfo').innerHTML = "";
     		document.getElementById('productInfo').appendChild(projectForm);
     		document.getElementById('productInfo').appendChild(logoColumn);
-            console.log("LULLL",data)
 			for(let i = 0 ; i<data.students.length; i++) {
-			    console.log(data)
 				var s = data.students[i];
 				buildRow(s.name, s.identities, s.id);
 			}
@@ -447,7 +462,7 @@ function fieldEdited(studentName, identities, studentId) {
 		var change = name !== studentName;
 
 		Object.values(identities).forEach(identity => {
-		    var identity_name = document.getElementById("student"+identity.dataSource+"Name" + studentId).innerHTML
+		    var identity_name = document.getElementById("student"+identity.data_source+"Name" + studentId).innerHTML
 		    if (identity_name !== identity.username){
 		        change = false;
 		    }
@@ -464,7 +479,6 @@ function fieldEdited(studentName, identities, studentId) {
 }
 
 function buildRow(studentName, student_identities, studentId) {
-    console.log("BUILDING ROW:", studentName, student_identities, studentId)
 	var table = document.getElementById("tableNames");
 	var row = table.insertRow(-1);
 	var name = document.createElement("td");
@@ -476,7 +490,6 @@ function buildRow(studentName, student_identities, studentId) {
 	row.appendChild(name);
 
 	identities.forEach(identity => {
-	    console.log(identity, )
 		var identityName = document.createElement("td");
 		identityName.setAttribute("contenteditable", "true");
 		identityName.setAttribute("style", "border:1px solid lightgray")
@@ -532,9 +545,11 @@ function buildRow(studentName, student_identities, studentId) {
 }
 
 function deleteStudent(studentId) {
+
+
 	if (studentId >= 0) {
 		jQuery.ajax({
-			url: `../api/projects/metrics/student/${studentId}?prj=${externalId}`,
+			url: `../api/metrics/students/${studentId}`,
 			type: "DELETE",
 			contentType: false,
 			processData: false,
@@ -600,35 +615,30 @@ $("#acceptMetricsButton").click(function () {
 
 		jQuery.ajax({
 			data: body,
-			url: `../api/projects/metrics/students?prj=${externalId}`,
+			url: `../api/metrics/students?prj=${externalId}`,
 			type: "PUT",
 			contentType: "application/json;",
 			processData: false,
 			success: function (data) {
 				$("#metricsModal").modal("hide");
-				if(selectedStudent<0) {
+				if(selectedStudent === "") {
+
 					var row = document.getElementById("row" + selectedStudent)
 					row.setAttribute("id", "row" + data);
 					var name = document.getElementById("studentName" + selectedStudent)
 					var nameClone = name.cloneNode(true)
 					nameClone.setAttribute("id", "studentName" + data)
-					nameClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
+					nameClone.addEventListener("input",function() {fieldEdited(nameText, student_new_identities, data) })
 					name.parentNode.replaceChild(nameClone,name)
-					var taigaName = document.getElementById("studentTaigaName" + selectedStudent)
-					var taigaClone = taigaName.cloneNode(true)
-					taigaClone.setAttribute("id", "studentTaigaName" + data)
-					taigaClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
-					taigaName.parentNode.replaceChild(taigaClone, taigaName)
-					var githubName = document.getElementById("studentGithubName" + selectedStudent)
-					var githubClone=githubName.cloneNode(true)
-					githubClone.setAttribute("id", "studentGithubName" + data)
-					githubClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
-					githubName.parentNode.replaceChild(githubClone,githubName)
-					var prtName = document.getElementById("studentPrtName" + selectedStudent)
-					var prtClone=prtName.cloneNode(true)
-					prtClone.setAttribute("id", "studentPrtName" + data)
-					prtClone.addEventListener("input",function() {fieldEdited(nameText, taigaNameText, githubNameText, prtNameText, data) })
-					prtName.parentNode.replaceChild(prtClone,prtName)
+
+                    identities.forEach(identity => {
+                        var identityName = document.getElementById(`student${identity}Name` + selectedStudent)
+                        var identityClone = identityName.cloneNode(true)
+                        identityClone.setAttribute("id", `student${identity}Name` + data)
+                        identityClone.addEventListener("input",function() {fieldEdited(nameText, student_new_identities, data) })
+                        identityName.parentNode.replaceChild(identityClone, identityName)
+                    })
+
 					var selMetricsBtn = document.getElementById("selMetricsBtn"+selectedStudent)
 					var selMetricsClone = selMetricsBtn.cloneNode(true)
 					selMetricsClone.setAttribute("id", "selMetricsBtn"+data)
@@ -698,7 +708,7 @@ function showMetrics(studentId) {
 	var externalId =document.getElementById(currentSelectionId).innerHTML;
 	jQuery.ajax({
 		dataType: "json",
-		url: `../api/projects/metrics?prj=${externalId}`,
+		url: `../api/metrics?prj=${externalId}`,
 		cache: false,
 		type: "GET",
 		async: false,

@@ -16,6 +16,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import evaluation.StrategicIndicator;
 import org.elasticsearch.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +177,7 @@ public class QMAStrategicIndicators {
 
                 //bool that determines if the current SI has the estimation parameter
                 if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
-                    throw new CategoriesException();
+                    throw new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH);
 
                 buildDTOStrategicIndicatorEvaluationList(si, element, id, hasBN, hasFeedback, categories);
             }
@@ -196,7 +197,7 @@ public class QMAStrategicIndicators {
 
             if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
                 setValueAndThresholdForCategories(categories, estimation);
-            } else if (hasEstimation) throw new CategoriesException();
+            } else if (hasEstimation) throw new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH);
             //calculate "fake" value if the SI has estimation
             if (hasEstimation) {
                 buildDTOStrategicIndicatorEvaluationWithEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation);
@@ -241,7 +242,7 @@ public class QMAStrategicIndicators {
             ++i;
         }
         if (changed != categories.size())
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH);
     }
 
     private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOAssessment> assessment) {

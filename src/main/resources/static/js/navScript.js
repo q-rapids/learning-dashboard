@@ -331,6 +331,9 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
 } else if (currentURL.search("/QualityRequirements") !== -1) {
     id = "QualityRequirements";
     highlight(id);
+} else if (currentURL.search("/DataProtection") !== -1) {
+    id = "DataProtection";
+    highlight(id);
 } else if (currentURL.search("/Decisions") !== -1) {
     id = "Decisions";
     highlight(id);
@@ -562,6 +565,8 @@ $("#usersConfig").attr("href", serverUrl + "/users");
 $("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
 
 $("#Reporting").attr("href", serverUrl + "/Reporting");
+
+$("#DataProtection").attr("href", serverUrl + "/DataProtection");
 
 
 
