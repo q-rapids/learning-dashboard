@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.upc.gessi.qrapids.app.domain.exceptions.EnumBadRequestException;
 
 public enum AnonymizationModes {
 
@@ -33,7 +34,13 @@ public enum AnonymizationModes {
 
     @JsonCreator
     public static AnonymizationModes fromString(String anonymizationMode){
-        return anonymizationMode == null ? null : AnonymizationModes.valueOf(anonymizationMode.toUpperCase());
+
+        for (AnonymizationModes mode : AnonymizationModes.values()) {
+            if(mode.toString().equals(anonymizationMode)){
+                return mode;
+            }
+        }
+        throw new EnumBadRequestException("Anonymization mode '" + anonymizationMode + "' not exists");
     }
 
 }

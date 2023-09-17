@@ -104,9 +104,9 @@ public class Projects {
 
     @PostMapping("api/projects/{projectId}/anonymize")
     @ResponseStatus(HttpStatus.OK)
-    public DTOProject anonymizeProject(@PathVariable Long projectId, @RequestBody(required = false) AnonymizationModes anonymizationMode) {
+    public DTOProject anonymizeProject(@PathVariable Long projectId, @RequestBody(required = false) DTOAnonymizeProjectRequest body) {
 
-        AnonymizationModes mode = anonymizationMode;
+        AnonymizationModes mode = body.getAnonymizationMode();
 
         if (mode == null)
             mode = AnonymizationModes.COUNTRIES;
