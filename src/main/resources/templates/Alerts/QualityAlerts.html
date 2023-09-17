@@ -8,6 +8,8 @@
     <div th:replace="Fragments/Template :: logo"></div>
     <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
     <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+
+    <div th:replace="Fragments/Template :: cookies"></div>
     <br/>
     <div class="col-xs-4 pull-right" style="text-align: right; padding-right: 2em;">
         <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlert()">New Metric Alert</button>

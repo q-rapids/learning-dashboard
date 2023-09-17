@@ -182,5 +182,76 @@
     </div>
 </div>
 
+<div th:fragment="cookies">
+    <div class="modal fade" id="cookiesModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div id="cookieConsentPopup" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p>Cookies consent</p>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Facultat d’Informàtica de Barcelona, Universitat Politécnica de Catalunya uses cookies on its
+                    website. Cookies are small text files that are stored on your computer or mobile device when
+                    you visit our website. They are used to improve your experience on our website and to provide
+                    us with information about how you use our website.
+                </p>
+
+                <p>
+                    We use the following type of cookies:
+                </p>
+
+                <ul>
+                    <li>
+                        Essential cookies: These cookies are necessary for the operation of our website and cannot
+                        be disabled. They include cookies that allow you to log in to our website and use its features.
+                    </li>
+                </ul>
+
+                <p>
+                    You can choose whether or not to accept cookies. If you do not want to accept cookies, you can
+                    change your browser settings to block cookies. However, this may prevent you from using our
+                    website.
+                </p>
+
+                <p>
+                    By clicking on "Accept cookies", you consent to the use of cookies by Facultat d’Informàtica de
+                    Barcelona, Universitat Politécnica de Catalunya in accordance with this Cookie Consent Form.
+                </p>
+
+                <p>
+                    You can withdraw your consent at any time by changing your browser settings or by contacting
+                    us.
+                </p>
+                <div class="modal-footer">
+                    <button id="cookieAccept" class="btn btn-primary">Accept</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function showCookiePopup() {
+        $("#cookiesModal").modal();
+    }
+
+    function hideCookiePopup() {
+        $("#cookiesModal").modal("hide");
+    }
+    window.addEventListener('load', function() {
+     console.log("Window loaded"); // Debugging line
+        if (!sessionStorage.getItem('cookieConsent')) {
+            console.log("Showing popup"); // Debugging line
+            showCookiePopup();
+        }
+
+        document.getElementById("cookieAccept").onclick = function() {
+            console.log("Button clicked"); // Debugging line
+            sessionStorage.setItem('cookieConsent', 'accepted');
+            hideCookiePopup();
+        };
+    });
+    </script>
+    </div>
+</div>
 </body>
 </html>
