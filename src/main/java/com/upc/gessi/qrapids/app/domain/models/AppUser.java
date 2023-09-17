@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,6 +47,9 @@ public class AppUser implements Serializable{
     @Column(name="anonymous_mode")
     private boolean anonymousMode;
 
+    @Column(name="anonymous_mode_selected")
+    private AnonymizationModes anonymousModeSelected;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "user_project",
@@ -65,6 +69,7 @@ public class AppUser implements Serializable{
         this.appuser_question = appuser_question;
         this.question = question;
         this.anonymousMode = false;
+        this.anonymousModeSelected = AnonymizationModes.COUNTRIES;
     }
 
     public AppUser(String username, String email, boolean admin, String password) {
@@ -161,6 +166,15 @@ public class AppUser implements Serializable{
         this.anonymousMode = anonymousMode;
     }
 
+
+    public AnonymizationModes getAnonymousModeSelected() {
+        return anonymousModeSelected;
+    }
+
+    public void setAnonymousModeSelected(AnonymizationModes anonymousModeSelected) {
+        this.anonymousModeSelected = anonymousModeSelected;
+    }
+
     public boolean hasRoute (String route ) {
 
         if ( this.admin )
@@ -191,6 +205,8 @@ public class AppUser implements Serializable{
                 ", userGroup=" + userGroup +
                 ", appuser_question=" + appuser_question +
                 ", question='" + question + '\'' +
+                ", anonymousMode='" + anonymousMode + '\'' +
+                ", anonymousModeSelected='" + anonymousModeSelected + '\'' +
                 '}';
     }
 }

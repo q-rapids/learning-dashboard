@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentExceptio
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -103,21 +104,31 @@ public class Projects {
 
     @PostMapping("api/projects/{projectId}/anonymize")
     @ResponseStatus(HttpStatus.OK)
-    public DTOProject anonymizeProject(@PathVariable Long projectId) {
+    public DTOProject anonymizeProject(@PathVariable Long projectId, @RequestBody(required = false) DTOAnonymizeProjectRequest body) {
 
-            Project project = projectsController.getProjectById(projectId);
+        AnonymizationModes mode = body.getAnonymizationMode();
 
-            if(project.isAnonymized())
-                throw new ProjectAlreadyAnonymizedException(projectId.toString());
+        if (mode == null)
+            mode = AnonymizationModes.COUNTRIES;
 
-            return projectsController.anonymizeProject(project);
+        Project project = projectsController.getProjectById(projectId);
+
+        if(project.isAnonymized())
+            throw new ProjectAlreadyAnonymizedException(projectId.toString());
+
+        return projectsController.anonymizeProject(project, mode);
 
     }
 
     @PostMapping("api/projects/anonymize")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOProject> anonymizeProjects(@RequestBody @Valid List<Long> projectIds) {
-                    return projectsController.anonymizeProjects(projectIds);
+    public List<DTOProject> anonymizeProjects(@RequestBody @Valid DTOAnonymizeProjectsRequest body) {
+
+        AnonymizationModes mode = body.getAnonymizationMode();
+
+        if (mode == null)
+            mode = AnonymizationModes.COUNTRIES;
+        return projectsController.anonymizeProjects(body.getProjectIds(), mode);
     }
 
     @GetMapping("api/project/{projectId}/iterations") //!!!!!!!!!!!!!

@@ -6,16 +6,12 @@ import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Student.StudentRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StudentIdentity.StudentIdentityRepository;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
@@ -88,10 +84,10 @@ public class StudentsController {
         }
     }
 
-    public void anonymizeStudentsFromProject(Project project){
+    public void anonymizeStudentsFromProject(Project project, AnonymizationModes anonymizationMode){
         List<Student> students = getStudentsFromProject(project.getId());
 
-        Map<Long,String> studentAnonymizedNames = getAnonymizedStudentNames(students);
+        Map<Long,String> studentAnonymizedNames = getAnonymizedStudentNames(students, anonymizationMode);
 
         students.forEach(student -> {
             student.setName(studentAnonymizedNames.get(student.getId()));
@@ -100,7 +96,7 @@ public class StudentsController {
         studentRepository.saveAll(students);
     }
 
-    public Map<Long, String> getAnonymizedStudentNames(List<Student> students){
+    public Map<Long, String> getAnonymizedStudentNames(List<Student> students, AnonymizationModes anonymizationMode){
 
         Map<Long, String> studentNormalizedNames = new HashMap<>();
 
@@ -108,7 +104,7 @@ public class StudentsController {
                 boolean uniqueName = false;
                 int it = 0;
                 while(!uniqueName) {
-                    String anonymizedName = getAnonymizedName(student.getId().intValue(), it);
+                    String anonymizedName = getAnonymizedName(student.getId().intValue(), it, anonymizationMode);
 
                     if (! studentNormalizedNames.containsValue(anonymizedName)) {
                         studentNormalizedNames.put(student.getId(), anonymizedName);
@@ -129,7 +125,7 @@ public class StudentsController {
         List<Student> students = studentRepository.findAllByProjectIdOrderByName(project.getId());
 
         if(anonymize){
-            return getAnonymizedStudentNames(students);
+            return getAnonymizedStudentNames(students, usersController.getCurrentUserAnonymizationMode());
         }
 
         Map<Long, String> studentNormalizedNames = new HashMap<>();
@@ -212,8 +208,8 @@ public class StudentsController {
         }
         return normalizedMetricName;
     }
-
-    public String getAnonymizedName(Integer id, Integer offset) {
+    //Deprecated
+    public String getAnonymizedRandomName(Integer id, Integer offset) {
 
         int weekNumber = LocalDate.now().getDayOfYear() / 7; // Get the week number
 
@@ -240,6 +236,31 @@ public class StudentsController {
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
+    }
+
+    public String getAnonymizedName(Integer id, Integer offset, AnonymizationModes mode) {
+
+        int weekNumber = LocalDate.now().getDayOfYear() / 7; // Get the week number
+
+        long seed = ((long)id << 32) + (weekNumber + offset); // Random Seed based on week number and offset
+
+        SecureRandom random = null;
+
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        random.setSeed(seed);
+
+        Enum<?>[] selectedMode = mode.getValues();
+
+        int length = selectedMode.length;
+        int value = random.nextInt(length);
+
+        String anonymizedName = selectedMode[value].toString();
+        return anonymizedName.replace("_"," ");
     }
 
     public Long updateStudentAndMetrics(Long studentID, DTOStudent studentDTO, List<Long> metricsIds, String projectExternalId) {

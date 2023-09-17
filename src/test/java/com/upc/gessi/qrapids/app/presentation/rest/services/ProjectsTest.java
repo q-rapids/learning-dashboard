@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
 import com.upc.gessi.qrapids.app.domain.models.DataSource;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.ResourceNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -17,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
@@ -43,10 +48,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -153,13 +158,13 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-
+        boolean anonymized = false;
         // PROJECT DTO
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, anonymized);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -184,6 +189,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
+                .andExpect(jsonPath("$[0].anonymized", is(anonymized)))
                 .andDo(document("projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -217,7 +223,9 @@ public class ProjectsTest {
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
-                                        .description("Students of the project"))
+                                        .description("Students of the project"),
+                                fieldWithPath("[].anonymized")
+                                        .description("If project is anonymized"))
                 ));
 
         // Verify mock interactions
@@ -233,13 +241,13 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-
+        boolean anonymized = false;
         // PROJECT DTO
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, anonymized);
 
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
@@ -266,6 +274,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
+                .andExpect(jsonPath("$[0].anonymized", is(anonymized)))
                 .andDo(document("profile/projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -299,7 +308,9 @@ public class ProjectsTest {
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
-                                        .description("Students of the project"))
+                                        .description("Students of the project"),
+                                fieldWithPath("[].anonymized")
+                                        .description("If project is anonymized"))
                 ));
 
         // Verify mock interactions
@@ -316,7 +327,7 @@ public class ProjectsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
-
+        boolean anonymized = false;
 
         Boolean isGlobal = false;
         // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
@@ -333,7 +344,7 @@ public class ProjectsTest {
             dtoProjectIdentitiesBody.put(dataSource, dataSourceURL);
         }
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, anonymized);
 
         DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
         when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
@@ -374,7 +385,7 @@ public class ProjectsTest {
                                                 "    \"backlog_id\": \"<backlog>\",\n" +
                                                 "    \"global\": <true/false>,\n" +
                                                 "    \"identities\" :{\n" +
-                                                "        \"<IDENTITY>\": \"<URL>\"\n" +
+                                                "        \"<IDENTITY>\": \"<URL>\"\n}" +
                                                 "    }")
                         )
                 ));
@@ -410,6 +421,7 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         String projectBacklogId = "999";
         Boolean isGlobal = false;
+        boolean anonymized = false;
 
         URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
@@ -426,7 +438,7 @@ public class ProjectsTest {
         }
 
 
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId, false, dtoProjectIdentities, anonymized);
 
 
         DTOUpdateProject dtoUpdateProject = new DTOUpdateProject(projectExternalId, projectName, projectDescription, projectBacklogId, dtoProjectIdentitiesBody, isGlobal);
@@ -527,12 +539,12 @@ public class ProjectsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-
+        boolean anonymized = false;
 
         String identityURL = "githubURL";
         Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
         dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, false);
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, anonymized);
 
         when(projectsDomainController.getProjectDTOById(projectId)).thenReturn(dtoProject);
 
@@ -553,6 +565,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$.identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$.isGlobal",is(false)))
                 .andExpect(jsonPath("$.students", is(nullValue())))
+                .andExpect(jsonPath("$.anonymized", is(anonymized)))
                 .andDo(document("projects/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -590,7 +603,9 @@ public class ProjectsTest {
                                 fieldWithPath("isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("students")
-                                        .description("Students of the project"))
+                                        .description("Students of the project"),
+                                fieldWithPath("anonymized")
+                                        .description("If project is anonymized"))
                 ));
 
         // Verify mock interactions
@@ -704,5 +719,362 @@ public class ProjectsTest {
                                 fieldWithPath("[].dateTo")
                                         .description("Phase to date"))
                 ));
+    }
+
+
+    @Test
+    public void anonymizeProject() throws Exception {
+        AnonymizationModes mode = AnonymizationModes.GREEK_ALPHABET;
+
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        boolean active = true;
+        String projectBacklogId = "999";
+        boolean anonymized = false;
+
+
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, anonymized);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, active, false);
+        project.setId(projectId);
+        project.setAnonymized(anonymized);
+        when(projectsDomainController.getProjectDTOById(projectId)).thenReturn(dtoProject);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        Map<String, String> dto = new HashMap<>();
+        dto.put("anonymization_mode", mode.toString());
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/{id}/anonymize", projectId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+
+        when(projectsDomainController.anonymizeProject(any(), any())).thenReturn(dtoProject);
+
+        when(projectsDomainController.getProjectById(projectId)).thenReturn(project);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("projects/{id}/anonymize",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("anonymization_mode")
+                                        .description("Anonymization mode, if not defined, default is Capitals")
+                        ),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Project identifier"),
+                                fieldWithPath("externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("name")
+                                        .description("Project name"),
+                                fieldWithPath("description")
+                                        .description("Project description"),
+                                fieldWithPath("logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("backlogId")
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("anonymized")
+                                        .description("If project students are anonymized"),
+                                fieldWithPath("identities")
+                                        .description("Project identities"),
+                                fieldWithPath("identities.GITHUB")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("identities.GITHUB.dataSource")
+                                        .description("Identity data source. Example: Github, Taiga, PRT"),
+                                fieldWithPath("identities.GITHUB.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("identities.GITHUB.project")
+                                        .description("Identity project"),
+                                fieldWithPath("isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("students")
+                                        .description("Students of the project"),
+                                fieldWithPath("anonymized")
+                                        .description("If project is anonymized"))
+                ));
+    }
+
+    @Test
+    public void anonymizeProjectNotFound() throws Exception {
+        AnonymizationModes mode = AnonymizationModes.GREEK_ALPHABET;
+
+        Long projectId = 1L;
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        Map<String, String> dto = new HashMap<>();
+        dto.put("anonymization_mode", mode.toString());
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/{id}/anonymize", projectId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+        when(projectsDomainController.getProjectById(projectId)).thenThrow(ResourceNotFoundException.class);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isNotFound())
+                .andDo(document("projects/{id}/anonymize/error-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+
+    }
+    @Test
+    public void anonymizeProjectBadRequest() throws Exception {
+
+        Long projectId = 1L;
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        Map<String, String> dto = new HashMap<>();
+        dto.put("anonymization_mode", "YEPA");
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/{id}/anonymize", projectId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andDo(document("projects/{id}/anonymize/error-bad-request",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    public void anonymizeProjectAlreadyAnonimizate() throws Exception {
+        AnonymizationModes mode = AnonymizationModes.GREEK_ALPHABET;
+
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        boolean active = true;
+        String projectBacklogId = "999";
+        boolean anonymized = true;
+
+
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, anonymized);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, active, false);
+        project.setId(projectId);
+        project.setAnonymized(anonymized);
+
+        when(projectsDomainController.getProjectById(projectId)).thenReturn(project);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        Map<String, String> dto = new HashMap<>();
+        dto.put("anonymization_mode", mode.toString());
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/{id}/anonymize", projectId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isConflict())
+                .andDo(document("projects/{id}/anonymize/error-conflict",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+
+    @Test
+    public void anonymizeProjects() throws Exception {
+        AnonymizationModes mode = AnonymizationModes.GREEK_ALPHABET;
+
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        boolean active = true;
+        String projectBacklogId = "999";
+        boolean anonymized = false;
+
+
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false, dtoProjectIdentities, anonymized);
+
+        List<DTOProject> dtoProjects = new ArrayList<>();
+        dtoProjects.add(dtoProject);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        List<Long> projectIds = new ArrayList<>();
+        projectIds.add(projectId);
+
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("anonymization_mode", mode.toString());
+        dto.put("project_ids", projectIds);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/anonymize")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+
+        when(projectsDomainController.anonymizeProjects(any(), any())).thenReturn(dtoProjects);
+
+        this.mockMvc.perform(requestBuilder)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(projectId.intValue())))
+                .andExpect(jsonPath("$[0].externalId", is(projectExternalId)))
+                .andExpect(jsonPath("$[0].name", is(projectName)))
+                .andExpect(jsonPath("$[0].description", is(projectDescription)))
+                .andExpect(jsonPath("$[0].logo", is(nullValue())))
+                .andExpect(jsonPath("$[0].active", is(active)))
+                .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$[0].identities.GITHUB.dataSource", is(DataSource.GITHUB.toString())))
+                .andExpect(jsonPath("$[0].identities.GITHUB.url", is(identityURL)))
+                .andExpect(jsonPath("$[0].isGlobal",is(false)))
+                .andExpect(jsonPath("$[0].students", is(nullValue())))
+                .andExpect(jsonPath("$[0].anonymized", is(anonymized)))
+                .andDo(document("projects/anonymize",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("project_ids")
+                                        .description("List of project ids to anonymize"),
+                                fieldWithPath("anonymization_mode")
+                                        .description("Anonymization mode, if not defined, default is Capitals")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Project identifier"),
+                                fieldWithPath("[].externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Project name"),
+                                fieldWithPath("[].description")
+                                        .description("Project description"),
+                                fieldWithPath("[].logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("[].active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("[].backlogId")
+                                        .description("Project identifier in the backlog"),
+                                fieldWithPath("[].anonymized")
+                                        .description("If project students are anonymized"),
+                                fieldWithPath("[].identities")
+                                        .description("Project identities"),
+                                fieldWithPath("[].identities.GITHUB")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("[].identities.GITHUB.dataSource")
+                                        .description("Identity data source. Example: Github, Taiga, PRT"),
+                                fieldWithPath("[].identities.GITHUB.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("[].identities.GITHUB.project")
+                                        .description("Identity project"),
+                                fieldWithPath("[].isGlobal")
+                                        .description("Is a global project?"),
+                                fieldWithPath("[].students")
+                                        .description("Students of the project"),
+                                fieldWithPath("[].anonymized")
+                                        .description("If project is anonymized"))));
+    }
+
+    @Test
+    public void anonymizeProjectsBadRequest() throws Exception {
+        AnonymizationModes mode = AnonymizationModes.GREEK_ALPHABET;
+
+        Long projectId = 1L;
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        List<Long> projectIds = new ArrayList<>();
+        projectIds.add(projectId);
+
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("anonymization_mode","YEPA");
+        dto.put("project_ids", projectIds);
+
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/anonymize")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andDo(document("projects/anonymize/error-bad-request",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    public void anonymizeProjectsConflict() throws Exception {
+        AnonymizationModes mode = AnonymizationModes.GREEK_ALPHABET;
+
+        Long projectId = 1L;
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+        List<Long> projectIds = new ArrayList<>();
+        projectIds.add(projectId);
+
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("anonymization_mode", mode.toString());
+        dto.put("project_ids", projectIds);
+
+        when(projectsDomainController.anonymizeProjects(any(), any())).thenThrow(ProjectAlreadyAnonymizedException.class);
+
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/projects/anonymize")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dto));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isConflict())
+                .andDo(document("projects/anonymize/error-conflict",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())));
     }
 }

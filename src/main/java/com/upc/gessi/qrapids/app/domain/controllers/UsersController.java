@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,5 +94,9 @@ public class UsersController {
 
     public boolean hasCurrentUserAnonymousMode(){
         return  getCurrentUser().isAnonymousMode();
+    }
+
+    public AnonymizationModes getCurrentUserAnonymizationMode(){
+        return getCurrentUser().getAnonymousModeSelected();
     }
 }
