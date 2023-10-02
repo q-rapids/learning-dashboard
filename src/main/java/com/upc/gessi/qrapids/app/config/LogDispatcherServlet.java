@@ -4,23 +4,18 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
-import org.springframework.web.util.ContentCachingResponseWrapper;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.util.WebUtils;
 import org.springframework.core.log.LogFormatUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.http.MediaType;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
 
-public class LogDispatcherServlet extends org.springframework.web.servlet.DispatcherServlet {
+public class LogDispatcherServlet extends DispatcherServlet {
 
     @Override
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -75,9 +70,7 @@ public class LogDispatcherServlet extends org.springframework.web.servlet.Dispat
 
     private static String getRequestUri(HttpServletRequest request) {
         String uri = (String) request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE);
-        if (uri == null) {
-            uri = request.getRequestURI();
-        }
+        if (uri == null) uri = request.getRequestURI();
         return uri;
     }
 

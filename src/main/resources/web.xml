@@ -10,6 +10,7 @@
         <servlet-class>com.upc.gessi.qrapids.app.config.LogDispatcherServlet</servlet-class>
         <!-- <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> -->
         <load-on-startup>1</load-on-startup>
+        <multipart-config/>
     </servlet>
 
     <servlet-mapping>
