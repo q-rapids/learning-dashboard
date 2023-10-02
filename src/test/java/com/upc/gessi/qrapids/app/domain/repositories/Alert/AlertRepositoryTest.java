@@ -134,7 +134,7 @@ public class AlertRepositoryTest {
     }
 
     @Test
-    public void findTodayExactAlert(){
+    public void findTodayExactAlert() throws InterruptedException {
         //Given
         Project project = new Project("test_project", "TestProject", "", null, true, null,null,false);
         entityManager.persistAndFlush(project);
@@ -145,7 +145,9 @@ public class AlertRepositoryTest {
         LocalDate todayDate= LocalDate.now();
         LocalDateTime todayStart = todayDate.atStartOfDay();
         Date startDate= Date.from(todayStart.atZone(ZoneId.systemDefault()).toInstant());
+        Thread.sleep(1000L);
         Date now = new Date();
+
         // When
         Alert alertFound = alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(project.getId(),"badBacklogManagement","metric", 0.31f, AlertType.TRESPASSED_THRESHOLD,"PROPHET",predDate, startDate, now, 0.50f);
 

@@ -1130,7 +1130,6 @@ public class AlertsControllerTest
         LocalDateTime todayStart = todayDate.atStartOfDay();
         Date startDate= Date.from(todayStart.atZone(ZoneId.systemDefault()).toInstant());
         Date now = new Date();
-        when(alertsControllerMock.getTodayStartOfDayInstant()).thenReturn(startDate);
         when(alertRepository.findAlertByProjectIdAndAffectedIdAndAffectedTypeAndValueAndTypeAndPredictionTechniqueAndPredictionDateAndDateGreaterThanEqualAndDateLessThanAndThreshold(eq(projectId), eq(alert.getAffectedId()), eq("metric"), eq(alert.getValue()), eq(alert.getType()), eq("PROPHET"), eq(alert.getPredictionDate()), eq(startDate), any(), eq(alert.getThreshold()))).thenReturn(alert);
 
         // When

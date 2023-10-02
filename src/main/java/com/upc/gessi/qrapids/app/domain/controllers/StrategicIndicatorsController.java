@@ -297,7 +297,7 @@ public class StrategicIndicatorsController {
                 ++i;
                 ++j;
             }
-            if (i>=forecast.size()) break;
+            if (i + period >= forecast.size()) break;
             List<DTOStrategicIndicatorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
@@ -338,7 +338,7 @@ public class StrategicIndicatorsController {
                     ++i;
                     ++j;
                 }
-                if (i >=  siFactorsPredictions.size()) break;
+                if (i  + period >=  siFactorsPredictions.size()) break;
 
                 List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(siFactorsPredictions.subList(i, i + period));
                 List<Float> predictedValues = new ArrayList<>();

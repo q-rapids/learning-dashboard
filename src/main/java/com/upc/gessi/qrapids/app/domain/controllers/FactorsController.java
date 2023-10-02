@@ -725,11 +725,10 @@ public class FactorsController {
             List <DTOMetricEvaluation> qfMetricsPredictions = forecast.get(qf).getMetrics();
             int j=0;
             for(int i=0; i<qfMetricsPredictions.size(); i+=period, ++j){
-                while (qfMetricsPredictions.get(i).getValue()==null){
-                    ++i;
-                    ++j;
+                while (qfMetricsPredictions.get(i).getValue()==null) {
+                    ++i; ++j;
                 }
-                if(i>=qfMetricsPredictions.size()) break;
+                if(i + period >=qfMetricsPredictions.size()) break;
                 List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(qfMetricsPredictions.subList(i, i + period));
                 String metricId = forecastedValues.get(0).getId();
                 DTOMetricEvaluation currentMetricEval = currentMetricEvals.get(factorId+metricId);
