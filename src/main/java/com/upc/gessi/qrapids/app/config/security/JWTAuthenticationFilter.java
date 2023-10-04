@@ -38,6 +38,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private AuthenticationManager authenticationManager;
 
 	private UsersController usersController;
+
+	private SessionTimer sessionTimer;
+
 	// √Tools Auth
 	AuthTools authTools;
 
@@ -121,23 +124,23 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			// Web Application
             // Set token auth in HTTP Only cookie client.
 			Cookie qrapids_token_client = new Cookie( COOKIE_STRING, token);
+			this.sessionTimer = SessionTimer.getInstance();
+
+			ActionLogger al = new ActionLogger();
+			String username = ((User) auth.getPrincipal()).getUsername();
+			al.traceEnterApp(username, token);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+			//userController.setLastConnection(username, dtf.format(now));
 
 			// Configuration
 			// Changed HttpOnly to false to read it from the application
 			qrapids_token_client.setHttpOnly( true );
 			qrapids_token_client.setMaxAge(  (int) EXPIRATION_COOKIE_TIME / 1000 );
 
-            res.addCookie( qrapids_token_client );
-
-			ActionLogger al = new ActionLogger();
-			String username = ((User) auth.getPrincipal()).getUsername();
-			al.traceEnterApp(username);
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
-			//userController.setLastConnection(username, dtf.format(now));
+			res.addCookie( qrapids_token_client );
+			sessionTimer.startTimer(username, token, (int) EXPIRATION_COOKIE_TIME / 1000);
 
 			res.sendRedirect("StrategicIndicators/CurrentChart");
-
-
 
 		} else {
 			// API send header with token auth

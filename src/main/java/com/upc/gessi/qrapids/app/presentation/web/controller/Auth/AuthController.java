@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.web.controller.Auth;
 
 import com.upc.gessi.qrapids.app.config.ActionLogger;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
+import com.upc.gessi.qrapids.app.config.security.SessionTimer;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Question;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
@@ -120,13 +121,15 @@ public class AuthController {
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 
         String cookie_token = this.authTools.getCookieToken( request, COOKIE_STRING );
+        SessionTimer sessionTimer = SessionTimer.getInstance();
         if ( cookie_token != null && cookie_token != "" && !cookie_token.isEmpty() ){
             String user = null;
             user = this.authTools.getUser(cookie_token);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
             ActionLogger al = new ActionLogger();
-            al.traceExitApp(user);
+            al.traceExitApp(user, cookie_token);
+            sessionTimer.cancelTimer(cookie_token);
         }
 
 		Cookie cookie = new Cookie(COOKIE_STRING, null); // Not necessary, but saves bandwidth.
