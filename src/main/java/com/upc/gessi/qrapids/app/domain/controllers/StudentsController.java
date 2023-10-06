@@ -146,6 +146,8 @@ public class StudentsController {
 
         Map<Long, String> normalizedNames = getNormalizedNamesByProject(project);
 
+        System.out.println("JEJEJEJEJE: " + normalizedNames); //Aqui llega bien
+
 
         for(DTOStudent s : students) {
             List<Metric> metrics = metricRepository.findAllByStudentIdOrderByName(s.getId());
@@ -190,7 +192,7 @@ public class StudentsController {
             //normalize names
             metricsController.normalizeMetricsEvaluation(orderedMetricList, students, normalizedNames);
 
-            DTOStudentMetrics temp = new DTOStudentMetrics(s.getName(), dtoStudentIdentities, orderedMetricList, number);
+            DTOStudentMetrics temp = new DTOStudentMetrics(normalizedNames.get(s.getId()), dtoStudentIdentities, orderedMetricList, number);
             dtoStudentMetrics.add(temp);
         }
         return dtoStudentMetrics;

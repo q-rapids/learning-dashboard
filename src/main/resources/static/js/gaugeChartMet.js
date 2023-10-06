@@ -270,7 +270,7 @@ function drawChartByStudent(metrics, container, width, height, categories, proje
         var labelF = document.createElement('label');
         labelF.setAttribute("style", "font-size:20px")
         //labelF.id = students[j].id;
-        labelF.textContent = students[j].studentName;
+        labelF.textContent = students[j].name;;
         divF.appendChild(labelF);
 
         gaugeChart.append(divF);
