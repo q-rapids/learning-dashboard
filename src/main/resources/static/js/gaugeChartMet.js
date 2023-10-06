@@ -127,9 +127,9 @@ function getData(width, height) {
 
 function getStudents(data, width, height) {
     if (id)
-        url = parseURLComposed("../api/metrics/student");
+        url = parseURLComposed("../api/metrics/students");
     else
-        url = "../api/metrics/student"
+        url = "../api/metrics/students"
 
     jQuery.ajax({
         dataType: "json",
