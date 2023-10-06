@@ -777,7 +777,7 @@ function saveProject() {
 
             identities.forEach(identity => {
                 var identity_new_value = document.getElementById(`input${identity}Url`).value;
-                if(identity_new_value !== "") project_new_identities[identity] = identity_new_value;
+                project_new_identities[identity] = identity_new_value;
             })
 
             var externalId =document.getElementById(currentSelectionId).innerHTML;
