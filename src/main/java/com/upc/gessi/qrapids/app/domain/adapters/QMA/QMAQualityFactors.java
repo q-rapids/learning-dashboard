@@ -67,6 +67,9 @@ public class QMAQualityFactors {
     @Autowired
     QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
 
+    @Autowired
+    QMAMetrics qmaMetrics;
+
     private Logger logger = LoggerFactory.getLogger(Factors.class);
 
     public boolean prepareQFIndex(String projectExternalId) throws IOException {
@@ -246,7 +249,7 @@ public class QMAQualityFactors {
                     logger.error(e.getMessage(), e);
                 }
 
-                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId),type);
+                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), qmaMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId), type);
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 String cat_name = factorsController.getCategoryFromRationale(evaluation.getRationale());
                 df.setDate(evaluation.getEvaluationDate());
