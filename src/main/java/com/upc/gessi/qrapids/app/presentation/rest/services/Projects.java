@@ -106,13 +106,12 @@ public class Projects {
     @ResponseStatus(HttpStatus.OK)
     public DTOProject anonymizeProject(@PathVariable Long projectId, @RequestBody(required = false) DTOAnonymizeProjectRequest body) {
 
-        AnonymizationModes mode = body.getAnonymizationMode();
-
-        if (mode == null)
-            mode = AnonymizationModes.COUNTRIES;
+        AnonymizationModes mode;
+        if (body == null) mode = AnonymizationModes.COUNTRIES;
+        else mode = body.getAnonymizationMode();
+        if (mode == null) mode = AnonymizationModes.COUNTRIES;
 
         Project project = projectsController.getProjectById(projectId);
-
         if(project.isAnonymized())
             throw new ProjectAlreadyAnonymizedException(projectId.toString());
 
@@ -124,11 +123,14 @@ public class Projects {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOProject> anonymizeProjects(@RequestBody @Valid DTOAnonymizeProjectsRequest body) {
 
-        AnonymizationModes mode = body.getAnonymizationMode();
+        AnonymizationModes mode;
+        if (body == null) mode = AnonymizationModes.COUNTRIES;
+        else mode = body.getAnonymizationMode();
+        if (mode == null) mode = AnonymizationModes.COUNTRIES;
 
-        if (mode == null)
-            mode = AnonymizationModes.COUNTRIES;
-        return projectsController.anonymizeProjects(body.getProjectIds(), mode);
+        if (body != null)
+            return projectsController.anonymizeProjects(body.getProjectIds(), mode);
+        else return new ArrayList<>();
     }
 
     @GetMapping("api/project/{projectId}/iterations") //!!!!!!!!!!!!!
