@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.0, 2023-10-04">
+<meta name="author" content="v1.0, 2023-10-08">
 <title>Learning Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Learning Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v1.0, 2023-10-04</span><br>
+<span id="author" class="author">v1.0, 2023-10-08</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -550,6 +550,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_all_projects">9.2. Get all projects</a></li>
 <li><a href="#_get_single_project">9.3. Get single project</a></li>
 <li><a href="#_update_project">9.4. Update project</a></li>
+<li><a href="#_anonymize_single_project">9.5. Anonymize single project</a></li>
+<li><a href="#_anonymize_projects">9.6. Anonymize projects</a></li>
 </ul>
 </li>
 <li><a href="#_products">10. Products</a>
@@ -581,8 +583,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_students">13. Students</a>
 <ul class="sectlevel2">
-<li><a href="#_update_students_metrics">13.1. Update student&#8217;s metrics</a></li>
-<li><a href="#_delete_students_metrics">13.2. Delete student&#8217;s metrics</a></li>
+<li><a href="#_update_a_student_and_its_metrics">13.1. Update a student and its metrics</a></li>
+<li><a href="#_delete_a_student_and_its_metrics">13.2. Delete a student and its metrics</a></li>
 </ul>
 </li>
 <li><a href="#_news_updates">14. News (updates)</a>
@@ -2132,7 +2134,7 @@ Content-Length: 883
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2142,7 +2144,7 @@ Content-Length: 883
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-06"
+    "formattedDate" : "2023-10-08"
   } ]
 } ]</code></pre>
 </div>
@@ -2399,7 +2401,7 @@ Content-Length: 883
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2409,7 +2411,7 @@ Content-Length: 883
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-06"
+    "formattedDate" : "2023-10-08"
   } ]
 } ]</code></pre>
 </div>
@@ -2652,7 +2654,7 @@ Content-Length: 883
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2662,7 +2664,7 @@ Content-Length: 883
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-06"
+    "formattedDate" : "2023-10-08"
   } ]
 } ]</code></pre>
 </div>
@@ -2927,7 +2929,7 @@ Content-Length: 883
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2937,7 +2939,7 @@ Content-Length: 883
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-06"
+    "formattedDate" : "2023-10-08"
   } ]
 } ]</code></pre>
 </div>
@@ -3180,7 +3182,7 @@ Content-Length: 866
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3190,7 +3192,7 @@ Content-Length: 866
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-06"
+    "formattedDate" : "2023-10-08"
   } ]
 } ]</code></pre>
 </div>
@@ -3447,7 +3449,7 @@ Content-Length: 866
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3457,7 +3459,7 @@ Content-Length: 866
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-06"
+    "formattedDate" : "2023-10-08"
   } ]
 } ]</code></pre>
 </div>
@@ -4841,7 +4843,7 @@ Content-Length: 569
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4851,7 +4853,7 @@ Content-Length: 569
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-06"
+  "formattedDate" : "2023-10-08"
 } ]</code></pre>
 </div>
 </div>
@@ -5047,7 +5049,7 @@ Content-Length: 565
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5057,7 +5059,7 @@ Content-Length: 565
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-06"
+  "formattedDate" : "2023-10-08"
 }</code></pre>
 </div>
 </div>
@@ -5239,7 +5241,7 @@ Content-Length: 569
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5249,7 +5251,7 @@ Content-Length: 569
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-06"
+  "formattedDate" : "2023-10-08"
 } ]</code></pre>
 </div>
 </div>
@@ -5451,7 +5453,7 @@ Content-Length: 662
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5467,7 +5469,7 @@ Content-Length: 662
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-06"
+  "formattedDate" : "2023-10-08"
 } ]</code></pre>
 </div>
 </div>
@@ -5672,7 +5674,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5900,7 +5902,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
@@ -5915,7 +5917,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6002,7 +6004,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_current_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2023-09-29&amp;to=2023-10-06' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2023-10-01&amp;to=2023-10-08' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6158,7 +6160,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6223,7 +6225,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2023-09-29&amp;to=2023-10-06' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2023-10-01&amp;to=2023-10-08' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6379,7 +6381,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6622,7 +6624,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6857,7 +6859,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -7098,7 +7100,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7367,7 +7369,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7636,7 +7638,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -8334,7 +8336,7 @@ Content-Length: 569
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8344,7 +8346,7 @@ Content-Length: 569
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-06"
+  "formattedDate" : "2023-10-08"
 } ]</code></pre>
 </div>
 </div>
@@ -8704,7 +8706,7 @@ Content-Length: 421
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8923,15 +8925,15 @@ Content-Type: application/json;charset=UTF-8
       "student" : null,
       "data_source" : "PRT"
     },
-    "TAIGA" : {
-      "username" : "username",
-      "student" : null,
-      "data_source" : "TAIGA"
-    },
     "GITHUB" : {
       "username" : "username",
       "student" : null,
       "data_source" : "GITHUB"
+    },
+    "TAIGA" : {
+      "username" : "username",
+      "student" : null,
+      "data_source" : "TAIGA"
     }
   },
   "project" : null,
@@ -8941,7 +8943,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -9101,7 +9103,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -9261,7 +9263,7 @@ Content-Length: 421
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -9443,7 +9445,7 @@ Content-Length: 421
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -9684,7 +9686,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -9944,15 +9946,15 @@ Content-Type: application/json;charset=UTF-8
       "student" : null,
       "data_source" : "PRT"
     },
-    "TAIGA" : {
-      "username" : "username",
-      "student" : null,
-      "data_source" : "TAIGA"
-    },
     "GITHUB" : {
       "username" : "username",
       "student" : null,
       "data_source" : "GITHUB"
+    },
+    "TAIGA" : {
+      "username" : "username",
+      "student" : null,
+      "data_source" : "TAIGA"
     }
   },
   "project" : null,
@@ -9962,7 +9964,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -10128,7 +10130,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 6 ],
+  "date" : [ 2023, 10, 8 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -10395,7 +10397,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 6 ],
+    "date" : [ 2023, 10, 8 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -10727,7 +10729,7 @@ Content-Length: 298
   "valueDescription" : "Normal (0.40)",
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1696581735215,
+  "date" : 1696781505938,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -11565,7 +11567,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1696581733918,
+  "date" : 1696781504592,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -11759,7 +11761,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1696581749052,
+  "date" : 1696781517253,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -11775,7 +11777,7 @@ Content-Type: application/json;charset=UTF-8
     "valueDescription" : null,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1696581749052,
+    "date" : 1696781517253,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -11919,7 +11921,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1696581749461,
+  "date" : 1696781517816,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -12518,7 +12520,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1696581737677,
+  "date" : 1696781508008,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -12731,7 +12733,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2023-10-06",
+  "date" : "2023-10-08",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -13321,8 +13323,8 @@ Content-Length: 364
   "description" : "Test project",
   "identities" : {
     "PRT" : "PRT.test",
-    "TAIGA" : "TAIGA.test",
-    "GITHUB" : "GITHUB.test"
+    "GITHUB" : "GITHUB.test",
+    "TAIGA" : "TAIGA.test"
   },
   "global" : false,
   "external_id" : "test",
@@ -13342,6 +13344,233 @@ Content-Length: 364
 </div>
 <div class="sect3">
 <h4 id="_http_response_name_already_exists">HTTP response name already exists</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_anonymize_single_project">9.5. Anonymize single project</h3>
+<div class="sect3">
+<h4 id="_path_parameters_2">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. /api/projects/{id}/anonymize</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="_path_parameters_2_request_body">Request body</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "anonymization_mode" : "GREEK_ALPHABET"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_2_request_fields">Request fields</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>anonymization_mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Anonymization mode, if not defined, default is Capitals</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_2_curl_request">Curl request</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/projects/1/anonymize' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "anonymization_mode" : "GREEK_ALPHABET"
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_2_http_response">HTTP response</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 363
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id" : 1,
+  "externalId" : "test",
+  "name" : "Test",
+  "description" : "Test project",
+  "logo" : null,
+  "active" : true,
+  "backlogId" : "999",
+  "isGlobal" : false,
+  "anonymized" : true,
+  "identities" : {
+    "GITHUB" : {
+      "dataSource" : "GITHUB",
+      "url" : "githubURL",
+      "project" : null
+    }
+  },
+  "students" : null
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_bad_request">HTTP response bad request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_project_not_found">HTTP response project not found</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 404 Not Found</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_project_already_anonymized">HTTP response project already anonymized</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_anonymize_projects">9.6. Anonymize projects</h3>
+<div class="sect3">
+<h4 id="_anonymize_projects_request_body">Request body</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code>{
+  "anonymization_mode" : "GREEK_ALPHABET",
+  "project_ids" : [ 1 ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_anonymize_projects_request_fields">Request fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project_ids</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of project ids to anonymize</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>anonymization_mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Anonymization mode, if not defined, default is Capitals</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_anonymize_projects_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/projects/anonymize' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "anonymization_mode" : "GREEK_ALPHABET",
+  "project_ids" : [ 1 ]
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_anonymize_projects_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 367
+
+[ {
+  "id" : 1,
+  "externalId" : "test",
+  "name" : "Test",
+  "description" : "Test project",
+  "logo" : null,
+  "active" : true,
+  "backlogId" : "999",
+  "isGlobal" : false,
+  "anonymized" : true,
+  "identities" : {
+    "GITHUB" : {
+      "dataSource" : "GITHUB",
+      "url" : "githubURL",
+      "project" : null
+    }
+  },
+  "students" : null
+} ]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_bad_request_2">HTTP response bad request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_project_already_anonymized_2">HTTP response project already anonymized</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
@@ -13793,9 +14022,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect2">
 <h3 id="_update_product">10.4. Update product</h3>
 <div class="sect3">
-<h4 id="_path_parameters_2">Path parameters</h4>
+<h4 id="_path_parameters_3">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. /api/products/{id}</caption>
+<caption class="title">Table 3. /api/products/{id}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -13814,7 +14043,7 @@ Content-Type: application/json;charset=UTF-8
 </tbody>
 </table>
 <div class="sect4">
-<h5 id="_path_parameters_2_request_parameters">Request parameters</h5>
+<h5 id="_path_parameters_3_request_parameters">Request parameters</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -13843,7 +14072,7 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_2_request_parts">Request parts</h5>
+<h5 id="_path_parameters_3_request_parts">Request parts</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -13864,7 +14093,7 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_2_curl_request">Curl request</h5>
+<h5 id="_path_parameters_3_curl_request">Curl request</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products/1' -i -X PUT \
@@ -13877,7 +14106,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_2_http_response">HTTP response</h5>
+<h5 id="_path_parameters_3_http_response">HTTP response</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
@@ -14928,9 +15157,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect2">
 <h3 id="_update_profile">11.4. Update profile</h3>
 <div class="sect3">
-<h4 id="_path_parameters_3">Path parameters</h4>
+<h4 id="_path_parameters_4">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. /api/products/{id}</caption>
+<caption class="title">Table 4. /api/products/{id}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -14949,7 +15178,7 @@ Content-Type: application/json;charset=UTF-8
 </tbody>
 </table>
 <div class="sect4">
-<h5 id="_path_parameters_3_request_parameters">Request parameters</h5>
+<h5 id="_path_parameters_4_request_parameters">Request parameters</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -14998,7 +15227,7 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_3_curl_request">Curl request</h5>
+<h5 id="_path_parameters_4_curl_request">Curl request</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/profiles/1' -i -X PUT \
@@ -15008,7 +15237,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_3_http_response">HTTP response</h5>
+<h5 id="_path_parameters_4_http_response">HTTP response</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
@@ -15153,9 +15382,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect2">
 <h3 id="_update_iteration">12.2. Update iteration</h3>
 <div class="sect3">
-<h4 id="_path_parameters_4">Path parameters</h4>
+<h4 id="_path_parameters_5">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. /api/iterations/{iteration_id}</caption>
+<caption class="title">Table 5. /api/iterations/{iteration_id}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -15174,7 +15403,7 @@ Content-Type: application/json;charset=UTF-8
 </tbody>
 </table>
 <div class="sect4">
-<h5 id="_path_parameters_4_request_fields">Request fields</h5>
+<h5 id="_path_parameters_5_request_fields">Request fields</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -15218,7 +15447,7 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_4_curl_request">Curl request</h5>
+<h5 id="_path_parameters_5_curl_request">Curl request</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/iterations/1' -i -X PUT \
@@ -15236,7 +15465,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_4_http_response">HTTP response</h5>
+<h5 id="_path_parameters_5_http_response">HTTP response</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
@@ -15292,9 +15521,9 @@ Content-Type: application/json;charset=UTF-8
 <h2 id="_students">13. Students</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_update_students_metrics">13.1. Update student&#8217;s metrics</h3>
+<h3 id="_update_a_student_and_its_metrics">13.1. Update a student and its metrics</h3>
 <div class="sect3">
-<h4 id="_update_students_metrics_request_parameters">Request parameters</h4>
+<h4 id="_update_a_student_and_its_metrics_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -15315,7 +15544,7 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect3">
-<h4 id="_update_students_metrics_curl_request">Curl request</h4>
+<h4 id="_update_a_student_and_its_metrics_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/students?prj=1' -i -X PUT \
@@ -15326,15 +15555,15 @@ Content-Type: application/json;charset=UTF-8
   "name" : "student_test_name",
   "identities" : {
     "PRT" : "username",
-    "TAIGA" : "username",
-    "GITHUB" : "username"
+    "GITHUB" : "username",
+    "TAIGA" : "username"
   }
 }'</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_update_students_metrics_http_response">HTTP response</h4>
+<h4 id="_update_a_student_and_its_metrics_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -15347,9 +15576,9 @@ Content-Length: 1
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_students_metrics">13.2. Delete student&#8217;s metrics</h3>
+<h3 id="_delete_a_student_and_its_metrics">13.2. Delete a student and its metrics</h3>
 <div class="sect3">
-<h4 id="_delete_students_metrics_path_parameters">Path parameters</h4>
+<h4 id="_delete_a_student_and_its_metrics_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /api/metrics/students/{studentId}</caption>
 <colgroup>
@@ -15371,7 +15600,7 @@ Content-Length: 1
 </table>
 </div>
 <div class="sect3">
-<h4 id="_delete_students_metrics_curl_request">Curl request</h4>
+<h4 id="_delete_a_student_and_its_metrics_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/students/1' -i -X DELETE</code></pre>
@@ -15379,7 +15608,7 @@ Content-Length: 1
 </div>
 </div>
 <div class="sect3">
-<h4 id="_delete_students_metrics_http_response">HTTP response</h4>
+<h4 id="_delete_a_student_and_its_metrics_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
@@ -15741,9 +15970,9 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect2">
 <h3 id="_update_novelty_update">14.6. Update novelty (update)</h3>
 <div class="sect3">
-<h4 id="_path_parameters_5">Path parameters</h4>
+<h4 id="_path_parameters_6">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. /api/update/{id}</caption>
+<caption class="title">Table 6. /api/update/{id}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -15762,7 +15991,7 @@ Content-Type: application/json;charset=UTF-8
 </tbody>
 </table>
 <div class="sect4">
-<h5 id="_path_parameters_5_request_parameters">Request parameters</h5>
+<h5 id="_path_parameters_6_request_parameters">Request parameters</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -15791,7 +16020,7 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_5_curl_request">Curl request</h5>
+<h5 id="_path_parameters_6_curl_request">Curl request</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/update/1' -i -X PUT \
@@ -15800,7 +16029,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect4">
-<h5 id="_path_parameters_5_http_response">HTTP response</h5>
+<h5 id="_path_parameters_6_http_response">HTTP response</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
@@ -15933,7 +16162,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2023-10-06' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2023-10-08' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -15985,7 +16214,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2023-10-09",
+  "date" : "2023-10-11",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -16077,10 +16306,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2023-09-21",
+  "dateFrom" : "2023-09-23",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2023-10-21"
+  "dateTo" : "2023-10-23"
 } ]</code></pre>
 </div>
 </div>
@@ -16091,7 +16320,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-10-04 17:46:03 +0200
+Last updated 2023-10-08 18:10:24 +0200
 </div>
 </div>
 </body>

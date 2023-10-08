@@ -753,21 +753,25 @@ public class ProjectsTest {
         dto.put("anonymization_mode", mode.toString());
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
                 .post("/api/projects/{id}/anonymize", projectId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectWriter.writeValueAsString(dto));
 
-
+        dtoProject.setAnonymized(true);
         when(projectsDomainController.anonymizeProject(any(), any())).thenReturn(dtoProject);
 
         when(projectsDomainController.getProjectById(projectId)).thenReturn(project);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andDo(document("projects/{id}/anonymize",
+                .andDo(document("projects/single-anonymize",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Project identifier")
+                        ),
                         requestFields(
                                 fieldWithPath("anonymization_mode")
                                         .description("Anonymization mode, if not defined, default is Capitals")
@@ -802,9 +806,7 @@ public class ProjectsTest {
                                 fieldWithPath("isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("students")
-                                        .description("Students of the project"),
-                                fieldWithPath("anonymized")
-                                        .description("If project is anonymized"))
+                                        .description("Students of the project"))
                 ));
     }
 
@@ -832,7 +834,7 @@ public class ProjectsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isNotFound())
-                .andDo(document("projects/{id}/anonymize/error-not-found",
+                .andDo(document("projects/single-anonymize/error-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
 
@@ -858,7 +860,7 @@ public class ProjectsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andDo(document("projects/{id}/anonymize/error-bad-request",
+                .andDo(document("projects/single-anonymize/error-bad-request",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
     }
@@ -904,7 +906,7 @@ public class ProjectsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isConflict())
-                .andDo(document("projects/{id}/anonymize/error-conflict",
+                .andDo(document("projects/single-anonymize/error-conflict",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));
     }
@@ -950,6 +952,7 @@ public class ProjectsTest {
                 .content(objectWriter.writeValueAsString(dto));
 
 
+        dtoProjects.get(0).setAnonymized(true);
         when(projectsDomainController.anonymizeProjects(any(), any())).thenReturn(dtoProjects);
 
         this.mockMvc.perform(requestBuilder)
@@ -967,7 +970,7 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].students", is(nullValue())))
-                .andExpect(jsonPath("$[0].anonymized", is(anonymized)))
+                .andExpect(jsonPath("$[0].anonymized", is(true)))
                 .andDo(document("projects/anonymize",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1007,9 +1010,7 @@ public class ProjectsTest {
                                 fieldWithPath("[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].students")
-                                        .description("Students of the project"),
-                                fieldWithPath("[].anonymized")
-                                        .description("If project is anonymized"))));
+                                        .description("Students of the project"))));
     }
 
     @Test
