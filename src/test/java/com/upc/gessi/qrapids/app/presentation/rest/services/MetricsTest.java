@@ -173,7 +173,6 @@ public class MetricsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("Not enough categories")))
                 .andDo(document("metrics/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -256,7 +255,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/metrics/{id}/current", dtoMetricEvaluation.getId())
+                .get("/api/metrics/{metricId}/current", dtoMetricEvaluation.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -279,7 +278,7 @@ public class MetricsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
-                                parameterWithName("id")
+                                parameterWithName("metricId")
                                         .description("Metric identifier")),
                         requestParameters(
                                 parameterWithName("prj")
@@ -399,7 +398,7 @@ public class MetricsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/metrics/{id}/historical", dtoMetricEvaluation.getId())
+                .get("/api/metrics/{metricId}/historical", dtoMetricEvaluation.getId())
                 .param("prj", projectExternalId)
                 .param("from", dateFrom)
                 .param("to", dateTo);
@@ -424,7 +423,7 @@ public class MetricsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
-                                parameterWithName("id")
+                                parameterWithName("metricId")
                                         .description("Metric identifier")),
                         requestParameters(
                                 parameterWithName("prj")

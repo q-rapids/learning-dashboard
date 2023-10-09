@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,8 @@ public class UserProfileController {
             view.addObject( "questions", this.questionRepository.findAll());
             view.addObject("defautlUserGroup", this.userGroupRepository.findByDefaultGroupIsTrue() );
             view.addObject("appuser", this.userRepository.findByUsername( userName ));
+            view.addObject("currentAnonymous", this.userRepository.findByUsername( userName ).getAnonymousModeSelected().getModeName());
+            view.addObject("anonymizationModes", AnonymizationModes.values());
         }catch (Exception e){
             logger.error(e.getMessage(), e);
         }
@@ -94,7 +97,10 @@ public class UserProfileController {
             if(userOptional.isPresent()) {
                 AppUser userUpdate = userOptional.get();
                 userUpdate.setEmail(user.getEmail());
-
+                if(!(user.getAnonymousModeSelected() == null)) {
+                    userUpdate.setAnonymousMode(user.isAnonymousMode());
+                    userUpdate.setAnonymousModeSelected(user.getAnonymousModeSelected());
+                }
                 if(!(user.getAppuser_question() == null))
                     userUpdate.setAppuser_question(user.getAppuser_question());
                 if (!(user.getQuestion() == null))

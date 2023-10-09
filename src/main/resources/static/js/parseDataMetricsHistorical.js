@@ -267,7 +267,7 @@ function getDataStudents() {
     //get data from API
     jQuery.ajax({
         dataType: "json",
-        url: "../api/metrics/student/historical",
+        url: "../api/metrics/students/historical",
         data: {
             "from": $('#datepickerFrom').val(),
             "to": $('#datepickerTo').val()

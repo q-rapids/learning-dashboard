@@ -116,7 +116,7 @@ public class QualityRequirementsTest {
     public void ignoreQRWrongProject() throws Exception {
         // Given
         String projectExternalId = "test";
-        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         String rationale = "Not important";
         int patternId = 100;
@@ -129,8 +129,7 @@ public class QualityRequirementsTest {
                 .param("patternId", String.valueOf(patternId));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("qrs/ignore-qr-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
@@ -260,7 +259,7 @@ public class QualityRequirementsTest {
     public void newQRProjectNotFound () throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException(project.getExternalId()));
 
         Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
         QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(null, decision, project);
@@ -277,7 +276,7 @@ public class QualityRequirementsTest {
                 .param("goal", qualityRequirement.getGoal());
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/add-qr-project-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -394,7 +393,7 @@ public class QualityRequirementsTest {
     public void getQRsWrongProject () throws Exception {
         // Given
         String projectExternalId = "test";
-        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -402,8 +401,7 @@ public class QualityRequirementsTest {
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("qrs/get-all-qrs-wrong-project",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())

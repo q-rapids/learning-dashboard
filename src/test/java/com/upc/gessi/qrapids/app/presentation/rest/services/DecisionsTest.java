@@ -192,7 +192,7 @@ public class DecisionsTest {
     public void getDecisionsProjectNotFound () throws Exception {
         // Given
         String projectExternalId = "missingProject";
-        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -200,8 +200,7 @@ public class DecisionsTest {
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("decisions/get-all-project-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())

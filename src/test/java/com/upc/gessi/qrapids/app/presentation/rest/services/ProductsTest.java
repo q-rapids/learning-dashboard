@@ -2,10 +2,8 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,7 +26,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -76,7 +76,12 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+
+        String identityURL = "GITHUBURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
+
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -109,9 +114,8 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].projects[0].active", is(active)))
                 .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$[0].projects[0].taigaURL", is("testURL1")))
-                .andExpect(jsonPath("$[0].projects[0].githubURL", is("testURL2")))
-                .andExpect(jsonPath("$[0].projects[0].prtURL", is("testURL3")))
+                .andExpect(jsonPath("$[0].projects[0].identities.GITHUB.dataSource", is(DataSource.GITHUB.toString())))
+                .andExpect(jsonPath("$[0].projects[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$[0].projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$[0].projects[0].students", is(nullValue())))
                 .andDo(document("products/all",
@@ -142,12 +146,18 @@ public class ProductsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("[].projects[].backlogId")
                                         .description("Project identifier in the backlog"),
-                                fieldWithPath("[].projects[].taigaURL")
-                                        .description("Taiga repository URL"),
-                                fieldWithPath("[].projects[].githubURL")
-                                        .description("Github repositories URLs separated by a ';'"),
-                                fieldWithPath("[].projects[].prtURL")
-                                        .description("PRT sheet URL"),
+                                fieldWithPath("[].projects[].anonymized")
+                                        .description("If project students are anonymized"),
+                                fieldWithPath("[].projects[].identities")
+                                        .description("Project identities"),
+                                fieldWithPath("[].projects[].identities.GITHUB")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("[].projects[].identities.GITHUB.dataSource")
+                                        .description("Identity data source. Example: GITHUB, Taiga, PRT"),
+                                fieldWithPath("[].projects[].identities.GITHUB.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("[].projects[].identities.GITHUB.project")
+                                        .description("Identity project"),
                                 fieldWithPath("[].projects[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("[].projects[].students")
@@ -168,7 +178,13 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+
+        String identityURL = "githubURL";
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        dtoProjectIdentities.put(DataSource.GITHUB, new DTOProjectIdentity(DataSource.GITHUB, identityURL));
+
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities,false);
+
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -198,9 +214,8 @@ public class ProductsTest {
                 .andExpect(jsonPath("$.projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$.projects[0].active", is(active)))
                 .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)))
-                .andExpect(jsonPath("$.projects[0].taigaURL", is("testURL1")))
-                .andExpect(jsonPath("$.projects[0].githubURL", is("testURL2")))
-                .andExpect(jsonPath("$.projects[0].prtURL", is("testURL3")))
+                .andExpect(jsonPath("$.projects[0].identities.GITHUB.dataSource", is(DataSource.GITHUB.toString())))
+                .andExpect(jsonPath("$.projects[0].identities.GITHUB.url", is(identityURL)))
                 .andExpect(jsonPath("$.projects[0].isGlobal",is(false)))
                 .andExpect(jsonPath("$.projects[0].students", is(nullValue())))
                 .andDo(document("products/single",
@@ -235,12 +250,18 @@ public class ProductsTest {
                                         .description("Is an active project?"),
                                 fieldWithPath("projects[].backlogId")
                                         .description("Project identifier in the backlog"),
-                                fieldWithPath("projects[].taigaURL")
-                                        .description("Taiga repository URL"),
-                                fieldWithPath("projects[].githubURL")
-                                        .description("Github repositories URLs separated by a ';'"),
-                                fieldWithPath("projects[].prtURL")
-                                        .description("PRT sheet URL"),
+                                fieldWithPath("projects[].anonymized")
+                                        .description("If project students are anonymized"),
+                                fieldWithPath("projects[].identities")
+                                        .description("Project identities"),
+                                fieldWithPath("projects[].identities.GITHUB")
+                                        .description("Example of identity, URLs separated by a ';'"),
+                                fieldWithPath("projects[].identities.GITHUB.dataSource")
+                                        .description("Identity data source. Example: GITHUB, Taiga, PRT"),
+                                fieldWithPath("projects[].identities.GITHUB.url")
+                                        .description("Identity URL"),
+                                fieldWithPath("projects[].identities.GITHUB.project")
+                                        .description("Identity project"),
                                 fieldWithPath("projects[].isGlobal")
                                         .description("Is a global project?"),
                                 fieldWithPath("projects[].students")
@@ -260,7 +281,11 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        for(DataSource source: DataSource.values()){
+            dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
+        }
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
@@ -325,7 +350,11 @@ public class ProductsTest {
         String projectDescription = "Test project";
         boolean active = true;
         String projectBacklogId = "999";
-        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, "testURL1", "testURL2", "testURL3", false);
+        Map<DataSource, DTOProjectIdentity> dtoProjectIdentities = new HashMap<>();
+        for(DataSource source: DataSource.values()){
+            dtoProjectIdentities.put(source,new DTOProjectIdentity(source, "test"));
+        }
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId, false,dtoProjectIdentities, false);
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 

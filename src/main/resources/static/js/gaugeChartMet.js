@@ -126,9 +126,10 @@ function getData(width, height) {
 
 function getStudents(data, width, height) {
     if (id)
-        url = parseURLComposed("../api/metrics/student");
+        url = parseURLComposed("../api/metrics/students");
     else
-        url = "../api/metrics/student"
+        url = "../api/metrics/students"
+
     jQuery.ajax({
         dataType: "json",
         url: url,
@@ -267,7 +268,7 @@ function drawChartByStudent(metrics, container, width, height, categories, proje
         var labelF = document.createElement('label');
         labelF.setAttribute("style", "font-size:20px")
         //labelF.id = students[j].id;
-        labelF.textContent = students[j].studentName;
+        labelF.textContent = students[j].name;
         divF.appendChild(labelF);
 
         gaugeChart.append(divF);

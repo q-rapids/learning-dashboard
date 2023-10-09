@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.BadRequestException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Mappers;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlertDecision;
@@ -64,7 +65,6 @@ public class Alerts {
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
-        try {
             Project project = projectsController.findProjectByExternalId(prj);
             List<Alert> alerts = alertsController.getAlertsByProjectAndProfile(project, profile);
             alertsController.setViewedStatusForAlerts(alerts);
@@ -84,29 +84,19 @@ public class Alerts {
                 dtoAlerts.add(dtoAlert);
             }
             return dtoAlerts;
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }
     }
 
     @GetMapping("/api/alerts/countNew")
     @ResponseStatus(HttpStatus.OK)
     public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
-        try {
             Project project = projectsController.findProjectByExternalId(prj);
             Pair<Long, Long> newAlerts = alertsController.countNewAlertsByProfile(project, profile);
             return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }
     }
 
     @GetMapping("/api/alerts/{id}/qrPatterns")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQRPattern> getQrPatternsForAlert(@PathVariable String id) {
-        try {
             List<DTOQRPattern> dtoQRPatternList = new ArrayList<>();
             Alert alert = alertsController.getAlertById(Long.parseLong(id));
             List<QualityRequirementPattern> qrPatternList = qrPatternsController.getPatternsForAlert(alert);
@@ -114,16 +104,11 @@ public class Alerts {
                 dtoQRPatternList.add(Mappers.mapQualityRequirementPatternToDTOQRPattern(qrPattern));
             }
             return dtoQRPatternList;
-        } catch (AlertNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
-        }
     }
 
     @GetMapping("/api/alerts/{id}/decision")
     @ResponseStatus(HttpStatus.OK)
     public DTOAlertDecision getAlertDecision(@PathVariable String id) {
-        try {
             Alert alert = alertsController.getAlertById(Long.parseLong(id));
             Decision decision = alert.getDecision();
             DTOAlertDecision alertDecision = new DTOAlertDecision();
@@ -159,10 +144,6 @@ public class Alerts {
                     throw new IllegalStateException("Unexpected value: " + decision.getType());
             }
             return alertDecision;
-        } catch (AlertNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
-        }
     }
 
     @PostMapping("/api/alerts/{id}/qr/ignore")
@@ -170,17 +151,10 @@ public class Alerts {
     public void ignoreAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request) {
         String rationale = request.getParameter("rationale");
         String patternId = request.getParameter("patternId");
-        try {
-            Alert alert = alertsController.getAlertById(Long.parseLong(id));
-            Project project = projectsController.findProjectByExternalId(prj);
-            qualityRequirementController.ignoreQualityRequirementForAlert(project, alert, rationale, Integer.parseInt(patternId));
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (AlertNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
-        }
+
+        Alert alert = alertsController.getAlertById(Long.parseLong(id));
+        Project project = projectsController.findProjectByExternalId(prj);
+        qualityRequirementController.ignoreQualityRequirementForAlert(project, alert, rationale, Integer.parseInt(patternId));
     }
 
     @PostMapping("/api/alerts/{id}/qr")
@@ -211,16 +185,12 @@ public class Alerts {
                     qualityRequirement.getGoal(),
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
+        } catch (ProjectNotFoundException | AlertNotFoundException e) {
+            throw e;
         } catch (HttpClientErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
-        } catch (AlertNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR);
         }
@@ -263,15 +233,11 @@ public class Alerts {
                         "/queue/notify",
                         new Notification("New Alert")
                 );
-            } catch (ProjectNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
             } catch (IllegalArgumentException e) {
-                logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
+                throw new BadRequestException("One or more arguments have the wrong type");
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+            throw new BadRequestException(Messages.MISSING_ATTRIBUTES_IN_BODY);
         }
     }
 

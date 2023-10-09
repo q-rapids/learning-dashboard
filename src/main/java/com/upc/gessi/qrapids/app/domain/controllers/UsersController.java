@@ -4,13 +4,15 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -83,8 +85,18 @@ public class UsersController {
             temp.addAllowedProjects(tempprj);
         }
         userRepository.save(temp);
-
-
     }
 
+    public AppUser getCurrentUser(){
+        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(currentUser.getPrincipal().toString());
+    }
+
+    public boolean hasCurrentUserAnonymousMode(){
+        return  getCurrentUser().isAnonymousMode();
+    }
+
+    public AnonymizationModes getCurrentUserAnonymizationMode(){
+        return getCurrentUser().getAnonymousModeSelected();
+    }
 }

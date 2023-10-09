@@ -168,7 +168,7 @@ public class AlertsTest {
         // Given
         String projectExternalId = "test";
         String profileId = null; // without profile
-        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -177,8 +177,7 @@ public class AlertsTest {
                 .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/get-all-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
@@ -234,7 +233,7 @@ public class AlertsTest {
         // Given
         String projectExternalId = "test";
         String profileId = null; // without profile
-        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -243,8 +242,7 @@ public class AlertsTest {
                 //.param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/count-new-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
@@ -347,7 +345,7 @@ public class AlertsTest {
     public void getQRPatternForAlertNotFound() throws Exception {
         // Given
         long alertId = 1L;
-        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
+        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException(Long.toString(alertId)));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -355,7 +353,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isNotFound())
-                .andExpect(status().reason(is("Alert not found")))
                 .andDo(document("alerts/get-qr-patterns-alert-not-found",
                         preprocessResponse(prettyPrint())
                 ));
@@ -422,7 +419,7 @@ public class AlertsTest {
     @Test
     public void getAlertDecisionAlertNotFound() throws Exception {
         long alertId = 1L;
-        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
+        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException(Long.toString(alertId)));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -430,7 +427,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isNotFound())
-                .andExpect(status().reason(is("Alert not found")))
                 .andDo(document("alerts/get-decision-alert-not-found",
                         preprocessResponse(prettyPrint())
                 ));
@@ -493,7 +489,7 @@ public class AlertsTest {
         Long alertId = 2L;
         String rationale = "Not important";
         int patternId = 100;
-        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -503,8 +499,7 @@ public class AlertsTest {
                 .param("patternId", String.valueOf(patternId));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/ignore-qr-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
@@ -518,7 +513,7 @@ public class AlertsTest {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         long alertId = 2L;
-        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
+        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException(Long.toString(alertId)));
         String rationale = "Not important";
         int patternId = 100;
 
@@ -531,7 +526,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isNotFound())
-                .andExpect(status().reason(is("Alert not found")))
                 .andDo(document("alerts/ignore-qr-alert-not-found",
                         preprocessResponse(prettyPrint())
                 ));
@@ -680,7 +674,7 @@ public class AlertsTest {
         when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         Alert alert = domainObjectsBuilder.buildAlert(project);
-        when(alertsDomainController.getAlertById(alert.getId())).thenThrow(new AlertNotFoundException());
+        when(alertsDomainController.getAlertById(alert.getId())).thenThrow(new AlertNotFoundException(alert.getId().toString()));
 
         Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
         QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(alert, decision, project);
@@ -717,7 +711,7 @@ public class AlertsTest {
     public void newQRFromAlertProjectNotFound () throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException(project.getExternalId()));
 
         Alert alert = domainObjectsBuilder.buildAlert(project);
         Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
@@ -735,7 +729,7 @@ public class AlertsTest {
                 .param("goal", qualityRequirement.getGoal());
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/add-qr-from-alert-project-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -942,7 +936,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("One or more arguments have the wrong type")))
                 .andDo(document("alerts/add-alert-wrong-type",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -1003,7 +996,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("One or more attributes are missing in the request body")))
                 .andDo(document("alerts/add-alert-missing-param",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -1014,7 +1006,7 @@ public class AlertsTest {
     public void notifyAlertProjectNotFound () throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException(project.getExternalId()));
 
         // Perform request
         Map<String, String> element = new HashMap<>();
@@ -1039,8 +1031,7 @@ public class AlertsTest {
                 .content(bodyJson);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/notify-alert-project-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -1054,7 +1045,7 @@ public class AlertsTest {
     public void addAlertProjectNotFound () throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException(project.getExternalId()));
 
         // Perform request
         Map<String, String> element = new HashMap<>();
@@ -1079,8 +1070,7 @@ public class AlertsTest {
                 .content(bodyJson);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/add-alert-project-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())

@@ -17,6 +17,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMet
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.apache.commons.io.IOUtils;
@@ -268,7 +269,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getStrategicIndicatorsCurrentEvaluationCategoriesConflict() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenThrow(new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -422,7 +423,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationCategoriesConflict() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, profileId)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, profileId)).thenThrow(new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -585,7 +586,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenThrow(new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1922,7 +1923,10 @@ public class StrategicIndicatorsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2", "testURL3", false);
+
+
+
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, false);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
@@ -2117,7 +2121,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getMissingStrategicIndicator() throws Exception {
         Long strategicIndicatorId = 2L;
-        when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicatorId)).thenThrow(new StrategicIndicatorNotFoundException());
+        when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicatorId)).thenThrow(new StrategicIndicatorNotFoundException(strategicIndicatorId.toString()));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/strategicIndicators/{id}", strategicIndicatorId);
@@ -2464,7 +2468,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void deleteOneStrategicIndicatorNotFound() throws Exception {
         Long strategicIndicatorId = 1L;
-        doThrow(new StrategicIndicatorNotFoundException()).when(strategicIndicatorsDomainController).deleteStrategicIndicator(strategicIndicatorId);
+        doThrow(new StrategicIndicatorNotFoundException(strategicIndicatorId.toString())).when(strategicIndicatorsDomainController).deleteStrategicIndicator(strategicIndicatorId);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -2551,7 +2555,7 @@ public class StrategicIndicatorsTest {
         List<Map<String, String>> strategicIndicatorCategoriesList = domainObjectsBuilder.buildRawSICategoryList();
         strategicIndicatorCategoriesList.remove(2);
         strategicIndicatorCategoriesList.remove(1);
-        doThrow(new CategoriesException()).when(strategicIndicatorsDomainController).newStrategicIndicatorCategories(strategicIndicatorCategoriesList);
+        doThrow(new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES)).when(strategicIndicatorsDomainController).newStrategicIndicatorCategories(strategicIndicatorCategoriesList);
 
         // Perform request
         Gson gson = new Gson();
@@ -2561,8 +2565,7 @@ public class StrategicIndicatorsTest {
                 .content(gson.toJson(strategicIndicatorCategoriesList));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("Not enough categories"))
+                .andExpect(status().isConflict())
                 .andDo(document("si/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -2650,7 +2653,7 @@ public class StrategicIndicatorsTest {
         String projectExternalId = "test";
         String projectName = "Test";
         String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testURL1", "testURL2", "testURL3", false);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, false);
 
         when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
         when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(false);
