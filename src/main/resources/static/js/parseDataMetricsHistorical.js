@@ -282,7 +282,7 @@ function getDataStudents() {
             var i=0
             if(response.length===0) warningUtils("Warning", "This project has no students. Go to products &#x2192 project &#x2192 project team members")
             while (i<response.length) {
-                students.push([response[i].studentName, response[i].numberMetrics])
+                students.push([response[i].name, response[i].metrics_size])
                 data = response[i].metrics
                 j = 0;
                 var line = [];

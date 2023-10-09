@@ -1,9 +1,9 @@
 var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
-var urlTaiga;
-var urlGithub;
-var urlPrt;
+var urlTaiga = null;
+var urlGithub = null;
+var urlPrt = null;
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
 var decisionIgnoreColor = 'rgb(189,0,0)';
 var decisionAddColor = 'rgb(62,208,62)';
@@ -43,9 +43,15 @@ function getCurrentProject() {
         success: function (data) {
             for(var i=0; i<data.length; i++) {
                 if(data[i].name===sessionStorage.getItem("prj")) {
-                    urlTaiga = data[i].taigaURL;
-                    urlGithub = data[i].githubURL;
-                    urlPrt = data[i].prtURL;
+                    if (data[i].identities.hasOwnProperty('TAIGA')) {
+                        urlTaiga = data[i].identities.TAIGA.url;
+                    }
+                    if (data[i].identities.hasOwnProperty('GITHUB')) {
+                        urlGithub = data[i].identities.GITHUB.url;
+                    }
+                    if (data[i].identities.hasOwnProperty('PRT')) {
+                        urlPrt = data[i].identities.PRT.url;
+                    }
                 }
             }
         }
