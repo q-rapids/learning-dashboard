@@ -7,9 +7,9 @@ var angle;
 var target;
 var tau = Math.PI / 2;
 var id = false;
-var urlTaiga;
-var urlGithub;
-var urlPrt;
+var urlTaiga = null;
+var urlGithub = null;
+var urlPrt = null;
 
 var factors;
 var students;
@@ -249,9 +249,15 @@ function getCurrentProject() {
                 if(data[i].name===sessionStorage.getItem("prj")) {
                     global = data[i].isGlobal
                     setUpGroupSelector()
-                    urlTaiga = data[i].taigaURL;
-                    urlGithub = data[i].githubURL;
-                    urlPrt = data[i].prtURL;
+                    if (data[i].identities.hasOwnProperty('TAIGA')) {
+                        urlTaiga = data[i].identities.TAIGA.url;
+                    }
+                    if (data[i].identities.hasOwnProperty('GITHUB')) {
+                        urlGithub = data[i].identities.GITHUB.url;
+                    }
+                    if (data[i].identities.hasOwnProperty('PRT')) {
+                        urlPrt = data[i].identities.PRT.url;
+                    }
                 }
             }
         }
