@@ -291,7 +291,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
         divF.style.marginTop = "1em";
         divF.style.marginBottom = "1em";
         if (factors[j].type === "Taiga") {
-            if (urlTaiga !== undefined && urlTaiga!==null) {
+            if (urlTaiga !== undefined && urlTaiga !== null && urlTaiga !== "") {
                 var a = document.createElement('a')
                 a.href=urlTaiga;
                 a.target = "_blank"
@@ -308,7 +308,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             }
         }
         if (factors[j].type === "Github") {
-            if (urlGithub !== undefined && urlGithub) {
+            if (urlGithub !== undefined && urlGithub !== null && urlGithub !== "") {
                 var list = urlGithub.split(";");
                 var a = document.createElement('a')
                 a.href=list[0];
@@ -337,7 +337,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             }
         }
         if (factors[j].type === "PRT") {
-            if (urlPrt !== undefined && urlPrt !== null) {
+            if (urlPrt !== undefined && urlPrt !== null && urlPrt !== "") {
                 var a = document.createElement('a')
                 a.href=urlPrt;
                 a.target = "_blank"

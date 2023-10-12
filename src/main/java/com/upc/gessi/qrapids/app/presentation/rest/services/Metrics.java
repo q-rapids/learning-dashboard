@@ -64,7 +64,7 @@ public class Metrics {
         return metricsController.getAllNames();
     }
 
-    @PutMapping("/api/metrics/{metric_id}")
+    @PutMapping("/api/metrics/{metricId}")
     @ResponseStatus(HttpStatus.OK)
     public void editMetric(@PathVariable Long metricId, HttpServletRequest request) {
         String threshold = request.getParameter("threshold");

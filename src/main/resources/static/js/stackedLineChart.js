@@ -475,7 +475,7 @@ function drawChart() {
             divF.style.marginBottom = "1em";
 
             if (groupByFactor && factorType === "Taiga") {
-                if (urlTaiga !== undefined && urlTaiga!==null) {
+                if (urlTaiga !== undefined && urlTaiga!== null && urlTaiga!== "") {
                     var b = document.createElement('a')
                     b.href=urlTaiga;
                     b.target = "_blank"
@@ -490,7 +490,7 @@ function drawChart() {
                 }
             }
             if (groupByFactor && factorType === "Github") {
-                if (urlGithub !== undefined && urlGithub !== null) {
+                if (urlGithub !== undefined && urlGithub !== null && urlGithub !== "") {
                     var list = urlGithub.split(";");
                     var b = document.createElement('a')
                     b.href=list[0];
@@ -519,7 +519,7 @@ function drawChart() {
                 }
             }
             if (groupByFactor && factorType === "PRT") {
-                if (urlPrt !== undefined && urlPrt !== null) {
+                if (urlPrt !== undefined && urlPrt !== null && urlPrt !== "") {
                     var b = document.createElement('a')
                     b.href=urlPrt;
                     b.target = "_blank"

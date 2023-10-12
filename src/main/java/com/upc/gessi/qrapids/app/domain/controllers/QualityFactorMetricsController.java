@@ -36,10 +36,13 @@ public class QualityFactorMetricsController {
 
     public String getTypeFromFactorOfMetric(Metric metric) {
         List<QualityFactorMetrics> qfm = qualityFactorMetricsRepository.findByMetric(metric);
-        Optional<Factor> f = qualityFactorRepository.findById(qfm.get(0).getQuality_factor().getId());
-        if(f.isPresent()) {
-            Factor ftemp = f.get();
-            return ftemp.getType();
+        if  (qfm.size() > 0){
+            Optional<Factor> f = qualityFactorRepository.findById(qfm.get(0).getQuality_factor().getId());
+            if (f.isPresent()) {
+                Factor ftemp = f.get();
+                return ftemp.getType();
+            }
+            return null;
         }
         return null;
     }

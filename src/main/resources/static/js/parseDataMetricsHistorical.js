@@ -315,10 +315,10 @@ function getDataStudents() {
                         decisionsAdd = [];
                         decisionsIgnore = [];
                         last = data[j].id;
-                        texts.push(data[j].id);
+                        texts.push(data[j].name);
                         ids.push(data[j].id);
                         var labelsForOneChart = [];
-                        labelsForOneChart.push(data[j].id);
+                        labelsForOneChart.push(data[j].name);
                         if (decisions.has(data[j].id)) {
                             var metricDecisions = decisions.get(data[j].id);
                             for (var i = 0; i < metricDecisions.length; i++) {
