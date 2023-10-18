@@ -264,7 +264,7 @@ public class QMAQualityFactors {
         }
 
         //normalize student names
-        normalizeQFMetricsStudentNames(qf, project);
+        //normalizeQFMetricsStudentNames(qf, project);
 
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
