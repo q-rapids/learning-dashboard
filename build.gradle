@@ -60,24 +60,24 @@ repositories {
 dependencies {
 
 	// Security
-    compile("org.springframework.boot:spring-boot-starter-security")
+	compile("org.springframework.boot:spring-boot-starter-security")
 
-    // JWT
-    compile("io.jsonwebtoken:jjwt:0.7.0")
+	// JWT
+	compile("io.jsonwebtoken:jjwt:0.7.0")
 
-    // Development
-    compile('org.springframework.boot:spring-boot-devtools')
+	// Development
+	compile('org.springframework.boot:spring-boot-devtools')
 
-    // Spring Boot
+	// Spring Boot
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 
-    // Spring mail
+	// Spring mail
 	compile 'org.springframework.boot:spring-boot-starter-mail:1.5.8.RELEASE'
 
-    // Database JDBC
+	// Database JDBC
 	compile('org.postgresql:postgresql:42.1.4.jre7')
 
 	// JSON Java Library

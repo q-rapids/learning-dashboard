@@ -4,7 +4,7 @@ A dashboard for visualizing the quality of the company's products. This strategi
 ## Main Functionality
 The main functionalities of the current version of the Learning Dashboard are: providing several ways to visualize and explore the available data, generate predictions of the existing assessments, perform simulations on how the strategic indicators will evolve based on the value of the factors and generate quality requirements to correct deviations on the assessments.
 
-The **User's Guide** is available in the [Wiki](https://github.com/q-rapids/qrapids-dashboard/wiki/User-Guide).
+The **User's Guide** is available in the [Wiki](https://github.com/Learning-Dashboard/LD-learning-dashboard/wiki/User-Guide).
 
 ## Technologies
 |Property| Description                    |
@@ -28,7 +28,7 @@ After the build is done the WAR file can be found at the __build/libs__ director
 
 ## Documentation
 
-You can find the user documentation in the repository [Wiki](https://github.com/q-rapids/qrapids-dashboard/wiki) and the technical documentation of the RESTful API [here](https://q-rapids.github.io/qrapids-dashboard).
+You can find the user documentation in the repository [Wiki](https://github.com/Learning-Dashboard/LD-learning-dashboard/wiki) and the technical documentation of the RESTful API [here](https://learning-dashboard.github.io/LD-learning-dashboard).
 
 ## Licensing
 
