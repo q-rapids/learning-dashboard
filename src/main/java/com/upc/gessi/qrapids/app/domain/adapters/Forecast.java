@@ -61,12 +61,10 @@ public class Forecast {
     @Value("${forecast.url}")
     private String url;
 
-    // @Value("${forecast.path}")
-    @Value("${qma.path}")
+    @Value("${forecast.path}")
     private String path;
 
-//    @Value("${forecast.prefix}")
-    @Value("${qma.prefix}")
+    @Value("${forecast.prefix}")
     private String prefix;
 
     @Autowired

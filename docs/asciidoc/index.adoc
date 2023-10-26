@@ -1,5 +1,5 @@
 = Learning Dashboard API REST Documentation
-v1.0, {docdate}
+v3.3, {docdate}
 :toc: left
 
 :sectnums:
@@ -21,7 +21,7 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 ==== HTTP response categories error
 include::{snippets}/si/current-conflict/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/current-read-error/http-response.adoc[]
 :numbered:
 
@@ -37,7 +37,7 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 ==== HTTP response categories error
 include::{snippets}/si/single-current-conflict/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/single-current-read-error/http-response.adoc[]
 :numbered:
 
@@ -53,7 +53,7 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 ==== HTTP response categories error
 include::{snippets}/si/historical-conflict/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/historical-read-error/http-response.adoc[]
 :numbered:
 
@@ -68,7 +68,7 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 ==== HTTP response categories error
 include::{snippets}/si/historical-conflict/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/historical-read-error/http-response.adoc[]
 :numbered:
 
@@ -91,7 +91,7 @@ operation::si/detailed-current[snippets='request-parameters,curl-request,respons
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/detailed-current-read-error/http-response.adoc[]
 :numbered:
 
@@ -104,7 +104,7 @@ operation::si/detailed-single-current[snippets='path-parameters,request-paramete
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/detailed-single-current-read-error/http-response.adoc[]
 :numbered:
 
@@ -117,7 +117,7 @@ operation::si/detailed-historical[snippets='request-parameters,curl-request,resp
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/detailed-historical-read-error/http-response.adoc[]
 :numbered:
 
@@ -130,7 +130,7 @@ operation::si/detailed-single-historical[snippets='path-parameters,request-param
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 :numbered:
 
@@ -275,7 +275,7 @@ operation::qf/all[snippets='request-parameters,curl-request,response-fields,http
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -289,7 +289,7 @@ operation::qf/single[snippets='path-parameters,request-parameters,curl-request,r
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -302,7 +302,7 @@ operation::qualityFactors/historical[snippets='request-parameters,curl-request,r
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/qualityFactors/historical-read-error/http-response.adoc[]
 :numbered:
 
@@ -315,7 +315,7 @@ operation::qualityFactors/prediction[snippets='request-parameters,curl-request,r
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -329,7 +329,7 @@ operation::qf/current[snippets='request-parameters,curl-request,response-fields,
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -343,7 +343,7 @@ operation::metrics/current-qf[snippets='path-parameters,request-parameters,curl-
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -358,7 +358,7 @@ operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-re
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -373,7 +373,7 @@ operation::qf/historical[snippets='request-parameters,curl-request,response-fiel
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -387,7 +387,7 @@ operation::metrics/historical-qf[snippets='path-parameters,request-parameters,cu
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -402,7 +402,7 @@ operation::qf/current-si[snippets='path-parameters,request-parameters,curl-reque
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -417,7 +417,7 @@ operation::qf/prediction[snippets='request-parameters,curl-request,response-fiel
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -431,7 +431,7 @@ operation::metrics/prediction-qf[snippets='path-parameters,request-parameters,cu
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -446,7 +446,7 @@ operation::qf/prediction-si[snippets='path-parameters,request-parameters,curl-re
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -502,7 +502,7 @@ operation::qf/simulation[snippets='request-parameters,request-fields,curl-reques
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -539,7 +539,7 @@ operation::metrics/current[snippets='request-parameters,curl-request,response-fi
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -559,7 +559,7 @@ operation::metrics/single[snippets='path-parameters,request-parameters,curl-requ
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -574,7 +574,7 @@ operation::metrics/historical[snippets='request-parameters,curl-request,response
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -589,7 +589,7 @@ operation::metrics/single-historical[snippets='path-parameters,request-parameter
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -604,7 +604,7 @@ operation::metrics/historical-qf[snippets='path-parameters,request-parameters,cu
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -624,7 +624,7 @@ operation::metrics/prediction[snippets='request-parameters,curl-request,response
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -639,7 +639,7 @@ operation::metrics/prediction-qf[snippets='path-parameters,request-parameters,cu
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
@@ -869,7 +869,7 @@ operation::projects/import[snippets='curl-request,response-fields,http-response'
 ==== HTTP response categories error
 include::{snippets}/projects/import-conflict/http-response.adoc[]
 
-==== HTTP response error on ElasticSearch connection
+==== HTTP response error on MongoDB connection
 include::{snippets}/projects/import-read-error/http-response.adoc[]
 
 :numbered:

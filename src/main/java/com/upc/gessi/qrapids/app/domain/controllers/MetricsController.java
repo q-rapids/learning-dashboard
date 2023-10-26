@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
@@ -9,13 +10,11 @@ import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import org.elasticsearch.ElasticsearchStatusException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -176,33 +175,33 @@ public class MetricsController {
         qmaMetrics.setMetricQualityFactorRelation(metricList, projectExternalId);
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, MongoException {
         return qmaMetrics.CurrentEvaluation(null, projectExternalId, profileId);
     }
 
-    public DTOMetricEvaluation getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public DTOMetricEvaluation getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, MongoException {
         return qmaMetrics.SingleCurrentEvaluation(metricId, projectExternalId);
     }
 
-    public List<DTOMetricEvaluation> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, MongoException {
         // it's already filtered by quality factor
         return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId, null);
     }
 
-    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, MongoException {
         return qmaMetrics.SingleHistoricalData(metricId, from, to, projectExternalId, profileId);
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, MongoException {
         return qmaMetrics.HistoricalData(null, from, to, projectExternalId, profileId);
     }
 
-    public List<DTOMetricEvaluation> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, MongoException {
         // it's already filtered by quality factor
         return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId, null);
     }
 
-    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, MongoException {
         return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 

@@ -788,7 +788,7 @@ function saveProject() {
 	                if (jqXHR.status == 409)
 	                	warningUtils("Error", "This Project name is already in use");
 	                else {
-						warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+						warningUtils("Error", "Error in MongoDB: contact to the system administrator");
 	                    location.href = "../Products/Configuration";
 	                }
 	            },
@@ -1058,7 +1058,7 @@ function saveProduct() {
                     if (jqXHR.status == 409)
 						warningUtils("Error", "This Product name is already in use");
                     else {
-						warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+						warningUtils("Error", "Error in MongoDB: contact to the system administrator");
                         location.href = serverUrl + "/Products/Configuration";
                     }
                 },
@@ -1086,7 +1086,7 @@ function deleteProduct() {
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
-				warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+				warningUtils("Error", "Error in MongoDB: contact to the system administrator");
                 location.href = serverUrl + "/Products/Configuration";
             },
             success: function() {
@@ -1288,7 +1288,7 @@ function saveNewProduct() {
                     if (jqXHR.status == 409)
                     	warningUtils("Error", "This Product name is already in use");
                     else {
-						warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+						warningUtils("Error", "Error in MongoDB: contact to the system administrator");
                         location.href = serverUrl + "/Products/Configuration";
                     }
                 },

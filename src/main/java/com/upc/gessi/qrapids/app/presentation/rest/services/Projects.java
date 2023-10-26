@@ -49,7 +49,7 @@ public class Projects {
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on MongoDB connection");
         }
     }
 

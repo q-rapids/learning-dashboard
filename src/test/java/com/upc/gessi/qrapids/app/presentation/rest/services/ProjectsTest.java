@@ -131,7 +131,7 @@ public class ProjectsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isInternalServerError())
-                .andExpect(status().reason(is("Error on ElasticSearch connection")))
+                .andExpect(status().reason(is("Error on MongoDB connection")))
                 .andDo(document("projects/import-read-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())));

@@ -401,7 +401,7 @@ $("#saveQF").click(function () {
                 if (jqXHR.status === 409)
                     warningUtils("Error", "This Quality Factor name is already in use");
                 else {
-                    warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error","Error in MongoDB: contact to the system administrator");
                     location.href = "../QualityFactors/Configuration";
                 }
             },
@@ -414,7 +414,7 @@ $("#saveQF").click(function () {
                     processData: false,
                     //ToDo: the service produces more than one error, the current message does not fit all of them
                     error: function (jqXHR, textStatus, errorThrown) {
-                        warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                        warningUtils("Error","Error in MongoDB: contact to the system administrator");
                         location.href = "../QualityFactors/Configuration";
                     },
                     success: function () {

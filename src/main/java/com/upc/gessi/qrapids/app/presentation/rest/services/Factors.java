@@ -1,16 +1,16 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
+import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
-import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
-import org.elasticsearch.ElasticsearchStatusException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,30 +38,6 @@ public class Factors {
 
     private Logger logger = LoggerFactory.getLogger(Factors.class);
 
-    /*
-    //Old get
-    @GetMapping("/api/qualityFactors/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategoryThreshold> getFactorCategories () {
-        List<QFCategory> factorCategoryList = factorsController.getFactorCategories();
-        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
-        for (QFCategory factorCategory : factorCategoryList) {
-            dtoCategoryList.add(new DTOCategoryThreshold(factorCategory.getId(), factorCategory.getName(), factorCategory.getColor(), factorCategory.getUpperThreshold()));
-        }
-        return dtoCategoryList;
-    }
-    //Old creator
-    @PostMapping("/api/qualityFactors/categories")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
-        try {
-            factorsController.newFactorCategories(categories);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
-        }
-    }*/
-
     @GetMapping("/api/qualityFactors/import")
     @ResponseStatus(HttpStatus.OK)
     public void importFactors() {
@@ -70,9 +46,9 @@ public class Factors {
         } catch (CategoriesException | ProjectNotFoundException | MetricNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
-        } catch (IOException e) {
+        } catch (IOException | MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on MongoDB connection");
         }
     }
 
@@ -212,7 +188,7 @@ public class Factors {
     public List<DTOFactorEvaluation> getQualityFactorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return factorsController.getAllFactorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -283,7 +259,7 @@ public class Factors {
     public List<DTODetailedFactorEvaluation> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile, true);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException | ProjectNotFoundException e) {
@@ -297,7 +273,7 @@ public class Factors {
     public DTOFactorEvaluation getSingleFactorEvaluation (@RequestParam("prj") String prj, @PathVariable String id) {
         try {
             return factorsController.getSingleFactorEvaluation(id, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -312,7 +288,7 @@ public class Factors {
     List<DTODetailedFactorEvaluation> getDetailedQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return factorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj,profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException | ProjectNotFoundException e) {
@@ -326,7 +302,7 @@ public class Factors {
     public List<DTOFactorEvaluation> getAllQualityFactorsEvaluation(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             return factorsController.getAllFactorsEvaluation(prj, profile, true);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -341,7 +317,7 @@ public class Factors {
         try {
             List<DTOFactorEvaluation> currentEvaluation = factorsController.getAllFactorsEvaluation(prj, profile,true);
             return factorsController.getFactorsPrediction(currentEvaluation, prj, technique, "7", horizon);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -356,7 +332,7 @@ public class Factors {
         try {
             List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile, true);
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException | ProjectNotFoundException e) {
@@ -374,7 +350,7 @@ public class Factors {
                 metricsMap.put(metric.getId(), metric.getValue());
             }
             return factorsController.simulate(metricsMap, prj, profile, LocalDate.parse(date));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -395,7 +371,7 @@ public class Factors {
             df.setDate(f.getDate());
             result.add(df);
             return result;
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -413,7 +389,7 @@ public class Factors {
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
             result.add(new DTODetailedFactorEvaluation(id,f.getDescription(),f.getName(),metrics, f.getType()));
             return result;
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -432,7 +408,7 @@ public class Factors {
             List<DTODetailedFactorEvaluation> result = new ArrayList<>();
             result.add(new DTODetailedFactorEvaluation(id,f.getDescription(), f.getName(),metrics,f.getType()));
             return result;
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -447,7 +423,7 @@ public class Factors {
         try {
             List<DTOFactorEvaluation> qfs = factorsController.getAllFactorsEvaluation(prj, profile, true);
             return qfs.get(0).getDate();
-        } catch (IOException e) {
+        } catch (IOException | MongoException e) {
             logger.error(e.getMessage(), e);
         }
         // if the response is null

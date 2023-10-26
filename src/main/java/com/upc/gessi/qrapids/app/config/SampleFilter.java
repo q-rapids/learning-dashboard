@@ -12,7 +12,7 @@ public class SampleFilter extends Filter<ILoggingEvent> {
             && ((event.getMessage().contains("Action performed by")) || (event.getMessage().contains("No user is logged in yet")))
             && (!event.getMessage().contains("api") && !event.getMessage().contains("js") && !event.getMessage().contains("css") &&
                         !event.getMessage().contains("icons") && !event.getMessage().contains(".ico") && !event.getMessage().contains("fonts") &&
-                        !event.getMessage().contains("ws") && !event.getMessage().contains("elasticsearch") && !event.getMessage().contains("http-outgoing-") &&
+                        !event.getMessage().contains("ws") && /*!event.getMessage().contains("elasticsearch") &&*/ !event.getMessage().contains("http-outgoing-") &&
                         !event.getMessage().contains("Ant") && !event.getMessage().contains("FORWARD") && !event.getMessage().contains("doesn't match") )) {
             return FilterReply.ACCEPT;
         }

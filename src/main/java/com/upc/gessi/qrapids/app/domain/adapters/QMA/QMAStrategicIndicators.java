@@ -4,6 +4,10 @@ import DTOs.EstimationEvaluationDTO;
 import DTOs.EvaluationDTO;
 import DTOs.QuadrupletDTO;
 import DTOs.StrategicIndicatorEvaluationDTO;
+
+import com.mongodb.MongoException;
+import com.mongodb.client.result.UpdateResult;
+
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -17,12 +21,11 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
-import org.elasticsearch.rest.RestStatus;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import util.Queries;
-
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -106,36 +109,41 @@ public class QMAStrategicIndicators {
                                               LocalDate date,
                                               List<DTOAssessment> assessment,
                                               List<String> missingFactors,
-                                              long dates_mismatch
-                                              ) throws IOException {
+                                              long dates_mismatch) {
 
-        RestStatus status;
-        if (assessment == null) {
-            status = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
-                                                            strategicIndicatorID,
-                                                            strategicIndicatorName,
-                                                            strategicIndicatorDescription,
-                                                            value,
-                                                            info,
-                                                            date,
-                                                            null,
-                                                            missingFactors,
-                                                            dates_mismatch)
-                    .status();
-        } else {
-            status = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
-                                                            strategicIndicatorID,
-                                                            strategicIndicatorName,
-                                                            strategicIndicatorDescription,
-                                                            value,
-                                                            info,
-                                                            date,
-                                                            listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
-                                                            missingFactors,
-                                                            dates_mismatch)
-                    .status();
+        qmacon.initConnexion();
+        UpdateResult result;
+        try {
+            if (assessment == null) {
+                result = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
+                                            strategicIndicatorID,
+                                            strategicIndicatorName,
+                                            strategicIndicatorDescription,
+                                            value,
+                                            info,
+                                            date,
+                                            null,
+                                            missingFactors,
+                                            dates_mismatch);
+            }
+            else {
+                result = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
+                                            strategicIndicatorID,
+                                            strategicIndicatorName,
+                                            strategicIndicatorDescription,
+                                            value,
+                                            info,
+                                            date,
+                                            listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
+                                            missingFactors,
+                                            dates_mismatch);
+            }
+            return result.wasAcknowledged();
         }
-        return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(String prjExternalId, String profileId, List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException, ProjectNotFoundException {
@@ -251,6 +259,5 @@ public class QMAStrategicIndicators {
         }
         return new EstimationEvaluationDTO(estimation);
     }
-
 
 }

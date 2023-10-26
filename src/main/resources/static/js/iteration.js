@@ -126,7 +126,7 @@ $('#iterationSaveBtn').click( function () {
             if (jqXHR.status === 409)
                 warningUtils("Error", "This iteration and subject name is already in use");
             else {
-                warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                warningUtils("Error","Error in MongoDB: contact to the system administrator");
                 location.href = serverUrl + "/Iterations/Configuration";
             }
         },
@@ -147,7 +147,7 @@ $('#iterationDeleteBtn').click( function () {
             url: url,
             type: "DELETE",
             error: function(jqXHR, textStatus, errorThrown) {
-                warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+                warningUtils("Error", "Error in MongoDB: contact to the system administrator");
                 location.href = serverUrl + "/Iterations/Configuration";
             },
             success: function() {

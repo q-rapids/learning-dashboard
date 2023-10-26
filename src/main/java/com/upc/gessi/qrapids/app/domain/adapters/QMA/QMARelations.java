@@ -11,7 +11,6 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
@@ -50,7 +49,9 @@ public class QMARelations {
                                                        List<Float> weights,
                                                        List<Float> factorValues,
                                                        List<String> factorLabels,
-                                                       String strategicIndicatorValue) throws IOException {
+                                                       String strategicIndicatorValue) {
+
+        qmacon.initConnexion();
         return Relations.setStrategicIndicatorFactorRelation(
                 projectId,
                 factorIds.toArray(new String[0]),
@@ -69,7 +70,9 @@ public class QMARelations {
                                                        List<Float> weights,
                                                        List<Float> metricValues,
                                                        List<String> metricLabels,
-                                                       String qualityFactorValue) throws IOException {
+                                                       String qualityFactorValue) {
+
+        qmacon.initConnexion();
         return Relations.setQualityFactorMetricRelation(
                 projectId,
                 metricsIds.toArray(new String[0]),
@@ -93,7 +96,7 @@ public class QMARelations {
     public List<DTORelationsSI> getRelations (String prj, String profile, LocalDate date) throws IOException, CategoriesException, ProjectNotFoundException {
         qmacon.initConnexion();
         List<RelationDTO> relationDTOS;
-        // get relations from elasticsearch
+        // get relations from MongoDB
         if (date == null)
             relationDTOS = Relations.getRelations(prj);
         else

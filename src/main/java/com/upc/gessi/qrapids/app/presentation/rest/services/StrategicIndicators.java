@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.mongodb.MongoException;
+
 import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
@@ -10,8 +12,8 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
+
 import org.apache.commons.io.IOUtils;
-import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,7 @@ public class StrategicIndicators {
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj,@RequestParam(value = "profile", required = false) String profile) {
         try {
             return strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (CategoriesException | ProjectNotFoundException e) {
@@ -68,7 +70,7 @@ public class StrategicIndicators {
     public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj,@RequestParam(value = "profile", required = false) String profile, @PathVariable String id) {
         try {
             return strategicIndicatorsController.getSingleStrategicIndicatorsCurrentEvaluation(id,prj,profile);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (CategoriesException | ProjectNotFoundException e) {
@@ -85,7 +87,7 @@ public class StrategicIndicators {
     public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -99,7 +101,7 @@ public class StrategicIndicators {
     public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @PathVariable String id) {
         try {
             return strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj, profile);
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -113,7 +115,7 @@ public class StrategicIndicators {
     public List<DTODetailedFactorEvaluation> getQualityFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(@RequestParam(value = "prj") String prj, @PathVariable String id) {
         try {
             return factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException | ProjectNotFoundException e) {
@@ -127,7 +129,7 @@ public class StrategicIndicators {
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj,@RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (CategoriesException | ProjectNotFoundException e) {
@@ -144,7 +146,7 @@ public class StrategicIndicators {
     public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -158,7 +160,7 @@ public class StrategicIndicators {
     public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return strategicIndicatorsController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(id, prj, profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -173,7 +175,7 @@ public class StrategicIndicators {
     List<DTODetailedFactorEvaluation> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return factorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException | ProjectNotFoundException e) {
@@ -188,7 +190,7 @@ public class StrategicIndicators {
         try {
             List<DTOStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
             return strategicIndicatorsController.getStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException | CategoriesException | ProjectNotFoundException e) {
@@ -203,7 +205,7 @@ public class StrategicIndicators {
         try {
             List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -218,7 +220,7 @@ public class StrategicIndicators {
         try {
             List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj, profile);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -233,7 +235,7 @@ public class StrategicIndicators {
         try {
             List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
+        } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -448,7 +450,6 @@ public class StrategicIndicators {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -491,7 +492,7 @@ public class StrategicIndicators {
                 return strategicIndicatorsController.getQualityModel(prj, profile, null);
             else
                 return strategicIndicatorsController.getQualityModel(prj, profile, LocalDate.parse(date));
-        } catch (IOException | ArithmeticException | CategoriesException | ProjectNotFoundException e) {
+        } catch (IOException | ArithmeticException | CategoriesException | ProjectNotFoundException | MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -509,7 +510,7 @@ public class StrategicIndicators {
         try {
             List<DTOStrategicIndicatorEvaluation> si = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj, profile);
             return si.get(0).getDate();
-        } catch (IOException | CategoriesException | ProjectNotFoundException e) {
+        } catch (IOException | CategoriesException | ProjectNotFoundException | MongoException e) {
             logger.error(e.getMessage(), e);
         }
         // if the response is null
@@ -540,7 +541,7 @@ public class StrategicIndicators {
                 result.add(siInfo);
             }
             return result;
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (CategoriesException | ProjectNotFoundException e) {

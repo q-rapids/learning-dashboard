@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
@@ -17,16 +15,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.time.ZoneId;
 import java.util.*;
-import eval2.Eval;
-import java.time.LocalDate;
 
 @SpringBootApplication
 @EnableScheduling
@@ -139,13 +130,5 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			Logger logger = LoggerFactory.getLogger(Alerts.class);
 			logger.error(e.getMessage(), e);
 		}
-		/* Commented fetch function for avoid automatically add elasticsearch information to local SQL database.
-		try {
-			context.getBean(StrategicIndicatorsController.class).fetchStrategicIndicators();
-		} catch (Exception e) {
-			Logger logger = LoggerFactory.getLogger(Alerts.class);
-			logger.error(e.getMessage(), e);
-		}
-		*/
 	}
 }

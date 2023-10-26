@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.mongodb.MongoException;
+
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
@@ -14,7 +16,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
-import org.elasticsearch.ElasticsearchStatusException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,39 +262,39 @@ public class StrategicIndicatorsController {
         }
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, CategoriesException, MongoException, ProjectNotFoundException {
         return qmaStrategicIndicators.CurrentEvaluation(projectExternalId, profileId);
     }
 
-    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorsCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
+    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorsCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, CategoriesException, MongoException, ProjectNotFoundException {
         return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, profileId, strategicIndicatorId);
     }
 
-    public List<DTODetailedStrategicIndicatorEvaluation> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId, boolean filterDB) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId, boolean filterDB) throws IOException, MongoException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, profileId, filterDB);
     }
 
-    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, MongoException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, profileId, true);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, CategoriesException, MongoException, ProjectNotFoundException {
         return qmaStrategicIndicators.HistoricalData(from, to, projectExternalId, profileId);
     }
 
-    public List<DTODetailedStrategicIndicatorEvaluation> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, MongoException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.HistoricalData(null, from, to, projectExternalId, profileId);
     }
 
-    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, MongoException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId, profileId);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (List<DTOStrategicIndicatorEvaluation> si, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (List<DTOStrategicIndicatorEvaluation> si, String technique, String freq, String horizon, String projectExternalId) throws IOException, MongoException {
         return qmaForecast.ForecastSI(si,technique, freq, horizon, projectExternalId);
     }
 
-    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, MongoException {
         return qmaForecast.ForecastDSI(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 

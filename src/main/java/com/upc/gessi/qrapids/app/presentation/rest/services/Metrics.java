@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
-
+import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
@@ -10,7 +10,7 @@ import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
-import org.elasticsearch.ElasticsearchStatusException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +44,9 @@ public class Metrics {
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
-        } catch (IOException e) {
+        } catch (IOException | MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on MongoDB connection");
         }
     }
 
@@ -177,7 +177,7 @@ public class Metrics {
     public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             return metricsController.getAllMetricsCurrentEvaluation(prj, profile);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -191,7 +191,7 @@ public class Metrics {
     public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
         try {
             return metricsController.getSingleMetricCurrentEvaluation(id, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -205,7 +205,7 @@ public class Metrics {
     public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return metricsController.getAllMetricsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -219,7 +219,7 @@ public class Metrics {
     public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return metricsController.getSingleMetricHistoricalEvaluation(id, prj, profile, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -234,7 +234,7 @@ public class Metrics {
         try {
             List<DTOMetricEvaluation> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(prj, profile);
             return metricsController.getMetricsPrediction(currentEvaluation, prj, techinique, "7", horizon);
-        } catch (ElasticsearchStatusException e) {
+        } catch (MongoException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -249,7 +249,7 @@ public class Metrics {
         try {
             List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(prj, profile);
             return metrics.get(0).getDate();
-        } catch (IOException e) {
+        } catch (IOException | MongoException e) {
             logger.error(e.getMessage(), e);
         }
         // if the response is null
