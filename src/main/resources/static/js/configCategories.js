@@ -604,7 +604,7 @@ function deleteFactorCategories(name) {
             document.getElementById('MetricList').innerHTML = "";
             buildTree("factors");
             previousSelectionId=null;
-            warningUtils("Ok", "The metric category has been deleted successfully");
+            warningUtils("Ok", "The factor category has been deleted successfully");
         },
         error: function() {
             warningUtils("Error", "Error on deleting category");
@@ -675,7 +675,7 @@ function deleteMetricCategories(name) {
             warningUtils("Ok", "The metric category has been deleted successfully");
         },
         error: function() {
-        warningUtils("Error", "Error on deleting category");
+            warningUtils("Error", "Error on deleting category");
         }
     });
 }
