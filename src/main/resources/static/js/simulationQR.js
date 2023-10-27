@@ -3,8 +3,6 @@ var currentColor = "#696969";
 
 var patterns = [];
 
-const DEFAULT_CATEGORY = "Default"
-
 var strategicIndicators = [];
 var qualityFactors = [];
 var metrics = [];
@@ -546,52 +544,54 @@ function showMetricSlider (metric) {
     }
 
     var metricsDiv = $("#metricsSliders");
-    var div = document.createElement('div');
-    div.id = "div" + metric.id;
-    div.style.marginTop = "1em";
-    div.style.marginBottom = "1em";
+    metrics.forEach(function (metric) {
+        var div = document.createElement('div');
+        div.id = "div" + metric.id;
+        div.style.marginTop = "1em";
+        div.style.marginBottom = "1em";
 
-    var label = document.createElement('label');
-    label.id = metric.id;
-    label.textContent = metric.name;
-    label.title = metric.description;
-    div.appendChild(label);
+        var label = document.createElement('label');
+        label.id = metric.id;
+        label.textContent = metric.name;
+        label.title = metric.description;
+        div.appendChild(label);
 
-    div.appendChild(document.createElement('br'));
+        div.appendChild(document.createElement('br'));
 
-    var slider = document.createElement("input");
-    slider.id = "sliderValue" + metric.id;
-    slider.style.width = "100%";
-    var sliderConfig = {
-        id: "slider" + metric.id,
-        min: 0,
-        max: 1,
-        step: 0.01,
-        value: metric.value
-    };
-    sliderConfig.rangeHighlights = [];
-    Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
-    // Add original value
-    var start, end;
-    if (metric.value === 0) {
-        start = 0;
-        end = 0.03;
-    }
-    else if (metric.value === 1) {
-        start = 0.97;
-        end = 1;
-    }
-    else {
-        start = metric.value - 0.015;
-        end = metric.value + 0.015;
-    }
-    sliderConfig.rangeHighlights.push({
-        start: start,
-        end: end
+        var slider = document.createElement("input");
+        slider.id = "sliderValue" + metric.id;
+        slider.style.width = "100%";
+        var sliderConfig = {
+            id: "slider" + metric.id,
+            min: 0,
+            max: 1,
+            step: 0.01,
+            value: metric.value
+        };
+        sliderConfig.rangeHighlights = [];
+        Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
+        // Add original value
+        var start, end;
+        if (metric.value === 0) {
+            start = 0;
+            end = 0.03;
+        }
+        else if (metric.value === 1) {
+            start = 0.97;
+            end = 1;
+        }
+        else {
+            start = metric.value - 0.015;
+            end = metric.value + 0.015;
+        }
+        sliderConfig.rangeHighlights.push({
+            start: start,
+            end: end
+        });
+        div.appendChild(slider);
+        metricsDiv.append(div);
+        $("#"+slider.id).slider(sliderConfig);
     });
-    div.appendChild(slider);
-    metricsDiv.append(div);
-    $("#"+slider.id).slider(sliderConfig);
     $(".slider-rangeHighlight").css("background", currentColor);
     for (var j = 0; j < metricCats.length; j++) {
         $(".slider-rangeHighlight." + metricCats[j].name).css("background", metricCats[j].color)
