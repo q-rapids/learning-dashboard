@@ -201,7 +201,7 @@ function sortDataAlphabetically (data) {
 
 function getFactorsCategories () {
     jQuery.ajax({
-        url: "../api/qualityFactors/categories",
+        url: "../api/factors/categories",
         type: "GET",
         async: true,
         success: function (response) {
