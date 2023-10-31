@@ -96,7 +96,7 @@ dependencies {
 	compile files('libs/LD-qma-mongo-1.0.jar')
 
 	// API QR Generator
-	compile files('libs/qrapids-qr_generator-0.3.jar')
+	compile files('libs/LD-qr_generator-0.3.jar')
 
 	// QR-Eval library
 	compile files('libs/qrapids-eval-2.2.jar')
