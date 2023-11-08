@@ -99,7 +99,7 @@ dependencies {
 	compile files('libs/LD-qr_generator-0.3.jar')
 
 	// QR-Eval library
-	compile files('libs/qrapids-eval-2.2.jar')
+	compile files('libs/LD-eval-2.2.jar')
 
 	// Logging
 	compile('org.apache.logging.log4j:log4j-api:2.9.1')

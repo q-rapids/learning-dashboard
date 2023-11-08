@@ -7,14 +7,15 @@ The main functionalities of the current version of the Learning Dashboard are: p
 The **User's Guide** is available in the [Wiki](https://github.com/Learning-Dashboard/LD-learning-dashboard/wiki/User-Guide).
 
 ## Technologies
-|Property| Description                    |
-| -------------------- |--------------------------------|
-| Type of component    | Web Application                |
-| Build                | .war                           |
-| Programming language | Java                           |
-| DBMS                 | PostgreSQL                     |
-| Frameworks           | Spring Boot, AngularJS, Gradle |
-| External libraries   | Chart.js, MongoDB Java API     |
+| Property                     | Description                            |
+|------------------------------|----------------------------------------|
+| Type of component            | Web Application                        |
+| Build                        | .war                                   |
+| Programming language         | Java                                   |
+| DBMS                         | PostgreSQL                             |
+| Frameworks                   | Spring Boot, AngularJS, Gradle         |
+| External libraries           | Chart.js, MongoDB Java API             |
+ | Learning Dashboard libraries | LD-eval, LD-qma-mongo, LD-qr_generator |
 
 ## How to build
 This is a Gradle project. You can use any IDE that supports Gradle to build it, or alternatively you can use the command line using the Gradle wrapper with the command *__gradlew__* if you don't have Gradle installed on your machine or with the command *__gradle__* if you do, followed by the task *__war__*.
