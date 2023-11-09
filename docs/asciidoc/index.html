@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v3.3, 2023-10-26">
+<meta name="author" content="v3.3, 2023-11-09">
 <title>Learning Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Learning Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v3.3, 2023-10-26</span><br>
+<span id="author" class="author">v3.3, 2023-11-09</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -514,93 +514,73 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_get_all_alerts">5.1. Get all alerts</a></li>
 <li><a href="#_create_alert">5.2. Create alert</a></li>
-<li><a href="#_notify_alert_deprecated">5.3. Notify alert (deprecated)</a></li>
-<li><a href="#_count_new_alerts">5.4. Count new alerts</a></li>
-<li><a href="#_get_quality_requirement_patterns_for_alert">5.5. Get quality requirement patterns for alert</a></li>
-<li><a href="#_get_alert_decision">5.6. Get alert decision</a></li>
-<li><a href="#_ignore_quality_requirement_for_alert">5.7. Ignore quality requirement for alert</a></li>
-<li><a href="#_add_quality_requirement_for_alert">5.8. Add quality requirement for alert</a></li>
+<li><a href="#_count_new_alerts">5.3. Count new alerts</a></li>
 </ul>
 </li>
-<li><a href="#_quality_requirements">6. Quality requirements</a>
+<li><a href="#_feedback">6. Feedback</a>
 <ul class="sectlevel2">
-<li><a href="#_get_all_quality_requirements">6.1. Get all quality requirements</a></li>
-<li><a href="#_add_quality_requirement">6.2. Add quality requirement</a></li>
-<li><a href="#_ignore_quality_requirement">6.3. Ignore quality requirement</a></li>
-<li><a href="#_get_all_quality_requirement_patterns">6.4. Get all quality requirement patterns</a></li>
-<li><a href="#_get_single_quality_requirement_pattern">6.5. Get single quality requirement pattern</a></li>
-<li><a href="#_get_metric_for_quality_requirement_pattern">6.6. Get metric for quality requirement pattern</a></li>
+<li><a href="#_add_new_feedback">6.1. Add new feedback</a></li>
+<li><a href="#_get_feedback_for_strategic_indicator">6.2. Get feedback for strategic indicator</a></li>
+<li><a href="#_get_feedback_report_for_strategic_indicator">6.3. Get feedback report for strategic indicator</a></li>
 </ul>
 </li>
-<li><a href="#_decisions">7. Decisions</a>
+<li><a href="#_projects">7. Projects</a>
 <ul class="sectlevel2">
-<li><a href="#_get_all_decisions">7.1. Get all decisions</a></li>
+<li><a href="#_import_projects">7.1. Import projects</a></li>
+<li><a href="#_get_all_projects">7.2. Get all projects</a></li>
+<li><a href="#_get_single_project">7.3. Get single project</a></li>
+<li><a href="#_update_project">7.4. Update project</a></li>
 </ul>
 </li>
-<li><a href="#_feedback">8. Feedback</a>
+<li><a href="#_products">8. Products</a>
 <ul class="sectlevel2">
-<li><a href="#_add_new_feedback">8.1. Add new feedback</a></li>
-<li><a href="#_get_feedback_for_strategic_indicator">8.2. Get feedback for strategic indicator</a></li>
-<li><a href="#_get_feedback_report_for_strategic_indicator">8.3. Get feedback report for strategic indicator</a></li>
+<li><a href="#_get_all_products">8.1. Get all products</a></li>
+<li><a href="#_get_single_product">8.2. Get single product</a></li>
+<li><a href="#_new_product">8.3. New product</a></li>
+<li><a href="#_update_product">8.4. Update product</a></li>
+<li><a href="#_delete_product">8.5. Delete product</a></li>
+<li><a href="#_get_product_evaluation">8.6. Get product evaluation</a></li>
+<li><a href="#_get_product_detailed_evaluation">8.7. Get product detailed evaluation</a></li>
 </ul>
 </li>
-<li><a href="#_projects">9. Projects</a>
+<li><a href="#_profiles">9. Profiles</a>
 <ul class="sectlevel2">
-<li><a href="#_import_projects">9.1. Import projects</a></li>
-<li><a href="#_get_all_projects">9.2. Get all projects</a></li>
-<li><a href="#_get_single_project">9.3. Get single project</a></li>
-<li><a href="#_update_project">9.4. Update project</a></li>
+<li><a href="#_get_all_profiles">9.1. Get all profiles</a></li>
+<li><a href="#_get_single_profile">9.2. Get single profile</a></li>
+<li><a href="#_new_profile">9.3. New profile</a></li>
+<li><a href="#_update_profile">9.4. Update profile</a></li>
+<li><a href="#_delete_profile">9.5. Delete profile</a></li>
 </ul>
 </li>
-<li><a href="#_products">10. Products</a>
+<li><a href="#_iterations">10. Iterations</a>
 <ul class="sectlevel2">
-<li><a href="#_get_all_products">10.1. Get all products</a></li>
-<li><a href="#_get_single_product">10.2. Get single product</a></li>
-<li><a href="#_new_product">10.3. New product</a></li>
-<li><a href="#_update_product">10.4. Update product</a></li>
-<li><a href="#_delete_product">10.5. Delete product</a></li>
-<li><a href="#_get_product_evaluation">10.6. Get product evaluation</a></li>
-<li><a href="#_get_product_detailed_evaluation">10.7. Get product detailed evaluation</a></li>
+<li><a href="#_get_all_iterations">10.1. Get all iterations</a></li>
+<li><a href="#_update_iteration">10.2. Update iteration</a></li>
+<li><a href="#_delete_iteration">10.3. Delete iteration</a></li>
 </ul>
 </li>
-<li><a href="#_profiles">11. Profiles</a>
+<li><a href="#_students">11. Students</a>
 <ul class="sectlevel2">
-<li><a href="#_get_all_profiles">11.1. Get all profiles</a></li>
-<li><a href="#_get_single_profile">11.2. Get single profile</a></li>
-<li><a href="#_new_profile">11.3. New profile</a></li>
-<li><a href="#_update_profile">11.4. Update profile</a></li>
-<li><a href="#_delete_profile">11.5. Delete profile</a></li>
+<li><a href="#_update_students_metrics">11.1. Update student&#8217;s metrics</a></li>
+<li><a href="#_delete_students_metrics">11.2. Delete student&#8217;s metrics</a></li>
 </ul>
 </li>
-<li><a href="#_iterations">12. Iterations</a>
+<li><a href="#_news_updates">12. News (updates)</a>
 <ul class="sectlevel2">
-<li><a href="#_get_all_iterations">12.1. Get all iterations</a></li>
-<li><a href="#_update_iteration">12.2. Update iteration</a></li>
-<li><a href="#_delete_iteration">12.3. Delete iteration</a></li>
+<li><a href="#_get_all_news_updates">12.1. Get all news (updates)</a></li>
+<li><a href="#_get_last_year_news_updates">12.2. Get last year news (updates)</a></li>
+<li><a href="#_get_single_novetly_update">12.3. Get single novetly (update)</a></li>
+<li><a href="#_get_last_novetly_update">12.4. Get last novetly (update)</a></li>
+<li><a href="#_new_novelty_update">12.5. New novelty (update)</a></li>
+<li><a href="#_update_novelty_update">12.6. Update novelty (update)</a></li>
+<li><a href="#_delete_novelty_update">12.7. Delete novelty (update)</a></li>
 </ul>
 </li>
-<li><a href="#_students">13. Students</a>
+<li><a href="#_others">13. Others</a>
 <ul class="sectlevel2">
-<li><a href="#_update_students_metrics">13.1. Update student&#8217;s metrics</a></li>
-<li><a href="#_delete_students_metrics">13.2. Delete student&#8217;s metrics</a></li>
-</ul>
-</li>
-<li><a href="#_news_updates">14. News (updates)</a>
-<ul class="sectlevel2">
-<li><a href="#_get_all_news_updates">14.1. Get all news (updates)</a></li>
-<li><a href="#_get_last_year_news_updates">14.2. Get last year news (updates)</a></li>
-<li><a href="#_get_single_novetly_update">14.3. Get single novetly (update)</a></li>
-<li><a href="#_get_last_novetly_update">14.4. Get last novetly (update)</a></li>
-<li><a href="#_new_novelty_update">14.5. New novelty (update)</a></li>
-<li><a href="#_update_novelty_update">14.6. Update novelty (update)</a></li>
-<li><a href="#_delete_novelty_update">14.7. Delete novelty (update)</a></li>
-</ul>
-</li>
-<li><a href="#_others">15. Others</a>
-<ul class="sectlevel2">
-<li><a href="#_get_forecasting_techniques">15.1. Get forecasting techniques</a></li>
-<li><a href="#_get_project_milestones">15.2. Get project milestones</a></li>
-<li><a href="#_get_project_phases">15.3. Get project phases</a></li>
+<li><a href="#_get_forecasting_techniques">13.1. Get forecasting techniques</a></li>
+<li><a href="#_get_project_milestones">13.2. Get project milestones</a></li>
+<li><a href="#_get_project_phases">13.3. Get project phases</a></li>
 </ul>
 </li>
 </ul>
@@ -2110,7 +2090,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 884
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2132,7 +2112,7 @@ Content-Length: 884
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2142,7 +2122,7 @@ Content-Length: 884
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-26"
+    "formattedDate" : "2023-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -2377,7 +2357,7 @@ Content-Length: 884
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 884
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2399,7 +2379,7 @@ Content-Length: 884
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2409,7 +2389,7 @@ Content-Length: 884
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-26"
+    "formattedDate" : "2023-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -2630,7 +2610,7 @@ Content-Length: 884
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 884
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2652,7 +2632,7 @@ Content-Length: 884
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2662,7 +2642,7 @@ Content-Length: 884
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-26"
+    "formattedDate" : "2023-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -2905,7 +2885,7 @@ Content-Length: 884
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 884
+Content-Length: 883
 
 [ {
   "id" : "processperformance",
@@ -2927,7 +2907,7 @@ Content-Length: 884
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2937,7 +2917,7 @@ Content-Length: 884
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-26"
+    "formattedDate" : "2023-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -3157,8 +3137,8 @@ Content-Length: 884
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 867
 Content-Type: application/json;charset=UTF-8
+Content-Length: 866
 
 [ {
   "id" : "processperformance",
@@ -3180,7 +3160,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3190,7 +3170,7 @@ Content-Type: application/json;charset=UTF-8
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-26"
+    "formattedDate" : "2023-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -3424,8 +3404,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 867
 Content-Type: application/json;charset=UTF-8
+Content-Length: 866
 
 [ {
   "id" : "processperformance",
@@ -3447,7 +3427,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3457,7 +3437,7 @@ Content-Type: application/json;charset=UTF-8
     "missingMetrics" : null,
     "type" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2023-10-26"
+    "formattedDate" : "2023-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -4829,8 +4809,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 570
 Content-Type: application/json;charset=UTF-8
+Content-Length: 569
 
 [ {
   "id" : "testingperformance",
@@ -4841,7 +4821,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4851,7 +4831,7 @@ Content-Type: application/json;charset=UTF-8
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-26"
+  "formattedDate" : "2023-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -4866,10 +4846,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_9">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -5035,8 +5013,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 566
 Content-Type: application/json;charset=UTF-8
+Content-Length: 565
 
 {
   "id" : "testingperformance",
@@ -5047,7 +5025,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5057,7 +5035,7 @@ Content-Type: application/json;charset=UTF-8
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-26"
+  "formattedDate" : "2023-11-09"
 }</code></pre>
 </div>
 </div>
@@ -5072,10 +5050,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_10">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -5227,8 +5203,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 570
 Content-Type: application/json;charset=UTF-8
+Content-Length: 569
 
 [ {
   "id" : "testingperformance",
@@ -5239,7 +5215,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5249,7 +5225,7 @@ Content-Type: application/json;charset=UTF-8
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-26"
+  "formattedDate" : "2023-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -5440,7 +5416,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 663
+Content-Length: 662
 
 [ {
   "id" : "testingperformance",
@@ -5451,7 +5427,7 @@ Content-Length: 663
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5467,7 +5443,7 @@ Content-Length: 663
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-26"
+  "formattedDate" : "2023-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -5482,10 +5458,8 @@ Content-Length: 663
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_12">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -5654,7 +5628,7 @@ Content-Length: 663
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 729
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5672,7 +5646,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5695,10 +5669,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_13">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -5894,13 +5866,13 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 789
+Content-Length: 787
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
@@ -5915,7 +5887,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5938,10 +5910,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_14">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -6002,7 +5972,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_current_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2023-10-19&amp;to=2023-10-26' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2023-11-02&amp;to=2023-11-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6140,7 +6110,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 729
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6158,7 +6128,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6181,10 +6151,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_15">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -6223,7 +6191,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2023-10-19&amp;to=2023-10-26' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2023-11-02&amp;to=2023-11-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6361,7 +6329,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 729
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6379,7 +6347,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6402,10 +6370,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_16">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -6604,8 +6570,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 722
 Content-Type: application/json;charset=UTF-8
-Content-Length: 723
 
 [ {
   "id" : "testingperformance",
@@ -6622,7 +6588,7 @@ Content-Length: 723
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6645,10 +6611,8 @@ Content-Length: 723
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_17">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -6839,7 +6803,7 @@ Content-Length: 723
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 729
+Content-Length: 728
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6857,7 +6821,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6880,10 +6844,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_18">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -7080,7 +7042,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 834
+Content-Length: 833
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -7098,7 +7060,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7127,10 +7089,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_19">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -7349,7 +7309,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 828
+Content-Length: 827
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -7367,7 +7327,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7396,10 +7356,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_20">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -7618,7 +7576,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 834
+Content-Length: 833
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -7636,7 +7594,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7665,10 +7623,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_21">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -8322,8 +8278,8 @@ Content-Length: 342
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 570
 Content-Type: application/json;charset=UTF-8
+Content-Length: 569
 
 [ {
   "id" : "testingperformance",
@@ -8334,7 +8290,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8344,7 +8300,7 @@ Content-Type: application/json;charset=UTF-8
   "missingMetrics" : null,
   "type" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2023-10-26"
+  "formattedDate" : "2023-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -8359,10 +8315,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_22">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -8696,7 +8650,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
   "id" : "fasttests",
@@ -8704,7 +8658,7 @@ Content-Length: 422
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8725,10 +8679,8 @@ Content-Length: 422
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_23">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -8856,8 +8808,8 @@ Content-Length: 422
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 687
 Content-Type: application/json;charset=UTF-8
+Content-Length: 686
 
 [ {
   "student_id" : null,
@@ -8868,7 +8820,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -8876,10 +8828,10 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
   } ],
-  "taigaUsername" : "taiga_test_username",
-  "prtUsername" : "prt_test_username",
+  "githubUsername" : "github_test_username",
   "studentName" : "student_test_name",
-  "githubUsername" : "github_test_username"
+  "prtUsername" : "prt_test_username",
+  "taigaUsername" : "taiga_test_username"
 } ]</code></pre>
 </div>
 </div>
@@ -9022,7 +8974,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 418
+Content-Length: 417
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -9031,7 +8983,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -9052,10 +9004,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_24">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -9183,7 +9133,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
   "id" : "fasttests",
@@ -9191,7 +9141,7 @@ Content-Length: 422
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -9212,10 +9162,8 @@ Content-Length: 422
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_25">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -9365,7 +9313,7 @@ Content-Length: 422
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
   "id" : "fasttests",
@@ -9373,7 +9321,7 @@ Content-Length: 422
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -9394,10 +9342,8 @@ Content-Length: 422
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_26">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -9596,8 +9542,8 @@ Content-Length: 422
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 722
 Content-Type: application/json;charset=UTF-8
-Content-Length: 723
 
 [ {
   "id" : "testingperformance",
@@ -9614,7 +9560,7 @@ Content-Length: 723
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -9637,10 +9583,8 @@ Content-Length: 723
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_27">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -9812,7 +9756,7 @@ Content-Length: 723
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 711
+Content-Length: 710
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -9824,7 +9768,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -9833,10 +9777,10 @@ Content-Type: application/json;charset=UTF-8
     "qualityFactors" : [ "testingperformance" ]
   } ],
   "numberMetrics" : 1,
-  "taigaUsername" : "taiga_test_username",
-  "prtUsername" : "prt_test_username",
+  "githubUsername" : "github_test_username",
   "studentName" : "student_test_name",
-  "githubUsername" : "github_test_username"
+  "prtUsername" : "prt_test_username",
+  "taigaUsername" : "taiga_test_username"
 } ]</code></pre>
 </div>
 </div>
@@ -9985,7 +9929,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 515
+Content-Length: 514
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -9994,7 +9938,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2023, 10, 26 ],
+  "date" : [ 2023, 11, 9 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -10021,10 +9965,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_28">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -10243,7 +10185,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 828
+Content-Length: 827
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -10261,7 +10203,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2023, 10, 26 ],
+    "date" : [ 2023, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -10290,10 +10232,8 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_29">HTTP response error on MongoDB connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -10493,7 +10433,7 @@ Content-Length: 345
 <h4 id="_get_all_alerts_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts?prj=test&amp;profile=&amp;profile=' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -10519,19 +10459,19 @@ Content-Length: 345
 <td class="tableblock halign-left valign-top"><p class="tableblock">Alert identifier</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id_element</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].affectedId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the affected element causing the alert</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].affectedType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the element causing the alert</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the affected element causing the alert (metric, factor or indicator)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Type of element causing the alert (METRIC or FACTOR)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the alert causing the alert</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
@@ -10539,19 +10479,9 @@ Content-Length: 345
 <td class="tableblock halign-left valign-top"><p class="tableblock">Current value of the element causing the alert</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].valueDescription</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Category and value of the element causing the alert</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].threshold</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minimum acceptable value for the element</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
@@ -10561,17 +10491,17 @@ Content-Length: 345
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Status of the alert (NEW, VIEWED or RESOLVED)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status of the alert (NEW or VIEWED)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].reqAssociat</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The alert has or hasn&#8217;t an associated quality requirement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].predictionDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Date for the prediction that has raised an alert, if it is a prediction alert</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].artefacts</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert artefacts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].predictionTechnique</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technique used for the prediction that raised an alert, if it is a prediction alert</p></td>
 </tr>
 </tbody>
 </table>
@@ -10581,22 +10511,20 @@ Content-Length: 345
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 282
 Content-Type: application/json;charset=UTF-8
-Content-Length: 298
 
 [ {
   "id" : 2,
-  "id_element" : "id",
-  "name" : "Duplication",
-  "type" : "METRIC",
+  "type" : "TRESPASSED_THRESHOLD",
   "value" : 0.4,
-  "valueDescription" : "Normal (0.40)",
   "threshold" : 0.5,
-  "category" : "category",
-  "date" : 1698330436040,
+  "date" : 1699528388302,
   "status" : "NEW",
-  "reqAssociat" : true,
-  "artefacts" : null
+  "affectedId" : "duplication",
+  "affectedType" : "metric",
+  "predictionDate" : 1699528388302,
+  "predictionTechnique" : "PROPHET"
 } ]</code></pre>
 </div>
 </div>
@@ -10629,19 +10557,19 @@ Content-Length: 298
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.affectedId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.affectedType</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the element causing the alert</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the element causing the alert (metric, factor or indicator)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the element causing the alert (METRIC or FACTOR)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the alert (CATEGORY_DOWNGRADE, CATEGORY_UPGRADE, TRESPASSED_THRESHOLD, ALERT_NOT_TREATED)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.value</code></p></td>
@@ -10652,11 +10580,6 @@ Content-Length: 298
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.threshold</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minimum acceptable value for the element</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.project_id</code></p></td>
@@ -10674,12 +10597,11 @@ Content-Length: 298
     -H 'Content-Type: application/json' \
     -d '{
   "element" : {
+    "affectedType" : "metric",
     "project_id" : "test",
-    "name" : "Duplication",
+    "affectedId" : "Duplication",
     "threshold" : "0.5",
-    "id" : "duplication",
-    "type" : "METRIC",
-    "category" : "duplication",
+    "type" : "ALERT_NOT_TREATED",
     "value" : "0.4"
   }
 }'</code></pre>
@@ -10703,7 +10625,31 @@ Content-Length: 298
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_element_type">HTTP response wrong element type</h4>
+<h4 id="_http_response_wrong_type">HTTP response wrong type</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_wrong_affected_type">HTTP response wrong affected type</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_wrong_project_34">HTTP response wrong project</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_wrong_affected_id">HTTP response wrong affected id</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -10712,120 +10658,7 @@ Content-Length: 298
 </div>
 </div>
 <div class="sect2">
-<h3 id="_notify_alert_deprecated">5.3. Notify alert (deprecated)</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-This operation is deprecated. Please, use <a href="#_create_alert">Create alert</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_notify_alert_deprecated_request_fields">Request fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the element causing the alert (METRIC or FACTOR)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.value</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Current value of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.threshold</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum acceptable value for the element</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>element.project_id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier of the element causing the alert</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_notify_alert_deprecated_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/notifyAlert' -i -X POST \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "element" : {
-    "project_id" : "test",
-    "name" : "Duplication",
-    "threshold" : "0.5",
-    "id" : "duplication",
-    "type" : "METRIC",
-    "category" : "duplication",
-    "value" : "0.4"
-  }
-}'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_notify_alert_deprecated_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_missing_body_parameter_2">HTTP response missing body parameter</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_wrong_element_type_2">HTTP response wrong element type</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_count_new_alerts">5.4. Count new alerts</h3>
+<h3 id="_count_new_alerts">5.3. Count new alerts</h3>
 <div class="sect3">
 <h4 id="_count_new_alerts_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -10855,414 +10688,25 @@ This operation is deprecated. Please, use <a href="#_create_alert">Create alert<
 <h4 id="_count_new_alerts_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/countNew?prj=test&amp;profile=&amp;profile=' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/countNew?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_count_new_alerts_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>newAlerts</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of new alerts</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>newAlertsWithQR</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of new alerts with an associated quality requirement</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>Snippet response-fields not found for operation::alerts/count-new</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_count_new_alerts_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 49
 Content-Type: application/json;charset=UTF-8
+Content-Length: 1
 
-{
-  "newAlerts" : 2,
-  "newAlertsWithQR" : 1
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_wrong_project_34">HTTP response wrong project</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_quality_requirement_patterns_for_alert">5.5. Get quality requirement patterns for alert</h3>
-<div class="sect3">
-<h4 id="_get_quality_requirement_patterns_for_alert_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/alerts/{id}/qrPatterns</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_quality_requirement_patterns_for_alert_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/qrPatterns' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_quality_requirement_patterns_for_alert_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].comments</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement comments</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement goal</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].comments</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement comments</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.formText</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement text</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].correctnessCondition</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter correctness condition</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricName</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].costFunction</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement cost function</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_quality_requirement_patterns_for_alert_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 800
-Content-Type: application/json;charset=UTF-8
-
-[ {
-  "id" : 100,
-  "name" : "Duplications",
-  "comments" : "No comments",
-  "description" : "No description",
-  "goal" : "Improve the quality of the source code",
-  "forms" : [ {
-    "name" : "Duplications",
-    "description" : "The ratio of files without duplications should be at least the given value",
-    "comments" : "No comments",
-    "fixedPart" : {
-      "formText" : "The ratio of files without duplications should be at least %value%",
-      "parameters" : [ {
-        "id" : 120,
-        "name" : "value",
-        "description" : "value in percentage",
-        "correctnessCondition" : "Stay between 0 and 100",
-        "metricId" : 172,
-        "metricName" : "Integer that represents a percentage"
-      } ]
-    }
-  } ],
-  "costFunction" : "No cost function"
-} ]</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_alert_not_found">HTTP response alert not found</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 404 Not Found</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_alert_decision">5.6. Get alert decision</h3>
-<div class="sect3">
-<h4 id="_get_alert_decision_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/alerts/{id}/decision</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_alert_decision_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/decision' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_alert_decision_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qrGoal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement goal</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qrRequirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement text</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qrDescription</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qrBacklogUrl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Link to the backlog issue containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>decisionType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Type of the decision (ADD or IGNORE)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>decisionRationale</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User rationale of the decision</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_alert_decision_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 371
-Content-Type: application/json;charset=UTF-8
-
-{
-  "qrGoal" : "Improve the quality of the source code",
-  "qrRequirement" : "The ratio of files without duplications should be at least 0.8",
-  "qrDescription" : "The ratio of files without duplications should be at least the given value",
-  "qrBacklogUrl" : "https://backlog.example/issue/999",
-  "decisionType" : "ADD",
-  "decisionRationale" : "User comments"
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_alert_not_found_2">HTTP response alert not found</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 404 Not Found</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_ignore_quality_requirement_for_alert">5.7. Ignore quality requirement for alert</h3>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_for_alert_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/alerts/{id}/qr/ignore</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_for_alert_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rationale</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User rationale of the decision</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>patternId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the ignored quality requirement pattern</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_for_alert_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/qr/ignore' -i -X POST \
-    -d 'prj=test&amp;rationale=Not+important&amp;patternId=100'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_for_alert_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
+0</code></pre>
 </div>
 </div>
 </div>
@@ -11274,1138 +10718,14 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_http_response_alert_not_found_3">HTTP response alert not found</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 404 Not Found</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_add_quality_requirement_for_alert">5.8. Add quality requirement for alert</h3>
-<div class="sect3">
-<h4 id="_add_quality_requirement_for_alert_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/alerts/{id}/qr</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_for_alert_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rationale</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User rationale of the decision</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>patternId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the added quality requirement pattern</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>requirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Goal of the added quality requirement</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_for_alert_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/qr' -i -X POST \
-    -d 'prj=test&amp;rationale=User+comments&amp;patternId=100&amp;requirement=The+ratio+of+files+without+duplications+should+be+at+least+0.8&amp;description=The+ratio+of+files+without+duplications+should+be+at+least+the+given+value&amp;goal=Improve+the+quality+of+the+source+code'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_for_alert_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement creation date</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>requirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Goal of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier inside the backlog</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogUrl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Link to the backlog issue containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogProjectId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backlog identifier of the project containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alert</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert object which caused the quality requirement addition</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_for_alert_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created
-Content-Type: application/json;charset=UTF-8
-Content-Length: 410
-
-{
-  "id" : 3,
-  "date" : 1698330434757,
-  "requirement" : "The ratio of files without duplications should be at least 0.8",
-  "description" : "The ratio of files without duplications should be at least the given value",
-  "goal" : "Improve the quality of the source code",
-  "backlogId" : "ID-999",
-  "backlogUrl" : "https://backlog.example/issue/999",
-  "backlogProjectId" : null,
-  "alert" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_alert_not_found_4">HTTP response alert not found</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 404 Not Found</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_error_on_backlog_saving">HTTP response error on backlog saving</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_quality_requirements">6. Quality requirements</h2>
+<h2 id="_feedback">6. Feedback</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_all_quality_requirements">6.1. Get all quality requirements</h3>
-<div class="sect3">
-<h4 id="_get_all_quality_requirements_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_all_quality_requirements_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qr?prj=test' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_all_quality_requirements_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement creation date</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].requirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Goal of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].backlogId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier inside the backlog</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].backlogUrl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Link to the backlog issue containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].backlogProjectId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backlog identifier of the project containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.id_element</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Type of element causing the alert (METRIC or FACTOR)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.value</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Current value of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.valueDescription</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Category and value of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.threshold</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum acceptable value for the element</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element causing the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Generation date of the alert</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.status</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Status of the alert (NEW, VIEWED or RESOLVED)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.reqAssociat</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The alert has or hasn&#8217;t an associated quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].alert.artefacts</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert artefacts</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_all_quality_requirements_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 722
-Content-Type: application/json;charset=UTF-8
-
-[ {
-  "id" : 3,
-  "date" : 1698330445543,
-  "requirement" : "The ratio of files without duplications should be at least 0.8",
-  "description" : "The ratio of files without duplications should be at least the given value",
-  "goal" : "Improve the quality of the source code",
-  "backlogId" : "ID-999",
-  "backlogUrl" : "https://backlog.example/issue/999",
-  "backlogProjectId" : "prj-1",
-  "alert" : {
-    "id" : 2,
-    "id_element" : "id",
-    "name" : "Duplication",
-    "type" : "METRIC",
-    "value" : 0.4,
-    "valueDescription" : null,
-    "threshold" : 0.5,
-    "category" : "category",
-    "date" : 1698330445543,
-    "status" : "NEW",
-    "reqAssociat" : true,
-    "artefacts" : null
-  }
-} ]</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_wrong_project_36">HTTP response wrong project</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_add_quality_requirement">6.2. Add quality requirement</h3>
-<div class="sect3">
-<h4 id="_add_quality_requirement_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rationale</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User rationale of the decision</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>patternId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the added quality requirement pattern</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>requirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Goal of the added quality requirement</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qr' -i -X POST \
-    -d 'prj=test&amp;rationale=User+comments&amp;patternId=100&amp;requirement=The+ratio+of+files+without+duplications+should+be+at+least+0.8&amp;description=The+ratio+of+files+without+duplications+should+be+at+least+the+given+value&amp;goal=Improve+the+quality+of+the+source+code'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement creation date</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>requirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Goal of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier inside the backlog</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogUrl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Link to the backlog issue containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogProjectId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backlog identifier of the project containing the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alert</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alert object which caused the quality requirement addition</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_add_quality_requirement_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created
-Content-Type: application/json;charset=UTF-8
-Content-Length: 410
-
-{
-  "id" : 3,
-  "date" : 1698330445842,
-  "requirement" : "The ratio of files without duplications should be at least 0.8",
-  "description" : "The ratio of files without duplications should be at least the given value",
-  "goal" : "Improve the quality of the source code",
-  "backlogId" : "ID-999",
-  "backlogUrl" : "https://backlog.example/issue/999",
-  "backlogProjectId" : null,
-  "alert" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_error_on_backlog_saving_2">HTTP response error on backlog saving</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_ignore_quality_requirement">6.3. Ignore quality requirement</h3>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rationale</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User rationale of the decision</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>patternId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the ignored quality requirement pattern</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qr/ignore' -i -X POST \
-    -d 'prj=test&amp;rationale=Not+important&amp;patternId=100'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_ignore_quality_requirement_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_wrong_project_37">HTTP response wrong project</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_all_quality_requirement_patterns">6.4. Get all quality requirement patterns</h3>
-<div class="sect3">
-<h4 id="_get_all_quality_requirement_patterns_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qrPatterns' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_all_quality_requirement_patterns_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].comments</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement comments</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement goal</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].comments</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement comments</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.formText</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement text</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].correctnessCondition</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter correctness condition</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forms[].fixedPart.parameters[].metricName</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].costFunction</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement cost function</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_all_quality_requirement_patterns_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 800
-Content-Type: application/json;charset=UTF-8
-
-[ {
-  "id" : 100,
-  "name" : "Duplications",
-  "comments" : "No comments",
-  "description" : "No description",
-  "goal" : "Improve the quality of the source code",
-  "forms" : [ {
-    "name" : "Duplications",
-    "description" : "The ratio of files without duplications should be at least the given value",
-    "comments" : "No comments",
-    "fixedPart" : {
-      "formText" : "The ratio of files without duplications should be at least %value%",
-      "parameters" : [ {
-        "id" : 120,
-        "name" : "value",
-        "description" : "value in percentage",
-        "correctnessCondition" : "Stay between 0 and 100",
-        "metricId" : 172,
-        "metricName" : "Integer that represents a percentage"
-      } ]
-    }
-  } ],
-  "costFunction" : "No cost function"
-} ]</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_single_quality_requirement_pattern">6.5. Get single quality requirement pattern</h3>
-<div class="sect3">
-<h4 id="_get_single_quality_requirement_pattern_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/qrPatterns/{id}</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement pattern identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_single_quality_requirement_pattern_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qrPatterns/100' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_single_quality_requirement_pattern_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>comments</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement comments</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement goal</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].comments</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement comments</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.formText</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement text</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].correctnessCondition</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter correctness condition</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].metricId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>forms[].fixedPart.parameters[].metricName</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement parameter metric name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>costFunction</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Suggested quality requirement cost function</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_single_quality_requirement_pattern_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 796
-
-{
-  "id" : 100,
-  "name" : "Duplications",
-  "comments" : "No comments",
-  "description" : "No description",
-  "goal" : "Improve the quality of the source code",
-  "forms" : [ {
-    "name" : "Duplications",
-    "description" : "The ratio of files without duplications should be at least the given value",
-    "comments" : "No comments",
-    "fixedPart" : {
-      "formText" : "The ratio of files without duplications should be at least %value%",
-      "parameters" : [ {
-        "id" : 120,
-        "name" : "value",
-        "description" : "value in percentage",
-        "correctnessCondition" : "Stay between 0 and 100",
-        "metricId" : 172,
-        "metricName" : "Integer that represents a percentage"
-      } ]
-    }
-  } ],
-  "costFunction" : "No cost function"
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_metric_for_quality_requirement_pattern">6.6. Get metric for quality requirement pattern</h3>
-<div class="sect3">
-<h4 id="_get_metric_for_quality_requirement_pattern_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/qrPatterns/{id}/metric</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement pattern identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_metric_for_quality_requirement_pattern_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qrPatterns/1/metric' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_metric_for_quality_requirement_pattern_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>metric</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_metric_for_quality_requirement_pattern_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 29
-Content-Type: application/json;charset=UTF-8
-
-{
-  "metric" : "comments"
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_decisions">7. Decisions</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_get_all_decisions">7.1. Get all decisions</h3>
-<div class="sect3">
-<h4 id="_get_all_decisions_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qrs</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates if the result must include the information about the quality requirements associated to the decisions</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Starting date (yyyy-mm-dd) for the requested the period</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_all_decisions_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/decisions?prj=test&amp;qrs=true&amp;from=2019-07-15&amp;to=2019-08-01' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_all_decisions_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Decision identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Decision type (ADD or IGNORE)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Decision creation date</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].author</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the decision creator</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User rationale behind the decision</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].patternId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the quality requirement pattern being added or ignored</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].elementId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identifier of the element impacted by the quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].requirement</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Text of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Goal of the added quality requirement</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].backlogId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality requirement identifier inside the backlog</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].backlogUrl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Link to the backlog issue containing the quality requirement</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_all_decisions_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 493
-Content-Type: application/json;charset=UTF-8
-
-[ {
-  "id" : 2,
-  "type" : "ADD",
-  "date" : 1698330437632,
-  "author" : null,
-  "rationale" : "User comments",
-  "patternId" : 100,
-  "elementId" : "duplications",
-  "requirement" : "The ratio of files without duplications should be at least 0.8",
-  "description" : "The ratio of files without duplications should be at least the given value",
-  "goal" : "Improve the quality of the source code",
-  "backlogId" : "ID-999",
-  "backlogUrl" : "https://backlog.example/issue/999"
-} ]</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_feedback">8. Feedback</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_add_new_feedback">8.1. Add new feedback</h3>
+<h3 id="_add_new_feedback">6.1. Add new feedback</h3>
 <div class="sect3">
 <h4 id="_add_new_feedback_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -12503,7 +10823,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_missing_body_parameter_3">HTTP response missing body parameter</h4>
+<h4 id="_http_response_missing_body_parameter_2">HTTP response missing body parameter</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -12512,7 +10832,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_feedback_for_strategic_indicator">8.2. Get feedback for strategic indicator</h3>
+<h3 id="_get_feedback_for_strategic_indicator">6.2. Get feedback for strategic indicator</h3>
 <div class="sect3">
 <h4 id="_get_feedback_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -12597,7 +10917,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2023-10-26",
+  "date" : "2023-11-09",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -12607,7 +10927,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_feedback_report_for_strategic_indicator">8.3. Get feedback report for strategic indicator</h3>
+<h3 id="_get_feedback_report_for_strategic_indicator">6.3. Get feedback report for strategic indicator</h3>
 <div class="sect3">
 <h4 id="_get_feedback_report_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -12746,10 +11066,10 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect1">
-<h2 id="_projects">9. Projects</h2>
+<h2 id="_projects">7. Projects</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_import_projects">9.1. Import projects</h3>
+<h3 id="_import_projects">7.1. Import projects</h3>
 <div class="sect3">
 <h4 id="_import_projects_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -12812,7 +11132,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_all_projects">9.2. Get all projects</h3>
+<h3 id="_get_all_projects">7.2. Get all projects</h3>
 <div class="sect3">
 <h4 id="_get_all_projects_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -12927,7 +11247,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_single_project">9.3. Get single project</h3>
+<h3 id="_get_single_project">7.3. Get single project</h3>
 <div class="sect3">
 <h4 id="_get_single_project_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13064,7 +11384,7 @@ Content-Length: 287
 </div>
 </div>
 <div class="sect2">
-<h3 id="_update_project">9.4. Update project</h3>
+<h3 id="_update_project">7.4. Update project</h3>
 <div class="sect3">
 <h4 id="_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13195,10 +11515,10 @@ Content-Length: 287
 </div>
 </div>
 <div class="sect1">
-<h2 id="_products">10. Products</h2>
+<h2 id="_products">8. Products</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_all_products">10.1. Get all products</h3>
+<h3 id="_get_all_products">8.1. Get all products</h3>
 <div class="sect3">
 <h4 id="_get_all_products_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -13344,7 +11664,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_single_product">10.2. Get single product</h3>
+<h3 id="_get_single_product">8.2. Get single product</h3>
 <div class="sect3">
 <h4 id="_get_single_product_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13512,7 +11832,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_new_product">10.3. New product</h3>
+<h3 id="_new_product">8.3. New product</h3>
 <div class="sect3">
 <h4 id="_new_product_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13594,7 +11914,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_update_product">10.4. Update product</h3>
+<h3 id="_update_product">8.4. Update product</h3>
 <div class="sect3">
 <h4 id="_path_parameters_2">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13698,7 +12018,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_product">10.5. Delete product</h3>
+<h3 id="_delete_product">8.5. Delete product</h3>
 <div class="sect3">
 <h4 id="_delete_product_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13739,7 +12059,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_product_evaluation">10.6. Get product evaluation</h3>
+<h3 id="_get_product_evaluation">8.6. Get product evaluation</h3>
 <div class="sect3">
 <h4 id="_get_product_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -13963,7 +12283,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_product_detailed_evaluation">10.7. Get product detailed evaluation</h3>
+<h3 id="_get_product_detailed_evaluation">8.7. Get product detailed evaluation</h3>
 <div class="sect3">
 <h4 id="_get_product_detailed_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -14202,10 +12522,10 @@ Content-Length: 1129
 </div>
 </div>
 <div class="sect1">
-<h2 id="_profiles">11. Profiles</h2>
+<h2 id="_profiles">9. Profiles</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_all_profiles">11.1. Get all profiles</h3>
+<h3 id="_get_all_profiles">9.1. Get all profiles</h3>
 <div class="sect3">
 <h4 id="_get_all_profiles_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -14394,7 +12714,7 @@ Content-Length: 595
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_single_profile">11.2. Get single profile</h3>
+<h3 id="_get_single_profile">9.2. Get single profile</h3>
 <div class="sect3">
 <h4 id="_get_single_profile_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -14605,7 +12925,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_new_profile">11.3. New profile</h3>
+<h3 id="_new_profile">9.3. New profile</h3>
 <div class="sect3">
 <h4 id="_new_profile_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -14689,7 +13009,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_update_profile">11.4. Update profile</h3>
+<h3 id="_update_profile">9.4. Update profile</h3>
 <div class="sect3">
 <h4 id="_path_parameters_3">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -14789,7 +13109,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_profile">11.5. Delete profile</h3>
+<h3 id="_delete_profile">9.5. Delete profile</h3>
 <div class="sect3">
 <h4 id="_delete_profile_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -14832,10 +13152,10 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect1">
-<h2 id="_iterations">12. Iterations</h2>
+<h2 id="_iterations">10. Iterations</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_all_iterations">12.1. Get all iterations</h3>
+<h3 id="_get_all_iterations">10.1. Get all iterations</h3>
 <div class="sect3">
 <h4 id="_get_all_iterations_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -14898,15 +13218,15 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 171
+Content-Length: 175
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 1,
   "name" : "test iteration",
   "label" : "test label",
-  "from_date" : 1656108000000,
-  "to_date" : 1658440800000,
+  "from_date" : -58304794161000,
+  "to_date" : -58302374961000,
   "project_ids" : [ 2, 4, 5 ]
 } ]</code></pre>
 </div>
@@ -14914,7 +13234,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_update_iteration">12.2. Update iteration</h3>
+<h3 id="_update_iteration">10.2. Update iteration</h3>
 <div class="sect3">
 <h4 id="_path_parameters_4">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15009,7 +13329,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_iteration">12.3. Delete iteration</h3>
+<h3 id="_delete_iteration">10.3. Delete iteration</h3>
 <div class="sect3">
 <h4 id="_delete_iteration_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15052,10 +13372,10 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect1">
-<h2 id="_students">13. Students</h2>
+<h2 id="_students">11. Students</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_update_students_metrics">13.1. Update student&#8217;s metrics</h3>
+<h3 id="_update_students_metrics">11.1. Update student&#8217;s metrics</h3>
 <div class="sect3">
 <h4 id="_update_students_metrics_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15113,7 +13433,7 @@ Content-Length: 1
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_students_metrics">13.2. Delete student&#8217;s metrics</h3>
+<h3 id="_delete_students_metrics">11.2. Delete student&#8217;s metrics</h3>
 <div class="sect3">
 <h4 id="_delete_students_metrics_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15156,10 +13476,10 @@ Content-Length: 1
 </div>
 </div>
 <div class="sect1">
-<h2 id="_news_updates">14. News (updates)</h2>
+<h2 id="_news_updates">12. News (updates)</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_all_news_updates">14.1. Get all news (updates)</h3>
+<h3 id="_get_all_news_updates">12.1. Get all news (updates)</h3>
 <div class="sect3">
 <h4 id="_get_all_news_updates_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -15226,7 +13546,7 @@ Content-Length: 78
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_last_year_news_updates">14.2. Get last year news (updates)</h3>
+<h3 id="_get_last_year_news_updates">12.2. Get last year news (updates)</h3>
 <div class="sect3">
 <h4 id="_get_last_year_news_updates_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -15293,7 +13613,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_single_novetly_update">14.3. Get single novetly (update)</h3>
+<h3 id="_get_single_novetly_update">12.3. Get single novetly (update)</h3>
 <div class="sect3">
 <h4 id="_get_single_novetly_update_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15382,7 +13702,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_last_novetly_update">14.4. Get last novetly (update)</h3>
+<h3 id="_get_last_novetly_update">12.4. Get last novetly (update)</h3>
 <div class="sect3">
 <h4 id="_get_last_novetly_update_path_parameters">Path parameters</h4>
 <div class="paragraph">
@@ -15455,7 +13775,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_new_novelty_update">14.5. New novelty (update)</h3>
+<h3 id="_new_novelty_update">12.5. New novelty (update)</h3>
 <div class="sect3">
 <h4 id="_new_novelty_update_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15505,7 +13825,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_update_novelty_update">14.6. Update novelty (update)</h3>
+<h3 id="_update_novelty_update">12.6. Update novelty (update)</h3>
 <div class="sect3">
 <h4 id="_path_parameters_5">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15576,7 +13896,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_novelty_update">14.7. Delete novelty (update)</h3>
+<h3 id="_delete_novelty_update">12.7. Delete novelty (update)</h3>
 <div class="sect3">
 <h4 id="_delete_novelty_update_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15619,10 +13939,10 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect1">
-<h2 id="_others">15. Others</h2>
+<h2 id="_others">13. Others</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_forecasting_techniques">15.1. Get forecasting techniques</h3>
+<h3 id="_get_forecasting_techniques">13.1. Get forecasting techniques</h3>
 <div class="sect3">
 <h4 id="_get_forecasting_techniques_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -15669,7 +13989,7 @@ Content-Length: 26
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_project_milestones">15.2. Get project milestones</h3>
+<h3 id="_get_project_milestones">13.2. Get project milestones</h3>
 <div class="sect3">
 <h4 id="_get_project_milestones_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15699,7 +14019,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2023-10-26' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2023-11-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -15751,7 +14071,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2023-10-29",
+  "date" : "2023-11-12",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -15761,7 +14081,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_project_phases">15.3. Get project phases</h3>
+<h3 id="_get_project_phases">13.3. Get project phases</h3>
 <div class="sect3">
 <h4 id="_get_project_phases_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -15843,10 +14163,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2023-10-11",
+  "dateFrom" : "2023-10-25",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2023-11-10"
+  "dateTo" : "2023-11-24"
 } ]</code></pre>
 </div>
 </div>
@@ -15857,7 +14177,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-10-26 16:16:59 +0200
+Last updated 2023-11-09 09:55:50 +0100
 </div>
 </div>
 </body>
