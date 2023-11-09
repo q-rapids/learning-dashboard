@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller("/Simulation")
 public class SimulationController {
+
     @RequestMapping("Simulation/Factors")
     public String SISimulation(){
         return "Simulation/SimulationFactors";
@@ -13,11 +14,6 @@ public class SimulationController {
     @RequestMapping("Simulation/Metrics")
     public String simulationMetrics() {
         return "Simulation/SimulationMetrics";
-    }
-
-    @RequestMapping("Simulation/QR")
-    public String simulationQR() {
-        return "Simulation/SimulationQR";
     }
 
 }

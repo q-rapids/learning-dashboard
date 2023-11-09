@@ -12,7 +12,9 @@ import qr.models.Form;
 import qr.models.Param;
 import qr.models.QualityRequirementPattern;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 
@@ -890,8 +892,11 @@ public class DomainObjectsBuilder {
         Long id = 1L;
         String name = "test iteration";
         String label = "test label";
-        java.sql.Date from_date = new java.sql.Date(2022 - 1900, Calendar.JUNE, 25);
-        java.sql.Date to_date = new java.sql.Date(2022 - 1900, Calendar.JULY, 22);
+        LocalDate localFromDate = LocalDate.of(2022 - 1900, Calendar.JUNE, 25);
+        LocalDate localToDate = LocalDate.of(2022 - 1900, Calendar.JULY, 22);
+
+        java.sql.Date from_date = new java.sql.Date(Date.from(localFromDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
+        java.sql.Date to_date = new java.sql.Date(Date.from(localToDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
         List<Long> project_ids = new ArrayList<>();
         project_ids.add(2L);
         project_ids.add(4L);

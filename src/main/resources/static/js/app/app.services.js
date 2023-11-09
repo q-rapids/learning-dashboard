@@ -161,7 +161,6 @@ app.controller('TablesCtrl', function($scope, $http) {
                 }
                 else alert.thrownby = "-";
             });
-            clearAlertsPendingBanner();
         })
     };
 
