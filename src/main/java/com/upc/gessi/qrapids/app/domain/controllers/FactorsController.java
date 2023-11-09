@@ -400,7 +400,7 @@ public class FactorsController {
         }
     }
 
-    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
+    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         boolean correct = true;
         if (dateFrom != null) {
             LocalDate dateTo = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -414,7 +414,7 @@ public class FactorsController {
         return correct;
     }
 
-    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
+    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         boolean correct = true;
 
         // if there is no specific project as a parameter, all the projects are assessed
@@ -434,7 +434,7 @@ public class FactorsController {
         return correct;
     }
 
-    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException {
+    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         //metrics list, each of them includes list of QF in which is involved
         MetricEvaluation metricEvaluationQma = new MetricEvaluation();
         List<DTOMetricEvaluation> metricList;
@@ -452,9 +452,14 @@ public class FactorsController {
         }
         metricEvaluationQma.setMetrics(metricList);
 
+        Project proj = projectsController.findProjectByExternalId(project);
+
         // CHECK METRICS ALERTS
-        for (DTOMetricEvaluation m : metricList) {
-            alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
+        LocalDate today = LocalDate.now();
+        if(evaluationDate.equals(today)) {
+            for (DTOMetricEvaluation m : metricList) {
+                alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
+            }
         }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -507,7 +512,8 @@ public class FactorsController {
         String assessmentValueOrLabel = "";
         try {
             assessmentValueOrLabel = assessQualityFactors(evaluationDate, project, qualityFactor, listMetricsAssessmentValues, qfMetrics, missingMetrics, metricsMismatch, assessmentValueOrLabel);
-        } catch (AssessmentErrorException | CategoriesException e) {
+        } catch (AssessmentErrorException | CategoriesException | ProjectNotFoundException |
+                 QualityFactorNotFoundException | MetricNotFoundException | StrategicIndicatorNotFoundException e) {
             logger.error(e.getMessage(), e);
             correct = false;
         }
@@ -588,7 +594,7 @@ public class FactorsController {
         return qmaRelations.setQualityFactorMetricRelation(prj, metricsIds, qf, evaluationDate, weights, metricValues, metricsLabels, qfValueOrLabel);
     }
 
-    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException {
+    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (!listMetricsAssessmentValues.isEmpty()) {
             float value;
             List<Float> weights = new ArrayList<>();
@@ -639,7 +645,8 @@ public class FactorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK FACTORS ALERTS
-            alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateFactorAlert(qualityFactor,value);
         }
         return assessmentValueOrLabel;
     }
@@ -703,8 +710,34 @@ public class FactorsController {
         return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId, null);
     }
 
-    public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {
-        return qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
+    public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        //Save the current evaluations metrics dto as they are going to be changed for the forecast creation
+        Map<String,DTOMetricEvaluation> currentMetricEvals = new HashMap<>();
+        for (int f = 0; f < currentEvaluation.size(); ++f){
+            for (int m = 0; m < currentEvaluation.get(f).getMetrics().size(); ++m){
+                currentMetricEvals.put(currentEvaluation.get(f).getId()+currentEvaluation.get(f).getMetrics().get(m).getId(),currentEvaluation.get(f).getMetrics().get(m));
+            }
+        }
+        List<DTODetailedFactorEvaluation> forecast = qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
+        int period=Integer.parseInt(horizon);
+        for (int qf=0; qf < forecast.size(); ++qf){
+            String factorId = forecast.get(qf).getId();
+            List <DTOMetricEvaluation> qfMetricsPredictions = forecast.get(qf).getMetrics();
+            int j = 0;
+            for(int i = 0; i < qfMetricsPredictions.size(); i += period, ++j){
+                while (i < qfMetricsPredictions.size() && qfMetricsPredictions.get(i).getValue() == null) {
+                    ++i; ++j;
+                }
+                if(i >= qfMetricsPredictions.size()) break;
+                int subListEnd = Math.min(i + period, forecast.size());
+                List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(qfMetricsPredictions.subList(i, subListEnd));
+                String metricId = forecastedValues.get(0).getId();
+                DTOMetricEvaluation currentMetricEval = currentMetricEvals.get(factorId+metricId);
+                alertsController.checkAlertsForMetricsPrediction(currentMetricEval, forecastedValues, projectExternalId, technique);
+            }
+        }
+
+        return forecast;
     }
 
     public List<DTOFactorEvaluation> simulate (Map<String, Float> metricsValue, String projectExternalId, String profile, LocalDate date) throws IOException {
@@ -751,8 +784,30 @@ public class FactorsController {
         return category;
     }
 
-    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException {
-        return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        List<DTOFactorEvaluation> forecast = qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+        int period=Integer.parseInt(horizon);
+        int j=0;
+        for(int i=0; i < forecast.size(); i+=period, ++j){
+            while (forecast.get(i).getValue().getFirst()==null){
+                ++i;
+                ++j;
+            }
+            if (i>=forecast.size()) break;
+            List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
+            List<Float> predictedValues = new ArrayList<>();
+            List<Date> predictionDates = new ArrayList<>();
+            for (int f=0 ;f<forecastedValues.size();++f){
+                predictedValues.add(forecastedValues.get(f).getValue().getFirst());
+                LocalDate predictedDate = forecastedValues.get(f).getDate();
+                Date date;
+                if (predictedDate==null) date = null;
+                else date = java.sql.Date.valueOf(predictedDate);
+                predictionDates.add(date);
+            }
+            alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(j).getId(), predictedValues, predictionDates, prj, technique);
+        }
+        return forecast;
     }
 
     public List<Factor> getQualityFactorsByProjectAndProfile(String prjExternalId, String profileId) throws ProjectNotFoundException {

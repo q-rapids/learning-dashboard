@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.Relations.RelationDTO;
 import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
+import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
@@ -52,15 +53,21 @@ public class QMARelations {
                                                        String strategicIndicatorValue) {
 
         qmacon.initConnexion();
-        return Relations.setStrategicIndicatorFactorRelation(
-                projectId,
-                factorIds.toArray(new String[0]),
-                strategicIndicatorId,
-                evaluationDate,
-                convertFloatListToDoubleArray(weights),
-                convertFloatListToDoubleArray(factorValues),
-                factorLabels.toArray(new String[0]),
-                strategicIndicatorValue);
+        try {
+            return Relations.setStrategicIndicatorFactorRelation(
+                    projectId,
+                    factorIds.toArray(new String[0]),
+                    strategicIndicatorId,
+                    evaluationDate,
+                    convertFloatListToDoubleArray(weights),
+                    convertFloatListToDoubleArray(factorValues),
+                    factorLabels.toArray(new String[0]),
+                    strategicIndicatorValue);
+        }
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean setQualityFactorMetricRelation(String projectId,
@@ -73,15 +80,21 @@ public class QMARelations {
                                                        String qualityFactorValue) {
 
         qmacon.initConnexion();
-        return Relations.setQualityFactorMetricRelation(
-                projectId,
-                metricsIds.toArray(new String[0]),
-                qualityFactorId,
-                evaluationDate,
-                convertFloatListToDoubleArray(weights),
-                convertFloatListToDoubleArray(metricValues),
-                metricLabels.toArray(new String[0]),
-                qualityFactorValue);
+        try {
+            return Relations.setQualityFactorMetricRelation(
+                    projectId,
+                    metricsIds.toArray(new String[0]),
+                    qualityFactorId,
+                    evaluationDate,
+                    convertFloatListToDoubleArray(weights),
+                    convertFloatListToDoubleArray(metricValues),
+                    metricLabels.toArray(new String[0]),
+                    qualityFactorValue);
+        }
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private double[] convertFloatListToDoubleArray(List<Float> floatList) {

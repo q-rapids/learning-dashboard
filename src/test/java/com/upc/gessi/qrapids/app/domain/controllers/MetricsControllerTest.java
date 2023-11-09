@@ -2,6 +2,9 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
+import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
@@ -35,6 +38,9 @@ public class MetricsControllerTest {
 
     @Mock
     private Forecast qmaForecast;
+
+    @Mock
+    private AlertsController alertsController;
 
     @Mock
     private MetricCategoryRepository metricCategoryRepository;
@@ -208,7 +214,7 @@ public class MetricsControllerTest {
     }
 
     @Test
-    public void getMetricsPrediction() throws IOException {
+    public void getMetricsPrediction() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         // Given
         DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
         dtoMetricEvaluation.setDatasource("Forecast");

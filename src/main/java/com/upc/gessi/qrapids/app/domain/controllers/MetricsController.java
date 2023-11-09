@@ -3,13 +3,11 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
-import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +38,9 @@ public class MetricsController {
 
     @Autowired
     private ProjectsController projectController;
+
+    @Autowired
+    private AlertsController alertsController;
 
     public Metric findMetricByExternalId (String externalId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalId(externalId);
@@ -201,8 +202,20 @@ public class MetricsController {
         return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId, null);
     }
 
-    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, MongoException {
-        return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, MongoException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        List<DTOMetricEvaluation> forecast = qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+        int period = Integer.parseInt(horizon);
+        int j = 0;
+        for(int i = 0; i < forecast.size(); i += period, ++j){
+            while (i < forecast.size() && forecast.get(i).getForecastingError() != null){
+                ++i; ++j;
+            }
+            if (i >= forecast.size()) break;
+            int subListEnd = Math.min(i + period, forecast.size());
+            List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, subListEnd));
+            alertsController.checkAlertsForMetricsPrediction(currentEvaluation.get(j), forecastedValues, projectExternalId, technique);
+        }
+        return forecast;
     }
 
     public String getMetricLabelFromValue(Float value) {

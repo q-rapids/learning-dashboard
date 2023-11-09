@@ -196,6 +196,8 @@ public class StrategicIndicators {
         } catch (IOException | CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        } catch (MetricNotFoundException | QualityFactorNotFoundException | StrategicIndicatorNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -211,6 +213,8 @@ public class StrategicIndicators {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        } catch (MetricNotFoundException | QualityFactorNotFoundException | StrategicIndicatorNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -226,6 +230,8 @@ public class StrategicIndicators {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        } catch (MetricNotFoundException | QualityFactorNotFoundException | StrategicIndicatorNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -241,6 +247,8 @@ public class StrategicIndicators {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        } catch (MetricNotFoundException | QualityFactorNotFoundException | StrategicIndicatorNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

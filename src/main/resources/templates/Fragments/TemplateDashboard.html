@@ -52,8 +52,6 @@
         <a id="Prediction">Prediction</a>
         <a id="Simulation">Simulation</a>
         <a id="QualityAlerts">Alerts</a>
-        <a id="QualityRequirements">Quality Requirements</a>
-        <a id="Decisions">Decisions</a>
         <a id="Reporting" th:if="${@environment.getProperty('jasperServer.url') != ''}">Reporting</a>
         <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
         <div id="helpDropdown" class="dropdown pull-right" style="margin-top: 1em; margin-right: 1em; margin-left: 1em;">
@@ -152,7 +150,6 @@
         <a id="CategoriesConfig">Categories</a>
         <a id="ProfilesConfig">Profiles</a>
         <a id="IterationsConfig">Iterations</a>
-        <a id="QRPatternsConfig">Quality Requirements Patterns</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a id="UpdatesConfig">Updates Management</a>

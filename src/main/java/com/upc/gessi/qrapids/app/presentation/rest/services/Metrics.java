@@ -3,12 +3,10 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
-import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 
 import org.slf4j.Logger;
@@ -240,6 +238,8 @@ public class Metrics {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        } catch (MetricNotFoundException | QualityFactorNotFoundException | StrategicIndicatorNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

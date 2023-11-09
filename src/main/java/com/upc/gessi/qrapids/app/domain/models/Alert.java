@@ -1,153 +1,115 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "alert")
-public class Alert implements Serializable {
-
+@Table(name = "Alert")
+public class Alert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "id_element")
-    private String id_element;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "type")
-    private AlertType type;
-    @Column(name = "value")
-    private float value;
-    @Column(name = "threshold")
-    private float threshold;
-    @Column(name = "category")
-    private String category;
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     @Column(name = "status")
     private AlertStatus status;
-    @Column(name = "reqAssociat")
-    private boolean reqAssociat;
+    @Column(name = "value")
+    private float value;
+    @Column(name = "threshold")
+    private Float threshold;
+    @Column(name = "type")
+    private AlertType type;
     @ManyToOne
-    @JoinColumn(name="decisionId", referencedColumnName = "id")
-    private Decision decision;
-    @ManyToOne
-    @JoinColumn(name="projectId", referencedColumnName = "id")
+    @JoinColumn(name="projectid", referencedColumnName = "id")
     private Project project;
+    @Column(name = "affectedid")
+    private String affectedId;
+    @Column(name = "affectedtype")
+    private String affectedType;
+    @Column(name = "prediction_date")
+    private Date predictionDate;
+    @Column(name = "prediction_technique")
+    private String predictionTechnique;
 
-    public Alert(){
-
-    }
-
-    public Alert(String id_element, String name, AlertType type, float value, float threshold, String category, Date date, AlertStatus status, boolean reqAssociat, Project project) {
-        this.id_element = id_element;
-        this.name = name;
-        this.type = type;
+    public Alert (float value, Float threshold, AlertType type, Project project, String affectedId, String affectedType, Date predictionDate, String technique) {
         this.value = value;
         this.threshold = threshold;
-        this.category = category;
-        this.date = date;
-        this.status = status;
-        this.reqAssociat = reqAssociat;
+        this.type = type;
         this.project = project;
+        this.affectedId = affectedId;
+        this.affectedType = affectedType;
+        this.predictionDate=predictionDate;
+        this.predictionTechnique=technique;
+        this.date =  new Date();
+        this.status = AlertStatus.NEW;
+    };
+
+    public Alert() {
     }
 
-    public Long getId() {
+    public Long getId(){
         return id;
     }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setId (Long alertId) {
+        id = alertId;
     }
 
-    public String getId_element() {
-        return id_element;
+    public Date getDate(){
+        return date;
+    }
+    public void setDate( Date alertDate){
+        date = alertDate;
     }
 
-    public void setId_element(String id_element) {
-        this.id_element = id_element;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public AlertType getType() {
-        return type;
-    }
-
-    public void setType(AlertType type) {
-        this.type = type;
+    public AlertStatus getStatus() {return status;}
+    public void setStatus(AlertStatus status) {
+        this.status = status;
     }
 
     public float getValue() {
         return value;
     }
-
-    public void setValue(float value) {
-        this.value = value;
+    public void setValue(float alertValue) {
+        value = alertValue;
     }
 
-    public float getThreshold() {
+    public Float getThreshold() {
         return threshold;
     }
-
-    public void setThreshold(float threshold) {
-        this.threshold = threshold;
+    public void setThreshold(Float alertThreshold) {
+        threshold = alertThreshold;
     }
 
-    public String getCategory() {
-        return category;
+    public AlertType getType() {
+        return type;
+    }
+    public void setType(AlertType alertType) {
+        type = alertType;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public AlertStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AlertStatus status) {
-        this.status = status;
-    }
-
-    public boolean isReqAssociat() {
-        return reqAssociat;
-    }
-
-    public void setReqAssociat(boolean reqAssociat) {
-        this.reqAssociat = reqAssociat;
-    }
-
-    public Decision getDecision() {
-        return decision;
-    }
-
-    public void setDecision(Decision decision) {
-        this.decision = decision;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
+    public Project getProject() {return project;}
     public void setProject(Project project) {
         this.project = project;
     }
+
+    public String getAffectedId() {
+        return affectedId;
+    }
+    public void setAffectedId(String affectedId) {
+        this.affectedId = affectedId;
+    }
+
+    public String getAffectedType() {return affectedType;}
+    public void setAffectedType(String affectedType){this.affectedType=affectedType;}
+
+    public Date getPredictionDate(){
+        return predictionDate;
+    }
+    public void setPredictionDate( Date predDate){
+        predictionDate = predDate;
+    }
+
+    public String getPredictionTechnique() {return predictionTechnique;}
+    public void setPredictionTechnique(String technique){predictionTechnique = technique;}
 }

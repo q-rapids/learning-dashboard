@@ -4,36 +4,32 @@ import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
 import com.upc.gessi.qrapids.app.domain.models.AlertType;
 
 import java.sql.Date;
-import java.util.List;
 
 public class DTOAlert {
 
     private Long id;
-    private String id_element;
-    private String name;
     private AlertType type;
     private float value;
-    private String valueDescription;
-    private float threshold;
-    private String category;
+    private Float threshold;
     private Date date;
     private AlertStatus status;
-    private boolean reqAssociat;
+    private String affectedId;
+    private String affectedType;
+    private Date predictionDate;
+    private String predictionTechnique;
 
-    private List<String> artefacts;
 
-    public DTOAlert(Long id, String id_element, String name, AlertType type, float value, float threshold, String category, Date date, AlertStatus status, boolean reqAssociat, List<String> artefacts) {
+    public DTOAlert(Long id, String affectedId, String affectedType, AlertType type, float value, Float threshold, Date date, AlertStatus status, Date predictionDate, String technique) {
         this.id = id;
-        this.id_element = id_element;
-        this.name = name;
         this.type = type;
         this.value = value;
         this.threshold = threshold;
-        this.category = category;
         this.date = date;
         this.status = status;
-        this.reqAssociat = reqAssociat;
-        this.artefacts = artefacts;
+        this.affectedId = affectedId;
+        this.affectedType =affectedType;
+        this.predictionDate = predictionDate;
+        this.predictionTechnique = technique;
     }
 
     public Long getId() {
@@ -44,20 +40,20 @@ public class DTOAlert {
         this.id = id;
     }
 
-    public String getId_element() {
-        return id_element;
+    public String getAffectedId() {
+        return affectedId;
     }
 
-    public void setId_element(String id_element) {
-        this.id_element = id_element;
+    public void setAffectedId(String affectedId) {
+        this.affectedId = affectedId;
     }
 
-    public String getName() {
-        return name;
+    public String getAffectedType() {
+        return affectedType;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAffectedType(String affectedType) {
+        this.affectedType = affectedType;
     }
 
     public AlertType getType() {
@@ -76,28 +72,12 @@ public class DTOAlert {
         this.value = value;
     }
 
-    public String getValueDescription() {
-        return valueDescription;
-    }
-
-    public void setValueDescription(String valueDescription) {
-        this.valueDescription = valueDescription;
-    }
-
-    public float getThreshold() {
+    public Float getThreshold() {
         return threshold;
     }
 
-    public void setThreshold(float threshold) {
+    public void setThreshold(Float threshold) {
         this.threshold = threshold;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public Date getDate() {
@@ -116,19 +96,19 @@ public class DTOAlert {
         this.status = status;
     }
 
-    public boolean isReqAssociat() {
-        return reqAssociat;
+    public Date getPredictionDate() {
+        return predictionDate;
     }
 
-    public void setReqAssociat(boolean reqAssociat) {
-        this.reqAssociat = reqAssociat;
+    public void setPredictionDate(Date predictionDate) {
+        this.predictionDate = predictionDate;
     }
 
-    public List<String> getArtefacts() {
-        return artefacts;
+    public String getPredictionTechnique() {
+        return predictionTechnique;
     }
 
-    public void setArtefacts(List<String> artefacts) {
-        this.artefacts = artefacts;
+    public void setPredictionTechnique(String technique) {
+        this.predictionTechnique = technique;
     }
 }
