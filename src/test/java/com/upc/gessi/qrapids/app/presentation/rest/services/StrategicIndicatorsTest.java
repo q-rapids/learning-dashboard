@@ -45,10 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.upc.gessi.qrapids.app.testHelpers.HelperFunctions.getFloatAsDouble;
 import static org.hamcrest.Matchers.*;
@@ -2582,6 +2579,7 @@ public class StrategicIndicatorsTest {
 
         when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
         when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(true);
+        when(projectsController.getAllProjectsExternalID()).thenReturn(Collections.singletonList(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -2606,6 +2604,8 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
+        verify(projectsController, times(1)).getAllProjectsExternalID();
+        verifyNoMoreInteractions(projectsController);
         verify(qualityFactorsDomainController, times(1)).assessQualityFactors(projectExternalId, null);
         verifyNoMoreInteractions(qualityFactorsDomainController);
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicators(projectExternalId, null);
@@ -2618,6 +2618,7 @@ public class StrategicIndicatorsTest {
 
         when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
         when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(true);
+        when(projectsController.getAllProjectsExternalID()).thenReturn(Collections.singletonList(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -2642,6 +2643,8 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
+        verify(projectsController, times(1)).getAllProjectsExternalID();
+        verifyNoMoreInteractions(projectsController);
         verify(qualityFactorsDomainController, times(1)).assessQualityFactors(projectExternalId, null);
         verifyNoMoreInteractions(qualityFactorsDomainController);
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicators(projectExternalId, null);
@@ -2657,6 +2660,8 @@ public class StrategicIndicatorsTest {
 
         when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
         when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(false);
+        when(projectsController.getAllProjectsExternalID()).thenReturn(Collections.singletonList(projectExternalId));
+
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -2672,6 +2677,8 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
+        verify(projectsController, times(1)).getAllProjectsExternalID( );
+        verifyNoMoreInteractions(projectsController);
         verify(qualityFactorsDomainController, times(1)).assessQualityFactors(projectExternalId, null);
         verifyNoMoreInteractions(qualityFactorsDomainController);
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicators(projectExternalId, null);
@@ -2681,6 +2688,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void assesStrategicIndicatorsBadParam() throws Exception {
         String projectExternalId = "test";
+        when(projectsController.getAllProjectsExternalID()).thenReturn(Collections.singletonList(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders

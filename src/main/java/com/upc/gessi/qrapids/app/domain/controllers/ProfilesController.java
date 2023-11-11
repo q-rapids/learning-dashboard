@@ -35,7 +35,9 @@ public class ProfilesController {
     @Autowired
     private ProfileProjectsController profileProjectsCont;
 
-    @Lazy @Autowired
+    // Lazy injection to avoid circular dependencies
+    @Lazy
+    @Autowired
     private ProjectsController projectsController;
 
 

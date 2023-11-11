@@ -397,6 +397,16 @@ public class StrategicIndicators {
                                          @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
         boolean correct = true;
         LocalDate dateFrom = null;
+        if (prj != null && !prj.isEmpty()) {
+            try {
+                List<String> projects = projectsController.getAllProjectsExternalID();
+                if (!projects.contains(prj))
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
+            }
+        }
 
         try {
             if (from != null && !from.isEmpty()) {
