@@ -26,14 +26,21 @@ public class DomainObjectsBuilder {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        String projectBacklogURL1 = "testurl1";
-        String projectBacklogURL2= "testurl2";
-        String projectBacklogURL3= "testurl3";
         Boolean projectIsGlobal = false;
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectBacklogURL1,projectBacklogURL2,projectBacklogURL3,projectIsGlobal);
+
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectIsGlobal);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
         return project;
+    }
+
+    public List<ProjectIdentity> buildProjectIdentities(Project project){
+        List<ProjectIdentity> projectIdentities = new ArrayList<>();
+
+        for(DataSource source: DataSource.values()){
+            projectIdentities.add(new ProjectIdentity(source, "testurl", project));
+        }
+        return projectIdentities;
     }
 
     public Alert buildAlert(Project project) {

@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.Question;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -225,22 +226,19 @@ public class AuthController {
 
 
         // User has one group with default property
-        if( groups >= 1 && hasDefaultGroup ){
+        if ( groups >= 1 && hasDefaultGroup ){
             // Join user to group to the default group, if the aplication doesn't haver default group, is admin.
             user.setAdmin( false );
             user.setUserGroup( this.userGroupRepository.findByDefaultGroupIsTrue() );
-        } else { // diria que aixo es pot treure
-            if(user.getAdmin()) user.setAdmin( true );
         }
+        else if (user.getAdmin()) user.setAdmin( true );
 
         try{
-
-            // Encrypted fields
             user.setQuestion( bCryptPasswordEncoder.encode( user.getQuestion() ) );
             user.setPassword( bCryptPasswordEncoder.encode(user.getPassword()) );
-
+            user.setAnonymousModeSelected( AnonymizationModes.COUNTRIES );
+            user.setAnonymousMode( false );
             this.userRepository.save( user );
-
         } catch( Exception e ){
             return "redirect:/login?error=signup error".replace(' ','+');
         }

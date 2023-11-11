@@ -159,7 +159,7 @@ public class AlertsTest {
     public void getAllAlertsNonExistingProject() throws Exception {
         // Given
         String projectExternalId = "prj";
-        when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -167,8 +167,7 @@ public class AlertsTest {
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/get-all-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
@@ -212,7 +211,7 @@ public class AlertsTest {
     public void countNewAlertsNonExistingProject() throws Exception {
         // Given
         String projectExternalId = "prj";
-        when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -220,8 +219,7 @@ public class AlertsTest {
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/count-new-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
@@ -331,7 +329,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("One or more arguments have the wrong type")))
                 .andDo(document("alerts/add-alert-wrong-type",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -381,7 +378,7 @@ public class AlertsTest {
     public void createAlertWrongProject() throws Exception {
         //Given
         String projectExternalId = "prj";
-        when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException(projectExternalId));
         List<String> forecastTechniques = Arrays.asList("PROPHET");
         when(siController.getForecastTechniques()).thenReturn(forecastTechniques);
 
@@ -411,8 +408,7 @@ public class AlertsTest {
                 .content(bodyJson);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/add-alert-wrong-project",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -455,8 +451,7 @@ public class AlertsTest {
                 .content(bodyJson);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("Metric not found")))
+                .andExpect(status().isNotFound())
                 .andDo(document("alerts/add-alert-affected-wrong-id",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -495,7 +490,6 @@ public class AlertsTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("One or more attributes are missing in the request body")))
                 .andDo(document("alerts/add-alert-missing-param",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())

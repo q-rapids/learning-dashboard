@@ -14,6 +14,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.Before;
@@ -166,7 +167,7 @@ public class FactorEvaluationTest {
         List<Map<String, String>> factorCategoriesList = domainObjectsBuilder.buildRawSICategoryList();
         factorCategoriesList.remove(2);
         factorCategoriesList.remove(1);
-        doThrow(new CategoriesException()).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList, "Default");
+        doThrow(new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES)).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList, "Default");
 
         //Perform request
         Gson gson = new Gson();
@@ -177,7 +178,6 @@ public class FactorEvaluationTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason("Not enough categories"))
                 .andDo(document("qf/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -1423,7 +1423,7 @@ public class FactorEvaluationTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, false);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
@@ -1579,7 +1579,7 @@ public class FactorEvaluationTest {
     @Test
     public void getMissingQualityFactor() throws Exception {
         Long qualityFactorId = 2L;
-        when(qualityFactorsDomainController.getQualityFactorById(qualityFactorId)).thenThrow(new QualityFactorNotFoundException());
+        when(qualityFactorsDomainController.getQualityFactorById(qualityFactorId)).thenThrow(new QualityFactorNotFoundException(qualityFactorId.toString()));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/qualityFactors/{id}", qualityFactorId);

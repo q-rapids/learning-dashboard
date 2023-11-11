@@ -7,9 +7,9 @@ var angle;
 var target;
 var tau = Math.PI / 2;
 var id = false;
-var urlTaiga;
-var urlGithub;
-var urlPrt;
+var urlTaiga = null;
+var urlGithub = null;
+var urlPrt = null;
 
 var factors;
 var students;
@@ -126,9 +126,10 @@ function getData(width, height) {
 
 function getStudents(data, width, height) {
     if (id)
-        url = parseURLComposed("../api/metrics/student");
+        url = parseURLComposed("../api/metrics/students");
     else
-        url = "../api/metrics/student"
+        url = "../api/metrics/students"
+
     jQuery.ajax({
         dataType: "json",
         url: url,
@@ -248,9 +249,15 @@ function getCurrentProject() {
                 if(data[i].name===sessionStorage.getItem("prj")) {
                     global = data[i].isGlobal
                     setUpGroupSelector()
-                    urlTaiga = data[i].taigaURL;
-                    urlGithub = data[i].githubURL;
-                    urlPrt = data[i].prtURL;
+                    if (data[i].identities.hasOwnProperty('TAIGA')) {
+                        urlTaiga = data[i].identities.TAIGA.url;
+                    }
+                    if (data[i].identities.hasOwnProperty('GITHUB')) {
+                        urlGithub = data[i].identities.GITHUB.url;
+                    }
+                    if (data[i].identities.hasOwnProperty('PRT')) {
+                        urlPrt = data[i].identities.PRT.url;
+                    }
                 }
             }
         }
@@ -267,7 +274,7 @@ function drawChartByStudent(metrics, container, width, height, categories, proje
         var labelF = document.createElement('label');
         labelF.setAttribute("style", "font-size:20px")
         //labelF.id = students[j].id;
-        labelF.textContent = students[j].studentName;
+        labelF.textContent = students[j].name;
         divF.appendChild(labelF);
 
         gaugeChart.append(divF);
@@ -284,7 +291,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
         divF.style.marginTop = "1em";
         divF.style.marginBottom = "1em";
         if (factors[j].type === "Taiga") {
-            if (urlTaiga !== undefined && urlTaiga!==null) {
+            if (urlTaiga !== undefined && urlTaiga !== null && urlTaiga !== "") {
                 var a = document.createElement('a')
                 a.href=urlTaiga;
                 a.target = "_blank"
@@ -301,7 +308,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             }
         }
         if (factors[j].type === "Github") {
-            if (urlGithub !== undefined && urlGithub) {
+            if (urlGithub !== undefined && urlGithub !== null && urlGithub !== "") {
                 var list = urlGithub.split(";");
                 var a = document.createElement('a')
                 a.href=list[0];
@@ -330,7 +337,7 @@ function drawChartByFactor(metrics, container, width, height, categories, projec
             }
         }
         if (factors[j].type === "PRT") {
-            if (urlPrt !== undefined && urlPrt !== null) {
+            if (urlPrt !== undefined && urlPrt !== null && urlPrt !== "") {
                 var a = document.createElement('a')
                 a.href=urlPrt;
                 a.target = "_blank"

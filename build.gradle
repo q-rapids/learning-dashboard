@@ -88,6 +88,7 @@ dependencies {
 
 	// Utils
 	compile 'commons-io:commons-io:2.5'
+	compile 'commons-codec:commons-codec:1.10'
 
 	// MongoDB API
 	compile('org.mongodb:mongodb-driver-sync:3.12.14')

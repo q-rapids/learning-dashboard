@@ -4,6 +4,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 
+import java.util.Objects;
+
 public class SampleFilter extends Filter<ILoggingEvent> {
 
     @Override
@@ -16,7 +18,7 @@ public class SampleFilter extends Filter<ILoggingEvent> {
                         !event.getMessage().contains("FORWARD") && !event.getMessage().contains("doesn't match") )) {
             return FilterReply.ACCEPT;
         }
-        else if (event.getLoggerName()=="ActionLogger") {
+        else if (Objects.equals(event.getLoggerName(), "ActionLogger")) {
             return FilterReply.ACCEPT;
         }
         else {

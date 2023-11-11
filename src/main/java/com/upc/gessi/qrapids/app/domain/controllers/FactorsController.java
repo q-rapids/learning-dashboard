@@ -14,6 +14,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +137,7 @@ public class FactorsController {
 
     }
 
-    public void deleteFactorCategory(String name) throws CategoriesException {
+    public void deleteFactorCategory(String name) {
 
         Iterable<QFCategory> factorCategoryIterable = factorCategoryRepository.findAllByName(name);
         for(QFCategory m : factorCategoryIterable)  {
@@ -147,7 +148,7 @@ public class FactorsController {
 
     public void updateFactorCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
         deleteFactorCategory(name);
         newFactorCategories(categories, name);
     }
@@ -171,9 +172,9 @@ public class FactorsController {
     public void newFactorCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
 
         boolean exists=CheckIfNameExists(name);
-        if(exists) throw new CategoriesException();
+        if(exists) throw new CategoriesException(Messages.CATEGORY_ALREADY_EXISTS);
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
         if (categories.size() > 2) {
             //metricCategoryRepository.deleteAll();
@@ -187,14 +188,14 @@ public class FactorsController {
                 factorCategoryRepository.save(qfCategory);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
     public Factor findFactorByExternalIdAndProjectId(String externalId, Long prjId) throws QualityFactorNotFoundException {
         Factor factor = qualityFactorRepository.findByExternalIdAndProjectId(externalId,prjId);
         if (factor == null) {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(externalId);
         }
         return factor;
     }
@@ -257,7 +258,7 @@ public class FactorsController {
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(qualityFactorId.toString());
         }
     }
     public Factor getQualityFactorByExternalId (String qualityFactorExternalId) throws QualityFactorNotFoundException {
@@ -265,7 +266,7 @@ public class FactorsController {
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(qualityFactorExternalId);
         }
     }
 
@@ -274,7 +275,7 @@ public class FactorsController {
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(qualityFactorExternalId);
         }
     }
 
@@ -396,11 +397,11 @@ public class FactorsController {
                 throw new DeleteFactorException();
             }
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(id.toString());
         }
     }
 
-    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
         boolean correct = true;
         if (dateFrom != null) {
             LocalDate dateTo = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -414,7 +415,7 @@ public class FactorsController {
         return correct;
     }
 
-    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
         boolean correct = true;
 
         // if there is no specific project as a parameter, all the projects are assessed
@@ -434,7 +435,7 @@ public class FactorsController {
         return correct;
     }
 
-    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException {
         //metrics list, each of them includes list of QF in which is involved
         MetricEvaluation metricEvaluationQma = new MetricEvaluation();
         List<DTOMetricEvaluation> metricList;
@@ -512,8 +513,7 @@ public class FactorsController {
         String assessmentValueOrLabel = "";
         try {
             assessmentValueOrLabel = assessQualityFactors(evaluationDate, project, qualityFactor, listMetricsAssessmentValues, qfMetrics, missingMetrics, metricsMismatch, assessmentValueOrLabel);
-        } catch (AssessmentErrorException | CategoriesException | ProjectNotFoundException |
-                 QualityFactorNotFoundException | MetricNotFoundException | StrategicIndicatorNotFoundException e) {
+        } catch (AssessmentErrorException | CategoriesException e) {
             logger.error(e.getMessage(), e);
             correct = false;
         }
@@ -594,7 +594,7 @@ public class FactorsController {
         return qmaRelations.setQualityFactorMetricRelation(prj, metricsIds, qf, evaluationDate, weights, metricValues, metricsLabels, qfValueOrLabel);
     }
 
-    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException {
         if (!listMetricsAssessmentValues.isEmpty()) {
             float value;
             List<Float> weights = new ArrayList<>();
@@ -789,12 +789,13 @@ public class FactorsController {
         int period=Integer.parseInt(horizon);
         int j=0;
         for(int i=0; i < forecast.size(); i+=period, ++j){
-            while (forecast.get(i).getValue().getFirst()==null){
+            while (i < forecast.size() && forecast.get(i).getValue() == null){
                 ++i;
                 ++j;
             }
             if (i>=forecast.size()) break;
-            List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, i + period));
+            int subListEnd = Math.min(i + period, forecast.size());
+            List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, subListEnd));
             List<Float> predictedValues = new ArrayList<>();
             List<Date> predictionDates = new ArrayList<>();
             for (int f=0 ;f<forecastedValues.size();++f){

@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundExc
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.BadRequestException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,36 +45,26 @@ public class Alerts {
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
-        try {
-            Project project = projectsController.findProjectByExternalId(prj);
-            List<Alert> alerts = alertsController.getAllProjectAlertsWithProfile(project.getId(), profile);
-            for (Alert alert:alerts) alertsController.changeAlertStatusToViewed(alert);
+        Project project = projectsController.findProjectByExternalId(prj);
+        List<Alert> alerts = alertsController.getAllProjectAlertsWithProfile(project.getId(), profile);
+        for (Alert alert:alerts) alertsController.changeAlertStatusToViewed(alert);
 
-            List<DTOAlert> dtoAlerts = new ArrayList<>();
-            for (Alert a : alerts) {
-                Date predictionDate;
-                if (a.getPredictionDate()==null)  predictionDate = null;
-                else predictionDate = new java.sql.Date(a.getPredictionDate().getTime());
-                DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), predictionDate, a.getPredictionTechnique());
-                dtoAlerts.add(dtoAlert);
-            }
-            return dtoAlerts;
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+        List<DTOAlert> dtoAlerts = new ArrayList<>();
+        for (Alert a : alerts) {
+            Date predictionDate;
+            if (a.getPredictionDate()==null)  predictionDate = null;
+            else predictionDate = new java.sql.Date(a.getPredictionDate().getTime());
+            DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getAffectedId(),a.getAffectedType(), a.getType(), a.getValue(), a.getThreshold(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), predictionDate, a.getPredictionTechnique());
+            dtoAlerts.add(dtoAlert);
         }
+        return dtoAlerts;
     }
 
     @GetMapping("/api/alerts/countNew")
     @ResponseStatus(HttpStatus.OK)
     public int countNewAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
-        try {
-            Project project = projectsController.findProjectByExternalId(prj);
-            return alertsController.countNewAlertsWithProfile(project.getId(), profile);
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }
+        Project project = projectsController.findProjectByExternalId(prj);
+        return alertsController.countNewAlertsWithProfile(project.getId(), profile);
     }
 
     @PostMapping("/api/alerts")
@@ -127,24 +118,12 @@ public class Alerts {
                         "/queue/notify",
                         new Notification("New Alert")
                 );
-            } catch (ProjectNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
             } catch (IllegalArgumentException e) {
                 logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
-            } catch (MetricNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.METRIC_NOT_FOUND);
-            } catch (QualityFactorNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.FACTOR_NOT_FOUND);
-            } catch (StrategicIndicatorNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
+                throw new BadRequestException("One or more arguments have the wrong type");
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+            throw new BadRequestException(Messages.MISSING_ATTRIBUTES_IN_BODY);
         }
     }
 

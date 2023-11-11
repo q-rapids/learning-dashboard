@@ -780,6 +780,42 @@ include::{snippets}/projects/update-error/http-response.adoc[]
 :numbered:
 
 
+=== Anonymize single project
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/projects/single-anonymize/path-parameters.adoc[]
+
+operation::projects/single-anonymize[snippets='request-body,request-fields,curl-request,http-response']
+
+==== HTTP response bad request
+include::{snippets}/projects/single-anonymize/error-bad-request/http-response.adoc[]
+
+==== HTTP response project not found
+include::{snippets}/projects/single-anonymize/error-not-found/http-response.adoc[]
+
+==== HTTP response project already anonymized
+include::{snippets}/projects/single-anonymize/error-conflict/http-response.adoc[]
+
+:numbered:
+
+
+=== Anonymize projects
+
+:numbered!:
+
+operation::projects/anonymize[snippets='request-body,request-fields,curl-request,http-response']
+
+==== HTTP response bad request
+include::{snippets}/projects/anonymize/error-bad-request/http-response.adoc[]
+
+==== HTTP response project already anonymized
+include::{snippets}/projects/anonymize/error-conflict/http-response.adoc[]
+
+:numbered:
+
 
 == Products
 

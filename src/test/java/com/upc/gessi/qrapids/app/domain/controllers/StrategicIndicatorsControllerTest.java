@@ -439,7 +439,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void getStrategicIndicatorsPrediction() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    public void getStrategicIndicatorsPrediction() throws IOException {
         // Given
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
         dtoStrategicIndicatorEvaluation.setDatasource("Forecast");
@@ -471,7 +471,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void getDetailedStrategicIndicatorsPrediction() throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    public void getDetailedStrategicIndicatorsPrediction() throws IOException {
         // Given
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
 

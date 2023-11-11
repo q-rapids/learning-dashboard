@@ -29,26 +29,17 @@ public class ProductsController {
     private QMAStrategicIndicators qmasi;
 	@Autowired
 	private StrategicIndicatorsController strategicIndicatorsController;
-	
+
+	@Autowired
+	private ProjectsController projectsController;
+
 	public List<DTOProduct> getProducts() throws Exception {
 		Iterable<Product> productIterable = productRep.findAll();
 		List<Product> productsBD = new ArrayList<>();
 		productIterable.forEach(productsBD::add);
 		List<DTOProduct> products = new Vector<DTOProduct>();
-		for (Product p : productsBD) {
-			List<DTOProject> relatedProjects = new Vector<DTOProject>();
-			for (Project proj : p.getProjects()) {
-				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId(), proj.getTaigaURL(), proj.getGithubURL(), proj.getPrtURL(), proj.getIsGlobal());
-				relatedProjects.add(project);
-			}
-			Collections.sort(relatedProjects, new Comparator<DTOProject>() {
-		        @Override
-		        public int compare(DTOProject o1, DTOProject o2) {
-		            return o1.getName().compareTo(o2.getName());
-		        }
-		    });
-			DTOProduct product = new DTOProduct(p.getId(), p.getName(), p.getDescription(), p.getLogo(), relatedProjects);
-			products.add(product);
+		for (Product product : productsBD) {
+			products.add(getProductDTO(product));
 		}
 		Collections.sort(products, new Comparator<DTOProduct>() {
 	        @Override
@@ -58,26 +49,27 @@ public class ProductsController {
 	    });
         return products;
     }
-	
+
+
+	public DTOProduct getProductDTO(Product product){
+		List<DTOProject> relatedProjects = new Vector<DTOProject>();
+		for (Project project : product.getProjects()) {
+			DTOProject dtoProject = projectsController.getProjectDTO(project);
+			relatedProjects.add(dtoProject);
+		}
+		Collections.sort(relatedProjects, new Comparator<DTOProject>() {
+			@Override
+			public int compare(DTOProject o1, DTOProject o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		return new DTOProduct(product.getId(), product.getName(), product.getDescription(), product.getLogo(), relatedProjects);
+	}
+
 	public DTOProduct getProductById(String id) throws Exception {
 		Optional<Product> productOptional = productRep.findById(Long.parseLong(id));
-		if (productOptional.isPresent()) {
-			Product product = productOptional.get();
-			List<DTOProject> relatedProjects = new Vector<DTOProject>();
-			for (Project proj : product.getProjects()) {
-				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId(), proj.getTaigaURL(), proj.getGithubURL(), proj.getPrtURL(), proj.getIsGlobal());
-				relatedProjects.add(project);
-			}
-			Collections.sort(relatedProjects, new Comparator<DTOProject>() {
-				@Override
-				public int compare(DTOProject o1, DTOProject o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-			return new DTOProduct(product.getId(), product.getName(), product.getDescription(), product.getLogo(), relatedProjects);
-		}
-		return null;
-    }
+		return productOptional.map(this::getProductDTO).orElse(null);
+	}
 
 	public boolean checkProductByName(Long id, String name) throws Exception {
 		Product p = productRep.findByName(name);

@@ -66,9 +66,9 @@ public class AlertsController {
 
     public void createAlert(float value, Float threshold, AlertType type, Project project, String affectedId, String affectedType, Date predictionDate, String predictionTechnique) throws MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         if (!checkAffectedIdExists(affectedId, affectedType, project.getId())) {
-            if (affectedType.equals("metric")) throw new MetricNotFoundException();
-            else if (affectedType.equals("factor")) throw new QualityFactorNotFoundException();
-            else throw new StrategicIndicatorNotFoundException();
+            if (affectedType.equals("metric")) throw new MetricNotFoundException(affectedId);
+            else if (affectedType.equals("factor")) throw new QualityFactorNotFoundException(affectedId);
+            else throw new StrategicIndicatorNotFoundException(affectedId);
         }
         else {
             Alert newAlert = new Alert(value,  threshold,  type,  project,  affectedId, affectedType, predictionDate, predictionTechnique);
@@ -860,7 +860,7 @@ public class AlertsController {
 
     public Alert getAlertById(Long alertId) throws AlertNotFoundException {
         Alert alert = alertRepository.findAlertById(alertId);
-        if (alert == null) throw new AlertNotFoundException();
+        if (alert == null) throw new AlertNotFoundException(alertId.toString());
         return alert;
     }
 

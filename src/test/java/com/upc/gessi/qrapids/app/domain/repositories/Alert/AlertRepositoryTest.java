@@ -44,7 +44,7 @@ public class AlertRepositoryTest {
     @Test
     public void findAllByProjectIdWhenHasAlerts(){
         //Given
-        Project project = new Project("test_project", "TestProject", "", null, true, null, null, null,false);
+        Project project = new Project("test_project", "TestProject", "", null, true, false);
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
 
@@ -65,7 +65,7 @@ public class AlertRepositoryTest {
     @Test
     public void findAllByProjectIdWithoutAlerts(){
         //Given
-        Project project = new Project("test_project2", "TestProject2", "", null, true, null, null, null,false);
+        Project project = new Project("test_project2", "TestProject2", "", null, true, false);
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
 
@@ -79,7 +79,7 @@ public class AlertRepositoryTest {
     @Test
     public void findAllByProjectIdAndAffectedIdAndAffectedTypeTypeAndDateLessThanOrderByDateDesc(){
         //Given
-        Project project = new Project("test_project3", "TestProject3", "", null, true, null, null, null,false);
+        Project project = new Project("test_project3", "TestProject3", "", null, true, false);
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
         LocalDateTime yesterday = LocalDate.now().minusDays(1).atStartOfDay();
@@ -120,7 +120,7 @@ public class AlertRepositoryTest {
     @Test
     public void countByProjectIdAndStatus(){
         //Given
-        Project project = new Project("test_project3", "TestProject3", "", null, true, null, null, null,false);
+        Project project = new Project("test_project3", "TestProject3", "", null, true, false);
         entityManager.persistAndFlush(project);
         Long projectId = project.getId();
 
@@ -155,7 +155,7 @@ public class AlertRepositoryTest {
     @Test
     public void findTodayExactAlert() throws InterruptedException {
         //Given
-        Project project = new Project("test_project", "TestProject", "", null, true, null, null, null,false);
+        Project project = new Project("test_project", "TestProject", "", null, true, false);
         entityManager.persistAndFlush(project);
 
         Long projectId = project.getId();
@@ -179,7 +179,7 @@ public class AlertRepositoryTest {
     @Test
     public void findTodayExactPredictionAlert() throws InterruptedException {
         //Given
-        Project project = new Project("test_project", "TestProject", "", null, true, null, null, null,false);
+        Project project = new Project("test_project", "TestProject", "", null, true, false);
         entityManager.persistAndFlush(project);
 
         Long projectId = project.getId();

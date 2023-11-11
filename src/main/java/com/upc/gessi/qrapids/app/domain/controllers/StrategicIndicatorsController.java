@@ -16,6 +16,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +131,7 @@ public class StrategicIndicatorsController {
         if (strategicIndicatorOptional.isPresent()) {
             return strategicIndicatorOptional.get();
         } else {
-            throw new StrategicIndicatorNotFoundException();
+            throw new StrategicIndicatorNotFoundException(strategicIndicatorId.toString());
         }
     }
 
@@ -237,7 +238,7 @@ public class StrategicIndicatorsController {
             if (ppsi != null) profileProjectStrategicIndicatorsRepository.delete(ppsi);
             strategicIndicatorRepository.deleteById(strategicIndicatorId);
         } else {
-            throw new StrategicIndicatorNotFoundException();
+            throw new StrategicIndicatorNotFoundException(strategicIndicatorId.toString());
         }
     }
 
@@ -258,7 +259,7 @@ public class StrategicIndicatorsController {
                 strategicIndicatorCategoryRepository.save(sic);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
@@ -548,8 +549,7 @@ public class StrategicIndicatorsController {
             } else {
                 assessmentValueOrLabel = assessStrategicIndicatorWithoutBayesianNetwork(evaluationDate, project, strategicIndicator, listFactorsAssessmentValues, siFactors, missingFactors, factorsMismatch, assessmentValueOrLabel);
             }
-        } catch (AssessmentErrorException | ProjectNotFoundException | QualityFactorNotFoundException |
-                 StrategicIndicatorNotFoundException | MetricNotFoundException e) {
+        } catch (AssessmentErrorException e) {
             logger.error(e.getMessage(), e);
             correct = false;
         }
@@ -563,7 +563,7 @@ public class StrategicIndicatorsController {
         return correct;
     }
 
-    private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException {
         if (!listFactorsAssessmentValues.isEmpty()) {
             float value;
             List<Float> weights = new ArrayList<>();
@@ -611,7 +611,7 @@ public class StrategicIndicatorsController {
         return assessmentValueOrLabel;
     }
 
-    private String assessStrategicIndicatorWithBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<String> missingFactors, long factorsMismatch, Map<String, String> mapSIFactors) throws IOException, AssessmentErrorException, ProjectNotFoundException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+    private String assessStrategicIndicatorWithBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<String> missingFactors, long factorsMismatch, Map<String, String> mapSIFactors) throws IOException, AssessmentErrorException {
         String assessmentValueOrLabel;
         File tempFile = File.createTempFile("network", ".dne", null);
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
