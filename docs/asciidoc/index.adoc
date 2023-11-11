@@ -316,7 +316,7 @@ operation::qualityFactors/prediction[snippets='request-parameters,curl-request,r
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 

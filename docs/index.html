@@ -5464,8 +5464,10 @@ Content-Length: 663
 </div>
 <div class="sect3">
 <h4 id="_http_response_error_on_mongodb_connection_12">HTTP response error on MongoDB connection</h4>
-<div class="paragraph">
-<p>Unresolved directive in index.adoc - include::..\..\build\generated-snippets/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -8886,6 +8888,11 @@ Content-Type: application/json;charset=UTF-8
   "id" : null,
   "name" : "student_test_name",
   "identities" : {
+    "PRT" : {
+      "username" : "username",
+      "student" : null,
+      "data_source" : "PRT"
+    },
     "GITHUB" : {
       "username" : "username",
       "student" : null,
@@ -8895,11 +8902,6 @@ Content-Type: application/json;charset=UTF-8
       "username" : "username",
       "student" : null,
       "data_source" : "TAIGA"
-    },
-    "PRT" : {
-      "username" : "username",
-      "student" : null,
-      "data_source" : "PRT"
     }
   },
   "project" : null,
@@ -9901,6 +9903,11 @@ Content-Type: application/json;charset=UTF-8
   "id" : null,
   "name" : "student_test_name",
   "identities" : {
+    "PRT" : {
+      "username" : "username",
+      "student" : null,
+      "data_source" : "PRT"
+    },
     "GITHUB" : {
       "username" : "username",
       "student" : null,
@@ -9910,11 +9917,6 @@ Content-Type: application/json;charset=UTF-8
       "username" : "username",
       "student" : null,
       "data_source" : "TAIGA"
-    },
-    "PRT" : {
-      "username" : "username",
-      "student" : null,
-      "data_source" : "PRT"
     }
   },
   "project" : null,
@@ -10606,11 +10608,11 @@ Content-Type: application/json;charset=UTF-8
   "type" : "TRESPASSED_THRESHOLD",
   "value" : 0.4,
   "threshold" : 0.5,
-  "date" : 1699717319899,
+  "date" : 1699717745971,
   "status" : "NEW",
   "affectedId" : "duplication",
   "affectedType" : "metric",
-  "predictionDate" : 1699717319899,
+  "predictionDate" : 1699717745971,
   "predictionTechnique" : "PROPHET"
 } ]</code></pre>
 </div>
@@ -11630,9 +11632,9 @@ Content-Length: 364
   "name" : "Test",
   "description" : "Test project",
   "identities" : {
+    "PRT" : "PRT.test",
     "GITHUB" : "GITHUB.test",
-    "TAIGA" : "TAIGA.test",
-    "PRT" : "PRT.test"
+    "TAIGA" : "TAIGA.test"
   },
   "global" : false,
   "external_id" : "test",
@@ -13856,9 +13858,9 @@ Content-Type: application/json;charset=UTF-8
   "id" : 1,
   "name" : "student_test_name",
   "identities" : {
+    "PRT" : "username",
     "GITHUB" : "username",
-    "TAIGA" : "username",
-    "PRT" : "username"
+    "TAIGA" : "username"
   }
 }'</code></pre>
 </div>
@@ -14637,7 +14639,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-11 16:39:06 +0100
+Last updated 2023-11-11 16:48:27 +0100
 </div>
 </div>
 </body>
