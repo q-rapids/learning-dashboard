@@ -96,9 +96,6 @@ dependencies {
 	compile('org.mongodb:bson:3.12.14')
 	compile files('libs/LD-qma-mongo-1.0.jar')
 
-	// API QR Generator
-	compile files('libs/LD-qr_generator-0.3.jar')
-
 	// QR-Eval library
 	compile files('libs/LD-eval-2.2.jar')
 
