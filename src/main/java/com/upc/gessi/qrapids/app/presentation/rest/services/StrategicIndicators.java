@@ -55,7 +55,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
@@ -72,7 +72,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getSingleStrategicIndicatorsCurrentEvaluation(id,prj,profile);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
@@ -89,7 +89,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -103,7 +103,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj, profile);
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -117,7 +117,7 @@ public class StrategicIndicators {
             return factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -131,7 +131,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
@@ -148,7 +148,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -162,7 +162,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(id, prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -177,7 +177,7 @@ public class StrategicIndicators {
             return factorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -192,7 +192,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -207,7 +207,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -222,7 +222,7 @@ public class StrategicIndicators {
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -237,7 +237,7 @@ public class StrategicIndicators {
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (MongoException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -341,7 +341,7 @@ public class StrategicIndicators {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
         } catch (StrategicIndicatorNotFoundException | StrategicIndicatorQualityFactorNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(Messages.STRATEGIC_INDICATOR_NOT_FOUND, id));
         } catch (AssessmentErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
@@ -523,7 +523,7 @@ public class StrategicIndicators {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);

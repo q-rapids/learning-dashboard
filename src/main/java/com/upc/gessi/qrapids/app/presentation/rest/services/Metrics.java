@@ -141,7 +141,7 @@ public class Metrics {
             return metricsController.getAllMetricsCurrentEvaluation(prj, profile);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -155,7 +155,7 @@ public class Metrics {
             return metricsController.getSingleMetricCurrentEvaluation(id, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -169,7 +169,7 @@ public class Metrics {
             return metricsController.getAllMetricsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -183,7 +183,7 @@ public class Metrics {
             return metricsController.getSingleMetricHistoricalEvaluation(id, prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -198,7 +198,7 @@ public class Metrics {
             return metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());

@@ -57,7 +57,7 @@ public class MetricsController {
     public Metric findMetricByExternalIdAndProjectId(String externalId, Long prjId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalIdAndProjectId(externalId,prjId);
         if (metric == null) {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException("The metric identifier '%s' not found for project %s", externalId, prjId.toString());
         }
         return metric;
     }

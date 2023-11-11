@@ -135,7 +135,7 @@ public class Factors {
             return dtoFactor;
         } catch (QualityFactorNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(Messages.FACTOR_NOT_FOUND, id));
         }
     }
 
@@ -174,7 +174,7 @@ public class Factors {
             return factorsController.getAllFactorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -245,7 +245,7 @@ public class Factors {
             return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile, true);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -259,7 +259,7 @@ public class Factors {
             return factorsController.getSingleFactorEvaluation(id, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -274,7 +274,7 @@ public class Factors {
             return factorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj,profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -288,7 +288,7 @@ public class Factors {
             return factorsController.getAllFactorsEvaluation(prj, profile, true);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -303,7 +303,7 @@ public class Factors {
             return factorsController.getFactorsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -318,7 +318,7 @@ public class Factors {
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -336,7 +336,7 @@ public class Factors {
             return factorsController.simulate(metricsMap, prj, profile, LocalDate.parse(date));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -357,7 +357,7 @@ public class Factors {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -375,7 +375,7 @@ public class Factors {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -394,7 +394,7 @@ public class Factors {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
