@@ -1,4 +1,4 @@
-# Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg)
+# Learning Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg)
 A dashboard for visualizing the quality of the company's products. This strategic dashboard is complemented with some specific features to support decision-makers managing **quality requirements**.
 
 ## Main Functionality
@@ -22,7 +22,7 @@ This is a Gradle project. You can use any IDE that supports Gradle to build it, 
 
 ```
 # Example: using Gradle wrapper to build with dependencies
-cd qrapids-dashboard
+cd LD-learning-dashboard
 gradlew war
 ```
 After the build is done the WAR file can be found at the __build/libs__ directory

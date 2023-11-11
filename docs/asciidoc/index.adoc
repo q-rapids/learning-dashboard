@@ -276,7 +276,7 @@ operation::qf/all[snippets='request-parameters,curl-request,response-fields,http
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -290,7 +290,7 @@ operation::qf/single[snippets='path-parameters,request-parameters,curl-request,r
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -330,7 +330,7 @@ operation::qf/current[snippets='request-parameters,curl-request,response-fields,
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -344,7 +344,7 @@ operation::metrics/current-qf[snippets='path-parameters,request-parameters,curl-
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -359,7 +359,7 @@ operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-re
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -374,7 +374,7 @@ operation::qf/historical[snippets='request-parameters,curl-request,response-fiel
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -388,7 +388,7 @@ operation::metrics/historical-qf[snippets='path-parameters,request-parameters,cu
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -403,7 +403,7 @@ operation::qf/current-si[snippets='path-parameters,request-parameters,curl-reque
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -418,7 +418,7 @@ operation::qf/prediction[snippets='request-parameters,curl-request,response-fiel
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -432,7 +432,7 @@ operation::metrics/prediction-qf[snippets='path-parameters,request-parameters,cu
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -447,7 +447,7 @@ operation::qf/prediction-si[snippets='path-parameters,request-parameters,curl-re
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -464,7 +464,7 @@ operation::qualityFactors/get-one[snippets='path-parameters,curl-request,respons
 
 === Add quality factor
 
-operation::qualityFactors/new[snippets='request-parameters,request-parts,curl-request,http-response']
+operation::qualityFactors/new[snippets='request-parameters,curl-request,http-response']
 
 :numbered!:
 ==== HTTP response assessment error
@@ -474,7 +474,7 @@ include::{snippets}/qualityFactors/new-error/http-response.adoc[]
 
 === Update quality factor
 
-operation::qualityFactors/update[snippets='request-parameters,request-parts,curl-request,http-response']
+operation::qualityFactors/update[snippets='request-parameters,curl-request,http-response']
 
 :numbered!:
 ==== HTTP response missing parameter
@@ -503,7 +503,7 @@ operation::qf/simulation[snippets='request-parameters,request-fields,curl-reques
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -540,7 +540,7 @@ operation::metrics/current[snippets='request-parameters,curl-request,response-fi
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -560,7 +560,7 @@ operation::metrics/single[snippets='path-parameters,request-parameters,curl-requ
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -575,7 +575,7 @@ operation::metrics/historical[snippets='request-parameters,curl-request,response
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -590,7 +590,7 @@ operation::metrics/single-historical[snippets='path-parameters,request-parameter
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -605,13 +605,13 @@ operation::metrics/historical-qf[snippets='path-parameters,request-parameters,cu
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
 === Get historical evaluation for students
 
-operation::students/historical[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::students/historical[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered:
 
@@ -625,7 +625,7 @@ operation::metrics/prediction[snippets='request-parameters,curl-request,response
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -640,7 +640,7 @@ operation::metrics/prediction-qf[snippets='path-parameters,request-parameters,cu
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
 ==== HTTP response error on MongoDB connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
 
 :numbered:
 
@@ -666,7 +666,7 @@ include::{snippets}/metrics/categories-new-error/http-response.adoc[]
 
 === Get all alerts
 
-operation::alerts/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
+operation::alerts/get-all[snippets='request-parameters,curl-request,http-response']
 
 :numbered!:
 
@@ -703,7 +703,7 @@ include::{snippets}/alerts/add-alert-affected-wrong-id/http-response.adoc[]
 
 === Count new alerts
 
-operation::alerts/count-new[snippets='request-parameters,curl-request,response-fields,http-response']
+operation::alerts/count-new[snippets='request-parameters,curl-request,http-response']
 
 :numbered!:
 
@@ -886,7 +886,7 @@ operation::profiles/single[snippets='path-parameters,curl-request,response-field
 
 === New profile
 
-operation::profiles/add[snippets='request-parameters,request-parts,curl-request,http-response']
+operation::profiles/add[snippets='request-parameters,curl-request,http-response']
 
 :numbered!:
 
@@ -968,7 +968,7 @@ operation::updates/single[snippets='path-parameters,curl-request,response-fields
 
 === Get last novetly (update)
 
-operation::updates/last[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::updates/last[snippets='request-parameters,curl-request,response-fields,http-response']
 
 === New novelty (update)
 
