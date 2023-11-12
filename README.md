@@ -1,4 +1,4 @@
-# Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg)
+# Learning Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg)
 A dashboard for visualizing the quality of the company's products. This strategic dashboard is complemented with some specific features to support decision-makers managing **quality requirements**.
 
 ## Main Functionality
@@ -15,14 +15,14 @@ The **User's Guide** is available in the [Wiki](https://github.com/Learning-Dash
 | DBMS                         | PostgreSQL                             |
 | Frameworks                   | Spring Boot, AngularJS, Gradle         |
 | External libraries           | Chart.js, MongoDB Java API             |
- | Learning Dashboard libraries | LD-eval, LD-qma-mongo, LD-qr_generator |
+| Learning Dashboard libraries | LD-eval, LD-qma-mongo, LD-qr_generator |
 
 ## How to build
 This is a Gradle project. You can use any IDE that supports Gradle to build it, or alternatively you can use the command line using the Gradle wrapper with the command *__gradlew__* if you don't have Gradle installed on your machine or with the command *__gradle__* if you do, followed by the task *__war__*.
 
 ```
 # Example: using Gradle wrapper to build with dependencies
-cd qrapids-dashboard
+cd LD-learning-dashboard
 gradlew war
 ```
 After the build is done the WAR file can be found at the __build/libs__ directory

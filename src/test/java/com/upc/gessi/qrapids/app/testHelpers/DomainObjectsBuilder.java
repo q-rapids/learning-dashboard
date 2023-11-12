@@ -1,19 +1,15 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecisionQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import org.springframework.data.util.Pair;
-import qr.models.Classifier;
-import qr.models.FixedPart;
-import qr.models.Form;
-import qr.models.Param;
-import qr.models.QualityRequirementPattern;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 
@@ -25,27 +21,31 @@ public class DomainObjectsBuilder {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        String projectBacklogURL1 = "testurl1";
-        String projectBacklogURL2= "testurl2";
-        String projectBacklogURL3= "testurl3";
         Boolean projectIsGlobal = false;
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectBacklogURL1,projectBacklogURL2,projectBacklogURL3,projectIsGlobal);
+
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true,projectIsGlobal);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
         return project;
     }
 
+    public List<ProjectIdentity> buildProjectIdentities(Project project){
+        List<ProjectIdentity> projectIdentities = new ArrayList<>();
+
+        for(DataSource source: DataSource.values()){
+            projectIdentities.add(new ProjectIdentity(source, "testurl", project));
+        }
+        return projectIdentities;
+    }
+
     public Alert buildAlert(Project project) {
         long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
+        String affectedId = "duplication";
+        String affectedType = "metric";
+        AlertType alertType = AlertType.TRESPASSED_THRESHOLD;
         float value = 0.4f;
         float threshold = 0.5f;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        Alert alert = new Alert(idElement, name, alertType, value, threshold, category, date, alertStatus, true, project);
+        Alert alert = new Alert(value,threshold,alertType, project, affectedId,affectedType,null,null);
         alert.setId(alertId);
         return alert;
     }
@@ -361,121 +361,6 @@ public class DomainObjectsBuilder {
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
         return dtoStrategicIndicatorEvaluation;
-    }
-
-    public QualityRequirementPattern buildQualityRequirementPattern () {
-        Integer parameterId = 120;
-        String parameterName = "value";
-        String parameterDescription = "value in percentage";
-        String parameterCorrectnessCondition = "Stay between 0 and 100";
-        String parameterType = "integer";
-        String parameterValue = null;
-        Integer parameterMetricId = 172;
-        String parameterMetricName = "Integer that represents a percentage";
-        Param parameter = new Param(parameterId, parameterName, parameterDescription, parameterCorrectnessCondition, parameterType, parameterValue, parameterMetricId, parameterMetricName);
-        List<Param> parameterList = new ArrayList<>();
-        parameterList.add(parameter);
-        String formText = "The ratio of files without duplications should be at least %value%";
-        FixedPart fixedPart = new FixedPart(formText, parameterList);
-        String formName = "Duplications";
-        String formDescription = "The ratio of files without duplications should be at least the given value";
-        String formComments = "No comments";
-        Form form = new Form(formName, formDescription, formComments, fixedPart);
-        List<Form> formList = new ArrayList<>();
-        formList.add(form);
-        Integer requirementId = 100;
-        String requirementName = "Duplications";
-        String requirementComments = "No comments";
-        String requirementDescription = "No description";
-        String requirementGoal = "Improve the quality of the source code";
-        String requirementCostFunction = "No cost function";
-        QualityRequirementPattern qualityRequirementPattern = new QualityRequirementPattern(requirementId, requirementName, requirementComments, requirementDescription, requirementGoal, formList, requirementCostFunction);
-
-        return qualityRequirementPattern;
-    }
-
-    public Classifier buildClassifier() {
-        Integer classifierId = 130;
-        String classifierName = "commitresponsetime";
-        List<Classifier> internalClassifierList = new ArrayList<>();
-        List<QualityRequirementPattern> requirementPatternList = new ArrayList<>();
-        Classifier classifier = new Classifier();
-        classifier.setId(classifierId);
-        classifier.setName(classifierName);
-        classifier.setInternalClassifiers(internalClassifierList);
-        classifier.setRequirementPatterns(requirementPatternList);
-
-        return classifier;
-    }
-
-    public qr.models.Metric buildQRPatternsMetric() {
-        Integer metricId = 172;
-        String metricName = "Integer that represents a percentage";
-        String metricDescription = "Integer value that can have a percentage.";
-        String metricType = "integer";
-        Float metricMinValue = 0f;
-        Float metricMaxValue = 100f;
-        List<String> possibleValuesList = new ArrayList<>();
-        qr.models.Metric metric = new qr.models.Metric(metricId, metricName, metricType);
-        metric.setDescription(metricDescription);
-        metric.setMinValue(metricMinValue);
-        metric.setMaxValue(metricMaxValue);
-        metric.setPossibleValues(possibleValuesList);
-
-        return metric;
-    }
-
-    public Decision buildDecision (Project project, DecisionType type) {
-        Long decisionId = 2L;
-        DecisionType decisionType = type;
-        Date date = new Date();
-        String rationale = "User comments";
-        int patternId = 100;
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, project);
-        decision.setId(decisionId);
-        return decision;
-    }
-
-    public QualityRequirement buildQualityRequirement (Alert alert, Decision decision, Project project) {
-        Long requirementId = 3L;
-        String requirement = "The ratio of files without duplications should be at least 0.8";
-        String description = "The ratio of files without duplications should be at least the given value";
-        String goal = "Improve the quality of the source code";
-        String qrBacklogUrl =  "https://backlog.example/issue/999";
-        String qrBacklogId = "ID-999";
-        QualityRequirement qualityRequirement = new QualityRequirement(requirement, description, goal, alert, decision, project);
-        qualityRequirement.setId(requirementId);
-        qualityRequirement.setBacklogUrl(qrBacklogUrl);
-        qualityRequirement.setBacklogId(qrBacklogId);
-        return qualityRequirement;
-    }
-
-    public DTODecisionQualityRequirement buildDecisionWithQualityRequirement (QualityRequirement qualityRequirement) {
-        return new DTODecisionQualityRequirement(qualityRequirement.getDecision().getId(),
-                qualityRequirement.getDecision().getType(),
-                qualityRequirement.getDecision().getDate(),
-                null,
-                qualityRequirement.getDecision().getRationale(),
-                qualityRequirement.getDecision().getPatternId(),
-                qualityRequirement.getRequirement(),
-                qualityRequirement.getDescription(),
-                qualityRequirement.getGoal(),
-                qualityRequirement.getBacklogId(),
-                qualityRequirement.getBacklogUrl());
-    }
-
-    public DTODecisionQualityRequirement buildDecisionWithoutQualityRequirement (Decision decision) {
-        return new DTODecisionQualityRequirement(decision.getId(),
-                decision.getType(),
-                decision.getDate(),
-                null,
-                decision.getRationale(),
-                decision.getPatternId(),
-                null,
-                null,
-                null,
-                null,
-                null);
     }
 
     public DTODetailedFactorEvaluation buildDTOQualityFactor () {
@@ -947,8 +832,11 @@ public class DomainObjectsBuilder {
         Long id = 1L;
         String name = "test iteration";
         String label = "test label";
-        java.sql.Date from_date = new java.sql.Date(2022 - 1900, Calendar.JUNE, 25);
-        java.sql.Date to_date = new java.sql.Date(2022 - 1900, Calendar.JULY, 22);
+        LocalDate localFromDate = LocalDate.of(2022 - 1900, Calendar.JUNE, 25);
+        LocalDate localToDate = LocalDate.of(2022 - 1900, Calendar.JULY, 22);
+
+        java.sql.Date from_date = new java.sql.Date(Date.from(localFromDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
+        java.sql.Date to_date = new java.sql.Date(Date.from(localToDate.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
         List<Long> project_ids = new ArrayList<>();
         project_ids.add(2L);
         project_ids.add(4L);

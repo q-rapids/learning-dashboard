@@ -14,7 +14,7 @@ public class QMAProjects {
     @Autowired
     private QMAConnection qmacon;
 
-    public List<String> getAssessedProjects() throws IOException, CategoriesException {
+    public List<String> getAssessedProjects() throws IOException {
         List<String> projects;
 
         // Data coming from QMA API

@@ -25,21 +25,14 @@ function checkAlertsPending(){
         success: function (data) {
             console.log("checkAlertsPending()");
             console.log(data);
-            var newAlerts = data.newAlerts;
-            var newAlertsWithQR = data.newAlertsWithQR;
+            var newAlerts = data;
             var newAlertsText = "";
-            var newAlertsWithQRText = "";
             if (newAlerts > 0) {
                 if (newAlerts == 1) newAlertsText = "There is " + newAlerts + " new alert";
                 else newAlertsText = "There are " + newAlerts + " new alerts";
 
-                if(newAlertsWithQR > 0) {
-                    if (newAlertsWithQR == 1) newAlertsWithQRText += newAlertsWithQR + " of them has QR associated";
-                    else newAlertsWithQRText += newAlertsWithQR + " of them have QR associated";
-                }
 
                 $("#alertsPending").text(newAlertsText);
-                $("#qrAlertsPending").text(newAlertsWithQRText);
                 $(".post-it-alert").css("visibility", "visible");
                 $("#AlertsBanner").attr("href", serverUrl+"/QualityAlerts")
             }

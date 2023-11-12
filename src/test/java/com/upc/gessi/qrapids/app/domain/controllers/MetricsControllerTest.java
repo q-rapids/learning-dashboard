@@ -37,6 +37,9 @@ public class MetricsControllerTest {
     private Forecast qmaForecast;
 
     @Mock
+    private AlertsController alertsController;
+
+    @Mock
     private MetricCategoryRepository metricCategoryRepository;
 
     @InjectMocks

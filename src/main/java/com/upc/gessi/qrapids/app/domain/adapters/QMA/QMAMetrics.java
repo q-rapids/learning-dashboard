@@ -3,7 +3,9 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.EvaluationDTO;
 import DTOs.MetricEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
+import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.ProfileProjectStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -12,6 +14,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrat
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
 import evaluation.Factor;
 import evaluation.Metric;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +25,19 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class QMAMetrics {
 
     @Autowired
     private QMAConnection qmacon;
+
+    @Autowired
+    private MetricsController metricsController;
+
+    @Autowired
+    private StudentsController studentsController;
 
     // it was made to use these variables in static method
     private static ProfilesController profilesController;
@@ -91,7 +101,7 @@ public class QMAMetrics {
     }
 
 
-    static List<DTOMetricEvaluation> MetricEvaluationDTOListToDTOMetricList(String factorExternalID, List<MetricEvaluationDTO> evals, String prj, String profileId) {
+    public List<DTOMetricEvaluation> MetricEvaluationDTOListToDTOMetricList(String factorExternalID, List<MetricEvaluationDTO> evals, String prj, String profileId) {
         List<DTOMetricEvaluation> m = new ArrayList<>();
         Project project = prjRep.findByExternalId(prj);
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
@@ -109,6 +119,10 @@ public class QMAMetrics {
                 }
             }
         }
+
+        // normalize student names
+        normalizeMetricsStudentNames(m, project);
+
         // filter by profile
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
@@ -186,6 +200,14 @@ public class QMAMetrics {
     public List<DTOMetricEvaluation> getAllMetrics(String prj, String profile) throws IOException {
         qmacon.initConnexion();
         return MetricEvaluationDTOListToDTOMetricList(null, Metric.getEvaluations(prj), prj, profile);
+    }
+
+    private void normalizeMetricsStudentNames(List<DTOMetricEvaluation> m, Project project) {
+        if(project != null) {
+            List<DTOStudent> students = studentsController.getStudentsDTOFromProject(project.getId());
+            Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
+            metricsController.normalizeMetricsEvaluation(m, students, normalizedNames);
+        }
     }
 
 }

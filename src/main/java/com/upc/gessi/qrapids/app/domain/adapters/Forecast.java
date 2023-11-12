@@ -5,10 +5,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicat
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import util.Constants;
 import com.google.gson.JsonArray;
@@ -181,6 +181,9 @@ public class Forecast {
         if (status == 200) {
             return getDtoMetrics(metric, con);
         }
+        else if (status == 400){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
+        }
         return null;
     }
 
@@ -295,6 +298,9 @@ public class Forecast {
         int status = con.getResponseCode();
         if (status == 200) {
             return getDtoFactors(factor, con);
+        }
+        else if (status == 400){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
@@ -419,6 +425,9 @@ public class Forecast {
         int status = con.getResponseCode();
         if (status == 200) {
             return getDtoQualityFactors(factor, metrics, metricsNames, con);
+        }
+        else if (status == 400){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }
@@ -571,6 +580,9 @@ public class Forecast {
         if (status == 200) {
             return getDtoDetailedStrategicIndicators(dsi, factors, factorsNames, con);
         }
+        else if (status == 400){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
+        }
         return null;
     }
 
@@ -709,6 +721,9 @@ public class Forecast {
         int status = con.getResponseCode();
         if (status == 200) {
             return getStrategicIndicatorEvaluation(si, con);
+        }
+        else if (status == 400){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request. No elements to forecast");
         }
         return null;
     }

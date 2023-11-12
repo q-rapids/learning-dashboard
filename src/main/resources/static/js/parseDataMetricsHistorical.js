@@ -267,7 +267,7 @@ function getDataStudents() {
     //get data from API
     jQuery.ajax({
         dataType: "json",
-        url: "../api/metrics/student/historical",
+        url: "../api/metrics/students/historical",
         data: {
             "from": $('#datepickerFrom').val(),
             "to": $('#datepickerTo').val()
@@ -282,7 +282,7 @@ function getDataStudents() {
             var i=0
             if(response.length===0) warningUtils("Warning", "This project has no students. Go to products &#x2192 project &#x2192 project team members")
             while (i<response.length) {
-                students.push([response[i].studentName, response[i].numberMetrics])
+                students.push([response[i].name, response[i].metrics_size])
                 data = response[i].metrics
                 j = 0;
                 var line = [];
@@ -315,10 +315,10 @@ function getDataStudents() {
                         decisionsAdd = [];
                         decisionsIgnore = [];
                         last = data[j].id;
-                        texts.push(data[j].id);
+                        texts.push(data[j].name);
                         ids.push(data[j].id);
                         var labelsForOneChart = [];
-                        labelsForOneChart.push(data[j].id);
+                        labelsForOneChart.push(data[j].name);
                         if (decisions.has(data[j].id)) {
                             var metricDecisions = decisions.get(data[j].id);
                             for (var i = 0; i < metricDecisions.length; i++) {

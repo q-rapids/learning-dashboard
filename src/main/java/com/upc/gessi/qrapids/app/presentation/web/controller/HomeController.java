@@ -128,4 +128,19 @@ public class HomeController {
 
     }
 
+    /**
+     * Display data protection view
+     * @param
+     * @return
+     */
+    @GetMapping("/DataProtection")
+    public ModelAndView showHomeView() {
+
+        // View loader
+        // Redirect to route home
+        ModelAndView view = new ModelAndView("DataProtection/advice");
+
+        return view;
+    }
+
 }

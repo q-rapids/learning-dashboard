@@ -5,10 +5,12 @@ import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.exceptions.BadRequestException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 
 import org.slf4j.Logger;
@@ -74,62 +76,44 @@ public class Factors {
     @PostMapping("/api/factors/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newFactorCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
-        try {
-            if(categories.size()<3) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
-            else factorsController.newFactorCategories(categories, name);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        if(categories.size()<3)
+            throw new BadRequestException(Messages.NOT_ENOUGH_CATEGORIES);
+
+        factorsController.newFactorCategories(categories, name);
     }
 
     @PutMapping("/api/factors/categories")
     @ResponseStatus(HttpStatus.OK)
     public void updateFactorsCategories (@RequestBody List<Map<String, String>> categories,@RequestParam(value = "name", required = true) String name) {
-        try {
-            factorsController.updateFactorCategory(categories, name);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        factorsController.updateFactorCategory(categories, name);
     }
 
     @DeleteMapping("/api/factors/categories")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFactorsCategories (@RequestParam(value = "name", required = true) String name) {
-        try {
-            factorsController.deleteFactorCategory(name);
-        } catch (CategoriesException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
-        }
+        factorsController.deleteFactorCategory(name);
     }
 
     @GetMapping("/api/qualityFactors")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOFactor> getAllQualityFactors (@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
-        try {
-            List<Factor> factorsList = factorsController.getQualityFactorsByProjectAndProfile(prj, profile);
-            List<DTOFactor> dtoFactorsList = new ArrayList<>();
-            for (Factor factor : factorsList) {
-                DTOFactor dtoFactor = new DTOFactor(factor.getId(),
-                        factor.getExternalId(),
-                        factor.getName(),
-                        factor.getDescription(),
-                        factor.getMetricsIds(),
-                        factor.isWeighted(),
-                        factor.getWeights(),
-                        factor.getType(),
-                        factor.getCategoryName());
+        List<Factor> factorsList = factorsController.getQualityFactorsByProjectAndProfile(prj, profile);
+        List<DTOFactor> dtoFactorsList = new ArrayList<>();
+        for (Factor factor : factorsList) {
+            DTOFactor dtoFactor = new DTOFactor(factor.getId(),
+                    factor.getExternalId(),
+                    factor.getName(),
+                    factor.getDescription(),
+                    factor.getMetricsIds(),
+                    factor.isWeighted(),
+                    factor.getWeights(),
+                    factor.getType(),
+                    factor.getCategoryName());
 
-                dtoFactor.setThreshold(factor.getThreshold());
-                dtoFactorsList.add(dtoFactor);
-            }
-            return dtoFactorsList;
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            dtoFactor.setThreshold(factor.getThreshold());
+            dtoFactorsList.add(dtoFactor);
         }
+        return dtoFactorsList;
     }
 
     @GetMapping("/api/qualityFactors/{id}")
@@ -151,7 +135,7 @@ public class Factors {
             return dtoFactor;
         } catch (QualityFactorNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(Messages.FACTOR_NOT_FOUND, id));
         }
     }
 
@@ -190,7 +174,7 @@ public class Factors {
             return factorsController.getAllFactorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -226,7 +210,7 @@ public class Factors {
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+            throw new BadRequestException(Messages.MISSING_ATTRIBUTES_IN_BODY);
         } catch (AssessmentErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
@@ -261,7 +245,7 @@ public class Factors {
             return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile, true);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -275,7 +259,7 @@ public class Factors {
             return factorsController.getSingleFactorEvaluation(id, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -290,7 +274,7 @@ public class Factors {
             return factorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj,profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -304,7 +288,7 @@ public class Factors {
             return factorsController.getAllFactorsEvaluation(prj, profile, true);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -319,7 +303,7 @@ public class Factors {
             return factorsController.getFactorsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -334,7 +318,7 @@ public class Factors {
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -352,7 +336,7 @@ public class Factors {
             return factorsController.simulate(metricsMap, prj, profile, LocalDate.parse(date));
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -373,7 +357,7 @@ public class Factors {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -391,7 +375,7 @@ public class Factors {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -410,7 +394,7 @@ public class Factors {
             return result;
         } catch (MongoException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(Messages.PROJECT_NOT_FOUND, prj));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());

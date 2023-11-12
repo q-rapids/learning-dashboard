@@ -14,6 +14,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +137,7 @@ public class FactorsController {
 
     }
 
-    public void deleteFactorCategory(String name) throws CategoriesException {
+    public void deleteFactorCategory(String name) {
 
         Iterable<QFCategory> factorCategoryIterable = factorCategoryRepository.findAllByName(name);
         for(QFCategory m : factorCategoryIterable)  {
@@ -147,7 +148,7 @@ public class FactorsController {
 
     public void updateFactorCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
         deleteFactorCategory(name);
         newFactorCategories(categories, name);
     }
@@ -171,9 +172,9 @@ public class FactorsController {
     public void newFactorCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
 
         boolean exists=CheckIfNameExists(name);
-        if(exists) throw new CategoriesException();
+        if(exists) throw new CategoriesException(Messages.CATEGORY_ALREADY_EXISTS);
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
         if (categories.size() > 2) {
             //metricCategoryRepository.deleteAll();
@@ -187,14 +188,14 @@ public class FactorsController {
                 factorCategoryRepository.save(qfCategory);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
     public Factor findFactorByExternalIdAndProjectId(String externalId, Long prjId) throws QualityFactorNotFoundException {
         Factor factor = qualityFactorRepository.findByExternalIdAndProjectId(externalId,prjId);
         if (factor == null) {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(externalId);
         }
         return factor;
     }
@@ -257,7 +258,7 @@ public class FactorsController {
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(qualityFactorId.toString());
         }
     }
     public Factor getQualityFactorByExternalId (String qualityFactorExternalId) throws QualityFactorNotFoundException {
@@ -265,7 +266,7 @@ public class FactorsController {
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(qualityFactorExternalId);
         }
     }
 
@@ -274,7 +275,7 @@ public class FactorsController {
         if (qualityFactorOptional.isPresent()) {
             return qualityFactorOptional.get();
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(qualityFactorExternalId);
         }
     }
 
@@ -396,7 +397,7 @@ public class FactorsController {
                 throw new DeleteFactorException();
             }
         } else {
-            throw new QualityFactorNotFoundException();
+            throw new QualityFactorNotFoundException(id.toString());
         }
     }
 
@@ -452,9 +453,14 @@ public class FactorsController {
         }
         metricEvaluationQma.setMetrics(metricList);
 
+        Project proj = projectsController.findProjectByExternalId(project);
+
         // CHECK METRICS ALERTS
-        for (DTOMetricEvaluation m : metricList) {
-            alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
+        LocalDate today = LocalDate.now();
+        if(evaluationDate.equals(today)) {
+            for (DTOMetricEvaluation m : metricList) {
+                alertsController.shouldCreateMetricAlert(m, m.getValue(), proj.getId());
+            }
         }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -639,7 +645,8 @@ public class FactorsController {
             ))
                 throw new AssessmentErrorException();
             // CHECK FACTORS ALERTS
-            alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
+            LocalDate today = LocalDate.now();
+            if(evaluationDate.equals(today)) alertsController.shouldCreateFactorAlert(qualityFactor,value);
         }
         return assessmentValueOrLabel;
     }
@@ -703,8 +710,34 @@ public class FactorsController {
         return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId, null);
     }
 
-    public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {
-        return qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
+    public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        //Save the current evaluations metrics dto as they are going to be changed for the forecast creation
+        Map<String,DTOMetricEvaluation> currentMetricEvals = new HashMap<>();
+        for (int f = 0; f < currentEvaluation.size(); ++f){
+            for (int m = 0; m < currentEvaluation.get(f).getMetrics().size(); ++m){
+                currentMetricEvals.put(currentEvaluation.get(f).getId()+currentEvaluation.get(f).getMetrics().get(m).getId(),currentEvaluation.get(f).getMetrics().get(m));
+            }
+        }
+        List<DTODetailedFactorEvaluation> forecast = qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
+        int period=Integer.parseInt(horizon);
+        for (int qf=0; qf < forecast.size(); ++qf){
+            String factorId = forecast.get(qf).getId();
+            List <DTOMetricEvaluation> qfMetricsPredictions = forecast.get(qf).getMetrics();
+            int j = 0;
+            for(int i = 0; i < qfMetricsPredictions.size(); i += period, ++j){
+                while (i < qfMetricsPredictions.size() && qfMetricsPredictions.get(i).getValue() == null) {
+                    ++i; ++j;
+                }
+                if(i >= qfMetricsPredictions.size()) break;
+                int subListEnd = Math.min(i + period, forecast.size());
+                List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(qfMetricsPredictions.subList(i, subListEnd));
+                String metricId = forecastedValues.get(0).getId();
+                DTOMetricEvaluation currentMetricEval = currentMetricEvals.get(factorId+metricId);
+                alertsController.checkAlertsForMetricsPrediction(currentMetricEval, forecastedValues, projectExternalId, technique);
+            }
+        }
+
+        return forecast;
     }
 
     public List<DTOFactorEvaluation> simulate (Map<String, Float> metricsValue, String projectExternalId, String profile, LocalDate date) throws IOException {
@@ -751,8 +784,31 @@ public class FactorsController {
         return category;
     }
 
-    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException {
-        return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        List<DTOFactorEvaluation> forecast = qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+        int period=Integer.parseInt(horizon);
+        int j=0;
+        for(int i=0; i < forecast.size(); i+=period, ++j){
+            while (i < forecast.size() && forecast.get(i).getValue() == null){
+                ++i;
+                ++j;
+            }
+            if (i>=forecast.size()) break;
+            int subListEnd = Math.min(i + period, forecast.size());
+            List<DTOFactorEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, subListEnd));
+            List<Float> predictedValues = new ArrayList<>();
+            List<Date> predictionDates = new ArrayList<>();
+            for (int f=0 ;f<forecastedValues.size();++f){
+                predictedValues.add(forecastedValues.get(f).getValue().getFirst());
+                LocalDate predictedDate = forecastedValues.get(f).getDate();
+                Date date;
+                if (predictedDate==null) date = null;
+                else date = java.sql.Date.valueOf(predictedDate);
+                predictionDates.add(date);
+            }
+            alertsController.checkAlertsForFactorsPrediction(currentEvaluation.get(j).getValue().getFirst(),currentEvaluation.get(j).getId(), predictedValues, predictionDates, prj, technique);
+        }
+        return forecast;
     }
 
     public List<Factor> getQualityFactorsByProjectAndProfile(String prjExternalId, String profileId) throws ProjectNotFoundException {

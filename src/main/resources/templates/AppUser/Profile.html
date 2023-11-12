@@ -18,6 +18,8 @@
 <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
 <div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 
+<div th:replace="Fragments/Template :: cookies"></div>
+
 <div id="msg_success"
     class="alert alert-success"
     role="alert"
@@ -57,6 +59,25 @@
                 <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" th:value="${appuser.getEmail()}"  required="required"/>
             </div>
 
+            <div class="form-group">
+                <label for="anonymousMode">Anonymous mode</label>
+                <input type="checkbox" class="form-control" th:name="anonymousMode" th:id="anonymousMode" th:field="*{anonymousMode}" th:value="${appuser.isAnonymousMode()}"/>
+            </div>
+
+            <div class="form-group">
+                <label for="anonymousModeSelected">Anonymization</label>
+                <br/>
+
+                <select th:id="selectAnonymousMode" class="selectpicker" th:name="anonymousModeSelected" data-width="100%">
+
+                    <option th:each="mode : ${ anonymizationModes }"
+                            th:value="${mode}"
+                            th:text="${mode.getModeName()}"
+                            th:selected="${mode == appuser.getAnonymousModeSelected()}"
+                            ></option>
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-border-black">Update</button>
 
         </form>
@@ -87,7 +108,7 @@
             <div class="form-group">
                 <label for="appuser_question">Security Question *</label>
                 <br/>
-                <select class="selectpicker" th:name="appuser_question" data-width="100%">
+                <select id="questionSelector" class="selectpicker" th:name="appuser_question" data-width="100%">
 
                     <option th:each="question : ${ questions }"
                             th:value="${question.getId()}"
@@ -146,6 +167,8 @@
     </article>
 </div>
 
+<div style="min-height: 15px;"></div>
+
 <select id="shadow_slt" hidden="hidden">
 
     <option th:value="${appuser.getAppuser_question()?.getId()}"
@@ -157,7 +180,7 @@
 
     var _$ = [];
     $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
-    $('.selectpicker').selectpicker('val', _$ );
+    $('#questionSelector').selectpicker('val', _$ );
 
 
     $("#form_password_text").hide();

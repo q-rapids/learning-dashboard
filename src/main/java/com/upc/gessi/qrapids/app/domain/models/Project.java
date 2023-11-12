@@ -21,27 +21,21 @@ public class Project {
     private boolean active;
     @Column(name = "backlogId")
     private String backlogId;
-    @Column(name = "taigaURL")
-    private String taigaURL;
-    @Column(name = "githubURL")
-    private String githubURL;
-    @Column(name = "prtURL")
-    private String prtURL;
     @Column(name = "isGlobal")
     private Boolean isGlobal;
+    @Column(name = "anonymized")
+    private boolean anonymized;
 
     public Project(){}
     
-    public Project(String externalId, String name, String description, byte[] logo, boolean active, String taigaURL, String githubURL, String prtURL, Boolean isGlobal) {
+    public Project(String externalId, String name, String description, byte[] logo, boolean active, Boolean isGlobal) {
     	this.externalId = externalId;
     	this.name = name;
     	this.description = description;
     	this.logo = logo;
     	this.active = active;
-    	this.taigaURL=taigaURL;
-    	this.githubURL=githubURL;
-        this.prtURL=prtURL;
         this.isGlobal=isGlobal;
+        this.anonymized = false;
     }
     
     public Long getId() {
@@ -100,19 +94,15 @@ public class Project {
         this.backlogId = backlogId;
     }
 
-    public String getTaigaURL() {return taigaURL;}
-
-    public void setTaigaURL(String taigaURL) {this.taigaURL=taigaURL;}
-
-    public String getGithubURL() {return githubURL;}
-
-    public void setGithubURL(String githubURL) {this.githubURL=githubURL;}
-
-    public String getPrtURL() {return prtURL;}
-
-    public void setPrtURL(String prtURL) {this.prtURL=prtURL;}
-
     public Boolean getIsGlobal() { return isGlobal;}
 
     public void setIsGlobal(Boolean global) { isGlobal = global;}
+
+    public boolean isAnonymized() {
+        return anonymized;
+    }
+
+    public void setAnonymized(boolean anonymized) {
+        this.anonymized = anonymized;
+    }
 }

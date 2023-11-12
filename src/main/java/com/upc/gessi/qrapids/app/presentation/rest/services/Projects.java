@@ -4,12 +4,12 @@ import com.upc.gessi.qrapids.app.domain.controllers.IterationsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectAlreadyAnonymizedException;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOIteration;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -19,10 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import javax.servlet.http.HttpServletRequest;
+
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 
 @RestController
@@ -42,7 +43,7 @@ public class Projects {
     @GetMapping("/api/projects/import")
     @ResponseStatus(HttpStatus.OK)
     public List<String> importProjects() {
-    	try {
+        try {
             return projectsController.importProjectsAndUpdateDatabase();
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
@@ -56,90 +57,100 @@ public class Projects {
     @GetMapping("/api/projects")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOProject> getProjects(@RequestParam(value = "profile_id", required = false) String profileId) {
-        try {
-            Long id = null;
-            if (profileId != null) id = Long.valueOf(profileId);
-            return projectsController.getProjects(id);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
+        Long id = null;
+        if (profileId != null) id = Long.valueOf(profileId);
+        return projectsController.getProjects(id);
     }
 
     @GetMapping("/api/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public DTOProject getProjectById(@PathVariable String id) {
-        try {
-            DTOProject p = projectsController.getProjectById(id);
-            return p;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
+    public DTOProject getProjectById(@PathVariable Long id) {
+        return projectsController.getProjectDTOById(id);
     }
 
     @PutMapping("/api/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
-        try {
-            String externalId = request.getParameter("externalId");
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            String backlogId = request.getParameter("backlogId");
-            String taigaURL= request.getParameter("taigaURL");
-            if(taigaURL.equals("null")) taigaURL=null;
-            String githubURL= request.getParameter("githubURL");
-            if(githubURL.equals("null")) githubURL=null;
-            String prtURL= request.getParameter("prtURL");
-            if(prtURL.equals("null")) prtURL=null;
-            Boolean isGlobal = Boolean.parseBoolean(request.getParameter("isGlobal"));
+    public void updateProject(@PathVariable Long id, @RequestPart("data") @Valid DTOUpdateProject body, @RequestPart(value = "file", required = false) MultipartFile multipartFile) throws IOException {
+
+            DTOProject project = projectsController.getProjectDTOById(id);
+
             byte[] logoBytes = null;
-            if (logo != null) {
-                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            if (multipartFile != null) {
+                logoBytes = IOUtils.toByteArray(multipartFile.getInputStream());
             }
+
             if (logoBytes != null && logoBytes.length < 10) {
-                DTOProject p = projectsController.getProjectById(Long.toString(id));
-                logoBytes = p.getLogo();
+                logoBytes = project.getLogo();
             }
-            if (projectsController.checkProjectByName(id, name)) {
-                DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId, taigaURL, githubURL, prtURL, isGlobal);
+
+            if (projectsController.checkProjectByName(id, body.getName())) {
+
+                Map<DataSource, DTOProjectIdentity> parsedIdentities = new HashMap<>();
+                body.getIdentities().forEach((dataSource, identity) -> {
+                    parsedIdentities.put(dataSource, new DTOProjectIdentity(dataSource, identity));
+                });
+
+                DTOProject p = new DTOProject(id, body.getExternalId(), body.getName(), body.getDescription(), logoBytes, true, body.getBacklogId(), body.getGlobal(), parsedIdentities, project.isAnonymized());
                 projectsController.updateProject(p);
             } else {
-                throw new ElementAlreadyPresentException();
+                throw new ElementAlreadyPresentException(String.format(Messages.PROJECT_NAME_ALREADY_EXISTS, body.getName()));
             }
-        } catch (ElementAlreadyPresentException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+    }
+
+    @PostMapping("api/projects/{projectId}/anonymize")
+    @ResponseStatus(HttpStatus.OK)
+    public DTOProject anonymizeProject(@PathVariable Long projectId, @RequestBody(required = false) DTOAnonymizeProjectRequest body) {
+
+        AnonymizationModes mode;
+        if (body == null) mode = AnonymizationModes.COUNTRIES;
+        else mode = body.getAnonymizationMode();
+        if (mode == null) mode = AnonymizationModes.COUNTRIES;
+
+        Project project = projectsController.getProjectById(projectId);
+        if(project.isAnonymized()) throw new ProjectAlreadyAnonymizedException(projectId.toString());
+
+        return projectsController.anonymizeProject(project, mode);
+
+    }
+
+    @PostMapping("api/projects/anonymize")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOProject> anonymizeProjects(@RequestBody @Valid DTOAnonymizeProjectsRequest body) {
+
+        AnonymizationModes mode;
+        List<Long> projectIds;
+
+        if (body == null) {
+            mode = AnonymizationModes.COUNTRIES;
+            projectIds = new ArrayList<>();
         }
+        else {
+            mode = body.getAnonymizationMode();
+            if (mode == null) mode = AnonymizationModes.COUNTRIES;
+            projectIds = body.getProjectIds();
+            if (projectIds == null) projectIds = new ArrayList<>();
+        }
+
+        return projectsController.anonymizeProjects(projectIds, mode);
     }
 
     @GetMapping("api/project/{project_id}/iterations")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOIteration> getHistoricChartDates (@PathVariable Long project_id) {
-        try {
-            return iterationsController.getIterationsByProjectId(project_id);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
+        return iterationsController.getIterationsByProjectId(project_id);
     }
 
     @GetMapping("api/milestones")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMilestone> getMilestones (@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
+
         LocalDate localDate = null;
+
         if (date != null) {
             localDate = LocalDate.parse(date);
         }
-        try {
-            return projectsController.getMilestonesForProject(prj, localDate);
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }
+
+        return projectsController.getMilestonesForProject(prj, localDate);
     }
 
     @GetMapping("api/phases")
@@ -149,11 +160,12 @@ public class Projects {
         if (date != null) {
             localDate = LocalDate.parse(date);
         }
-        try {
-            return projectsController.getPhasesForProject(prj, localDate);
-        } catch (ProjectNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        }
+
+        return projectsController.getPhasesForProject(prj, localDate);
+    }
+
+    @GetMapping("api/projects/identities")
+    public List<DataSource> getIdentities(){
+        return Arrays.asList(DataSource.values());
     }
 }

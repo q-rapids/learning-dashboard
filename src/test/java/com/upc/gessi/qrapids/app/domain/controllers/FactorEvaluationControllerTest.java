@@ -7,7 +7,6 @@ import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -36,6 +35,9 @@ public class FactorEvaluationControllerTest {
 
     @Mock
     private QMAQualityFactors qmaQualityFactors;
+
+    @Mock
+    private AlertsController alertsController;
 
     @Mock
     private Forecast qmaForecast;

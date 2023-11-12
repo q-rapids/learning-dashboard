@@ -12,6 +12,8 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProjectIdentity;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,11 @@ public class ProfilesController {
 
     @Autowired
     private ProfileProjectsController profileProjectsCont;
+
+    // Lazy injection to avoid circular dependencies
+    @Lazy
+    @Autowired
+    private ProjectsController projectsController;
 
 
     public boolean checkNewProfileByName(String name) throws ProfileNotFoundException {
@@ -67,28 +74,31 @@ public class ProfilesController {
         if (!id.equals("null")) {
             Optional<Profile> profileOptional = profileRep.findById(Long.parseLong(id));
             if (profileOptional.isPresent()) {
-                Profile profile = profileOptional.get();
-                List<DTOProject> relatedProjects = new ArrayList<>();
-                List<Pair<Long, Boolean>> relatedAllSIs = new ArrayList<>();
-                for (ProfileProjects pp : profile.getProfileProjectsList()) {
-                    DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId(), pp.getProject().getTaigaURL(), pp.getProject().getGithubURL(), pp.getProject().getPrtURL(), pp.getProject().getIsGlobal());
-                    relatedProjects.add(project);
-                    Pair<Long, Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
-                    relatedAllSIs.add(allSI);
-                }
-                Collections.sort(relatedProjects, new Comparator<DTOProject>() {
-                    @Override
-                    public int compare(DTOProject o1, DTOProject o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
-                return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()),
-                        String.valueOf(profile.getDsiView()), String.valueOf(profile.getDqfView()),String.valueOf(profile.getmView()), String.valueOf(profile.getQmView()), relatedProjects, relatedAllSIs);
+                return getDTOProfile(profileOptional.get());
             }
         }
         return null;
     }
 
+    public DTOProfile getDTOProfile(Profile profile) throws ProfileNotFoundException {
+        List<DTOProject> relatedProjects = new ArrayList<>();
+        List<Pair<Long, Boolean>> relatedAllSIs = new ArrayList<>();
+        for (ProfileProjects pp : profile.getProfileProjectsList()) {
+            Project project = pp.getProject();
+            DTOProject dtoProject = projectsController.getProjectDTO(project);
+            relatedProjects.add(dtoProject);
+            Pair<Long, Boolean> allSI = Pair.of(project.getId(), pp.isAllSI());
+            relatedAllSIs.add(allSI);
+        }
+        Collections.sort(relatedProjects, new Comparator<DTOProject>() {
+            @Override
+            public int compare(DTOProject o1, DTOProject o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()),
+                String.valueOf(profile.getDsiView()), String.valueOf(profile.getDqfView()),String.valueOf(profile.getmView()), String.valueOf(profile.getQmView()), relatedProjects, relatedAllSIs);
+    }
 
     public List<DTOProfile> getProfiles() throws ProfileNotFoundException {
         Iterable<Profile> profileIterable = profileRep.findAll();
@@ -96,23 +106,7 @@ public class ProfilesController {
         profileIterable.forEach(profilesBD::add);
         List<DTOProfile> profiles = new ArrayList<>();
         for (Profile pr : profilesBD) {
-            List<DTOProject> relatedProjects = new ArrayList<>();
-            List<Pair<Long,Boolean>> relatedAllSIs = new ArrayList<>();
-            for (ProfileProjects pp : pr.getProfileProjectsList()) {
-                DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId(), pp.getProject().getTaigaURL(), pp.getProject().getGithubURL(), pp.getProject().getPrtURL(), pp.getProject().getIsGlobal());
-                relatedProjects.add(project);
-                Pair<Long,Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
-                relatedAllSIs.add(allSI);
-            }
-            Collections.sort(relatedProjects, new Comparator<DTOProject>() {
-                @Override
-                public int compare(DTOProject o1, DTOProject o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
-            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), String.valueOf(pr.getQualityLevel()),
-                    String.valueOf(pr.getDsiView()), String.valueOf(pr.getDqfView()), String.valueOf(pr.getmView()), String.valueOf(pr.getQmView()), relatedProjects, relatedAllSIs);
-            profiles.add(profile);
+            profiles.add(getDTOProfile(pr));
         }
         Collections.sort(profiles, new Comparator<DTOProfile>() {
             @Override
