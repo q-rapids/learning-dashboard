@@ -15,7 +15,7 @@ The **User's Guide** is available in the [Wiki](https://github.com/Learning-Dash
 | DBMS                         | PostgreSQL                             |
 | Frameworks                   | Spring Boot, AngularJS, Gradle         |
 | External libraries           | Chart.js, MongoDB Java API             |
-| Learning Dashboard libraries | LD-eval, LD-qma-mongo, LD-qr_generator |
+| Learning Dashboard libraries | LD-eval, LD-qma-mongo                  |
 
 ## How to build
 This is a Gradle project. You can use any IDE that supports Gradle to build it, or alternatively you can use the command line using the Gradle wrapper with the command *__gradlew__* if you don't have Gradle installed on your machine or with the command *__gradle__* if you do, followed by the task *__war__*.
