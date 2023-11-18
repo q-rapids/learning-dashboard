@@ -351,7 +351,7 @@ include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[
 
 === Get detailed current evaluation for strategic indicator
 
-operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::qf/current-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 
@@ -395,7 +395,7 @@ include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[
 
 === Get detailed historical evaluation for strategic indicator
 
-operation::qf/current-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 

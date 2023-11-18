@@ -111,6 +111,11 @@ public class FactorEvaluationTest {
                 .andDo(document("qf/categories",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Category name (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Category identifier"),
@@ -147,6 +152,11 @@ public class FactorEvaluationTest {
                 .andDo(document("qf/categories-new",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Category name (Optional)")
+                                        .optional()
+                        ),
                         requestFields(
                                 fieldWithPath("[].type")
                                         .description("Quality factors category type"),
@@ -230,7 +240,11 @@ public class FactorEvaluationTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -420,6 +434,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
@@ -519,7 +536,11 @@ public class FactorEvaluationTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -615,6 +636,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
@@ -689,10 +713,10 @@ public class FactorEvaluationTest {
         String metricId = "fasttests";
         Float metricValue = 0.7f;
         String date = "2019-07-07";
-        Map<String, String> metric = new HashMap<>();
+        Map<String, Object> metric = new HashMap<>();
         metric.put("id", metricId);
-        metric.put("value", metricValue.toString());
-        List<Map<String, String>> metricList = new ArrayList<>();
+        metric.put("value", metricValue);
+        List<Map<String, Object>> metricList = new ArrayList<>();
         metricList.add(metric);
 
         Map<String, Float> metricsMap = new HashMap<>();
@@ -740,6 +764,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("date")
                                         .description("Date of the quality factors evaluation simulation model base")),
                         requestFields(
@@ -1227,6 +1254,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
@@ -1361,6 +1391,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
@@ -1483,7 +1516,11 @@ public class FactorEvaluationTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -1497,10 +1534,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor category"),
                                 fieldWithPath("[].threshold")
                                         .description("Quality factor minimum acceptable value"),
-                                fieldWithPath("[].metrics")
-                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("[].metrics[]")
-                                        .description("Metric identifier"),
+                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("[].weighted")
                                         .description("Quality factor is weighted or not"),
                                 fieldWithPath("[].metricsWeights")
@@ -1559,10 +1594,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor category"),
                                 fieldWithPath("threshold")
                                         .description("Quality factor minimum acceptable value"),
-                                fieldWithPath("metrics")
-                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("metrics[]")
-                                        .description("Metric identifier"),
+                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("weighted")
                                         .description("Quality factor is weighted or not"),
                                 fieldWithPath("metricsWeights[]")

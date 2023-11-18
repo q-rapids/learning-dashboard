@@ -123,7 +123,7 @@ public class AlertsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -197,7 +197,7 @@ public class AlertsTest {
                         parameterWithName("prj")
                                 .description("Project external identifier"),
                         parameterWithName("profile")
-                                .description("Profile data base identifier")
+                                .description("Profile data base identifier (Optional)")
                                 .optional()),
                 responseBody()
         ));
@@ -273,16 +273,24 @@ public class AlertsTest {
                                 fieldWithPath("element.affectedId")
                                         .description("Identifier of the element causing the alert"),
                                 fieldWithPath("element.affectedType")
-                                        .description("Type of the element causing the alert (metric, factor or indicator)"),
+                                        .description("Type of the element causing the alert [metric, factor, indicator]"),
                                 fieldWithPath("element.type")
-                                        .description("Type of the alert (CATEGORY_DOWNGRADE, CATEGORY_UPGRADE, " +
-                                                "TRESPASSED_THRESHOLD, ALERT_NOT_TREATED)"),
+                                        .description("Type of the alert [CATEGORY_DOWNGRADE, CATEGORY_UPGRADE, " +
+                                                "TRESPASSED_THRESHOLD, ALERT_NOT_TREATED]"),
                                 fieldWithPath("element.value")
                                         .description("Current value of the element causing the alert"),
                                 fieldWithPath("element.threshold")
                                         .description("Minimum acceptable value for the element"),
                                 fieldWithPath("element.project_id")
-                                        .description("Project identifier of the element causing the alert")
+                                        .description("Project identifier of the element causing the alert"),
+                                fieldWithPath("element.predictionDate")
+                                        .description("Date of the prediction causing the alert (Optional)")
+                                        .optional()
+                                        .type(JsonFieldType.STRING),
+                                fieldWithPath("element.technique")
+                                        .description("Technique of the prediction causing the alert [PROPHET, ETS...] (Optional)")
+                                        .optional()
+                                        .type(JsonFieldType.STRING)
                         )
                 ));
 
