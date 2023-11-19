@@ -193,6 +193,11 @@ public class ProjectsTest {
                 .andDo(document("projects/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("profile_id")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Project identifier"),

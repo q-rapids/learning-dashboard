@@ -756,7 +756,7 @@ include::{snippets}/projects/import-read-error/http-response.adoc[]
 
 === Get all projects
 
-operation::projects/all[snippets='curl-request,response-fields,http-response']
+operation::projects/all[snippets='request-parameters,curl-request,response-fields,http-response']
 
 
 === Get single project
@@ -772,7 +772,7 @@ operation::projects/single[snippets='path-parameters,curl-request,response-field
 
 include::{snippets}/projects/single/path-parameters.adoc[]
 
-operation::projects/update[snippets='request-parameters,request-parts,curl-request,http-response']
+operation::projects/update[snippets='request-parts,curl-request,http-response']
 
 ==== HTTP response name already exists
 include::{snippets}/projects/update-error/http-response.adoc[]
