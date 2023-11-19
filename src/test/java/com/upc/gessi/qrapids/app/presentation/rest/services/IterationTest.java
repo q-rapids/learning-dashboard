@@ -130,22 +130,6 @@ public class IterationTest {
         ObjectWriter ow = objectMapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(requestBody);
 
-        /*
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/iterations/{iteration_id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .with(new RequestPostProcessor() {
-                    @Override
-                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                        request.setMethod("PUT");
-                        return request;
-                    }
-                });
-
-         */
-
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
                 .put("/api/iterations/{iteration_id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -162,7 +146,7 @@ public class IterationTest {
                         ),
                         requestFields(
                                 fieldWithPath("iteration.name").description("New iteration name"),
-                                fieldWithPath("iteration.label").description("(Optional) New iteration label"),
+                                fieldWithPath("iteration.label").description("New iteration label (Optional)").optional(),
                                 fieldWithPath("iteration.fromDate").description("New iteration start date"),
                                 fieldWithPath("iteration.toDate").description("New iteration end date"),
                                 fieldWithPath("project_ids").description("New projects associated with the iteration")

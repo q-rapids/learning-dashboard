@@ -91,7 +91,8 @@ public class FactorEvaluationTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/factors/categories?name=Default");
+                .get("/api/factors/categories")
+                .param("name", "Default");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -143,7 +144,8 @@ public class FactorEvaluationTest {
         // Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/factors/categories?name=test")
+                .post("/api/factors/categories")
+                .param("name", "test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(factorCategoriesList));
 

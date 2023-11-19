@@ -510,12 +510,12 @@ include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[
 
 === Get quality factor categories
 
-operation::qf/categories[snippets='curl-request,response-fields,http-response']
+operation::qf/categories[snippets='request-parameters,curl-request,response-fields,http-response']
 
 
 === Set quality factor categories
 
-operation::qf/categories-new[snippets='request-fields,curl-request,http-response']
+operation::qf/categories-new[snippets='request-parameters,request-fields,curl-request,http-response']
 
 :numbered!:
 ==== HTTP response not enough categories
