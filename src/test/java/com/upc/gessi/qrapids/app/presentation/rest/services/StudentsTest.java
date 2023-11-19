@@ -432,7 +432,7 @@ public class StudentsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .delete("/api/metrics/students/{studentId}", 1L);
+                .delete("/api/metrics/students/{id}", 1L);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -440,7 +440,7 @@ public class StudentsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
-                                parameterWithName("studentId")
+                                parameterWithName("id")
                                         .description("Student identifier")
                         )
                 ));

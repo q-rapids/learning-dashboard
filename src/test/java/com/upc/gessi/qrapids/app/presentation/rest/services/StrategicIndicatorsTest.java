@@ -204,7 +204,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -358,7 +358,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("id")
@@ -518,7 +518,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("to")
                                         .description("Ending date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -673,7 +673,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -804,7 +804,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -942,7 +942,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("to")
                                         .description("Ending date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -1089,7 +1089,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("to")
                                         .description("Ending date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -1235,7 +1235,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("horizon")
                                         .description("Amount of days that the prediction will cover"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -1362,7 +1362,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("horizon")
                                         .description("Amount of days that the prediction will cover"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -1509,7 +1509,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("horizon")
                                         .description("Amount of days that the prediction will cover"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -2026,7 +2026,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -2043,8 +2043,6 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator bayesian network"),
                                 fieldWithPath("[].qualityFactors")
                                         .description("List of the quality factors composing the strategic indicator"),
-                                fieldWithPath("[].qualityFactors[]")
-                                        .description("Quality factor identifier"),
                                 fieldWithPath("[].weighted")
                                         .description("Strategic indicator is weighted or not"),
                                 fieldWithPath("[].qualityFactorsWeights")
@@ -2636,9 +2634,10 @@ public class StrategicIndicatorsTest {
                                         .description("Project external identifier"),
                                 parameterWithName("train")
                                         .description("Indicates if the forecasting models should be trained: " +
-                                        "NONE for no training, ONE for one method training and ALL for all methods training"),
+                                        "NONE for no training, ONE for one method training and ALL for all methods training (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
-                                        .description("Date of the day (yyyy-mm-dd) from which execute several assessments, one for each day since today (optional)")
+                                        .description("Date of the day (yyyy-mm-dd) from which execute several assessments, one for each day since today (Optional)")
                                         .optional())
                 ));
 
@@ -2799,7 +2798,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("factors")
                                         .description("List of the names and new values of the quality factors"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -2973,9 +2972,9 @@ public class StrategicIndicatorsTest {
                                         .description("Project external identifier"),
                                 parameterWithName("date")
                                         .optional()
-                                        .description("Date (yyyy-mm-dd) of the quality model evaluation"),
+                                        .description("Date (yyyy-mm-dd) of the quality model evaluation (Optional)"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()
                         ),
                         responseFields(
@@ -3126,7 +3125,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("to")
                                         .description("Ending date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("profile")
-                                        .description("Profile data base identifier")
+                                        .description("Profile data base identifier (Optional)")
                                         .optional()),
                         responseFields(
                                 fieldWithPath("[].id")

@@ -72,7 +72,7 @@ public class UpdatesTest {
         String name = "Test";
         String update = "Test update";
         LocalDate localDate = LocalDate.parse(date);
-        DTOUpdate dtoUpdate = new DTOUpdate(1L, name);
+        DTOUpdate dtoUpdate = new DTOUpdate(1L, name, LocalDate.parse(date), update);
         allUpdatesList.add(dtoUpdate);
 
         // Given
@@ -86,6 +86,10 @@ public class UpdatesTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].name", is(name)))
+                .andExpect(jsonPath("$[0].date[0]", is(localDate.getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(localDate.getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(localDate.getDayOfMonth())))
+                .andExpect(jsonPath("$[0].update", is(update)))
                 .andDo(document("updates/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -286,7 +290,7 @@ public class UpdatesTest {
                                 parameterWithName("name")
                                         .description("Update name"),
                                 parameterWithName("date")
-                                        .description("Update date"),
+                                        .description("Update date, in format yyyy-MM-dd"),
                                 parameterWithName("update")
                                         .description("Description/List of updates and news")
                         )
@@ -339,7 +343,7 @@ public class UpdatesTest {
                                 parameterWithName("name")
                                         .description("Update identifier"),
                                 parameterWithName("date")
-                                        .description("Update date"),
+                                        .description("Update date, in format yyyy-MM-dd"),
                                 parameterWithName("update")
                                         .description("Description/List of updates and news")
                         )
