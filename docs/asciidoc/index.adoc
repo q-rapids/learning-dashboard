@@ -647,12 +647,12 @@ include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[
 
 === Get metric categories
 
-operation::metrics/categories[snippets='curl-request,response-fields,http-response']
+operation::metrics/categories[snippets='request-parameters,curl-request,response-fields,http-response']
 
 
 === Set metric categories
 
-operation::metrics/categories-new[snippets='request-fields,curl-request,http-response']
+operation::metrics/categories-new[snippets='request-parameters,request-fields,curl-request,http-response']
 
 :numbered!:
 ==== HTTP response not enough categories

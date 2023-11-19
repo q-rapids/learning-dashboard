@@ -111,6 +111,11 @@ public class MetricsTest {
                 .andDo(document("metrics/categories",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Category name (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Category identifier"),
@@ -134,7 +139,8 @@ public class MetricsTest {
         // Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/metrics/categories?name=Default")
+                .post("/api/metrics/categories")
+                .param("name", "Default")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(metricRawCategoriesList));
 
@@ -143,6 +149,11 @@ public class MetricsTest {
                 .andDo(document("metrics/categories-new",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Category name (Optional)")
+                                        .optional()
+                        ),
                         requestFields(
                                 fieldWithPath("[].type")
                                         .description("Metrics category type"),
@@ -214,7 +225,11 @@ public class MetricsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Metric identifier"),
@@ -352,6 +367,9 @@ public class MetricsTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
@@ -428,6 +446,9 @@ public class MetricsTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
@@ -516,6 +537,9 @@ public class MetricsTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")

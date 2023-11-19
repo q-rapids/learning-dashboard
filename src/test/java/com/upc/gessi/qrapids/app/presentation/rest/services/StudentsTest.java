@@ -128,7 +128,7 @@ public class StudentsTest {
                                 fieldWithPath("[].id")
                                     .description("Student identifier"),
                                 fieldWithPath("[].project")
-                                        .description("Project if the student"),
+                                        .description("Project of the student"),
                                 fieldWithPath("[].name")
                                     .description("Name of the student"),
                                 fieldWithPath("[].metrics_size")
@@ -263,7 +263,8 @@ public class StudentsTest {
                                 parameterWithName("prj")
                                     .description("Project external identifier"),
                                 parameterWithName("profile")
-                                    .description("Profile identifier"),
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                     .description("Initial date"),
                                 parameterWithName("to")
