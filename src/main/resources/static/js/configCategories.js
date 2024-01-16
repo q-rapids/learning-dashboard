@@ -569,8 +569,8 @@ function buildMetricTable(name) {
 function updateFactorCategories (name) {
 
     var dataMetrics = getDataMetricThreshold("tableQF");
-    if (dataMetrics.length < 2)
-        warningUtils("Warning", "There has to be at least 2 categories for each factor");
+    if (dataMetrics.length < 1)
+        warningUtils("Warning", "There has to be at least 1 categories for each factor");
     else {
         $.ajax({
             url: '../api/factors/categories?name=' + name,
@@ -638,8 +638,8 @@ function loadFactorCategories (name) {
 function updateMetricCategories (name) {
 
     var dataMetrics = getDataMetricThreshold("tableMetrics");
-    if (dataMetrics.length < 2)
-        warningUtils("Warning", "There has to be at least 2 categories for each factor");
+    if (dataMetrics.length < 1)
+        warningUtils("Warning", "There has to be at least 1 categories for each factor");
     else {
         $.ajax({
             url: '../api/metrics/categories?name=' + name,
@@ -981,8 +981,8 @@ function getDataMetricThreshold (table) {
 
 $('#saveSICategories').click(function () {
     var dataSI = getData();
-    if (dataSI.length < 2)
-        warningUtils("Warning", "There has to be at least 2 categories for each indicator");
+    if (dataSI.length < 1)
+        warningUtils("Warning", "There has to be at least 1 categories for each indicator");
     else {
         $.ajax({
             url: '../api/strategicIndicators/categories',
@@ -1011,8 +1011,8 @@ function saveFactorCategories () {
         warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
     }
     else {
-        if (dataFactors.length < 2)
-            warningUtils("Warning", "There has to be at least 2 categories for each factor");
+        if (dataFactors.length < 1)
+            warningUtils("Warning", "There has to be at least 1 categories for each factor");
         else {
             $.ajax({
                 url: '../api/factors/categories?name=' + name,
@@ -1045,8 +1045,8 @@ function saveMetricCategories () {
 
     }
     else {
-        if (dataMetrics.length < 2)
-            warningUtils("Warning", "There has to be at least 2 categories for each factor");
+        if (dataMetrics.length < 1)
+            warningUtils("Warning", "There has to be at least 1 categories for each factor");
         else {
             $.ajax({
                 url: '../api/metrics/categories?name=' + name,

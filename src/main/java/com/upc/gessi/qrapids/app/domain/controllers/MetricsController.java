@@ -199,7 +199,7 @@ public class MetricsController {
 
         if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
-        if (categories.size() > 2) {
+        if (categories.size() > 0) {
             //metricCategoryRepository.deleteAll();
             for (Map<String, String> c : categories) {
                 MetricCategory metricCategory = new MetricCategory();

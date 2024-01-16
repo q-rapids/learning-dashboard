@@ -83,7 +83,7 @@ public class Metrics {
     @PostMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
-        if(categories.size()<3) throw new BadRequestException(Messages.NOT_ENOUGH_CATEGORIES);
+        if(categories.size()<1) throw new BadRequestException(Messages.NOT_ENOUGH_CATEGORIES);
         else metricsController.newMetricCategories(categories, name);
     }
 

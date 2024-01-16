@@ -76,7 +76,7 @@ public class Factors {
     @PostMapping("/api/factors/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newFactorCategories (@RequestBody List<Map<String, String>> categories, @RequestParam(value = "name", required = false) String name) {
-        if(categories.size()<3)
+        if(categories.size()<1)
             throw new BadRequestException(Messages.NOT_ENOUGH_CATEGORIES);
 
         factorsController.newFactorCategories(categories, name);

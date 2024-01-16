@@ -176,7 +176,7 @@ public class FactorsController {
 
         if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
-        if (categories.size() > 2) {
+        if (categories.size() > 0) {
             //metricCategoryRepository.deleteAll();
             for (Map<String, String> c : categories) {
                 QFCategory qfCategory = new QFCategory();

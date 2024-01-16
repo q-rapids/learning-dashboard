@@ -173,6 +173,7 @@ public class MetricsTest {
         // Give
         metricRawCategoriesList.remove(2);
         metricRawCategoriesList.remove(1);
+        metricRawCategoriesList.remove(0);
         //doThrow(new CategoriesException()).when(metricsDomainController).newMetricCategories(metricRawCategoriesList, "Default");
 
         // Perform request

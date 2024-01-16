@@ -179,6 +179,7 @@ public class FactorEvaluationTest {
         List<Map<String, String>> factorCategoriesList = domainObjectsBuilder.buildRawSICategoryList();
         factorCategoriesList.remove(2);
         factorCategoriesList.remove(1);
+        factorCategoriesList.remove(0);
         doThrow(new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES)).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList, "Default");
 
         //Perform request

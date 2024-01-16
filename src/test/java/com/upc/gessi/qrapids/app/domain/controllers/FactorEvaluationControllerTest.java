@@ -103,6 +103,48 @@ public class FactorEvaluationControllerTest {
         assertEquals(categories.get(2).get("color"), factorCategoryListSaved.get(2).getColor());
         assertEquals(Float.parseFloat(categories.get(2).get("upperThreshold")) / 100f, factorCategoryListSaved.get(2).getUpperThreshold(), 0f);
     }
+    @Test
+    public void newFactorCategoriesUn() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawFactorCategoryList();
+
+        // When
+        factorsController.newFactorCategories(categories, "TEST");
+
+        // Then
+        //verify(factorCategoryRepository, times(1)).deleteAll("TEST");
+        verify(factorCategoryRepository, times(1)).existsByName("TEST");
+
+        ArgumentCaptor<QFCategory> factorCategoryArgumentCaptor = ArgumentCaptor.forClass(QFCategory.class);
+        verify(factorCategoryRepository, times(3)).save(factorCategoryArgumentCaptor.capture());
+        List<QFCategory> factorCategoryListSaved = factorCategoryArgumentCaptor.getAllValues();
+        assertEquals(categories.get(0).get("type"), factorCategoryListSaved.get(0).getType());
+        assertEquals(categories.get(0).get("color"), factorCategoryListSaved.get(0).getColor());
+        assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, factorCategoryListSaved.get(0).getUpperThreshold(), 0f);
+    }
+    @Test
+    public void newFactorCategoriesDos() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawFactorCategoryList();
+
+        // When
+        factorsController.newFactorCategories(categories, "TEST");
+
+        // Then
+        //verify(factorCategoryRepository, times(1)).deleteAll("TEST");
+        verify(factorCategoryRepository, times(1)).existsByName("TEST");
+
+        ArgumentCaptor<QFCategory> factorCategoryArgumentCaptor = ArgumentCaptor.forClass(QFCategory.class);
+        verify(factorCategoryRepository, times(3)).save(factorCategoryArgumentCaptor.capture());
+        List<QFCategory> factorCategoryListSaved = factorCategoryArgumentCaptor.getAllValues();
+        assertEquals(categories.get(0).get("type"), factorCategoryListSaved.get(0).getType());
+        assertEquals(categories.get(0).get("color"), factorCategoryListSaved.get(0).getColor());
+        assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, factorCategoryListSaved.get(0).getUpperThreshold(), 0f);
+        assertEquals(categories.get(1).get("type"), factorCategoryListSaved.get(1).getType());
+        assertEquals(categories.get(1).get("color"), factorCategoryListSaved.get(1).getColor());
+        assertEquals(Float.parseFloat(categories.get(1).get("upperThreshold")) / 100f, factorCategoryListSaved.get(1).getUpperThreshold(), 0f);
+
+    }
 
     @Test(expected = CategoriesException.class)
     public void newFactorCategoriesNotEnough() throws CategoriesException {
@@ -110,6 +152,7 @@ public class FactorEvaluationControllerTest {
         List<Map<String, String>> categories = domainObjectsBuilder.buildRawSICategoryList();
         categories.remove(2);
         categories.remove(1);
+        categories.remove(0);
 
         // Throw
         factorsController.newFactorCategories(categories, "Default");
