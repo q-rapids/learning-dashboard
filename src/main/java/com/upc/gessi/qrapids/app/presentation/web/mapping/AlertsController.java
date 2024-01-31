@@ -11,4 +11,3 @@ public class AlertsController
         return "Alerts/QualityAlerts";
     }
 }
-

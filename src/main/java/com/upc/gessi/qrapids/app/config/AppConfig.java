@@ -2,8 +2,6 @@ package com.upc.gessi.qrapids.app.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.rest.RestClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +14,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EnableAutoConfiguration(exclude={ElasticsearchAutoConfiguration.class, RestClientAutoConfiguration.class})
+@EnableAutoConfiguration( exclude={ } )
 public class AppConfig {
 
 	@Value("${spring.datasource.url}")
@@ -38,9 +36,7 @@ public class AppConfig {
     @Bean
 	@Primary
 	public DataSource dataSource() {
-
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-
 		dataSource.setDriverClassName( this.driverClass );
 		dataSource.setUrl( this.url );
 		dataSource.setUsername( this.username);
@@ -55,13 +51,11 @@ public class AppConfig {
 		jpaVendorAdapter.setGenerateDdl(true);
 		jpaVendorAdapter.setShowSql(true);
 		jpaVendorAdapter.setDatabasePlatform( this.dialect );
-
 		return jpaVendorAdapter;
 	}
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-
 		LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
 		lef.setPackagesToScan("com.upc.gessi.qrapids.app.domain.models");
 		lef.setDataSource(dataSource());

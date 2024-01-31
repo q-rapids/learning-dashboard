@@ -52,8 +52,7 @@
         <a id="Prediction">Prediction</a>
         <a id="Simulation">Simulation</a>
         <a id="QualityAlerts">Alerts</a>
-        <a id="QualityRequirements">Quality Requirements</a>
-        <a id="Decisions">Decisions</a>
+        <a id="DataProtection">Data Protection Advice</a>
         <a id="Reporting" th:if="${@environment.getProperty('jasperServer.url') != ''}">Reporting</a>
         <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
         <div id="helpDropdown" class="dropdown pull-right" style="margin-top: 1em; margin-right: 1em; margin-left: 1em;">
@@ -106,8 +105,6 @@
         <a id="DetailedQualityFactorsAssessment">Detailed Factors</a>
         <a id="MetricsAssessment">Metrics</a>
         <a id="PhasesAssessment" style="display: none;">Phases</a>
-        <a id="RawDataAssessment" th:unless="${@environment.getProperty('rawdata.dashboard') == null}"
-           th:href="@{${@environment.getProperty('rawdata.dashboard')}}" target="_tab">Raw Data</a>
         <a id="QualityModelAssessment">Quality Model</a>
         <span class="pull-right">
             <div class="panel-body" style="color: #3F403F">
@@ -154,7 +151,6 @@
         <a id="CategoriesConfig">Categories</a>
         <a id="ProfilesConfig">Profiles</a>
         <a id="IterationsConfig">Iterations</a>
-        <a id="QRPatternsConfig">Quality Requirements Patterns</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a id="UpdatesConfig">Updates Management</a>
@@ -162,7 +158,6 @@
     <div class="subnav" id="submenuSimulation" th:fragment="navSubBarSimulationDashboard">
         <a id="FactorsSimulation">Factors</a>
         <a id="MetricsSimulation">Metrics</a>
-        <a id="QRSimulation">Quality Requirements</a>
     </div>
     <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
         <a id="originDSI" onclick="navBack(true)"></a>

@@ -1,7 +1,10 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.app.domain.controllers.StudentsController;
-import com.upc.gessi.qrapids.app.domain.models.Student;
+import com.upc.gessi.qrapids.app.domain.models.DataSource;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
@@ -12,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -19,11 +23,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -33,8 +37,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,20 +72,23 @@ public class StudentsTest {
 
         List<DTOStudentMetrics> dtoStudentMetricsList = new ArrayList<>();
         String student_name = "student_test_name";
-        String taiga_username = "taiga_test_username";
-        String github_username = "github_test_username";
-        String prt_username = "prt_test_username";
+        Map<DataSource, DTOStudentIdentity> dTOStudentIdentities = new HashMap<>();
+
+        for(DataSource source: DataSource.values()){
+            dTOStudentIdentities.put(source, new DTOStudentIdentity(source,"username"));
+        }
+
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(student_name, taiga_username, github_username, prt_username, dtoMetricEvaluationList);
+        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(student_name, dTOStudentIdentities, dtoMetricEvaluationList);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
-        when(studentsDomainController.getStudentWithMetricsFromProject("prjExternalId")).thenReturn(dtoStudentMetricsList);
+        when(studentsDomainController.getStudentMetricsFromProject("prjExternalId",null,null,null)).thenReturn(dtoStudentMetricsList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/metrics/student")
+                .get("/api/metrics/students")
                 .param("prj", "prjExternalId");
 
 
@@ -90,11 +96,14 @@ public class StudentsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].project", is(nullValue())))
-                .andExpect(jsonPath("$[0].student_id", is(nullValue())))
-                .andExpect(jsonPath("$[0].studentName", is(student_name)))
-                .andExpect(jsonPath("$[0].taigaUsername", is(taiga_username)))
-                .andExpect(jsonPath("$[0].githubUsername", is(github_username)))
-                .andExpect(jsonPath("$[0].prtUsername", is(prt_username)))
+                .andExpect(jsonPath("$[0].id", is(nullValue())))
+                .andExpect(jsonPath("$[0].name", is(student_name)))
+                .andExpect(jsonPath("$[0].identities.GITHUB.data_source", is(dTOStudentIdentities.get(DataSource.GITHUB).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.GITHUB.username", is(dTOStudentIdentities.get(DataSource.GITHUB).getUsername())))
+                .andExpect(jsonPath("$[0].identities.TAIGA.data_source", is(dTOStudentIdentities.get(DataSource.TAIGA).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.TAIGA.username", is(dTOStudentIdentities.get(DataSource.TAIGA).getUsername())))
+                .andExpect(jsonPath("$[0].identities.PRT.data_source", is(dTOStudentIdentities.get(DataSource.PRT).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.PRT.username", is(dTOStudentIdentities.get(DataSource.PRT).getUsername())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluationList.get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoMetricEvaluationList.get(0).getDescription())))
@@ -116,18 +125,40 @@ public class StudentsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier")),
                         responseFields(
-                                fieldWithPath("[].student_id")
+                                fieldWithPath("[].id")
                                     .description("Student identifier"),
                                 fieldWithPath("[].project")
-                                        .description("Project if the student"),
-                                fieldWithPath("[].studentName")
+                                        .description("Project of the student"),
+                                fieldWithPath("[].name")
                                     .description("Name of the student"),
-                                fieldWithPath("[].taigaUsername")
-                                        .description("Taiga username of the student"),
-                                fieldWithPath("[].githubUsername")
-                                        .description("Github username of the student"),
-                                fieldWithPath("[].prtUsername")
-                                        .description("PRT username of the student"),
+                                fieldWithPath("[].metrics_size")
+                                        .description("Metrics size"),
+                                fieldWithPath("[].identities")
+                                        .description("Student identities such as Github, Taiga"),
+                                fieldWithPath("[].identities.GITHUB")
+                                        .description("Student Github identity"),
+                                fieldWithPath("[].identities.GITHUB.data_source")
+                                        .description("Student Github identity data source"),
+                                fieldWithPath("[].identities.GITHUB.username")
+                                        .description("Student Github username"),
+                                fieldWithPath("[].identities.GITHUB.student")
+                                        .description("Github student"),
+                                fieldWithPath("[].identities.TAIGA")
+                                        .description("Student Taiga identity"),
+                                fieldWithPath("[].identities.TAIGA.data_source")
+                                        .description("Student Taiga identity data source"),
+                                fieldWithPath("[].identities.TAIGA.username")
+                                        .description("Student Taiga username"),
+                                fieldWithPath("[].identities.TAIGA.student")
+                                        .description("Taiga student"),
+                                fieldWithPath("[].identities.PRT")
+                                        .description("Student PRT identity"),
+                                fieldWithPath("[].identities.PRT.data_source")
+                                        .description("Student PRT identity data source"),
+                                fieldWithPath("[].identities.PRT.username")
+                                        .description("Student PRT username"),
+                                fieldWithPath("[].identities.PRT.student")
+                                        .description("PRT student"),
                                 fieldWithPath("[].metrics[].id")
                                         .description("Metric identifier"),
                                 fieldWithPath("[].metrics[].name")
@@ -156,7 +187,7 @@ public class StudentsTest {
                 ));
 
         // Verify mock interactions
-        verify(studentsDomainController, times(1)).getStudentWithMetricsFromProject("prjExternalId");
+        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId",null,null,null);
         verifyNoMoreInteractions(studentsDomainController);
 
 
@@ -165,26 +196,33 @@ public class StudentsTest {
     @Test
     public void getStudentsAndMetricsHistorical() throws Exception {
 
-        List<DTOStudentMetricsHistorical> dtoStudentMetricsList = new ArrayList<>();
+        List<DTOStudentMetrics> dtoStudentMetricsList = new ArrayList<>();
         String student_name = "student_test_name";
-        String taiga_username = "taiga_test_username";
-        String github_username = "github_test_username";
-        String prt_username = "prt_test_username";
+
+        Map<DataSource, DTOStudentIdentity> dTOStudentIdentities = new HashMap<>();
+
+        for(DataSource source: DataSource.values()){
+            dTOStudentIdentities.put(source, new DTOStudentIdentity(source,"username"));
+        }
+
         String from = "2000-01-01";
         LocalDate localDateFrom = LocalDate.parse(from);
         String to = "2000-05-01";
         LocalDate localDateTo = LocalDate.parse(to);
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(domainObjectsBuilder.buildDTOMetric());
-        DTOStudentMetricsHistorical dtoStudentMetrics = new DTOStudentMetricsHistorical(student_name, taiga_username, github_username, prt_username, dtoMetricEvaluationList, 1);
+        DTOStudentMetrics dtoStudentMetrics = new DTOStudentMetrics(
+                student_name, dTOStudentIdentities, dtoMetricEvaluationList, 1);
         dtoStudentMetricsList.add(dtoStudentMetrics);
 
         // Given
-        when(studentsDomainController.getStudentWithHistoricalMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId")).thenReturn(dtoStudentMetricsList);
+        when(studentsDomainController.getStudentMetricsFromProject(
+                "prjExternalId", localDateFrom, localDateTo, "profileId"))
+                .thenReturn(dtoStudentMetricsList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/metrics/student/historical")
+                .get("/api/metrics/students/historical")
                 .param("prj", "prjExternalId")
                 .param("from", String.valueOf(localDateFrom))
                 .param("to", String.valueOf(localDateTo))
@@ -195,12 +233,15 @@ public class StudentsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].project", is(nullValue())))
-                .andExpect(jsonPath("$[0].student_id", is(nullValue())))
-                .andExpect(jsonPath("$[0].studentName", is(student_name)))
-                .andExpect(jsonPath("$[0].taigaUsername", is(taiga_username)))
-                .andExpect(jsonPath("$[0].githubUsername", is(github_username)))
-                .andExpect(jsonPath("$[0].prtUsername", is(prt_username)))
-                .andExpect(jsonPath("$[0].numberMetrics", is(1)))
+                .andExpect(jsonPath("$[0].id", is(nullValue())))
+                .andExpect(jsonPath("$[0].name", is(student_name)))
+                .andExpect(jsonPath("$[0].identities.GITHUB.data_source", is(dTOStudentIdentities.get(DataSource.GITHUB).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.GITHUB.username", is(dTOStudentIdentities.get(DataSource.GITHUB).getUsername())))
+                .andExpect(jsonPath("$[0].identities.TAIGA.data_source", is(dTOStudentIdentities.get(DataSource.TAIGA).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.TAIGA.username", is(dTOStudentIdentities.get(DataSource.TAIGA).getUsername())))
+                .andExpect(jsonPath("$[0].identities.PRT.data_source", is(dTOStudentIdentities.get(DataSource.PRT).getDataSource().toString())))
+                .andExpect(jsonPath("$[0].identities.PRT.username", is(dTOStudentIdentities.get(DataSource.PRT).getUsername())))
+                .andExpect(jsonPath("$[0].metrics_size", is(1)))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluationList.get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluationList.get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoMetricEvaluationList.get(0).getDescription())))
@@ -222,25 +263,46 @@ public class StudentsTest {
                                 parameterWithName("prj")
                                     .description("Project external identifier"),
                                 parameterWithName("profile")
-                                    .description("Profile identifier"),
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                     .description("Initial date"),
                                 parameterWithName("to")
                                     .description("Final Date")),
                         responseFields(
-                                fieldWithPath("[].student_id")
+                                fieldWithPath("[].id")
                                         .description("Student identifier"),
                                 fieldWithPath("[].project")
                                         .description("Project if the student"),
-                                fieldWithPath("[].studentName")
+                                fieldWithPath("[].name")
                                         .description("Name of the student"),
-                                fieldWithPath("[].taigaUsername")
-                                        .description("Taiga username of the student"),
-                                fieldWithPath("[].githubUsername")
-                                        .description("Github username of the student"),
-                                fieldWithPath("[].prtUsername")
-                                        .description("PRT username of the student"),
-                                fieldWithPath("[].numberMetrics")
+                                fieldWithPath("[].identities")
+                                        .description("Student identities such as Github, Taiga"),
+                                fieldWithPath("[].identities.GITHUB")
+                                        .description("Student Github identity"),
+                                fieldWithPath("[].identities.GITHUB.data_source")
+                                        .description("Student Github identity data source"),
+                                fieldWithPath("[].identities.GITHUB.username")
+                                        .description("Student Github username"),
+                                fieldWithPath("[].identities.GITHUB.student")
+                                        .description("Github student"),
+                                fieldWithPath("[].identities.TAIGA")
+                                        .description("Student Taiga identity"),
+                                fieldWithPath("[].identities.TAIGA.data_source")
+                                        .description("Student Taiga identity data source"),
+                                fieldWithPath("[].identities.TAIGA.username")
+                                        .description("Student Taiga username"),
+                                fieldWithPath("[].identities.TAIGA.student")
+                                        .description("Taiga student"),
+                                fieldWithPath("[].identities.PRT")
+                                        .description("Student PRT identity"),
+                                fieldWithPath("[].identities.PRT.data_source")
+                                        .description("Student PRT identity data source"),
+                                fieldWithPath("[].identities.PRT.username")
+                                        .description("Student PRT username"),
+                                fieldWithPath("[].identities.PRT.student")
+                                        .description("PRT student"),
+                                fieldWithPath("[].metrics_size")
                                         .description("Number of metrics"),
                                 fieldWithPath("[].metrics[].id")
                                         .description("Metric identifier"),
@@ -270,7 +332,7 @@ public class StudentsTest {
                 ));
 
         // Verify mock interactions
-        verify(studentsDomainController, times(1)).getStudentWithHistoricalMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId");
+        verify(studentsDomainController, times(1)).getStudentMetricsFromProject("prjExternalId", localDateFrom, localDateTo, "profileId");
         verifyNoMoreInteractions(studentsDomainController);
 
     }
@@ -278,24 +340,43 @@ public class StudentsTest {
     @Test
     public void updateMetricStudent() throws Exception {
 
-        DTOStudent dtoStudent = new DTOStudent("student_test_name", "taiga_test_name", "github_test_name", "prt_test_name", null);
-        String[] userMetricstemp = { "s1", "s2", "s3" };
-        String studentsList = "student_test_name,taiga_test_name,github_test_name,prt_test_name";
-        String studentId="1";
+        Map<DataSource, DTOStudentIdentity> dtoStudentIdentities = new HashMap<>();
+        Map<DataSource, String> dtoCreateIdentities = new HashMap<>();
+
+        for(DataSource source: DataSource.values()){
+            dtoStudentIdentities.put(source, new DTOStudentIdentity(source,"username"));
+            dtoCreateIdentities.put(source, "username");
+        }
+
+        String studentName = "student_test_name";
+
+        DTOStudent dtoStudent = new DTOStudent(studentName, dtoStudentIdentities, null);
+
+        DTOCreateStudent dtoCreateStudent = new DTOCreateStudent();
+        dtoCreateStudent.setName(studentName);
+        dtoCreateStudent.setIdentities(dtoCreateIdentities);
+        dtoCreateStudent.setId(1L);
         String projectId="1";
+
+        List<Long> userMetricstemp = new ArrayList<>(Arrays.asList(1L,2L,3L));
+        dtoCreateStudent.setMetrics(userMetricstemp);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE,false);
+
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+
+
+        when(studentsDomainController.updateStudentAndMetrics(dtoCreateStudent.getId(), dtoStudent, dtoCreateStudent.getMetrics(), projectId)).thenReturn(dtoCreateStudent.getId());
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/metrics/student")
-                .param("userTemp", userMetricstemp)
-                .param("studentId", studentId)
-                .param("projectId", projectId)
-                .param("studentsList", studentsList)
-                .with(new RequestPostProcessor() {
-                    @Override
-                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                        request.setMethod("PUT");
-                        return request;
-                    }
+                .multipart("/api/metrics/students")
+                .param("prj", projectId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectWriter.writeValueAsString(dtoCreateStudent))
+                .with(request -> {
+                    request.setMethod("PUT");
+                    return request;
                 });
 
         this.mockMvc.perform(requestBuilder)
@@ -304,31 +385,44 @@ public class StudentsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("userTemp")
-                                        .description("List of metrics ids that belong to the student"),
-                                parameterWithName("studentId")
-                                        .description("Id of the student"),
-                                parameterWithName("studentsList")
-                                        .description("String with the name and username of the students, separated by a comma"),
-                                parameterWithName("projectId")
-                                        .description("Id of the student's project")
+                                parameterWithName("prj")
+                                        .description("External id of the student's project")
+                        ),
+                        requestFields(
+                                fieldWithPath("id")
+                                        .description("Student id"),
+                                fieldWithPath("name")
+                                        .description("Student name"),
+                                fieldWithPath("identities")
+                                        .description("Student identities such as Github, Taiga"),
+                                fieldWithPath("identities.GITHUB")
+                                        .description("Student Github identity"),
+                                fieldWithPath("identities.TAIGA")
+                                        .description("Student Taiga identity"),
+                                fieldWithPath("identities.PRT")
+                                        .description("Student PRT identity"),
+                                fieldWithPath("metrics[]")
+                                        .description("Metrics ids")
                         )
                 ));
 
         // Verify mock interactions
         ArgumentCaptor<DTOStudent> argument1 = ArgumentCaptor.forClass(DTOStudent.class);
-        ArgumentCaptor<String> argument2 = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String[]> argument3 = ArgumentCaptor.forClass(String[].class);
+        ArgumentCaptor<Long> argument2 = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<List<Long>> argument3 = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<String> argument4 = ArgumentCaptor.forClass(String.class);
-        verify(studentsDomainController, times(1)).updateStudents(argument2.capture(), argument1.capture(),argument3.capture(),argument4.capture());
-        assertEquals(dtoStudent.getStudent_id(), argument1.getValue().getStudent_id());
-        assertEquals(dtoStudent.getStudentName(), argument1.getValue().getStudentName());
-        assertEquals(dtoStudent.getTaigaUsername(), argument1.getValue().getTaigaUsername());
-        assertEquals(dtoStudent.getGithubUsername(), argument1.getValue().getGithubUsername());
-        assertEquals(dtoStudent.getPrtUsername(), argument1.getValue().getPrtUsername());
-        assertEquals(studentId, argument2.getValue());
-        assertEquals(userMetricstemp[0], argument3.getValue()[0]);
+        verify(studentsDomainController, times(1)).updateStudentAndMetrics(argument2.capture(), argument1.capture(),argument3.capture(),argument4.capture());
+        assertEquals(dtoStudent.getId(), argument1.getValue().getId());
+        assertEquals(dtoStudent.getName(), argument1.getValue().getName());
+
+        argument1.getValue().getIdentities().forEach(((dataSource, studentIdentity) -> {
+            assertEquals(dtoStudentIdentities.get(dataSource).getUsername(), studentIdentity.getUsername() );
+        }));
+
+        assertEquals(dtoCreateStudent.getId(), argument2.getValue());
+        assertEquals(dtoCreateStudent.getMetrics().get(0), argument3.getValue().get(0));
         assertEquals(projectId, argument4.getValue());
+
         verifyNoMoreInteractions(studentsDomainController);
 
     }
@@ -338,7 +432,7 @@ public class StudentsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .delete("/api/metrics/student/{id}", 1L);
+                .delete("/api/metrics/students/{id}", 1L);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

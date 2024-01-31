@@ -87,13 +87,13 @@ public class FeedbackTest {
         String factor3Name = "Factor 3";
         factorNames.add(factor3Name);
 
-        List<String> factorValues = new ArrayList<>();
+        List<Float> factorValues = new ArrayList<>();
         Float factor1Value = 0.8f;
-        factorValues.add(factor1Value.toString());
+        factorValues.add(factor1Value);
         Float factor2Value = 0.7f;
-        factorValues.add(factor2Value.toString());
+        factorValues.add(factor2Value);
         Float factor3Value = 0.6f;
-        factorValues.add(factor3Value.toString());
+        factorValues.add(factor3Value);
 
         List<String> factorEvaluationDates = new ArrayList<>();
         String factor1Date = "2019-07-07";
@@ -203,8 +203,9 @@ public class FeedbackTest {
         Date date = new Date(dateAux.getTime());
         Double newValue = 0.75;
         Double oldValue = 0.6;
+        String author = "author";
 
-        com.upc.gessi.qrapids.app.domain.models.Feedback feedback = new com.upc.gessi.qrapids.app.domain.models.Feedback(strategicIndicatorId, date, null, null, newValue.floatValue(), oldValue.floatValue());
+        com.upc.gessi.qrapids.app.domain.models.Feedback feedback = new com.upc.gessi.qrapids.app.domain.models.Feedback(strategicIndicatorId, date, author, null, newValue.floatValue(), oldValue.floatValue());
         List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbackList = new ArrayList<>();
         feedbackList.add(feedback);
         when(feedbackDomainController.getFeedbackForStrategicIndicator(strategicIndicatorId)).thenReturn(feedbackList);
@@ -218,7 +219,7 @@ public class FeedbackTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].strategicIndicatorId", is(strategicIndicatorId.intValue())))
                 .andExpect(jsonPath("$[0].date", is(date.toString())))
-                .andExpect(jsonPath("$[0].author", is(nullValue())))
+                .andExpect(jsonPath("$[0].author", is(author)))
                 .andExpect(jsonPath("$[0].newValue", is(newValue)))
                 .andExpect(jsonPath("$[0].oldValue", is(oldValue)))
                 .andDo(document("feedback/get-feedback",
@@ -253,6 +254,7 @@ public class FeedbackTest {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Blocking";
         String date = "2019-07-07";
+        String author = "author";
 
         List<String> factorNames = new ArrayList<>();
         String factor1Name = "Factor 1";
@@ -278,7 +280,7 @@ public class FeedbackTest {
         String newCategory = "High";
         String newCategoryColor = "Green";
 
-        FeedbackFactors feedbackFactors = new FeedbackFactors(strategicIndicatorId, strategicIndicatorName, date, factorNames, factorValues, null, oldValue.floatValue(), oldCategory, oldCategoryColor, newValue.floatValue(), newCategory, newCategoryColor);
+        FeedbackFactors feedbackFactors = new FeedbackFactors(strategicIndicatorId, strategicIndicatorName, date, factorNames, factorValues, author, oldValue.floatValue(), oldCategory, oldCategoryColor, newValue.floatValue(), newCategory, newCategoryColor);
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         feedbackFactorsList.add(feedbackFactors);
 
@@ -300,7 +302,7 @@ public class FeedbackTest {
                 .andExpect(jsonPath("$[0].factVal[0]", is(factor1Value)))
                 .andExpect(jsonPath("$[0].factVal[1]", is(factor2Value)))
                 .andExpect(jsonPath("$[0].factVal[2]", is(factor3Value)))
-                .andExpect(jsonPath("$[0].author", is(nullValue())))
+                .andExpect(jsonPath("$[0].author", is(author)))
                 .andExpect(jsonPath("$[0].oldvalue", is(oldValue)))
                 .andExpect(jsonPath("$[0].oldCategory", is(oldCategory)))
                 .andExpect(jsonPath("$[0].oldCategoryColor", is(oldCategoryColor)))

@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.Relations.RelationDTO;
 import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
+import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
@@ -11,7 +12,6 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
@@ -50,16 +50,24 @@ public class QMARelations {
                                                        List<Float> weights,
                                                        List<Float> factorValues,
                                                        List<String> factorLabels,
-                                                       String strategicIndicatorValue) throws IOException {
-        return Relations.setStrategicIndicatorFactorRelation(
-                projectId,
-                factorIds.toArray(new String[0]),
-                strategicIndicatorId,
-                evaluationDate,
-                convertFloatListToDoubleArray(weights),
-                convertFloatListToDoubleArray(factorValues),
-                factorLabels.toArray(new String[0]),
-                strategicIndicatorValue);
+                                                       String strategicIndicatorValue) {
+
+        qmacon.initConnexion();
+        try {
+            return Relations.setStrategicIndicatorFactorRelation(
+                    projectId,
+                    factorIds.toArray(new String[0]),
+                    strategicIndicatorId,
+                    evaluationDate,
+                    convertFloatListToDoubleArray(weights),
+                    convertFloatListToDoubleArray(factorValues),
+                    factorLabels.toArray(new String[0]),
+                    strategicIndicatorValue);
+        }
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean setQualityFactorMetricRelation(String projectId,
@@ -69,16 +77,24 @@ public class QMARelations {
                                                        List<Float> weights,
                                                        List<Float> metricValues,
                                                        List<String> metricLabels,
-                                                       String qualityFactorValue) throws IOException {
-        return Relations.setQualityFactorMetricRelation(
-                projectId,
-                metricsIds.toArray(new String[0]),
-                qualityFactorId,
-                evaluationDate,
-                convertFloatListToDoubleArray(weights),
-                convertFloatListToDoubleArray(metricValues),
-                metricLabels.toArray(new String[0]),
-                qualityFactorValue);
+                                                       String qualityFactorValue) {
+
+        qmacon.initConnexion();
+        try {
+            return Relations.setQualityFactorMetricRelation(
+                    projectId,
+                    metricsIds.toArray(new String[0]),
+                    qualityFactorId,
+                    evaluationDate,
+                    convertFloatListToDoubleArray(weights),
+                    convertFloatListToDoubleArray(metricValues),
+                    metricLabels.toArray(new String[0]),
+                    qualityFactorValue);
+        }
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private double[] convertFloatListToDoubleArray(List<Float> floatList) {
@@ -93,7 +109,7 @@ public class QMARelations {
     public List<DTORelationsSI> getRelations (String prj, String profile, LocalDate date) throws IOException, CategoriesException, ProjectNotFoundException {
         qmacon.initConnexion();
         List<RelationDTO> relationDTOS;
-        // get relations from elasticsearch
+        // get relations from MongoDB
         if (date == null)
             relationDTOS = Relations.getRelations(prj);
         else

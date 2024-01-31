@@ -37,6 +37,9 @@ public class MetricsControllerTest {
     private Forecast qmaForecast;
 
     @Mock
+    private AlertsController alertsController;
+
+    @Mock
     private MetricCategoryRepository metricCategoryRepository;
 
     @InjectMocks
@@ -89,12 +92,56 @@ public class MetricsControllerTest {
         assertEquals(Float.parseFloat(categories.get(2).get("upperThreshold")) / 100f, metricCategoryListSaved.get(2).getUpperThreshold(), 0f);
     }
 
+    @Test
+    public void newMetricCategoriesDos() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawMetricCategoryList();
+
+        // When
+        metricsController.newMetricCategories(categories, "TEST");
+
+        // Then
+        //verify(metricCategoryRepository, times(1)).deleteAll();
+        verify(metricCategoryRepository, times(1)).existsByName("TEST");
+
+        ArgumentCaptor<MetricCategory> metricCategoryArgumentCaptor = ArgumentCaptor.forClass(MetricCategory.class);
+        verify(metricCategoryRepository, times(3)).save(metricCategoryArgumentCaptor.capture());
+        List<MetricCategory> metricCategoryListSaved = metricCategoryArgumentCaptor.getAllValues();
+        assertEquals(categories.get(0).get("type"), metricCategoryListSaved.get(0).getType());
+        assertEquals(categories.get(0).get("color"), metricCategoryListSaved.get(0).getColor());
+        assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, metricCategoryListSaved.get(0).getUpperThreshold(), 0f);
+        assertEquals(categories.get(1).get("type"), metricCategoryListSaved.get(1).getType());
+        assertEquals(categories.get(1).get("color"), metricCategoryListSaved.get(1).getColor());
+        assertEquals(Float.parseFloat(categories.get(1).get("upperThreshold")) / 100f, metricCategoryListSaved.get(1).getUpperThreshold(), 0f);
+    }
+
+    @Test
+    public void newMetricCategoriesUn() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawMetricCategoryList();
+
+        // When
+        metricsController.newMetricCategories(categories, "TEST");
+
+        // Then
+        //verify(metricCategoryRepository, times(1)).deleteAll();
+        verify(metricCategoryRepository, times(1)).existsByName("TEST");
+
+        ArgumentCaptor<MetricCategory> metricCategoryArgumentCaptor = ArgumentCaptor.forClass(MetricCategory.class);
+        verify(metricCategoryRepository, times(3)).save(metricCategoryArgumentCaptor.capture());
+        List<MetricCategory> metricCategoryListSaved = metricCategoryArgumentCaptor.getAllValues();
+        assertEquals(categories.get(0).get("type"), metricCategoryListSaved.get(0).getType());
+        assertEquals(categories.get(0).get("color"), metricCategoryListSaved.get(0).getColor());
+        assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, metricCategoryListSaved.get(0).getUpperThreshold(), 0f);
+    }
+
     @Test(expected = CategoriesException.class)
     public void newMetricCategoriesNotEnough() throws CategoriesException {
         // Given
         List<Map<String, String>> categories = domainObjectsBuilder.buildRawMetricCategoryList();
         categories.remove(2);
         categories.remove(1);
+        categories.remove(0);
 
         // Throw
         metricsController.newMetricCategories(categories, "Default");

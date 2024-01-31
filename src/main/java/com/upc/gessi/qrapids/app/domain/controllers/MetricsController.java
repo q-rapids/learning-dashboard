@@ -1,28 +1,26 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.mongodb.MongoException;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
-import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import org.elasticsearch.ElasticsearchStatusException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudent;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStudentIdentity;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MetricsController {
@@ -42,10 +40,16 @@ public class MetricsController {
     @Autowired
     private ProjectsController projectController;
 
+    @Autowired
+    private StudentsController studentsController;
+
+    @Autowired
+    private AlertsController alertsController;
+
     public Metric findMetricByExternalId (String externalId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalId(externalId);
         if (metric == null) {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException(externalId);
         }
         return metric;
     }
@@ -53,7 +57,7 @@ public class MetricsController {
     public Metric findMetricByExternalIdAndProjectId(String externalId, Long prjId) throws MetricNotFoundException {
         Metric metric = metricRepository.findByExternalIdAndProjectId(externalId,prjId);
         if (metric == null) {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException("The metric identifier '%s' not found for project %s", externalId, prjId.toString());
         }
         return metric;
     }
@@ -63,16 +67,56 @@ public class MetricsController {
         if (metricOptional.isPresent()) {
             return metricOptional.get();
         } else {
-            throw new MetricNotFoundException();
+            throw new MetricNotFoundException(metricId.toString());
         }
     }
 
-    public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
-        Project project = projectController.findProjectByExternalId(prj);
-        return metricRepository.findByProject_IdOrderByName(project.getId());
+    public void normalizeMetricsEvaluation(List<DTOMetricEvaluation> metrics, List<DTOStudent> students, Map<Long, String> normalizedNames) {
+        metrics.forEach(metric -> {
+            students.forEach(student -> {
+                List<DTOStudentIdentity> studentIdentities = new ArrayList<>(student.getIdentities().values());
+                metric.setName(studentsController.normalizedName(metric.getName(), studentIdentities, normalizedNames.get(student.getId())));
+            });
+        });
     }
 
-    public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException {
+
+
+    public void normalizeMetrics(List<Metric> metrics, List<DTOStudent> students, Map<Long, String> normalizedNames) {
+        Map<Long, DTOStudent> studentMap = new HashMap<>();
+        students.forEach(student -> {
+            studentMap.put(student.getId(), student);
+        });
+
+        metrics.forEach(metric -> {
+            if(metric.getStudent() != null) {
+                Long studentId = metric.getStudent().getId();
+                List<DTOStudentIdentity> identities = new ArrayList<>(studentMap.get(studentId).getIdentities().values());
+                metric.setName(studentsController.normalizedName(metric.getName(), identities ,  normalizedNames.get(studentId)));
+            }
+
+        });
+    }
+
+
+
+
+
+
+
+    public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
+        Project project = projectController.findProjectByExternalId(prj);
+        List<Metric> metrics = metricRepository.findByProject_IdOrderByName(project.getId());
+        Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
+
+        List<DTOStudent> students = studentsController.getStudentsDTOFromProject(project.getId());
+
+        normalizeMetrics(metrics, students, normalizedNames);
+
+        return metrics;
+    }
+
+    public void importMetricsAndUpdateDatabase() throws IOException {
         List<String> projects = projectController.getAllProjectsExternalID();
         for (String prj : projects) {
             List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj, null);
@@ -117,8 +161,7 @@ public class MetricsController {
 
     }
 
-    public void deleteMetricCategory(String name) throws CategoriesException {
-
+    public void deleteMetricCategory(String name) {
         Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAllByName(name);
         for(MetricCategory m : metricCategoryIterable)  {
             metricCategoryRepository.deleteById(m.getId());
@@ -128,7 +171,7 @@ public class MetricsController {
 
     public void updateMetricCategory(List<Map<String, String>> categories ,String name) throws CategoriesException {
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
         deleteMetricCategory(name);
         newMetricCategories(categories, name);
     }
@@ -152,11 +195,11 @@ public class MetricsController {
     public void newMetricCategories (List<Map<String, String>> categories, String name) throws CategoriesException {
 
         boolean exists=CheckIfNameExists(name);
-        if(exists) throw new CategoriesException();
+        if(exists) throw new CategoriesException(Messages.CATEGORY_ALREADY_EXISTS);
 
-        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException();
+        if(checkIfCategoriesHasRepeats(categories)) throw new CategoriesException(Messages.CATEGORIES_HAVE_REPEATS);
 
-        if (categories.size() > 2) {
+        if (categories.size() > 0) {
             //metricCategoryRepository.deleteAll();
             for (Map<String, String> c : categories) {
                 MetricCategory metricCategory = new MetricCategory();
@@ -168,7 +211,7 @@ public class MetricsController {
                 metricCategoryRepository.save(metricCategory);
             }
         } else {
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
@@ -176,34 +219,46 @@ public class MetricsController {
         qmaMetrics.setMetricQualityFactorRelation(metricList, projectExternalId);
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, MongoException {
         return qmaMetrics.CurrentEvaluation(null, projectExternalId, profileId);
     }
 
-    public DTOMetricEvaluation getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public DTOMetricEvaluation getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, MongoException {
         return qmaMetrics.SingleCurrentEvaluation(metricId, projectExternalId);
     }
 
-    public List<DTOMetricEvaluation> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, MongoException {
         // it's already filtered by quality factor
         return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId, null);
     }
 
-    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, MongoException {
         return qmaMetrics.SingleHistoricalData(metricId, from, to, projectExternalId, profileId);
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, MongoException {
         return qmaMetrics.HistoricalData(null, from, to, projectExternalId, profileId);
     }
 
-    public List<DTOMetricEvaluation> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, MongoException {
         // it's already filtered by quality factor
         return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId, null);
     }
 
-    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
-        return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, MongoException, MetricNotFoundException, QualityFactorNotFoundException, StrategicIndicatorNotFoundException {
+        List<DTOMetricEvaluation> forecast = qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+        int period = Integer.parseInt(horizon);
+        int j = 0;
+        for(int i = 0; i < forecast.size(); i += period, ++j){
+            while (i < forecast.size() && forecast.get(i).getForecastingError() != null){
+                ++i; ++j;
+            }
+            if (i >= forecast.size()) break;
+            int subListEnd = Math.min(i + period, forecast.size());
+            List<DTOMetricEvaluation> forecastedValues = new ArrayList<>(forecast.subList(i, subListEnd));
+            alertsController.checkAlertsForMetricsPrediction(currentEvaluation.get(j), forecastedValues, projectExternalId, technique);
+        }
+        return forecast;
     }
 
     public String getMetricLabelFromValue(Float value) {
@@ -235,5 +290,16 @@ public class MetricsController {
 
     public List<MetricCategory> getMetricCategories() {
         return (List<MetricCategory>) metricCategoryRepository.findAll();
+    }
+
+    public void updateStudentMetricsByIds(List<Long> metricsIds, Student student){
+        metricsIds.forEach(metricId ->{
+            Optional<Metric> metricSearchResult = metricRepository.findById(metricId);
+            if (metricSearchResult.isPresent()) {
+                Metric metric = metricSearchResult.get();
+                metric.setStudent(student);
+                metricRepository.save(metric);
+            }
+        });
     }
 }

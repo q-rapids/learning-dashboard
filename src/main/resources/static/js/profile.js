@@ -1627,7 +1627,7 @@ function saveNewProfile() {
 
                 else {
                     warningUtils()
-                    warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error","Error in MongoDB: contact to the system administrator");
                     location.href = serverUrl + "/Profiles/Configuration";
                 }
             },
@@ -1736,7 +1736,7 @@ function saveProfile() {
                 if (jqXHR.status == 409)
                     warningUtils("Error", "This Profile name is already in use");
                 else {
-                    warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error","Error in MongoDB: contact to the system administrator");
                     location.href = "../Profiles/Configuration";
                 }
             },
@@ -1760,7 +1760,7 @@ function deleteProfile() {
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
-                warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                warningUtils("Error","Error in MongoDB: contact to the system administrator");
                 location.href = serverUrl + "/Profiles/Configuration";
             },
             success: function() {

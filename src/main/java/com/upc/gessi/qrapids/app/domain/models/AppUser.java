@@ -1,11 +1,11 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
+import com.upc.gessi.qrapids.app.domain.utils.AnonymizationModes;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Entity
@@ -44,6 +44,13 @@ public class AppUser implements Serializable{
     @Column(name="last_connection")
     private LocalDateTime last_connection;
 
+    @Column(name="anonymous_mode")
+    private boolean anonymousMode;
+
+    @Column(name="anonymous_mode_selected")
+    private AnonymizationModes anonymousModeSelected;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "user_project",
             joinColumns = { @JoinColumn(name = "user_id") },
@@ -61,6 +68,8 @@ public class AppUser implements Serializable{
         this.userGroup = userGroup;
         this.appuser_question = appuser_question;
         this.question = question;
+        this.anonymousMode = false;
+        this.anonymousModeSelected = AnonymizationModes.COUNTRIES;
     }
 
     public AppUser(String username, String email, boolean admin, String password) {
@@ -149,7 +158,24 @@ public class AppUser implements Serializable{
         return question;
     }
 
-    public boolean hasRoute ( String route ) {
+    public boolean isAnonymousMode() {
+        return anonymousMode;
+    }
+
+    public void setAnonymousMode(boolean anonymousMode) {
+        this.anonymousMode = anonymousMode;
+    }
+
+
+    public AnonymizationModes getAnonymousModeSelected() {
+        return anonymousModeSelected;
+    }
+
+    public void setAnonymousModeSelected(AnonymizationModes anonymousModeSelected) {
+        this.anonymousModeSelected = anonymousModeSelected;
+    }
+
+    public boolean hasRoute (String route ) {
 
         if ( this.admin )
             return true;
@@ -179,6 +205,8 @@ public class AppUser implements Serializable{
                 ", userGroup=" + userGroup +
                 ", appuser_question=" + appuser_question +
                 ", question='" + question + '\'' +
+                ", anonymousMode='" + anonymousMode + '\'' +
+                ", anonymousModeSelected='" + anonymousModeSelected + '\'' +
                 '}';
     }
 }

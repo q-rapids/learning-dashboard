@@ -31,9 +31,6 @@ public class Util {
 
     private AuthTools authTools;
 
-    @Value("${rawdata.dashboard}")
-    private String rawdataDashboard;
-
     @Value("${pabre.url}")
     private String pabreUrl;
 
@@ -43,11 +40,12 @@ public class Util {
     @Value("${assessSI.url:}")
     private String assessSIUrl;
 
-    // add jasterserver data
     @Value("${jasperServer.url}")
     private String jasperserverURL;
+
     @Value("${jasperserver.user}")
     private String jasperserverUser;
+
     @Value("${jasperserver.password}")
     private String jasperserverPassword;
 
@@ -55,12 +53,6 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public List<String> jasperserverInfo() {
         return Arrays.asList(jasperserverURL, jasperserverUser, jasperserverPassword);
-    }
-
-    @GetMapping("/api/rawdataDashboard")
-    @ResponseStatus(HttpStatus.OK)
-    public String RawDataDashboard() {
-        return rawdataDashboard;
     }
 
     @GetMapping("/api/serverUrl")

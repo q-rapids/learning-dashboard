@@ -60,7 +60,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
-                warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+                warningUtils("Error", "Error in MongoDB: contact to the system administrator");
             },
             success: function() {
                 warningUtils("Ok", "Metric saved successfully")
@@ -94,7 +94,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                         contentType: false,
                         processData: false,
                         error: function (jqXHR, textStatus, errorThrown) {
-                            warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+                            warningUtils("Error", "Error in MongoDB: contact to the system administrator");
                             --cont;
                         },
                         success: function () {

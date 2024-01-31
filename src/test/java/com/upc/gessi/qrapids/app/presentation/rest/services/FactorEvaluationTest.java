@@ -14,6 +14,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.Before;
@@ -90,7 +91,8 @@ public class FactorEvaluationTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/factors/categories?name=Default");
+                .get("/api/factors/categories")
+                .param("name", "Default");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -110,6 +112,11 @@ public class FactorEvaluationTest {
                 .andDo(document("qf/categories",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Category name (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Category identifier"),
@@ -137,7 +144,8 @@ public class FactorEvaluationTest {
         // Perform request
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/factors/categories?name=test")
+                .post("/api/factors/categories")
+                .param("name", "test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(factorCategoriesList));
 
@@ -146,6 +154,11 @@ public class FactorEvaluationTest {
                 .andDo(document("qf/categories-new",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Category name (Optional)")
+                                        .optional()
+                        ),
                         requestFields(
                                 fieldWithPath("[].type")
                                         .description("Quality factors category type"),
@@ -166,7 +179,8 @@ public class FactorEvaluationTest {
         List<Map<String, String>> factorCategoriesList = domainObjectsBuilder.buildRawSICategoryList();
         factorCategoriesList.remove(2);
         factorCategoriesList.remove(1);
-        doThrow(new CategoriesException()).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList, "Default");
+        factorCategoriesList.remove(0);
+        doThrow(new CategoriesException(Messages.NOT_ENOUGH_CATEGORIES)).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList, "Default");
 
         //Perform request
         Gson gson = new Gson();
@@ -177,7 +191,6 @@ public class FactorEvaluationTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(status().reason("Not enough categories"))
                 .andDo(document("qf/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
@@ -230,7 +243,11 @@ public class FactorEvaluationTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -420,6 +437,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
@@ -519,7 +539,11 @@ public class FactorEvaluationTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -615,6 +639,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
@@ -689,10 +716,10 @@ public class FactorEvaluationTest {
         String metricId = "fasttests";
         Float metricValue = 0.7f;
         String date = "2019-07-07";
-        Map<String, String> metric = new HashMap<>();
+        Map<String, Object> metric = new HashMap<>();
         metric.put("id", metricId);
-        metric.put("value", metricValue.toString());
-        List<Map<String, String>> metricList = new ArrayList<>();
+        metric.put("value", metricValue);
+        List<Map<String, Object>> metricList = new ArrayList<>();
         metricList.add(metric);
 
         Map<String, Float> metricsMap = new HashMap<>();
@@ -740,6 +767,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("date")
                                         .description("Date of the quality factors evaluation simulation model base")),
                         requestFields(
@@ -1227,6 +1257,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
@@ -1361,6 +1394,9 @@ public class FactorEvaluationTest {
                         requestParameters(
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional(),
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
@@ -1423,7 +1459,7 @@ public class FactorEvaluationTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, "testurl1", "testurl2", "testurl3", false);
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true, false);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
@@ -1483,7 +1519,11 @@ public class FactorEvaluationTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier (Optional)")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -1497,10 +1537,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor category"),
                                 fieldWithPath("[].threshold")
                                         .description("Quality factor minimum acceptable value"),
-                                fieldWithPath("[].metrics")
-                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("[].metrics[]")
-                                        .description("Metric identifier"),
+                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("[].weighted")
                                         .description("Quality factor is weighted or not"),
                                 fieldWithPath("[].metricsWeights")
@@ -1559,10 +1597,8 @@ public class FactorEvaluationTest {
                                         .description("Quality factor category"),
                                 fieldWithPath("threshold")
                                         .description("Quality factor minimum acceptable value"),
-                                fieldWithPath("metrics")
-                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("metrics[]")
-                                        .description("Metric identifier"),
+                                        .description("List of the metrics composing the quality factor"),
                                 fieldWithPath("weighted")
                                         .description("Quality factor is weighted or not"),
                                 fieldWithPath("metricsWeights[]")
@@ -1579,7 +1615,7 @@ public class FactorEvaluationTest {
     @Test
     public void getMissingQualityFactor() throws Exception {
         Long qualityFactorId = 2L;
-        when(qualityFactorsDomainController.getQualityFactorById(qualityFactorId)).thenThrow(new QualityFactorNotFoundException());
+        when(qualityFactorsDomainController.getQualityFactorById(qualityFactorId)).thenThrow(new QualityFactorNotFoundException(qualityFactorId.toString()));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/qualityFactors/{id}", qualityFactorId);

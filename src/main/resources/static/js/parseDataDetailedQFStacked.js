@@ -151,7 +151,7 @@ function getMetricsCategories() {
 
 function getCategories() {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/qualityFactors/categories";
+    var url = "/api/factors/categories";
     if (serverUrl) {
         url = serverUrl + url;
     }

@@ -414,7 +414,7 @@ $("#saveSI").click(function () {
                 if (jqXHR.status === 409)
                     warningUtils("Error","This Strategic Indicator name is already in use");
                 else {
-                    warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error","Error in MongoDB: contact to the system administrator");
                     location.href = "../StrategicIndicators/Configuration";
                 }
             },

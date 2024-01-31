@@ -14,8 +14,6 @@ let factorsDB = [];
 
 var profileId = sessionStorage.getItem("profile_id");
 
-const DEFAULT_CATEGORY = "Default";
-
 function getMetricsWithCategory(){
     $.ajax({
         dataType: "json",

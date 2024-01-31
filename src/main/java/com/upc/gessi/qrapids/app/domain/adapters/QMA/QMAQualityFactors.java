@@ -1,12 +1,13 @@
 package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
 import DTOs.*;
+import com.mongodb.MongoException;
+import com.mongodb.client.result.UpdateResult;
+
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
-import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.ProfileProjectStrategicIndicators;
@@ -16,12 +17,13 @@ import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryReposi
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Factors;
+
 import evaluation.Factor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 import evaluation.StrategicIndicator;
-import org.elasticsearch.rest.RestStatus;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import util.Queries;
@@ -31,9 +33,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-
-import static com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators.*;
+import java.util.Map;
 
 @Component
 public class QMAQualityFactors {
@@ -55,7 +55,10 @@ public class QMAQualityFactors {
 
     @Autowired
     private ProjectsController projectsController;
-    
+
+    @Autowired
+    private MetricsController metricsController;
+
     @Autowired
     private FactorsController factorsController;
 
@@ -63,7 +66,13 @@ public class QMAQualityFactors {
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
+    private StudentsController studentsController;
+
+    @Autowired
     QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
+
+    @Autowired
+    QMAMetrics qmaMetrics;
 
     private Logger logger = LoggerFactory.getLogger(Factors.class);
 
@@ -82,39 +91,43 @@ public class QMAQualityFactors {
                                          List<DTOAssessment> assessment,
                                          List<String> missingMetrics,
                                          long dates_mismatch,
-                                         List<String> indicators
-    ) throws IOException {
+                                         List<String> indicators) {
 
-        RestStatus status;
-        if (assessment == null) {
-
-            status = Factor.setFactorEvaluation(prj,
-                    qualityFactorID,
-                    qualityFactorName,
-                    qualityFactorDescription,
-                    value,
-                    info,
-                    date,
-                    null,
-                    missingMetrics,
-                    dates_mismatch,
-                    indicators)
-                    .status();
-        } else {
-            status = Factor.setFactorEvaluation(prj,
-                    qualityFactorID,
-                    qualityFactorName,
-                    qualityFactorDescription,
-                    value,
-                    info,
-                    date,
-                    listDTOQFAssessmentToEstimationEvaluationDTO(assessment),
-                    missingMetrics,
-                    dates_mismatch,
-                    indicators)
-                    .status();
+        qmacon.initConnexion();
+        UpdateResult result;
+        try {
+            if (assessment == null) {
+                result = Factor.setFactorEvaluation(prj,
+                                qualityFactorID,
+                                qualityFactorName,
+                                qualityFactorDescription,
+                                value,
+                                info,
+                                date,
+                                null,
+                                missingMetrics,
+                                dates_mismatch,
+                                indicators);
+            }
+            else {
+                result = Factor.setFactorEvaluation(prj,
+                                qualityFactorID,
+                                qualityFactorName,
+                                qualityFactorDescription,
+                                value,
+                                info,
+                                date,
+                                listDTOQFAssessmentToEstimationEvaluationDTO(assessment),
+                                missingMetrics,
+                                dates_mismatch,
+                                indicators);
+            }
+            return result.wasAcknowledged();
         }
-        return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private EstimationEvaluationDTO listDTOQFAssessmentToEstimationEvaluationDTO(List<DTOAssessment> assessment) {
@@ -244,7 +257,7 @@ public class QMAQualityFactors {
                     logger.error(e.getMessage(), e);
                 }
 
-                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId),type);
+                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getDescription(), qualityFactor.getName(), qmaMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId), type);
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 String cat_name = factorsController.getCategoryFromRationale(evaluation.getRationale());
                 df.setDate(evaluation.getEvaluationDate());
@@ -278,6 +291,17 @@ public class QMAQualityFactors {
             }
         } else { // if profile is null, return all quality factors
             return qf;
+        }
+    }
+
+    private void normalizeQFMetricsStudentNames(List<DTODetailedFactorEvaluation> qf, Project project) {
+        if(project != null) {
+            List<DTOStudent> students = studentsController.getStudentsDTOFromProject(project.getId());
+            Map<Long,String> normalizedNames = studentsController.getNormalizedNamesByProject(project);
+
+            qf.forEach(factor -> {
+                metricsController.normalizeMetricsEvaluation(factor.getMetrics(), students, normalizedNames);
+            });
         }
     }
 }

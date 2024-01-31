@@ -3,15 +3,13 @@ package com.upc.gessi.qrapids.app.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 /**
  * Class that encapsulates the QMA API connection information
- * Opening/Closing the connection with the API is slow. Therefore, we also use this class as a single instance for this connection
- * in order to improve the performance.
+ * Opening / Closing the connection with the API is slow.
+ * Therefore, we also use this class as a single instance for this connection in order to improve the performance.
  *
- * The first time the operation initConnextion is called, we open the connection with the QMA API
- * This connection is closed when the instance is removed
+ * The first time the operation initConnextion is called, we open the connection with the QMA API.
+ * This connection is closed when the instance is removed.
  *
  */
 @Component
@@ -26,14 +24,11 @@ public class QMAConnection {
     @Value("${qma.port}")
     private int port;
 
-    @Value("${qma.path}")
-    private String path;
-
-    @Value("${qma.prefix}")
-    private String prefix;
+    @Value("${qma.database.name}")
+    private String database;
 
     @Value("${qma.username}")
-    private String username;
+    private String user;
 
     @Value("${qma.password}")
     private String password;
@@ -46,14 +41,12 @@ public class QMAConnection {
         return port;
     }
 
-    public String getPath() {return path;}
-
-    public String getPrefix() {
-        return prefix;
+    public String getDatabase() {
+        return database;
     }
 
     public String getUsername() {
-        return username;
+        return user;
     }
 
     public String getPassword() {
@@ -67,13 +60,12 @@ public class QMAConnection {
     }
 
     public void initConnexion() {
-        if (!this.init)
-            util.Connection.initConnection(ip, port, path, prefix, username , password);
-        this.init=true;
+        if (!this.init) util.Connection.initConnection(ip, port, database, user, password);
+        this.init = true;
     }
 
-    protected void finalize() throws IOException {
-        if (this.init)
-            util.Connection.closeConnection();
+    protected void finalize() {
+        if (this.init) util.Connection.closeConnection();
     }
+
 }

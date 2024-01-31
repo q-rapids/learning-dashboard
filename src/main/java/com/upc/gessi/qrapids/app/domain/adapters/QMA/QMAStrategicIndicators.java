@@ -4,6 +4,10 @@ import DTOs.EstimationEvaluationDTO;
 import DTOs.EvaluationDTO;
 import DTOs.QuadrupletDTO;
 import DTOs.StrategicIndicatorEvaluationDTO;
+
+import com.mongodb.MongoException;
+import com.mongodb.client.result.UpdateResult;
+
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -16,13 +20,13 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import evaluation.StrategicIndicator;
-import org.elasticsearch.rest.RestStatus;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import util.Queries;
-
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -106,36 +110,41 @@ public class QMAStrategicIndicators {
                                               LocalDate date,
                                               List<DTOAssessment> assessment,
                                               List<String> missingFactors,
-                                              long dates_mismatch
-                                              ) throws IOException {
+                                              long dates_mismatch) {
 
-        RestStatus status;
-        if (assessment == null) {
-            status = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
-                                                            strategicIndicatorID,
-                                                            strategicIndicatorName,
-                                                            strategicIndicatorDescription,
-                                                            value,
-                                                            info,
-                                                            date,
-                                                            null,
-                                                            missingFactors,
-                                                            dates_mismatch)
-                    .status();
-        } else {
-            status = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
-                                                            strategicIndicatorID,
-                                                            strategicIndicatorName,
-                                                            strategicIndicatorDescription,
-                                                            value,
-                                                            info,
-                                                            date,
-                                                            listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
-                                                            missingFactors,
-                                                            dates_mismatch)
-                    .status();
+        qmacon.initConnexion();
+        UpdateResult result;
+        try {
+            if (assessment == null) {
+                result = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
+                                            strategicIndicatorID,
+                                            strategicIndicatorName,
+                                            strategicIndicatorDescription,
+                                            value,
+                                            info,
+                                            date,
+                                            null,
+                                            missingFactors,
+                                            dates_mismatch);
+            }
+            else {
+                result = StrategicIndicator.setStrategicIndicatorEvaluation(prj,
+                                            strategicIndicatorID,
+                                            strategicIndicatorName,
+                                            strategicIndicatorDescription,
+                                            value,
+                                            info,
+                                            date,
+                                            listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
+                                            missingFactors,
+                                            dates_mismatch);
+            }
+            return result.wasAcknowledged();
         }
-        return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
+        catch (MongoException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(String prjExternalId, String profileId, List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException, ProjectNotFoundException {
@@ -176,7 +185,7 @@ public class QMAStrategicIndicators {
 
                 //bool that determines if the current SI has the estimation parameter
                 if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
-                    throw new CategoriesException();
+                    throw new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH);
 
                 buildDTOStrategicIndicatorEvaluationList(si, element, id, hasBN, hasFeedback, categories);
             }
@@ -196,7 +205,7 @@ public class QMAStrategicIndicators {
 
             if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
                 setValueAndThresholdForCategories(categories, estimation);
-            } else if (hasEstimation) throw new CategoriesException();
+            } else if (hasEstimation) throw new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH);
             //calculate "fake" value if the SI has estimation
             if (hasEstimation) {
                 buildDTOStrategicIndicatorEvaluationWithEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation);
@@ -241,7 +250,7 @@ public class QMAStrategicIndicators {
             ++i;
         }
         if (changed != categories.size())
-            throw new CategoriesException();
+            throw new CategoriesException(Messages.CATEGORIES_DO_NOT_MATCH);
     }
 
     private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOAssessment> assessment) {
@@ -251,6 +260,5 @@ public class QMAStrategicIndicators {
         }
         return new EstimationEvaluationDTO(estimation);
     }
-
 
 }

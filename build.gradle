@@ -26,7 +26,7 @@ apply plugin: 'jacoco'
 apply plugin: 'org.asciidoctor.convert'
 
 group = 'com.upc.gessi.qrapids'
-version = '3.2'
+version = '3.3'
 sourceCompatibility = 1.8
 
 war {
@@ -57,64 +57,64 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	set('elasticsearch.version', '5.6.3')
-}
-
 dependencies {
-    // Security
-    compile("org.springframework.boot:spring-boot-starter-security")
 
-    // JWT
-    compile("io.jsonwebtoken:jjwt:0.7.0")
+	// Security
+	compile("org.springframework.boot:spring-boot-starter-security")
 
-    // Development
-    compile('org.springframework.boot:spring-boot-devtools')
+	// JWT
+	compile("io.jsonwebtoken:jjwt:0.7.0")
 
-    // Spring Boot
+	// Development
+	compile('org.springframework.boot:spring-boot-devtools')
+
+	// Spring Boot
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 
-    // Spring mail
+	// Spring mail
 	compile 'org.springframework.boot:spring-boot-starter-mail:1.5.8.RELEASE'
 
-    // DB JDBC
+	// Database JDBC
 	compile('org.postgresql:postgresql:42.1.4.jre7')
 
-	//JSON Java Library
+	// JSON Java Library
 	compile 'com.google.code.gson:gson:2.8.2'
 
-	//socket
+	// Socket
 	compile 'org.springframework.boot:spring-boot-starter-websocket'
 
-	//Utils
+	// Utils
 	compile 'commons-io:commons-io:2.5'
+	compile 'commons-codec:commons-codec:1.10'
 
-	//API Elastic
-	compile('org.elasticsearch.client:transport:5.6.3')
-	compile('org.elasticsearch:elasticsearch:5.6.3')
-	compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:5.6.3')
-	compile files('libs/qrapids-qma-elastic-1.2.jar')
+	// MongoDB API
+	compile('org.mongodb:mongodb-driver-sync:3.12.14')
+	compile('org.mongodb:mongodb-driver-core:3.12.14')
+	compile('org.mongodb:bson:3.12.14')
+	compile files('libs/LD-qma-mongo-1.0.jar')
 
-	//API QR Generator
-	compile files('libs/qrapids-qr_generator-0.3.jar')
+	// QR-Eval library
+	compile files('libs/LD-eval-2.2.jar')
 
-	//Add qr-eval jar compilation
-	compile files('libs/qrapids-eval-2.1.jar')
-
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	// Logging
 	compile('org.apache.logging.log4j:log4j-api:2.9.1')
 	compile('org.apache.logging.log4j:log4j-core:2.9.1')
-	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+	// Rest API Documentation
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
+	// Testing
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testCompile('com.h2database:h2')
 
-	// comment this line to launch application from developing environment
-	// uncomment this line before generating .war file
-	//providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	// Comment this line to launch application from developing environment
+	// Uncomment this line before generating .war file
+	// providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
 }
 
 jacoco {
